@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "node --test tests/*.test.mjs",
+    "test:regression": "node --test tests/*.test.mjs",
+    "media:animated": "node scripts/media/download-animated-pokemon.mjs",
+    "media:animated:dry": "node scripts/media/download-animated-pokemon.mjs --dry-run"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "globals": "^17.11.0"
+  },
+  "dependencies": {
+    "ffmpeg": "^0.0.4"
+  }
+}

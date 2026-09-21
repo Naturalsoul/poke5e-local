@@ -1,0 +1,1129 @@
+{
+  "name": "Pikachu",
+  "type": "npc",
+  "img": "modules/poke5e-local/assets/pokemon/pikachu/main.png",
+  "system": {
+    "abilities": {
+      "str": {
+        "value": 11,
+        "proficient": 0,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        },
+        "max": null
+      },
+      "dex": {
+        "value": 15,
+        "proficient": 1,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        },
+        "max": null
+      },
+      "con": {
+        "value": 10,
+        "proficient": 0,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        },
+        "max": null
+      },
+      "int": {
+        "value": 6,
+        "proficient": 0,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        },
+        "max": null
+      },
+      "wis": {
+        "value": 10,
+        "proficient": 0,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        },
+        "max": null
+      },
+      "cha": {
+        "value": 12,
+        "proficient": 1,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        },
+        "max": null
+      }
+    },
+    "source": {
+      "custom": "Poke5e",
+      "book": "",
+      "page": "",
+      "license": "",
+      "revision": 1,
+      "rules": "2014"
+    },
+    "attributes": {
+      "ac": {
+        "flat": 13,
+        "calc": "natural",
+        "formula": ""
+      },
+      "hp": {
+        "value": 16,
+        "max": 16,
+        "temp": null,
+        "tempmax": null,
+        "formula": "16"
+      },
+      "movement": {
+        "burrow": 0,
+        "climb": 0,
+        "fly": 0,
+        "swim": 0,
+        "walk": 30,
+        "units": "ft",
+        "hover": false
+      }
+    },
+    "details": {
+      "biography": {
+        "value": "<p>The Mouse Pokémon. This forest-dwelling Pokémon stores electricity in its cheeks, so you’ll feel a tingly shock if you touch it.</p>",
+        "public": ""
+      },
+      "alignment": "Unaligned",
+      "type": {
+        "value": "custom",
+        "subtype": "",
+        "swarm": "",
+        "custom": "Pokémon (electric)"
+      },
+      "environment": "",
+      "cr": 0,
+      "spellLevel": 0
+    },
+    "traits": {
+      "size": "tiny"
+    },
+    "skills": {
+      "acr": {
+        "value": 1,
+        "ability": "dex",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        },
+        "roll": {
+          "min": null,
+          "max": null,
+          "mode": 0
+        }
+      },
+      "ani": {
+        "value": 0,
+        "ability": "wis",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        },
+        "roll": {
+          "min": null,
+          "max": null,
+          "mode": 0
+        }
+      },
+      "arc": {
+        "value": 0,
+        "ability": "int",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        },
+        "roll": {
+          "min": null,
+          "max": null,
+          "mode": 0
+        }
+      },
+      "ath": {
+        "value": 0,
+        "ability": "str",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        },
+        "roll": {
+          "min": null,
+          "max": null,
+          "mode": 0
+        }
+      },
+      "dec": {
+        "value": 0,
+        "ability": "cha",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        },
+        "roll": {
+          "min": null,
+          "max": null,
+          "mode": 0
+        }
+      },
+      "his": {
+        "value": 0,
+        "ability": "int",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        },
+        "roll": {
+          "min": null,
+          "max": null,
+          "mode": 0
+        }
+      },
+      "ins": {
+        "value": 0,
+        "ability": "wis",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        },
+        "roll": {
+          "min": null,
+          "max": null,
+          "mode": 0
+        }
+      },
+      "itm": {
+        "value": 0,
+        "ability": "cha",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        },
+        "roll": {
+          "min": null,
+          "max": null,
+          "mode": 0
+        }
+      },
+      "inv": {
+        "value": 0,
+        "ability": "int",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        },
+        "roll": {
+          "min": null,
+          "max": null,
+          "mode": 0
+        }
+      },
+      "med": {
+        "value": 0,
+        "ability": "wis",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        },
+        "roll": {
+          "min": null,
+          "max": null,
+          "mode": 0
+        }
+      },
+      "nat": {
+        "value": 0,
+        "ability": "int",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        },
+        "roll": {
+          "min": null,
+          "max": null,
+          "mode": 0
+        }
+      },
+      "prc": {
+        "value": 0,
+        "ability": "wis",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        },
+        "roll": {
+          "min": null,
+          "max": null,
+          "mode": 0
+        }
+      },
+      "prf": {
+        "value": 0,
+        "ability": "cha",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        },
+        "roll": {
+          "min": null,
+          "max": null,
+          "mode": 0
+        }
+      },
+      "per": {
+        "value": 1,
+        "ability": "cha",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        },
+        "roll": {
+          "min": null,
+          "max": null,
+          "mode": 0
+        }
+      },
+      "rel": {
+        "value": 0,
+        "ability": "int",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        },
+        "roll": {
+          "min": null,
+          "max": null,
+          "mode": 0
+        }
+      },
+      "slt": {
+        "value": 0,
+        "ability": "dex",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        },
+        "roll": {
+          "min": null,
+          "max": null,
+          "mode": 0
+        }
+      },
+      "ste": {
+        "value": 0,
+        "ability": "dex",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        },
+        "roll": {
+          "min": null,
+          "max": null,
+          "mode": 0
+        }
+      },
+      "sur": {
+        "value": 0,
+        "ability": "wis",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        },
+        "roll": {
+          "min": null,
+          "max": null,
+          "mode": 0
+        }
+      }
+    }
+  },
+  "prototypeToken": {
+    "name": "Pikachu",
+    "actorLink": false,
+    "texture": {
+      "src": "modules/poke5e-local/assets/pokemon/pikachu/sprite.png"
+    },
+    "bar1": {
+      "attribute": "attributes.hp"
+    }
+  },
+  "items": [
+    {
+      "name": "Electricidad Estática",
+      "type": "feat",
+      "system": {
+        "description": {
+          "value": "<p>Cuando este Pokémon es golpeado por un ataque cuerpo a cuerpo, tira un d4. En un resultado de 4, el atacante recibe una cantidad de daño de tipo Eléctico igual al bonificador por competencia de este Pokémon.</p>",
+          "chat": ""
+        },
+        "source": {
+          "custom": "Poke5e",
+          "book": "",
+          "page": "",
+          "license": "",
+          "revision": 1,
+          "rules": "2014"
+        },
+        "activities": {},
+        "identifier": "static"
+      },
+      "flags": {
+        "poke5e-local": {
+          "kind": "ability",
+          "sourceId": "static",
+          "buildVersion": "0.2.0"
+        }
+      }
+    },
+    {
+      "name": "Látigo",
+      "type": "feat",
+      "system": {
+        "description": {
+          "value": "<p>Agitas tu cola hacia un objetivo, distrayéndolo y abriendo brechas en sus defensas. La criatura debe realizar una tirada de salvación de Sabiduría contra tu CD de Movimiento. Si falla, los aliados añaden +1 a cualquier ataque con el que la fijen como objetivo durante la duración. Este modificador se puede acumular si el objetivo falla varias tiradas de salvación de Látigo, hasta un máximo de +5.</p>",
+          "chat": ""
+        },
+        "source": {
+          "custom": "Poke5e",
+          "book": "",
+          "page": "",
+          "license": "",
+          "revision": 1,
+          "rules": "2014"
+        },
+        "activities": {
+          "P5etailwhip00000": {
+            "_id": "P5etailwhip00000",
+            "name": "Látigo",
+            "activation": {
+              "type": "action",
+              "value": 1,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "spellSlot": false,
+              "targets": [
+                {
+                  "type": "itemUses",
+                  "target": "",
+                  "value": "1",
+                  "scaling": {
+                    "mode": "",
+                    "formula": ""
+                  }
+                }
+              ],
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              }
+            },
+            "range": {
+              "value": "100",
+              "units": "ft",
+              "special": "",
+              "override": true
+            },
+            "type": "save",
+            "save": {
+              "ability": [
+                "wis"
+              ],
+              "dc": {
+                "calculation": "dex",
+                "formula": ""
+              }
+            },
+            "damage": {
+              "onSave": "none",
+              "parts": []
+            },
+            "effects": []
+          }
+        },
+        "uses": {
+          "spent": 0,
+          "max": "15",
+          "recovery": [
+            {
+              "period": "lr",
+              "type": "recoverAll",
+              "formula": ""
+            }
+          ]
+        },
+        "identifier": "tail-whip"
+      },
+      "flags": {
+        "poke5e-local": {
+          "kind": "move",
+          "sourceId": "tail-whip",
+          "pokemonType": "normal",
+          "pp": 15,
+          "powerAbilities": [
+            "cha",
+            "dex"
+          ],
+          "buildVersion": "0.2.0"
+        }
+      }
+    },
+    {
+      "name": "Impactrueno",
+      "type": "feat",
+      "system": {
+        "description": {
+          "value": "<p>Propinas una descarga eléctrica a un objetivo a tu alcance. Realiza un ataque a distancia contra un objetivo, infligiendo 1d6 + MOV de daño eléctrico si impactas.</p>",
+          "chat": ""
+        },
+        "source": {
+          "custom": "Poke5e",
+          "book": "",
+          "page": "",
+          "license": "",
+          "revision": 1,
+          "rules": "2014"
+        },
+        "activities": {
+          "P5ethundershock0": {
+            "_id": "P5ethundershock0",
+            "name": "Impactrueno",
+            "activation": {
+              "type": "action",
+              "value": 1,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "spellSlot": false,
+              "targets": [
+                {
+                  "type": "itemUses",
+                  "target": "",
+                  "value": "1",
+                  "scaling": {
+                    "mode": "",
+                    "formula": ""
+                  }
+                }
+              ],
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              }
+            },
+            "range": {
+              "value": "20",
+              "units": "ft",
+              "special": "",
+              "override": true
+            },
+            "type": "attack",
+            "attack": {
+              "ability": "dex",
+              "bonus": "2",
+              "critical": {
+                "threshold": null
+              },
+              "flat": false,
+              "type": {
+                "value": "ranged",
+                "classification": "weapon"
+              }
+            },
+            "damage": {
+              "critical": {
+                "bonus": ""
+              },
+              "includeBase": false,
+              "parts": [
+                {
+                  "number": 1,
+                  "denomination": 6,
+                  "bonus": "@mod",
+                  "types": [
+                    "lightning"
+                  ],
+                  "custom": {
+                    "enabled": false,
+                    "formula": ""
+                  },
+                  "scaling": {
+                    "mode": "",
+                    "number": null,
+                    "formula": ""
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "uses": {
+          "spent": 0,
+          "max": "15",
+          "recovery": [
+            {
+              "period": "lr",
+              "type": "recoverAll",
+              "formula": ""
+            }
+          ]
+        },
+        "identifier": "thunder-shock"
+      },
+      "flags": {
+        "poke5e-local": {
+          "kind": "move",
+          "sourceId": "thunder-shock",
+          "pokemonType": "electric",
+          "pp": 15,
+          "powerAbilities": [
+            "str",
+            "dex"
+          ],
+          "buildVersion": "0.2.0"
+        }
+      }
+    },
+    {
+      "name": "Camaradería",
+      "type": "feat",
+      "system": {
+        "description": {
+          "value": "<p>Convences a una criatura de que no pretendes hacerle ningún daño. Obliga a una criatura a realizar una tirada de salvación de Carisma contra tu CD de Movimiento. Si falla, cualquier ataque que el objetivo realice en su próximo turno se lanzará con desventaja. Si el objetivo activa un movimiento que requiera una tirada de salvación, tendrás ventaja en la tirada.</p>",
+          "chat": ""
+        },
+        "source": {
+          "custom": "Poke5e",
+          "book": "",
+          "page": "",
+          "license": "",
+          "revision": 1,
+          "rules": "2014"
+        },
+        "activities": {
+          "P5eplaynice00000": {
+            "_id": "P5eplaynice00000",
+            "name": "Camaradería",
+            "activation": {
+              "type": "action",
+              "value": 1,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "spellSlot": false,
+              "targets": [
+                {
+                  "type": "itemUses",
+                  "target": "",
+                  "value": "1",
+                  "scaling": {
+                    "mode": "",
+                    "formula": ""
+                  }
+                }
+              ],
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              }
+            },
+            "range": {
+              "value": "30",
+              "units": "ft",
+              "special": "",
+              "override": true
+            },
+            "type": "save",
+            "save": {
+              "ability": [
+                "cha"
+              ],
+              "dc": {
+                "calculation": "cha",
+                "formula": ""
+              }
+            },
+            "damage": {
+              "onSave": "none",
+              "parts": []
+            },
+            "effects": []
+          }
+        },
+        "uses": {
+          "spent": 0,
+          "max": "10",
+          "recovery": [
+            {
+              "period": "lr",
+              "type": "recoverAll",
+              "formula": ""
+            }
+          ]
+        },
+        "identifier": "play-nice"
+      },
+      "flags": {
+        "poke5e-local": {
+          "kind": "move",
+          "sourceId": "play-nice",
+          "pokemonType": "normal",
+          "pp": 10,
+          "powerAbilities": [
+            "cha"
+          ],
+          "buildVersion": "0.2.0"
+        }
+      }
+    }
+  ],
+  "flags": {
+    "poke5e-local": {
+      "schemaVersion": "0.1.0",
+      "sourceId": "pikachu",
+      "dexNumber": 25,
+      "pokemonTypes": [
+        "electric"
+      ],
+      "sr": 0.5,
+      "level": 1,
+      "hitDie": "d6",
+      "activeAbilityIds": [
+        "static"
+      ],
+      "hiddenAbilityIds": [
+        "lightning-rod"
+      ],
+      "startingMoveIds": [
+        "tail-whip",
+        "thunder-shock",
+        "play-nice"
+      ],
+      "learnset": {
+        "level": [
+          {
+            "level": 1,
+            "moveIds": [
+              "tail-whip",
+              "thunder-shock",
+              "play-nice"
+            ]
+          },
+          {
+            "level": 2,
+            "moveIds": [
+              "growl",
+              "quick-attack"
+            ]
+          },
+          {
+            "level": 6,
+            "moveIds": [
+              "electro-ball",
+              "thunder-wave",
+              "feint"
+            ]
+          },
+          {
+            "level": 10,
+            "moveIds": [
+              "double-team",
+              "spark",
+              "discharge",
+              "nuzzle"
+            ]
+          },
+          {
+            "level": 14,
+            "moveIds": [
+              "slam",
+              "thunderbolt",
+              "agility"
+            ]
+          },
+          {
+            "level": 18,
+            "moveIds": [
+              "wild-charge",
+              "light-screen",
+              "thunder"
+            ]
+          }
+        ],
+        "eggMoveIds": [],
+        "tms": [
+          {
+            "id": 6,
+            "moveId": "toxic",
+            "cost": 8000,
+            "source": "moves.json"
+          },
+          {
+            "id": 10,
+            "moveId": "hidden-power",
+            "cost": 5200,
+            "source": "moves.json"
+          },
+          {
+            "id": 16,
+            "moveId": "light-screen",
+            "cost": 4400,
+            "source": "moves.json"
+          },
+          {
+            "id": 17,
+            "moveId": "protect",
+            "cost": 8000,
+            "source": "moves.json"
+          },
+          {
+            "id": 18,
+            "moveId": "rain-dance",
+            "cost": 4400,
+            "source": "moves.json"
+          },
+          {
+            "id": 21,
+            "moveId": "frustration",
+            "cost": 3600,
+            "source": "moves.json"
+          },
+          {
+            "id": 24,
+            "moveId": "thunderbolt",
+            "cost": 7200,
+            "source": "moves.json"
+          },
+          {
+            "id": 25,
+            "moveId": "thunder",
+            "cost": 8400,
+            "source": "moves.json"
+          },
+          {
+            "id": 27,
+            "moveId": "return",
+            "cost": 5200,
+            "source": "moves.json"
+          },
+          {
+            "id": 31,
+            "moveId": "brick-break",
+            "cost": 5600,
+            "source": "moves.json"
+          },
+          {
+            "id": 32,
+            "moveId": "double-team",
+            "cost": 7000,
+            "source": "moves.json"
+          },
+          {
+            "id": 33,
+            "moveId": "reflect",
+            "cost": 8000,
+            "source": "moves.json"
+          },
+          {
+            "id": 42,
+            "moveId": "facade",
+            "cost": 5600,
+            "source": "moves.json"
+          },
+          {
+            "id": 44,
+            "moveId": "rest",
+            "cost": 6000,
+            "source": "moves.json"
+          },
+          {
+            "id": 45,
+            "moveId": "attract",
+            "cost": 4000,
+            "source": "moves.json"
+          },
+          {
+            "id": 46,
+            "moveId": "thief",
+            "cost": 5200,
+            "source": "moves.json"
+          },
+          {
+            "id": 48,
+            "moveId": "round",
+            "cost": 5200,
+            "source": "moves.json"
+          },
+          {
+            "id": 49,
+            "moveId": "echoed-voice",
+            "cost": 4000,
+            "source": "moves.json"
+          },
+          {
+            "id": 56,
+            "moveId": "fling",
+            "cost": 4500,
+            "source": "moves.json"
+          },
+          {
+            "id": 57,
+            "moveId": "charge-beam",
+            "cost": 4400,
+            "source": "moves.json"
+          },
+          {
+            "id": 72,
+            "moveId": "volt-switch",
+            "cost": 5600,
+            "source": "moves.json"
+          },
+          {
+            "id": 73,
+            "moveId": "thunder-wave",
+            "cost": 5000,
+            "source": "moves.json"
+          },
+          {
+            "id": 86,
+            "moveId": "grass-knot",
+            "cost": 6500,
+            "source": "moves.json"
+          },
+          {
+            "id": 87,
+            "moveId": "swagger",
+            "cost": 5000,
+            "source": "moves.json"
+          },
+          {
+            "id": 88,
+            "moveId": "sleep-talk",
+            "cost": 4500,
+            "source": "moves.json"
+          },
+          {
+            "id": 90,
+            "moveId": "substitute",
+            "cost": 7500,
+            "source": "moves.json"
+          },
+          {
+            "id": 93,
+            "moveId": "wild-charge",
+            "cost": 7200,
+            "source": "moves.json"
+          },
+          {
+            "id": 94,
+            "moveId": "surf",
+            "cost": 7200,
+            "source": "moves.json"
+          },
+          {
+            "id": 100,
+            "moveId": "confide",
+            "cost": 4400,
+            "source": "moves.json"
+          },
+          {
+            "id": 102,
+            "moveId": "take-down",
+            "cost": 7400,
+            "source": "moves.json"
+          },
+          {
+            "id": 103,
+            "moveId": "charm",
+            "cost": 2500,
+            "source": "moves.json"
+          },
+          {
+            "id": 104,
+            "moveId": "fake-tears",
+            "cost": 8700,
+            "source": "moves.json"
+          },
+          {
+            "id": 105,
+            "moveId": "agility",
+            "cost": 8700,
+            "source": "moves.json"
+          },
+          {
+            "id": 117,
+            "moveId": "disarming-voice",
+            "cost": 3600,
+            "source": "moves.json"
+          },
+          {
+            "id": 118,
+            "moveId": "trailblaze",
+            "cost": 15000,
+            "source": "moves.json"
+          },
+          {
+            "id": 124,
+            "moveId": "swift",
+            "cost": 3600,
+            "source": "moves.json"
+          },
+          {
+            "id": 128,
+            "moveId": "draining-kiss",
+            "cost": 2500,
+            "source": "moves.json"
+          },
+          {
+            "id": 133,
+            "moveId": "endure",
+            "cost": 2500,
+            "source": "moves.json"
+          },
+          {
+            "id": 135,
+            "moveId": "dig",
+            "cost": 3600,
+            "source": "moves.json"
+          },
+          {
+            "id": 141,
+            "moveId": "body-slam",
+            "cost": 6200,
+            "source": "moves.json"
+          },
+          {
+            "id": 143,
+            "moveId": "thunder-punch",
+            "cost": 6200,
+            "source": "moves.json"
+          },
+          {
+            "id": 146,
+            "moveId": "electro-ball",
+            "cost": 8700,
+            "source": "moves.json"
+          },
+          {
+            "id": 155,
+            "moveId": "eerie-impulse",
+            "cost": 2500,
+            "source": "moves.json"
+          },
+          {
+            "id": 174,
+            "moveId": "encore",
+            "cost": 4900,
+            "source": "moves.json"
+          },
+          {
+            "id": 176,
+            "moveId": "play-rough",
+            "cost": 10800,
+            "source": "moves.json"
+          },
+          {
+            "id": 178,
+            "moveId": "helping-hand",
+            "cost": 2700,
+            "source": "moves.json"
+          },
+          {
+            "id": 182,
+            "moveId": "reversal",
+            "cost": 4900,
+            "source": "moves.json"
+          },
+          {
+            "id": 183,
+            "moveId": "electric-terrain",
+            "cost": 4900,
+            "source": "moves.json"
+          },
+          {
+            "id": 187,
+            "moveId": "nasty-plot",
+            "cost": 6600,
+            "source": "moves.json"
+          },
+          {
+            "id": 205,
+            "moveId": "tera-blast",
+            "cost": 9100,
+            "source": "moves.json"
+          },
+          {
+            "id": 206,
+            "moveId": "charge",
+            "cost": 2700,
+            "source": "moves.json"
+          },
+          {
+            "id": 211,
+            "moveId": "knock-off",
+            "cost": 14200,
+            "source": "moves.json"
+          },
+          {
+            "id": 221,
+            "moveId": "focus-punch",
+            "cost": 2700,
+            "source": "moves.json"
+          },
+          {
+            "id": 233,
+            "moveId": "endeavor",
+            "cost": 6600,
+            "source": "moves.json"
+          },
+          {
+            "id": 239,
+            "moveId": "electroweb",
+            "cost": 2700,
+            "source": "moves.json"
+          },
+          {
+            "id": 254,
+            "moveId": "alluring-voice",
+            "cost": 4900,
+            "source": "moves.json"
+          },
+          {
+            "id": 256,
+            "moveId": "upper-hand",
+            "cost": 3600,
+            "source": "moves.json"
+          }
+        ]
+      },
+      "evolutionRefs": {
+        "incoming": [
+          "pichu-to-pikachu"
+        ],
+        "outgoing": [
+          "pikachu-to-raichu",
+          "pikachu-to-alolan-raichu"
+        ]
+      },
+      "sourceMedia": {
+        "portrait": "assets/pokemon/pikachu/main.png",
+        "token": "assets/pokemon/pikachu/sprite.png",
+        "portraitShiny": "assets/pokemon/pikachu/main-shiny.png",
+        "tokenShiny": "assets/pokemon/pikachu/sprite-shiny.png"
+      },
+      "buildVersion": "0.2.0"
+    }
+  }
+}

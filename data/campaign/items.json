@@ -1,0 +1,196 @@
+{
+  "schemaVersion": "0.1.0",
+  "version": "0.1.0",
+  "items": [
+    {
+      "id": "campaign-rocket-field-kit",
+      "catalog": "campaign",
+      "type": "campaign",
+      "foundryType": "container",
+      "name": {
+        "en": "Rocket Field Kit",
+        "es": "Kit de Campo Rocket"
+      },
+      "description": {
+        "en": "A rugged Team Rocket field backpack used to carry supplies, tools, and mission equipment.",
+        "es": "Una mochila de campo resistente del Team Rocket, utilizada para transportar suministros, herramientas y equipo de misión."
+      },
+      "cost": null,
+      "container": {
+        "capacityWeight": 30,
+        "weight": 5,
+        "units": "lb"
+      },
+      "media": {
+        "sprite": "assets/items/campaign/backpack.png"
+      }
+    },
+    {
+      "id": "campaign-rocket-communicator",
+      "catalog": "campaign",
+      "type": "campaign",
+      "foundryType": "loot",
+      "name": {
+        "en": "Rocket Communicator",
+        "es": "Comunicador Rocket"
+      },
+      "description": {
+        "en": "A portable Team Rocket communication device used to coordinate personnel during field operations.",
+        "es": "Un dispositivo portátil de comunicación del Team Rocket, utilizado para coordinar al personal durante operaciones de campo."
+      },
+      "cost": null,
+      "media": {
+        "sprite": "assets/items/campaign/rocket-communicator.png"
+      }
+    },
+    {
+      "id": "campaign-rocket-id-card",
+      "catalog": "campaign",
+      "type": "campaign",
+      "foundryType": "loot",
+      "name": {
+        "en": "Rocket ID Card",
+        "es": "Credencial Rocket"
+      },
+      "description": {
+        "en": "A Team Rocket identification card used to verify the holder's identity and authorization within the organization.",
+        "es": "Una credencial de identificación del Team Rocket utilizada para verificar la identidad y autorización de su portador dentro de la organización."
+      },
+      "cost": null,
+      "media": {
+        "sprite": "assets/items/campaign/rocket-id-card.png"
+      }
+    },
+    {
+      "id": "campaign-pokemon-rations",
+      "catalog": "campaign",
+      "type": "campaign",
+      "foundryType": "consumable",
+      "name": {
+        "en": "Pokémon Rations",
+        "es": "Raciones Pokémon"
+      },
+      "description": {
+        "en": "A compact portion of prepared food intended to feed a Pokémon during travel or field operations.",
+        "es": "Una porción compacta de alimento preparado para alimentar a un Pokémon durante viajes u operaciones de campo."
+      },
+      "cost": null,
+      "media": {
+        "sprite": "assets/items/campaign/pokemon-rations.png"
+      }
+    },
+    {
+      "id": "campaign-trainer-rations",
+      "catalog": "campaign",
+      "type": "campaign",
+      "foundryType": "consumable",
+      "name": {
+        "en": "Trainer Rations",
+        "es": "Raciones de Entrenador"
+      },
+      "description": {
+        "en": "A compact travel ration intended to provide a trainer with a basic meal during field operations.",
+        "es": "Una ración compacta de viaje destinada a proporcionar una comida básica a un entrenador durante operaciones de campo."
+      },
+      "cost": null,
+      "media": {
+        "sprite": "assets/items/campaign/trainer-rations.png"
+      }
+    },
+    {
+      "id": "campaign-rope",
+      "catalog": "campaign",
+      "type": "campaign",
+      "foundryType": "loot",
+      "name": {
+        "en": "Rope",
+        "es": "Cuerda"
+      },
+      "description": {
+        "en": "A coil of durable rope suitable for climbing, securing equipment, and other common field tasks.",
+        "es": "Un rollo de cuerda resistente adecuado para trepar, asegurar equipo y realizar otras tareas habituales de campo."
+      },
+      "cost": null,
+      "media": {
+        "sprite": "assets/items/campaign/rope.png"
+      }
+    },
+    {
+      "id": "campaign-flashlight",
+      "catalog": "campaign",
+      "type": "campaign",
+      "foundryType": "loot",
+      "name": {
+        "en": "Flashlight",
+        "es": "Linterna"
+      },
+      "description": {
+        "en": "A portable flashlight used to illuminate dark areas during exploration and field operations.",
+        "es": "Una linterna portátil utilizada para iluminar áreas oscuras durante exploraciones y operaciones de campo."
+      },
+      "cost": null,
+      "media": {
+        "sprite": "assets/items/campaign/flashlight.png"
+      }
+    },
+    {
+      "id": "campaign-binoculars",
+      "catalog": "campaign",
+      "type": "campaign",
+      "foundryType": "loot",
+      "name": {
+        "en": "Binoculars",
+        "es": "Binoculares"
+      },
+      "description": {
+        "en": "Compact binoculars used to observe terrain, Pokémon, and other distant targets.",
+        "es": "Binoculares compactos utilizados para observar el terreno, Pokémon y otros objetivos a distancia."
+      },
+      "cost": null,
+      "media": {
+        "sprite": "assets/items/campaign/binoculars.png"
+      }
+    },
+    {
+      "id": "campaign-waterproof-bag",
+      "catalog": "campaign",
+      "type": "campaign",
+      "foundryType": "container",
+      "name": {
+        "en": "Waterproof Bag",
+        "es": "Mochila Impermeable"
+      },
+      "description": {
+        "en": "A waterproof field backpack designed to carry equipment while protecting its contents from rain and moisture.",
+        "es": "Una mochila de campo impermeable diseñada para transportar equipo y proteger su contenido de la lluvia y la humedad."
+      },
+      "cost": null,
+      "container": {
+        "capacityWeight": 30,
+        "weight": 5,
+        "units": "lb"
+      },
+      "media": {
+        "sprite": "assets/items/campaign/waterproof-bag.png"
+      }
+    },
+    {
+      "id": "campaign-field-notebook",
+      "catalog": "campaign",
+      "type": "campaign",
+      "foundryType": "loot",
+      "name": {
+        "en": "Field Notebook",
+        "es": "Cuaderno de Campo"
+      },
+      "description": {
+        "en": "A durable notebook intended for recording observations, instructions, maps, and mission notes in the field.",
+        "es": "Un cuaderno resistente destinado a registrar observaciones, instrucciones, mapas y notas de misión durante operaciones de campo."
+      },
+      "cost": null,
+      "media": {
+        "sprite": "assets/items/campaign/notebook.png"
+      }
+    }
+  ]
+}

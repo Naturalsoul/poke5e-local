@@ -1,0 +1,48 @@
+.poke5e-battle-transition {
+  position: fixed;
+  inset: 0;
+
+  z-index: 2147483647;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100vw;
+  height: 100vh;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  pointer-events: none;
+
+  background: transparent;
+
+  opacity: 1;
+  visibility: visible;
+}
+
+.poke5e-battle-transition__video {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  max-width: none;
+  max-height: none;
+
+  margin: 0;
+  padding: 0;
+
+  object-fit: contain;
+  object-position: center;
+
+  background: transparent;
+
+  opacity: 1;
+  visibility: visible;
+
+  pointer-events: none;
+}

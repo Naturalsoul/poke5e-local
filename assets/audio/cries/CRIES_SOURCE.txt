@@ -1,0 +1,10 @@
+﻿Pokemon cries local source
+Source: https://play.pokemonshowdown.com/audio/cries/
+Downloaded: 2026-08-17 16:31:41 -04:00
+Format: MP3
+Files found: 1236
+Downloaded now: 1236
+Skipped existing: 0
+
+These files originate from Pokemon Showdown's public cry directory.
+Review redistribution/licensing requirements before publishing them with the module.

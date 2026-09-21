@@ -1,0 +1,7664 @@
+/* ============================================================
+ * POKE5E — POKÉMON SHEET
+ * FIRE RED / LEAF GREEN INSPIRED
+ * ============================================================ */
+
+.poke5e-pokemon-sheet {
+  --poke5e-fr-red:
+    #d75b4e;
+
+  --poke5e-fr-red-dark:
+    #a83e35;
+
+  --poke5e-fr-green:
+    #63b66d;
+
+  --poke5e-fr-green-dark:
+    #36884b;
+
+  --poke5e-fr-cream:
+    #e9e1bd;
+
+  --poke5e-fr-cream-dark:
+    #bcb58f;
+
+  --poke5e-fr-ink:
+    #eef0e7;
+
+  --poke5e-fr-muted:
+    #aeb5ad;
+
+  --poke5e-fr-border:
+    #657076;
+
+  --poke5e-fr-border-bright:
+    #88949a;
+
+  --poke5e-fr-panel:
+    #252c30;
+
+  --poke5e-fr-panel-alt:
+    #30383c;
+
+  --poke5e-fr-panel-deep:
+    #1b2124;
+
+  --poke5e-fr-surface:
+    #171d20;
+
+  --poke5e-fr-shadow:
+    rgba(0, 0, 0, 0.42);
+
+  --poke5e-fr-exp:
+    #4f87d9;
+}
+
+
+/* ============================================================
+ * SHEET SHELL
+ * ============================================================ */
+
+.poke5e-pokemon-sheet
+.window-content {
+  min-width: 0;
+  min-height: 0;
+
+  padding: 0;
+
+  overflow: hidden;
+
+  background:
+    var(--poke5e-fr-surface);
+
+  color:
+    var(--poke5e-fr-ink);
+}
+
+
+.poke5e-pokemon-sheet__host {
+  width: 100%;
+  height: 100%;
+
+  min-width: 0;
+  min-height: 0;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  /*
+   * El Summary se reconstruye dinámicamente
+   * después de distintas acciones.
+   *
+   * La posición visible la preserva explícitamente
+   * pokemon-sheet-ui.mjs.
+   */
+  overflow-anchor:
+    none;
+
+  background:
+    radial-gradient(
+      circle at 86% 8%,
+      rgba(215, 91, 78, 0.1),
+      transparent 230px
+    ),
+    linear-gradient(
+      180deg,
+      #20282b,
+      var(--poke5e-fr-surface)
+    );
+
+  scrollbar-gutter:
+    stable;
+}
+
+
+/* ============================================================
+ * SUMMARY
+ * ============================================================ */
+
+.poke5e-pokemon-summary {
+  --poke5e-type-color:
+    #7b8278;
+
+  --poke5e-type-soft:
+    rgba(123, 130, 120, 0.16);
+
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  min-height: 100%;
+
+  gap: 12px;
+  padding: 14px;
+
+  box-sizing: border-box;
+
+  border: 0;
+  border-radius: 0;
+
+  background:
+    transparent;
+
+  color:
+    var(--poke5e-fr-ink);
+
+  box-shadow:
+    none;
+
+  font-family:
+    "Trebuchet MS",
+    system-ui,
+    sans-serif;
+}
+
+/* ============================================================
+ * HERO
+ * ============================================================ */
+
+.poke5e-pokemon-summary__hero {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    150px
+    minmax(0, 1fr);
+
+  grid-template-rows:
+    auto 1fr auto;
+
+  min-height: 184px;
+
+  gap: 8px 18px;
+  padding: 18px;
+
+  overflow: hidden;
+
+  border:
+    3px solid
+    var(--poke5e-fr-border);
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--poke5e-type-soft),
+      rgba(48, 56, 60, 0.94) 38%,
+      var(--poke5e-fr-panel-deep)
+    );
+
+  box-shadow:
+    inset 0 0 0 2px
+      rgba(255, 255, 255, 0.055),
+    0 5px 14px
+      var(--poke5e-fr-shadow);
+}
+
+
+.poke5e-pokemon-summary__hero::after {
+  content: "";
+
+  position: absolute;
+
+  right: -42px;
+  top: -50px;
+
+  width: 170px;
+  height: 170px;
+
+  border:
+    14px solid
+    color-mix(
+      in srgb,
+      var(--poke5e-type-color)
+      18%,
+      transparent
+    );
+
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+
+.poke5e-pokemon-summary__dex {
+  position: absolute;
+
+  top: 10px;
+  right: 14px;
+
+  z-index: 1;
+
+  color:
+    var(--poke5e-fr-muted);
+
+  font-size: 11px;
+  font-weight: 900;
+
+  letter-spacing: 0.08em;
+}
+
+.poke5e-pokemon-summary__toolbar {
+  position: absolute;
+
+  top: 30px;
+  right: 14px;
+
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+}
+
+
+.poke5e-pokemon-summary__toolbar > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 24px;
+
+  gap: 5px;
+  padding: 3px 7px;
+
+  border:
+    1px solid
+    var(--poke5e-fr-border);
+
+  border-radius: 5px;
+
+  background:
+    rgba(27, 33, 36, 0.88);
+
+  color:
+    var(--poke5e-fr-muted);
+
+  font-family: inherit;
+  font-size: 8px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, 0.035);
+
+  transition:
+    border-color 100ms ease,
+    color 100ms ease,
+    background 100ms ease;
+}
+
+
+.poke5e-pokemon-summary__toolbar > button:hover {
+  border-color:
+    var(--poke5e-fr-red);
+
+  background:
+    var(--poke5e-fr-panel-alt);
+
+  color:
+    var(--poke5e-fr-cream);
+}
+
+
+.poke5e-pokemon-summary__toolbar > button.is-active {
+  border-color:
+    var(--poke5e-fr-red);
+
+  background:
+    rgba(215, 91, 78, 0.16);
+
+  color:
+    var(--poke5e-fr-red);
+}
+
+
+.poke5e-pokemon-summary__toolbar > button i {
+  font-size: 8px;
+}
+
+.poke5e-pokemon-summary__portrait {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  grid-row:
+    1 / 4;
+
+  width: 138px;
+  height: 138px;
+
+  align-self: center;
+
+  border:
+    4px solid
+    var(--poke5e-type-color);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      #fff 0,
+      #fff 46%,
+      var(--poke5e-type-soft) 47%,
+      var(--poke5e-type-soft) 100%
+    );
+
+  box-shadow:
+    0 0 0 5px
+      rgba(255, 255, 255, 0.55),
+    0 4px 10px
+      var(--poke5e-fr-shadow);
+}
+
+
+.poke5e-pokemon-summary__portrait img {
+  width: 116px;
+  height: 116px;
+
+  object-fit: contain;
+}
+
+
+.poke5e-pokemon-summary__identity {
+  align-self: end;
+
+  min-width: 0;
+}
+
+
+.poke5e-pokemon-summary__identity > small {
+  display: block;
+
+  margin-bottom: 2px;
+
+  color:
+    var(--poke5e-fr-red);
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+
+.poke5e-pokemon-summary__identity h2 {
+  margin: 0;
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-size: 25px;
+  line-height: 1.1;
+
+  text-transform: uppercase;
+
+  text-shadow:
+    0 2px 2px
+    rgba(0, 0, 0, 0.45);
+}
+
+/* ============================================================
+ * POKÉMON NICKNAME / EDITABLE TITLE
+ * ============================================================ */
+
+.poke5e-pokemon-nickname {
+  width:
+    min(
+      100%,
+      520px
+    );
+
+  min-width:
+    0;
+}
+
+
+/* ============================================================
+ * EDITABLE FIELD
+ * ============================================================ */
+
+.poke5e-pokemon-nickname__field {
+  position:
+    relative;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    24px;
+
+  align-items:
+    center;
+
+  width:
+    100%;
+
+  min-width:
+    0;
+
+  min-height:
+    34px;
+
+  gap:
+    5px;
+
+  padding:
+    0 3px 3px;
+
+  border-bottom:
+    2px solid
+    rgba(233, 225, 189, 0.14);
+
+  border-radius:
+    4px 4px 0 0;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.018),
+      transparent 78%
+    );
+
+  transition:
+    border-color 120ms ease,
+    background 120ms ease,
+    box-shadow 120ms ease;
+}
+
+
+/* ============================================================
+ * INPUT AS TITLE
+ *
+ * Override deliberado del input nativo de Foundry.
+ * ============================================================ */
+
+.poke5e-pokemon-nickname__input {
+  width:
+    100%;
+
+  min-width:
+    0;
+
+  height:
+    auto;
+
+  margin:
+    0;
+
+  padding:
+    0;
+
+  border:
+    0 !important;
+
+  border-radius:
+    0;
+
+  outline:
+    0;
+
+  background:
+    transparent !important;
+
+  box-shadow:
+    none !important;
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-family:
+    "Trebuchet MS",
+    system-ui,
+    sans-serif;
+
+  font-size:
+    25px;
+
+  font-weight:
+    900;
+
+  line-height:
+    1.1;
+
+  letter-spacing:
+    0.01em;
+
+  text-transform:
+    none;
+
+  text-shadow:
+    0 2px 2px
+    rgba(0, 0, 0, 0.45);
+
+  cursor:
+    text;
+}
+
+
+/* El nombre no debe parecer deshabilitado
+ * por los estilos genéricos del sistema.
+ */
+
+.poke5e-pokemon-nickname__input:focus {
+  outline:
+    0;
+
+  border:
+    0 !important;
+
+  box-shadow:
+    none !important;
+}
+
+
+/* ============================================================
+ * EDIT ICON
+ * ============================================================ */
+
+.poke5e-pokemon-nickname__edit-icon {
+  justify-self:
+    center;
+
+  color:
+    var(--poke5e-fr-muted);
+
+  opacity:
+    0.3;
+
+  font-size:
+    10px;
+
+  pointer-events:
+    none;
+
+  transform:
+    translateY(
+      1px
+    );
+
+  transition:
+    color 120ms ease,
+    opacity 120ms ease,
+    transform 120ms ease;
+}
+
+
+/* ============================================================
+ * HOVER
+ * ============================================================ */
+
+.poke5e-pokemon-nickname__field:hover {
+  border-bottom-color:
+    rgba(215, 91, 78, 0.48);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(215, 91, 78, 0.035),
+      transparent 78%
+    );
+}
+
+
+.poke5e-pokemon-nickname__field:hover
+.poke5e-pokemon-nickname__edit-icon {
+  color:
+    var(--poke5e-fr-red);
+
+  opacity:
+    0.7;
+}
+
+
+/* ============================================================
+ * EDITING / FOCUS
+ * ============================================================ */
+
+.poke5e-pokemon-nickname__field:focus-within {
+  border-bottom-color:
+    var(--poke5e-fr-red);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(215, 91, 78, 0.085),
+      rgba(215, 91, 78, 0.02) 58%,
+      transparent
+    );
+
+  box-shadow:
+    inset 0 -1px 0
+      rgba(215, 91, 78, 0.28);
+}
+
+
+.poke5e-pokemon-nickname__field:focus-within
+.poke5e-pokemon-nickname__edit-icon {
+  color:
+    var(--poke5e-fr-red);
+
+  opacity:
+    1;
+
+  transform:
+    translateY(
+      1px
+    )
+    rotate(
+      -8deg
+    );
+}
+
+
+/* ============================================================
+ * TEXT SELECTION
+ * ============================================================ */
+
+.poke5e-pokemon-nickname__input::selection {
+  background:
+    rgba(215, 91, 78, 0.36);
+
+  color:
+    var(--poke5e-fr-cream);
+}
+
+
+/* ============================================================
+ * READ ONLY
+ * ============================================================ */
+
+.poke5e-pokemon-nickname--readonly {
+  min-height:
+    34px;
+
+  padding-bottom:
+    3px;
+
+  border-bottom:
+    2px solid
+    transparent;
+}
+
+
+.poke5e-pokemon-nickname__text {
+  display:
+    block;
+
+  overflow:
+    hidden;
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-size:
+    25px;
+
+  font-weight:
+    900;
+
+  line-height:
+    1.1;
+
+  text-overflow:
+    ellipsis;
+
+  text-transform:
+    none;
+
+  white-space:
+    nowrap;
+
+  text-shadow:
+    0 2px 2px
+    rgba(0, 0, 0, 0.45);
+}
+
+.poke5e-pokemon-summary__identity-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin-top: 6px;
+}
+
+
+.poke5e-pokemon-meta-chip {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  min-height:
+    24px;
+
+  padding:
+    3px 7px;
+
+  border:
+    2px solid
+    var(--poke5e-fr-border);
+
+  border-radius:
+    6px;
+
+  background:
+    rgba(0, 0, 0, 0.18);
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-size:
+    9px;
+
+  font-weight:
+    800;
+
+  box-sizing:
+    border-box;
+}
+
+
+
+.poke5e-pokemon-summary__types {
+  display: flex;
+  flex-wrap: wrap;
+
+  align-items: center;
+
+  gap: 5px;
+
+  margin-top: 7px;
+}
+
+/* ============================================================
+ * POKÉMON GENDER
+ * ============================================================ */
+
+.poke5e-pokemon-gender {
+  --poke5e-gender-color:
+    #8d979b;
+
+  --poke5e-gender-soft:
+    rgba(141, 151, 155, 0.12);
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  min-width:
+    0;
+
+  min-height:
+    24px;
+
+  gap:
+    5px;
+
+  padding:
+    2px 6px 2px 3px;
+
+  overflow:
+    hidden;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--poke5e-gender-color)
+      52%,
+      var(--poke5e-fr-border)
+    );
+
+  border-radius:
+    999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--poke5e-gender-soft),
+      rgba(0, 0, 0, 0.15)
+    );
+
+  color:
+    var(--poke5e-fr-ink);
+
+  box-sizing:
+    border-box;
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, 0.024);
+
+  transition:
+    border-color 100ms ease,
+    background 100ms ease,
+    box-shadow 100ms ease;
+}
+
+
+/* ============================================================
+ * GENDER SYMBOL
+ * ============================================================ */
+
+.poke5e-pokemon-gender__symbol {
+  display:
+    inline-grid;
+
+  width:
+    19px;
+
+  height:
+    19px;
+
+  flex:
+    0 0 19px;
+
+  place-items:
+    center;
+
+  padding:
+    0 !important;
+
+  border:
+    0 !important;
+
+  border-radius:
+    50%;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--poke5e-gender-color)
+      18%,
+      rgba(0, 0, 0, 0.22)
+    ) !important;
+
+  color:
+    var(--poke5e-gender-color) !important;
+
+  font-size:
+    13px !important;
+
+  font-weight:
+    900;
+
+  line-height:
+    1;
+
+  box-shadow:
+    inset 0 0 0 1px
+    color-mix(
+      in srgb,
+      var(--poke5e-gender-color)
+      34%,
+      transparent
+    );
+}
+
+
+/* ============================================================
+ * READ ONLY
+ * ============================================================ */
+
+.poke5e-pokemon-gender__name {
+  min-width:
+    0;
+
+  padding:
+    0 !important;
+
+  border:
+    0 !important;
+
+  background:
+    transparent !important;
+
+  color:
+    var(--poke5e-fr-ink) !important;
+
+  font-size:
+    9px !important;
+
+  font-weight:
+    900;
+
+  line-height:
+    1;
+
+  white-space:
+    nowrap;
+}
+
+
+/* ============================================================
+ * EDITABLE
+ * ============================================================ */
+
+.poke5e-pokemon-gender--editable {
+  min-width:
+    118px;
+
+  padding-right:
+    4px;
+
+  cursor:
+    pointer;
+}
+
+
+.poke5e-pokemon-gender__select {
+  flex:
+    1 1 auto;
+
+  width:
+    auto;
+
+  min-width:
+    78px;
+
+  height:
+    20px;
+
+  margin:
+    0;
+
+  padding:
+    0 18px 0 2px;
+
+  border:
+    0 !important;
+
+  border-radius:
+    0;
+
+  outline:
+    0;
+
+  background:
+    transparent !important;
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-family:
+    inherit;
+
+  font-size:
+    9px;
+
+  font-weight:
+    900;
+
+  cursor:
+    pointer;
+
+  box-shadow:
+    none !important;
+
+  color-scheme:
+    dark;
+}
+
+
+.poke5e-pokemon-gender__select:focus {
+  border:
+    0 !important;
+
+  outline:
+    0;
+
+  box-shadow:
+    none !important;
+}
+
+
+.poke5e-pokemon-gender__select:disabled {
+  opacity:
+    0.5;
+
+  cursor:
+    wait;
+}
+
+
+/* ============================================================
+ * GENDER DROPDOWN
+ * ============================================================ */
+
+.poke5e-pokemon-gender__select
+option {
+  background:
+    var(--poke5e-fr-panel-deep);
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-family:
+    inherit;
+
+  font-size:
+    9px;
+
+  font-weight:
+    700;
+}
+
+
+.poke5e-pokemon-gender__select
+option:disabled {
+  color:
+    var(--poke5e-fr-muted);
+}
+
+
+/* ============================================================
+ * GENDER INTERACTION
+ * ============================================================ */
+
+.poke5e-pokemon-gender--editable:hover {
+  border-color:
+    var(--poke5e-gender-color);
+
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(
+        in srgb,
+        var(--poke5e-gender-color)
+        18%,
+        transparent
+      ),
+      rgba(0, 0, 0, 0.16)
+    );
+}
+
+
+.poke5e-pokemon-gender--editable:focus-within {
+  border-color:
+    var(--poke5e-gender-color);
+
+  box-shadow:
+    0 0 0 1px
+    color-mix(
+      in srgb,
+      var(--poke5e-gender-color)
+      30%,
+      transparent
+    );
+}
+
+
+/* ============================================================
+ * GENDER PALETTE
+ *
+ * Solo presentación.
+ * ============================================================ */
+
+.poke5e-pokemon-gender[
+  data-gender="male"
+] {
+  --poke5e-gender-color:
+    #6faae5;
+
+  --poke5e-gender-soft:
+    rgba(111, 170, 229, 0.12);
+}
+
+
+.poke5e-pokemon-gender[
+  data-gender="female"
+] {
+  --poke5e-gender-color:
+    #df7d9c;
+
+  --poke5e-gender-soft:
+    rgba(223, 125, 156, 0.12);
+}
+
+
+.poke5e-pokemon-gender[
+  data-gender="unresolved"
+] {
+  --poke5e-gender-color:
+    #c7af73;
+
+  --poke5e-gender-soft:
+    rgba(199, 175, 115, 0.1);
+
+  border-style:
+    dashed;
+}
+
+/* ============================================================
+ * TYPE EDITOR — GM
+ * ============================================================ */
+
+.poke5e-pokemon-type-controls {
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  width:
+    100%;
+
+  max-width:
+    470px;
+
+  gap:
+    7px;
+
+  padding:
+    7px;
+
+  border:
+    1px solid
+    rgba(233, 225, 189, 0.13);
+
+  border-radius:
+    7px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(27, 33, 36, 0.64),
+      rgba(23, 29, 32, 0.82)
+    );
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, 0.018);
+}
+
+
+/* ============================================================
+ * TYPE CONTROL
+ * ============================================================ */
+
+.poke5e-pokemon-type-control {
+  --poke5e-type-color:
+    #707070;
+
+  --poke5e-type-soft:
+    rgba(112, 112, 112, 0.16);
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  min-width:
+    0;
+
+  gap:
+    4px;
+}
+
+
+/* ============================================================
+ * TYPE LABEL
+ * ============================================================ */
+
+.poke5e-pokemon-type-control__label {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  min-width:
+    0;
+
+  gap:
+    5px;
+
+  padding-left:
+    2px;
+
+  color:
+    var(--poke5e-fr-muted);
+
+  font-size:
+    7px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    0.055em;
+
+  line-height:
+    1;
+
+  text-transform:
+    uppercase;
+}
+
+
+.poke5e-pokemon-type-control__label
+i {
+  flex:
+    0 0 auto;
+
+  color:
+    var(--poke5e-type-color);
+
+  font-size:
+    7px;
+
+  filter:
+    drop-shadow(
+      0 0 2px
+      color-mix(
+        in srgb,
+        var(--poke5e-type-color)
+        42%,
+        transparent
+      )
+    );
+}
+
+
+/* ============================================================
+ * TYPE SELECT WRAPPER
+ * ============================================================ */
+
+.poke5e-pokemon-type-control__select-wrap {
+  position:
+    relative;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  min-width:
+    0;
+
+  min-height:
+    31px;
+
+  padding:
+    3px 4px 3px 7px;
+
+  overflow:
+    hidden;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--poke5e-type-color)
+      52%,
+      var(--poke5e-fr-border)
+    );
+
+  border-left:
+    3px solid
+    var(--poke5e-type-color);
+
+  border-radius:
+    6px;
+
+  background:
+    linear-gradient(
+      100deg,
+      var(--poke5e-type-soft),
+      rgba(27, 33, 36, 0.92) 62%
+    );
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, 0.024);
+
+  transition:
+    border-color 100ms ease,
+    background 100ms ease,
+    box-shadow 100ms ease,
+    transform 80ms ease;
+}
+
+
+/* ============================================================
+ * TYPE SWATCH
+ * ============================================================ */
+
+.poke5e-pokemon-type-control__swatch {
+  width:
+    9px;
+
+  height:
+    9px;
+
+  flex:
+    0 0 auto;
+
+  margin-right:
+    4px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.38);
+
+  border-radius:
+    50%;
+
+  background:
+    var(--poke5e-type-color);
+
+  box-shadow:
+    0 0 5px
+    color-mix(
+      in srgb,
+      var(--poke5e-type-color)
+      40%,
+      transparent
+    );
+}
+
+
+/* ============================================================
+ * TYPE SELECT
+ *
+ * El wrapper entrega el borde/fondo.
+ * El select solo conserva texto + dropdown.
+ * ============================================================ */
+
+.poke5e-pokemon-type-control
+select {
+  flex:
+    1 1 auto;
+
+  width:
+    100%;
+
+  min-width:
+    0;
+
+  height:
+    24px;
+
+  margin:
+    0;
+
+  padding:
+    0 22px 0 4px;
+
+  border:
+    0 !important;
+
+  border-radius:
+    0;
+
+  outline:
+    0;
+
+  background:
+    transparent !important;
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-family:
+    inherit;
+
+  font-size:
+    10px;
+
+  font-weight:
+    900;
+
+  cursor:
+    pointer;
+
+  box-shadow:
+    none !important;
+
+  color-scheme:
+    dark;
+}
+
+
+.poke5e-pokemon-type-control
+select:focus {
+  border:
+    0 !important;
+
+  outline:
+    0;
+
+  box-shadow:
+    none !important;
+}
+
+
+/* ============================================================
+ * HOVER / FOCUS
+ * ============================================================ */
+
+.poke5e-pokemon-type-control__select-wrap:hover {
+  border-color:
+    var(--poke5e-type-color);
+
+  background:
+    linear-gradient(
+      100deg,
+      color-mix(
+        in srgb,
+        var(--poke5e-type-color)
+        22%,
+        transparent
+      ),
+      rgba(27, 33, 36, 0.95) 64%
+    );
+}
+
+
+.poke5e-pokemon-type-control:focus-within
+.poke5e-pokemon-type-control__select-wrap {
+  border-color:
+    var(--poke5e-type-color);
+
+  box-shadow:
+    0 0 0 1px
+      color-mix(
+        in srgb,
+        var(--poke5e-type-color)
+        36%,
+        transparent
+      ),
+    inset 0 0 0 1px
+      rgba(255, 255, 255, 0.025);
+
+  transform:
+    translateY(-1px);
+}
+
+
+/* ============================================================
+ * NATIVE DROPDOWN
+ * ============================================================ */
+
+.poke5e-pokemon-type-control
+select option {
+  background:
+    var(--poke5e-fr-panel-deep);
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-family:
+    inherit;
+
+  font-size:
+    10px;
+
+  font-weight:
+    700;
+}
+
+
+.poke5e-pokemon-type-control
+select option:disabled {
+  color:
+    #747c7d;
+}
+
+
+.poke5e-pokemon-type-control
+select option:checked {
+  background:
+    var(--poke5e-fr-panel-alt);
+
+  color:
+    var(--poke5e-fr-cream);
+}
+
+/* ============================================================
+ * NATURE
+ * ============================================================ */
+
+.poke5e-pokemon-nature {
+  display:
+    grid;
+
+  grid-template-columns:
+    auto
+    minmax(130px, 1fr)
+    auto;
+
+  align-items:
+    center;
+
+  max-width:
+    470px;
+
+  min-height:
+    32px;
+
+  gap:
+    7px;
+
+  margin-top:
+    8px;
+
+  padding:
+    5px 7px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--poke5e-type-color)
+      52%,
+      var(--poke5e-fr-border)
+    );
+
+  border-left:
+    3px solid
+    var(--poke5e-type-color);
+
+  border-radius:
+    6px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--poke5e-type-soft),
+      rgba(27, 33, 36, 0.76)
+    );
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, 0.025);
+}
+
+
+.poke5e-pokemon-nature__label {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    4px;
+
+  color:
+    var(--poke5e-fr-cream);
+
+  font-size:
+    7px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    0.07em;
+
+  text-transform:
+    uppercase;
+
+  white-space:
+    nowrap;
+}
+
+
+.poke5e-pokemon-nature__label
+i {
+  color:
+    var(--poke5e-type-color);
+
+  font-size:
+    7px;
+}
+
+
+.poke5e-pokemon-nature__control {
+  min-width:
+    0;
+}
+
+
+.poke5e-pokemon-nature__name {
+  display:
+    block;
+
+  overflow:
+    hidden;
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-size:
+    10px;
+
+  font-weight:
+    900;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+}
+
+
+/* ============================================================
+ * GM NATURE SELECT
+ * ============================================================ */
+
+.poke5e-pokemon-nature
+select {
+  width:
+    100%;
+
+  min-width:
+    0;
+
+  height:
+    24px;
+
+  margin:
+    0;
+
+  padding:
+    2px 23px 2px 6px;
+
+  border:
+    1px solid
+    var(--poke5e-fr-border);
+
+  border-radius:
+    4px;
+
+  outline:
+    0;
+
+  background:
+    var(--poke5e-fr-panel-deep);
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-family:
+    inherit;
+
+  font-size:
+    8px;
+
+  font-weight:
+    800;
+
+  cursor:
+    pointer;
+
+  transition:
+    border-color 100ms ease,
+    box-shadow 100ms ease;
+}
+
+
+.poke5e-pokemon-nature
+select:hover:not(:disabled),
+.poke5e-pokemon-nature
+select:focus {
+  border-color:
+    var(--poke5e-type-color);
+
+  box-shadow:
+    0 0 0 1px
+    color-mix(
+      in srgb,
+      var(--poke5e-type-color)
+      32%,
+      transparent
+    );
+}
+
+
+.poke5e-pokemon-nature
+select:disabled {
+  opacity:
+    0.55;
+
+  cursor:
+    wait;
+}
+
+
+/* ============================================================
+ * NATURE MODIFIERS
+ * ============================================================ */
+
+.poke5e-pokemon-nature__modifiers {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    flex-end;
+
+  gap:
+    5px;
+
+  white-space:
+    nowrap;
+}
+
+
+.poke5e-pokemon-nature__modifiers
+> span {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    3px;
+
+  padding:
+    2px 5px;
+
+  border-radius:
+    999px;
+
+  font-size:
+    7px;
+
+  font-weight:
+    900;
+}
+
+
+.poke5e-pokemon-nature__modifier--increase {
+  border:
+    1px solid
+    rgba(215, 91, 78, 0.42);
+
+  background:
+    rgba(215, 91, 78, 0.11);
+
+  color:
+    #e47a6f;
+}
+
+
+.poke5e-pokemon-nature__modifier--decrease {
+  border:
+    1px solid
+    rgba(79, 135, 217, 0.42);
+
+  background:
+    rgba(79, 135, 217, 0.1);
+
+  color:
+    #86afea;
+}
+
+
+.poke5e-pokemon-nature__modifier--increase
+i,
+.poke5e-pokemon-nature__modifier--decrease
+i {
+  font-size:
+    6px;
+}
+
+
+.poke5e-pokemon-nature__modifier--increase
+small,
+.poke5e-pokemon-nature__modifier--decrease
+small {
+  font-size:
+    6px;
+
+  font-weight:
+    900;
+}
+
+
+.poke5e-pokemon-nature__modifier--neutral {
+  color:
+    var(--poke5e-fr-muted);
+
+  font-size:
+    7px;
+
+  font-weight:
+    800;
+
+  white-space:
+    nowrap;
+}
+
+/* ============================================================
+ * SHINY
+ * ============================================================ */
+
+.poke5e-pokemon-shiny-control,
+.poke5e-pokemon-shiny-badge {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  min-height:
+    24px;
+
+  gap:
+    4px;
+
+  padding:
+    2px 6px;
+
+  border:
+    2px solid
+    var(--poke5e-fr-border);
+
+  border-radius:
+    999px;
+
+  background:
+    rgba(0, 0, 0, 0.18);
+
+  color:
+    var(--poke5e-fr-muted);
+
+  font-size:
+    8px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    0.04em;
+
+  text-transform:
+    uppercase;
+}
+
+
+.poke5e-pokemon-shiny-control
+> i,
+.poke5e-pokemon-shiny-badge
+> i {
+  flex:
+    0 0 auto;
+
+  font-size:
+    8px;
+}
+
+
+/* ============================================================
+ * SHINY — GM CONTROL
+ * ============================================================ */
+
+.poke5e-pokemon-shiny-control
+select {
+  width:
+    auto;
+
+  min-width:
+    74px;
+
+  height:
+    19px;
+
+  margin:
+    0;
+
+  padding:
+    0 18px 0 3px;
+
+  border:
+    0;
+
+  outline:
+    0;
+
+  background:
+    transparent;
+
+  color:
+    inherit;
+
+  font-family:
+    inherit;
+
+  font-size:
+    8px;
+
+  font-weight:
+    900;
+
+  text-transform:
+    uppercase;
+
+  cursor:
+    pointer;
+}
+
+
+.poke5e-pokemon-shiny-control
+select:disabled {
+  opacity:
+    0.55;
+
+  cursor:
+    wait;
+}
+
+
+/* ============================================================
+ * SHINY — STATES
+ * ============================================================ */
+
+.poke5e-pokemon-shiny-control[
+  data-shiny-state="normal"
+] {
+  border-color:
+    var(--poke5e-fr-border);
+
+  color:
+    var(--poke5e-fr-muted);
+}
+
+
+.poke5e-pokemon-shiny-control[
+  data-shiny-state="unresolved"
+] {
+  border-style:
+    dashed;
+
+  opacity:
+    0.78;
+}
+
+
+.poke5e-pokemon-shiny-control[
+  data-shiny-state="shiny"
+],
+.poke5e-pokemon-shiny-badge[
+  data-shiny-state="shiny"
+] {
+  border-color:
+    rgba(232, 200, 93, 0.78);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(232, 200, 93, 0.16),
+      rgba(142, 106, 35, 0.08)
+    );
+
+  color:
+    #f1d66f;
+
+  box-shadow:
+    inset 0 0 0 1px
+      rgba(255, 247, 187, 0.08),
+    0 0 7px
+      rgba(232, 200, 93, 0.14);
+}
+
+
+.poke5e-pokemon-shiny-control[
+  data-shiny-state="shiny"
+]
+> i,
+.poke5e-pokemon-shiny-badge
+> i {
+  color:
+    #f1d66f;
+
+  filter:
+    drop-shadow(
+      0 0 3px
+      rgba(241, 214, 111, 0.55)
+    );
+}
+
+/* ============================================================
+ * TECHNICAL DETAILS
+ * ============================================================ */
+
+.poke5e-pokemon-technical {
+  padding: 10px;
+
+  border:
+    2px solid
+    var(--poke5e-fr-border);
+
+  border-radius: 8px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #20272a,
+      #181e21
+    );
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, 0.035);
+}
+
+
+.poke5e-pokemon-technical[hidden] {
+  display: none;
+}
+
+
+.poke5e-pokemon-technical > header {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+
+  border-bottom:
+    1px solid
+    rgba(233, 225, 189, 0.14);
+
+  color:
+    var(--poke5e-fr-cream);
+
+  font-size: 9px;
+
+  text-transform: uppercase;
+}
+
+
+.poke5e-pokemon-technical > header i {
+  color:
+    var(--poke5e-fr-red);
+}
+
+
+.poke5e-pokemon-technical__grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+  gap: 6px;
+}
+
+
+.poke5e-pokemon-technical__field {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+
+  gap: 3px;
+  padding: 6px;
+
+  border:
+    1px solid
+    #414b50;
+
+  border-radius: 5px;
+
+  background:
+    rgba(255, 255, 255, 0.025);
+}
+
+
+.poke5e-pokemon-technical__field > span {
+  color:
+    var(--poke5e-fr-muted);
+
+  font-size: 6px;
+  font-weight: 900;
+
+  letter-spacing: 0.05em;
+
+  text-transform: uppercase;
+}
+
+
+.poke5e-pokemon-technical__field > code {
+  display: block;
+
+  overflow: hidden;
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-size: 8px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================================
+ * HP
+ * ============================================================ */
+
+.poke5e-pokemon-summary__hp {
+  align-self: end;
+
+  padding: 8px 10px;
+
+  border:
+    2px solid
+    var(--poke5e-fr-border);
+
+  border-radius: 7px;
+
+  background:
+    var(--poke5e-fr-panel-deep);
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, 0.045);
+}
+
+
+.poke5e-pokemon-summary__hp > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 5px;
+
+  font-size: 10px;
+}
+
+.poke5e-pokemon-summary__hp > div:first-child strong {
+  color:
+    var(--poke5e-fr-green-dark);
+
+  letter-spacing: 0.06em;
+}
+
+.poke5e-pokemon-summary__hp-controls {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+}
+
+
+.poke5e-pokemon-summary__hp-controls > span {
+  min-width: 42px;
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-size: 10px;
+  font-weight: 800;
+
+  text-align: center;
+}
+
+
+.poke5e-pokemon-summary__hp-controls > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 20px;
+  height: 20px;
+
+  padding: 0;
+
+  border:
+    1px solid
+    var(--poke5e-fr-border);
+
+  border-radius: 4px;
+
+  background:
+    var(--poke5e-fr-panel-alt);
+
+  color:
+    var(--poke5e-fr-muted);
+
+  cursor: pointer;
+
+  transition:
+    border-color 100ms ease,
+    color 100ms ease,
+    background 100ms ease;
+}
+
+
+.poke5e-pokemon-summary__hp-controls > button:hover {
+  border-color:
+    var(--poke5e-fr-green);
+
+  background:
+    #39443e;
+
+  color:
+    var(--poke5e-fr-green);
+}
+
+
+.poke5e-pokemon-summary__hp-controls > button i {
+  font-size: 8px;
+}
+
+.poke5e-pokemon-summary__hp-track {
+  height: 11px;
+
+  overflow: hidden;
+
+  border:
+    2px solid
+    var(--poke5e-fr-border);
+
+  border-radius: 999px;
+
+  background:
+    #7d8584;
+}
+
+
+.poke5e-pokemon-summary__hp-track > span {
+  display: block;
+
+  height: 100%;
+
+  border-radius: inherit;
+
+  background:
+    #55ad63;
+
+  box-shadow:
+    inset 0 -2px 0
+    rgba(0, 0, 0, 0.16);
+}
+
+
+.poke5e-pokemon-summary[data-fainted="true"]
+.poke5e-pokemon-summary__hp-track > span {
+  background:
+    var(--poke5e-fr-red);
+}
+
+/* ============================================================
+ * EXPERIENCE
+ * ============================================================ */
+
+.poke5e-pokemon-experience {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+
+  margin-top: 8px;
+  padding-top: 8px;
+
+  border-top:
+    1px solid
+    rgba(233, 225, 189, 0.16);
+}
+
+
+.poke5e-pokemon-experience__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-width: 0;
+
+  gap: 8px;
+}
+
+
+.poke5e-pokemon-experience__label {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  color:
+    var(--poke5e-fr-cream);
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: 0.045em;
+
+  text-transform: uppercase;
+}
+
+
+.poke5e-pokemon-experience__label > i {
+  color:
+    var(--poke5e-fr-exp);
+
+  font-size: 9px;
+}
+
+
+.poke5e-pokemon-experience__value {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  color:
+    var(--poke5e-fr-muted);
+
+  font-size: 8px;
+  font-weight: 800;
+}
+
+
+.poke5e-pokemon-experience__value > span:first-child {
+  color:
+    var(--poke5e-fr-exp);
+
+  font-size: 8px;
+  font-weight: 900;
+}
+
+
+.poke5e-pokemon-experience__value input {
+  width: 68px;
+  height: 20px;
+
+  padding: 1px 4px;
+
+  border:
+    1px solid
+    var(--poke5e-fr-border);
+
+  border-radius: 4px;
+
+  outline: 0;
+
+  background:
+    var(--poke5e-fr-panel-alt);
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-family: inherit;
+  font-size: 8px;
+  font-weight: 800;
+
+  text-align: right;
+
+  appearance:
+    textfield;
+}
+
+
+.poke5e-pokemon-experience__value
+input::-webkit-inner-spin-button,
+.poke5e-pokemon-experience__value
+input::-webkit-outer-spin-button {
+  margin: 0;
+
+  appearance:
+    none;
+}
+
+
+.poke5e-pokemon-experience__value input:focus {
+  border-color:
+    var(--poke5e-fr-exp);
+
+  box-shadow:
+    0 0 0 1px
+    rgba(79, 135, 217, 0.28);
+}
+
+
+.poke5e-pokemon-experience__value input:disabled {
+  opacity: 0.55;
+
+  cursor: wait;
+}
+
+
+.poke5e-pokemon-experience__max {
+  color:
+    var(--poke5e-fr-green);
+
+  font-weight: 900;
+
+  text-transform: uppercase;
+}
+
+
+.poke5e-pokemon-experience__track {
+  height: 8px;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    var(--poke5e-fr-border);
+
+  border-radius: 999px;
+
+  background:
+    #444d51;
+}
+
+
+.poke5e-pokemon-experience__track > span {
+  display: block;
+
+  height: 100%;
+
+  border-radius: inherit;
+
+  background:
+    var(--poke5e-fr-exp);
+
+  box-shadow:
+    inset 0 -2px 0
+    rgba(0, 0, 0, 0.18);
+
+  transition:
+    width 180ms ease,
+    background 180ms ease;
+}
+
+
+.poke5e-pokemon-experience[
+  data-ready-to-level="true"
+]
+.poke5e-pokemon-experience__track > span {
+  background:
+    #d9a91c;
+}
+
+
+.poke5e-pokemon-experience[
+  data-max-level="true"
+]
+.poke5e-pokemon-experience__track > span {
+  background:
+    var(--poke5e-fr-green);
+}
+
+
+.poke5e-pokemon-experience__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-height: 12px;
+
+  gap: 8px;
+}
+
+
+.poke5e-pokemon-experience__footer > small {
+  color:
+    var(--poke5e-fr-muted);
+
+  font-size: 7px;
+  font-weight: 700;
+}
+
+
+.poke5e-pokemon-experience__ready {
+  display: inline-flex;
+  align-items: center;
+
+  margin-left: auto;
+
+  gap: 4px;
+
+  color:
+    #d9a91c;
+
+  font-size: 7px;
+  font-weight: 900;
+
+  letter-spacing: 0.035em;
+
+  text-transform: uppercase;
+}
+
+
+.poke5e-pokemon-experience__ready > i {
+  font-size: 6px;
+}
+
+/* ============================================================
+ * DASHBOARD
+ * ============================================================ */
+
+.poke5e-pokemon-summary__dashboard {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 10px;
+}
+
+
+.poke5e-pokemon-panel {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+
+  gap: 10px;
+  padding: 11px;
+
+  border:
+    3px solid
+    var(--poke5e-fr-border);
+
+  border-radius: 9px;
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--poke5e-fr-panel),
+      var(--poke5e-fr-panel-deep)
+    );
+
+  box-shadow:
+    inset 0 0 0 2px
+      rgba(255, 255, 255, 0.045),
+    0 3px 8px
+      rgba(0, 0, 0, 0.22);
+}
+
+
+.poke5e-pokemon-panel > header {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  min-height: 26px;
+  padding-bottom: 6px;
+
+  border-bottom:
+    2px solid
+    rgba(233, 225, 189, 0.16);
+}
+
+
+.poke5e-pokemon-panel > header i {
+  color:
+    var(--poke5e-fr-red);
+}
+
+
+.poke5e-pokemon-panel > header h3 {
+  margin: 0;
+
+  color:
+    var(--poke5e-fr-cream);
+
+  font-size: 11px;
+  font-weight: 900;
+
+  letter-spacing: 0.055em;
+
+  text-transform: uppercase;
+}
+
+
+/* ============================================================
+ * STATS
+ * ============================================================ */
+
+.poke5e-pokemon-stats {
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+  gap:
+    5px;
+}
+
+
+/* ============================================================
+ * STAT CARD — COMPACT HUD
+ * ============================================================ */
+
+.poke5e-pokemon-stat {
+  --poke5e-stat-accent:
+    var(--poke5e-fr-red);
+
+  position:
+    relative;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    auto
+    minmax(48px, 1fr)
+    auto;
+
+  grid-template-areas:
+    "label score modifier"
+    "actions actions actions";
+
+  align-items:
+    center;
+
+  min-width:
+    0;
+
+  gap:
+    5px 6px;
+
+  padding:
+    6px;
+
+  overflow:
+    hidden;
+
+  border:
+    1px solid
+    #536066;
+
+  border-radius:
+    7px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.025),
+      rgba(48, 56, 60, 0.76) 46%,
+      rgba(27, 33, 36, 0.9)
+    );
+
+  box-shadow:
+    inset 0 0 0 1px
+      rgba(255, 255, 255, 0.025),
+    0 2px 4px
+      rgba(0, 0, 0, 0.14);
+
+  transition:
+    border-color 100ms ease,
+    background 100ms ease,
+    box-shadow 100ms ease;
+}
+
+
+.poke5e-pokemon-stat::before {
+  content:
+    "";
+
+  position:
+    absolute;
+
+  top:
+    0;
+
+  right:
+    6px;
+
+  left:
+    6px;
+
+  height:
+    2px;
+
+  border-radius:
+    0 0 999px 999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--poke5e-stat-accent),
+      transparent
+    );
+
+  opacity:
+    0.32;
+
+  pointer-events:
+    none;
+}
+
+
+.poke5e-pokemon-stat:hover {
+  border-color:
+    rgba(215, 91, 78, 0.4);
+}
+
+
+/* ============================================================
+ * PROFICIENT SAVE CARD
+ * ============================================================ */
+
+.poke5e-pokemon-stat[
+  data-save-proficient="true"
+] {
+  border-color:
+    rgba(199, 175, 115, 0.34);
+}
+
+
+.poke5e-pokemon-stat[
+  data-save-proficient="true"
+]::before {
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #d9a91c,
+      transparent
+    );
+
+  opacity:
+    0.58;
+}
+
+
+/* ============================================================
+ * HEADER
+ *
+ * Los hijos participan directamente del grid de la card.
+ * ============================================================ */
+
+.poke5e-pokemon-stat__header {
+  display:
+    contents;
+}
+
+
+/* ============================================================
+ * LABEL
+ * ============================================================ */
+
+.poke5e-pokemon-stat__label {
+  grid-area:
+    label;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  min-width:
+    0;
+
+  gap:
+    3px;
+
+  color:
+    var(--poke5e-fr-red);
+
+  font-size:
+    7px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    0.035em;
+}
+
+
+.poke5e-pokemon-stat__label
+> i {
+  color:
+    #d9a91c;
+
+  font-size:
+    6px;
+
+  filter:
+    drop-shadow(
+      0 0 2px
+      rgba(217, 169, 28, 0.36)
+    );
+}
+
+
+/* ============================================================
+ * MODIFIER
+ * ============================================================ */
+
+.poke5e-pokemon-stat__modifier {
+  grid-area:
+    modifier;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-self:
+    end;
+
+  gap:
+    2px;
+
+  min-height:
+    17px;
+
+  padding:
+    1px 4px;
+
+  border:
+    1px solid
+    rgba(233, 225, 189, 0.09);
+
+  border-radius:
+    999px;
+
+  background:
+    rgba(0, 0, 0, 0.1);
+}
+
+
+.poke5e-pokemon-stat__modifier
+> small {
+  color:
+    var(--poke5e-fr-muted);
+
+  opacity:
+    0.52;
+
+  font-size:
+    4px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    0.04em;
+}
+
+
+.poke5e-pokemon-stat__modifier
+> strong {
+  min-width:
+    14px;
+
+  color:
+    var(--poke5e-fr-cream);
+
+  font-size:
+    7px;
+
+  font-weight:
+    900;
+
+  line-height:
+    1;
+
+  text-align:
+    right;
+}
+
+
+/* ============================================================
+ * SCORE
+ * ============================================================ */
+
+.poke5e-pokemon-stat__score {
+  grid-area:
+    score;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  min-width:
+    0;
+
+  min-height:
+    27px;
+}
+
+
+.poke5e-pokemon-stat__score-value {
+  color:
+    var(--poke5e-fr-ink);
+
+  font-size:
+    17px;
+
+  font-weight:
+    900;
+
+  line-height:
+    1;
+
+  text-shadow:
+    0 2px 3px
+    rgba(0, 0, 0, 0.32);
+}
+
+
+/* ============================================================
+ * EDITABLE SCORE — GM
+ * ============================================================ */
+
+.poke5e-pokemon-stat__score-editor {
+  position:
+    relative;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    13px;
+
+  align-items:
+    center;
+
+  width:
+    58px;
+
+  min-height:
+    27px;
+
+  padding:
+    0 2px 0 4px;
+
+  overflow:
+    hidden;
+
+  border:
+    1px solid
+    rgba(233, 225, 189, 0.07);
+
+  border-radius:
+    6px;
+
+  background:
+    rgba(0, 0, 0, 0.09);
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, 0.012);
+
+  transition:
+    border-color 100ms ease,
+    background 100ms ease,
+    box-shadow 100ms ease;
+}
+
+
+.poke5e-pokemon-stat__score-editor
+> i {
+  justify-self:
+    center;
+
+  color:
+    var(--poke5e-fr-muted);
+
+  opacity:
+    0.22;
+
+  font-size:
+    6px;
+
+  pointer-events:
+    none;
+
+  transition:
+    color 100ms ease,
+    opacity 100ms ease;
+}
+
+
+/* ============================================================
+ * SCORE INPUT
+ * ============================================================ */
+
+.poke5e-pokemon-stat__score-input {
+  width:
+    100%;
+
+  min-width:
+    0;
+
+  height:
+    25px;
+
+  margin:
+    0;
+
+  padding:
+    0;
+
+  border:
+    0 !important;
+
+  outline:
+    0;
+
+  background:
+    transparent !important;
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-family:
+    inherit;
+
+  font-size:
+    16px;
+
+  font-weight:
+    900;
+
+  line-height:
+    1;
+
+  text-align:
+    center;
+
+  appearance:
+    textfield;
+
+  box-shadow:
+    none !important;
+
+  cursor:
+    text;
+}
+
+
+.poke5e-pokemon-stat__score-input::-webkit-inner-spin-button,
+.poke5e-pokemon-stat__score-input::-webkit-outer-spin-button {
+  margin:
+    0;
+
+  appearance:
+    none;
+}
+
+
+.poke5e-pokemon-stat__score-input:focus {
+  border:
+    0 !important;
+
+  outline:
+    0;
+
+  box-shadow:
+    none !important;
+}
+
+
+.poke5e-pokemon-stat__score-input:disabled {
+  opacity:
+    0.5;
+
+  cursor:
+    wait;
+}
+
+
+/* ============================================================
+ * SCORE INTERACTION
+ * ============================================================ */
+
+.poke5e-pokemon-stat__score-editor:hover {
+  border-color:
+    rgba(215, 91, 78, 0.4);
+
+  background:
+    rgba(215, 91, 78, 0.03);
+}
+
+
+.poke5e-pokemon-stat__score-editor:hover
+> i {
+  color:
+    var(--poke5e-fr-red);
+
+  opacity:
+    0.58;
+}
+
+
+.poke5e-pokemon-stat__score-editor:focus-within {
+  border-color:
+    var(--poke5e-fr-red);
+
+  background:
+    rgba(215, 91, 78, 0.055);
+
+  box-shadow:
+    0 0 0 1px
+    rgba(215, 91, 78, 0.16);
+}
+
+
+.poke5e-pokemon-stat__score-editor:focus-within
+> i {
+  color:
+    var(--poke5e-fr-red);
+
+  opacity:
+    1;
+}
+
+
+/* ============================================================
+ * ACTIONS
+ * ============================================================ */
+
+.poke5e-pokemon-stat__actions {
+  grid-area:
+    actions;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap:
+    3px;
+
+  padding-top:
+    4px;
+
+  border-top:
+    1px solid
+    rgba(233, 225, 189, 0.07);
+}
+
+
+.poke5e-pokemon-stat__actions
+> button {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  min-width:
+    0;
+
+  min-height:
+    21px;
+
+  gap:
+    3px;
+
+  margin:
+    0;
+
+  padding:
+    2px 4px;
+
+  border:
+    1px solid
+    rgba(101, 112, 118, 0.68);
+
+  border-radius:
+    4px;
+
+  background:
+    rgba(0, 0, 0, 0.09);
+
+  color:
+    var(--poke5e-fr-muted);
+
+  font-family:
+    inherit;
+
+  cursor:
+    pointer;
+
+  transition:
+    border-color 100ms ease,
+    background 100ms ease,
+    color 100ms ease;
+}
+
+
+.poke5e-pokemon-stat__actions
+> button
+i {
+  flex:
+    0 0 auto;
+
+  font-size:
+    6px;
+}
+
+
+.poke5e-pokemon-stat__actions
+> button
+span {
+  min-width:
+    0;
+
+  overflow:
+    hidden;
+
+  font-size:
+    6px;
+
+  font-weight:
+    850;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+}
+
+
+.poke5e-pokemon-stat__actions
+> button:hover:not(:disabled) {
+  border-color:
+    rgba(215, 91, 78, 0.55);
+
+  background:
+    rgba(215, 91, 78, 0.065);
+
+  color:
+    var(--poke5e-fr-cream);
+}
+
+
+/* ============================================================
+ * PROFICIENT SAVE
+ * ============================================================ */
+
+.poke5e-pokemon-stat__actions
+> button.is-proficient {
+  border-color:
+    rgba(217, 169, 28, 0.4);
+
+  background:
+    rgba(217, 169, 28, 0.04);
+
+  color:
+    #dfc774;
+}
+
+
+.poke5e-pokemon-stat__actions
+> button.is-proficient
+i {
+  color:
+    #d9a91c;
+}
+
+
+.poke5e-pokemon-stat__actions
+> button.is-proficient:hover:not(:disabled) {
+  border-color:
+    rgba(217, 169, 28, 0.72);
+
+  background:
+    rgba(217, 169, 28, 0.085);
+
+  color:
+    #f0d77e;
+}
+
+
+/* ============================================================
+ * ACCESSIBILITY
+ * ============================================================ */
+
+.poke5e-pokemon-stat
+:is(
+  button,
+  input
+):focus-visible {
+  outline:
+    2px solid
+    rgba(199, 175, 115, 0.82);
+
+  outline-offset:
+    1px;
+}
+
+/* ============================================================
+ * STATUSES
+ * ============================================================ */
+
+.poke5e-pokemon-panel--statuses {
+  grid-column:
+    1 / -1;
+
+  align-self:
+    start;
+
+  gap:
+    8px;
+}
+
+
+/* ============================================================
+ * STATUS HEADER
+ * ============================================================ */
+
+.poke5e-pokemon-panel--statuses
+> header {
+  flex-wrap:
+    wrap;
+}
+
+
+.poke5e-pokemon-statuses__count {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    4px;
+
+  min-height:
+    20px;
+
+  padding:
+    2px 6px;
+
+  border:
+    1px solid
+    rgba(215, 91, 78, 0.34);
+
+  border-radius:
+    999px;
+
+  background:
+    rgba(215, 91, 78, 0.08);
+
+  color:
+    var(--poke5e-fr-red);
+
+  font-size:
+    9px;
+
+  font-weight:
+    900;
+
+  line-height:
+    1;
+}
+
+
+.poke5e-pokemon-statuses__count
+small {
+  color:
+    var(--poke5e-fr-muted);
+
+  font-size:
+    6px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    0.04em;
+}
+
+
+/* ============================================================
+ * ADD STATUS
+ * ============================================================ */
+
+.poke5e-pokemon-status-add {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  min-width:
+    190px;
+
+  min-height:
+    27px;
+
+  gap:
+    5px;
+
+  margin-left:
+    auto;
+
+  padding:
+    2px 5px;
+
+  border:
+    1px solid
+    rgba(215, 91, 78, 0.34);
+
+  border-radius:
+    5px;
+
+  background:
+    rgba(215, 91, 78, 0.055);
+
+  color:
+    var(--poke5e-fr-red);
+
+  transition:
+    border-color 100ms ease,
+    background 100ms ease,
+    box-shadow 100ms ease;
+}
+
+
+.poke5e-pokemon-status-add:hover {
+  border-color:
+    rgba(215, 91, 78, 0.68);
+
+  background:
+    rgba(215, 91, 78, 0.09);
+}
+
+
+.poke5e-pokemon-status-add:focus-within {
+  border-color:
+    var(--poke5e-fr-red);
+
+  box-shadow:
+    0 0 0 1px
+    rgba(215, 91, 78, 0.2);
+}
+
+
+.poke5e-pokemon-status-add
+> i {
+  flex:
+    0 0 auto;
+
+  font-size:
+    8px;
+}
+
+
+.poke5e-pokemon-status-add
+select {
+  flex:
+    1 1 auto;
+
+  width:
+    100%;
+
+  min-width:
+    0;
+
+  height:
+    21px;
+
+  margin:
+    0;
+
+  padding:
+    0 20px 0 3px;
+
+  border:
+    0;
+
+  outline:
+    0;
+
+  background:
+    transparent;
+
+  color:
+    var(--poke5e-fr-cream);
+
+  font-family:
+    inherit;
+
+  font-size:
+    8px;
+
+  font-weight:
+    800;
+
+  cursor:
+    pointer;
+
+  box-shadow:
+    none;
+}
+
+/* ============================================================
+ * ADD STATUS — NATIVE DROPDOWN
+ *
+ * Foundry/Chromium puede renderizar el popup del <select>
+ * mediante estilos nativos. color-scheme ayuda a solicitar
+ * explícitamente la variante oscura del control.
+ * ============================================================ */
+
+.poke5e-pokemon-status-add
+select {
+  color-scheme:
+    dark;
+}
+
+
+.poke5e-pokemon-status-add
+select option {
+  background:
+    var(--poke5e-fr-panel-deep);
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-family:
+    inherit;
+
+  font-size:
+    9px;
+
+  font-weight:
+    700;
+}
+
+
+.poke5e-pokemon-status-add
+select option:disabled {
+  color:
+    var(--poke5e-fr-muted);
+}
+
+
+.poke5e-pokemon-status-add
+select option:checked {
+  background:
+    var(--poke5e-fr-panel-alt);
+
+  color:
+    var(--poke5e-fr-cream);
+}
+
+.poke5e-pokemon-status-add
+select:focus {
+  border:
+    0;
+
+  outline:
+    0;
+
+  box-shadow:
+    none;
+}
+
+
+.poke5e-pokemon-status-add
+select:disabled {
+  opacity:
+    0.45;
+
+  cursor:
+    not-allowed;
+}
+
+
+/* ============================================================
+ * STATUS GRID
+ * ============================================================ */
+
+.poke5e-pokemon-statuses {
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(210px, 1fr)
+    );
+
+  align-items:
+    start;
+
+  gap:
+    7px;
+}
+
+
+/* ============================================================
+ * STATUS CARD
+ * ============================================================ */
+
+.poke5e-pokemon-status {
+  --poke5e-status-color:
+    #7e8a8f;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    38px
+    minmax(0, 1fr)
+    24px;
+
+  align-items:
+    center;
+
+  min-width:
+    0;
+
+  min-height:
+    52px;
+
+  gap:
+    8px;
+
+  padding:
+    6px;
+
+  overflow:
+    hidden;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--poke5e-status-color)
+      48%,
+      var(--poke5e-fr-border)
+    );
+
+  border-left:
+    4px solid
+    var(--poke5e-status-color);
+
+  border-radius:
+    7px;
+
+  background:
+    linear-gradient(
+      100deg,
+      color-mix(
+        in srgb,
+        var(--poke5e-status-color)
+        12%,
+        var(--poke5e-fr-panel-alt)
+      ),
+      var(--poke5e-fr-panel-deep)
+    );
+
+  box-shadow:
+    inset 0 0 0 1px
+      rgba(255, 255, 255, 0.025),
+    0 2px 5px
+      rgba(0, 0, 0, 0.16);
+}
+
+
+/* ============================================================
+ * STATUS ICON
+ *
+ * Important:
+ * Never allow Foundry's status SVG to define card dimensions.
+ * ============================================================ */
+
+.poke5e-pokemon-status__icon {
+  display:
+    grid;
+
+  width:
+    36px;
+
+  height:
+    36px;
+
+  place-items:
+    center;
+
+  overflow:
+    hidden;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--poke5e-status-color)
+      55%,
+      var(--poke5e-fr-border)
+    );
+
+  border-radius:
+    6px;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--poke5e-status-color)
+      12%,
+      var(--poke5e-fr-panel-deep)
+    );
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, 0.035);
+}
+
+
+.poke5e-pokemon-status__icon
+img {
+  display:
+    block;
+
+  width:
+    26px !important;
+
+  height:
+    26px !important;
+
+  min-width:
+    0;
+
+  min-height:
+    0;
+
+  max-width:
+    26px;
+
+  max-height:
+    26px;
+
+  margin:
+    0;
+
+  border:
+    0;
+
+  background:
+    transparent;
+
+  object-fit:
+    contain;
+
+  box-shadow:
+    none;
+}
+
+
+/* ============================================================
+ * STATUS BODY
+ * ============================================================ */
+
+.poke5e-pokemon-status__body {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  justify-content:
+    center;
+
+  min-width:
+    0;
+
+  gap:
+    3px;
+}
+
+
+.poke5e-pokemon-status__body
+> strong {
+  overflow:
+    hidden;
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-size:
+    10px;
+
+  font-weight:
+    900;
+
+  line-height:
+    1.15;
+
+  text-overflow:
+    ellipsis;
+
+  text-transform:
+    uppercase;
+
+  white-space:
+    nowrap;
+}
+
+
+.poke5e-pokemon-status__body
+> small {
+  display:
+    inline-flex;
+
+  align-self:
+    flex-start;
+
+  min-height:
+    16px;
+
+  align-items:
+    center;
+
+  padding:
+    1px 5px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--poke5e-status-color)
+      34%,
+      transparent
+    );
+
+  border-radius:
+    999px;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--poke5e-status-color)
+      8%,
+      transparent
+    );
+
+  color:
+    var(--poke5e-fr-muted);
+
+  font-size:
+    6px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    0.045em;
+
+  text-transform:
+    uppercase;
+}
+
+
+/* ============================================================
+ * STATUS REMOVE
+ * ============================================================ */
+
+.poke5e-pokemon-status__remove {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  width:
+    22px;
+
+  height:
+    22px;
+
+  padding:
+    0;
+
+  border:
+    1px solid
+    transparent;
+
+  border-radius:
+    4px;
+
+  background:
+    transparent;
+
+  color:
+    var(--poke5e-fr-muted);
+
+  opacity:
+    0.5;
+
+  cursor:
+    pointer;
+
+  transition:
+    opacity 100ms ease,
+    color 100ms ease,
+    border-color 100ms ease,
+    background 100ms ease;
+}
+
+
+.poke5e-pokemon-status:hover
+.poke5e-pokemon-status__remove {
+  opacity:
+    0.8;
+}
+
+
+.poke5e-pokemon-status__remove:hover:not(:disabled) {
+  border-color:
+    rgba(215, 91, 78, 0.56);
+
+  background:
+    rgba(215, 91, 78, 0.09);
+
+  color:
+    var(--poke5e-fr-red);
+
+  opacity:
+    1;
+}
+
+
+.poke5e-pokemon-status__remove:disabled {
+  opacity:
+    0.28;
+
+  cursor:
+    wait;
+}
+
+
+.poke5e-pokemon-status__remove
+i {
+  font-size:
+    8px;
+}
+
+
+/* ============================================================
+ * STATUS KIND
+ * ============================================================ */
+
+.poke5e-pokemon-status[
+  data-status-kind="non-volatile"
+]
+.poke5e-pokemon-status__body
+> small {
+  color:
+    var(--poke5e-fr-cream);
+}
+
+
+.poke5e-pokemon-status[
+  data-status-kind="volatile"
+]
+.poke5e-pokemon-status__body
+> small {
+  border-style:
+    dashed;
+}
+
+
+/* ============================================================
+ * STATUS PALETTE
+ *
+ * Visual only.
+ * Status mechanics remain owned by Core Engine.
+ * ============================================================ */
+
+.poke5e-pokemon-status[
+  data-status-id="asleep"
+] {
+  --poke5e-status-color:
+    #7d87cf;
+}
+
+
+.poke5e-pokemon-status[
+  data-status-id="burned"
+] {
+  --poke5e-status-color:
+    #e76f3c;
+}
+
+
+.poke5e-pokemon-status[
+  data-status-id="frozen"
+] {
+  --poke5e-status-color:
+    #5da9b3;
+}
+
+
+.poke5e-pokemon-status[
+  data-status-id="paralysis"
+] {
+  --poke5e-status-color:
+    #d9a91c;
+}
+
+
+.poke5e-pokemon-status[
+  data-status-id="poisoned"
+] {
+  --poke5e-status-color:
+    #9555a5;
+}
+
+
+.poke5e-pokemon-status[
+  data-status-id="badly-poisoned"
+] {
+  --poke5e-status-color:
+    #783f8f;
+}
+
+
+.poke5e-pokemon-status[
+  data-status-id="confused"
+] {
+  --poke5e-status-color:
+    #d85d83;
+}
+
+
+.poke5e-pokemon-status[
+  data-status-id="flinched"
+] {
+  --poke5e-status-color:
+    #d75b4e;
+}
+
+
+/* ============================================================
+ * STATUS EMPTY
+ * ============================================================ */
+
+.poke5e-pokemon-statuses__empty {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  min-height:
+    48px;
+
+  gap:
+    9px;
+
+  padding:
+    7px 9px;
+
+  border:
+    1px dashed
+    #505b60;
+
+  border-radius:
+    6px;
+
+  background:
+    rgba(255, 255, 255, 0.018);
+
+  color:
+    var(--poke5e-fr-muted);
+}
+
+
+.poke5e-pokemon-statuses__empty-icon {
+  display:
+    grid;
+
+  width:
+    30px;
+
+  height:
+    30px;
+
+  flex:
+    0 0 auto;
+
+  place-items:
+    center;
+
+  border-radius:
+    50%;
+
+  background:
+    rgba(215, 91, 78, 0.08);
+
+  color:
+    var(--poke5e-fr-red);
+}
+
+
+.poke5e-pokemon-statuses__empty
+> div {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    2px;
+}
+
+
+.poke5e-pokemon-statuses__empty
+strong {
+  color:
+    var(--poke5e-fr-ink);
+
+  font-size:
+    9px;
+}
+
+
+.poke5e-pokemon-statuses__empty
+small {
+  font-size:
+    7px;
+}
+
+/* ============================================================
+ * SKILLS
+ * ============================================================ */
+
+.poke5e-pokemon-utility-row {
+  display:
+    grid;
+
+  grid-column:
+    1 / -1;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  align-items:
+    stretch;
+
+  gap:
+    10px;
+}
+
+
+.poke5e-pokemon-panel--skills,
+.poke5e-pokemon-panel--held-item {
+  min-width:
+    0;
+}
+
+
+.poke5e-pokemon-skills {
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap:
+    5px;
+}
+
+
+.poke5e-pokemon-skill {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto
+    auto;
+
+  align-items: center;
+
+  min-width: 0;
+  min-height: 30px;
+
+  gap: 7px;
+  padding: 5px 7px;
+
+  border:
+    1px solid
+    var(--poke5e-fr-border);
+
+  border-radius: 5px;
+
+  background:
+    var(--poke5e-fr-panel-alt);
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-family: inherit;
+
+  cursor: pointer;
+
+  text-align: left;
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, 0.025);
+
+  transition:
+    border-color 100ms ease,
+    background 100ms ease,
+    transform 80ms ease;
+}
+
+
+.poke5e-pokemon-skill:hover {
+  border-color:
+    var(--poke5e-fr-red);
+
+  background:
+    #394247;
+
+  transform:
+    translateY(-1px);
+}
+
+
+.poke5e-pokemon-skill:active {
+  transform:
+    translateY(0);
+}
+
+
+.poke5e-pokemon-skill__name {
+  display: flex;
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 5px;
+}
+
+
+.poke5e-pokemon-skill__name > i {
+  flex: 0 0 auto;
+
+  color:
+    var(--poke5e-fr-red);
+
+  font-size: 6px;
+}
+
+
+.poke5e-pokemon-skill__name > span {
+  min-width: 0;
+
+  overflow: hidden;
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-size: 8px;
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.poke5e-pokemon-skill > strong {
+  min-width: 24px;
+
+  color:
+    var(--poke5e-fr-cream);
+
+  font-size: 10px;
+
+  text-align: right;
+}
+
+
+.poke5e-pokemon-skill > small {
+  min-width: 22px;
+
+  color:
+    var(--poke5e-fr-muted);
+
+  font-size: 7px;
+  font-weight: 900;
+
+  text-align: right;
+}
+
+
+.poke5e-pokemon-skill--expertise {
+  border-color:
+    rgba(217, 169, 28, 0.58);
+}
+
+
+.poke5e-pokemon-skill--expertise
+.poke5e-pokemon-skill__name > i {
+  color:
+    #d9a91c;
+
+  filter:
+    drop-shadow(
+      0 0 2px
+      rgba(217, 169, 28, 0.35)
+    );
+}
+
+
+.poke5e-pokemon-skill--expertise:hover {
+  border-color:
+    #d9a91c;
+
+  background:
+    rgba(217, 169, 28, 0.08);
+}
+
+/* ============================================================
+ * BATTLE
+ * ============================================================ */
+
+.poke5e-pokemon-battle-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+  gap: 6px;
+}
+
+
+.poke5e-pokemon-battle-grid > div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+  padding: 7px;
+
+  border:
+    2px solid
+    #505b60;
+
+  border-radius: 6px;
+
+  background:
+    var(--poke5e-fr-panel-alt);
+}
+
+
+.poke5e-pokemon-battle-grid span {
+  color:
+    var(--poke5e-fr-muted);
+
+  font-size: 7px;
+  font-weight: 900;
+
+  text-transform: uppercase;
+}
+
+
+.poke5e-pokemon-battle-grid strong {
+  overflow: hidden;
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-size: 11px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.poke5e-pokemon-initiative {
+  display: grid;
+
+  grid-column:
+    1 / -1;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto
+    auto;
+
+  align-items: center;
+
+  min-width: 0;
+  min-height: 30px;
+
+  gap: 8px;
+  padding: 5px 8px;
+
+  border:
+    1px solid
+    var(--poke5e-fr-border);
+
+  border-radius: 5px;
+
+  background:
+    var(--poke5e-fr-panel-alt);
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-family: inherit;
+
+  cursor: pointer;
+
+  text-align: left;
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, 0.025);
+
+  transition:
+    border-color 100ms ease,
+    background 100ms ease,
+    transform 80ms ease;
+}
+
+
+.poke5e-pokemon-initiative:hover:not(:disabled) {
+  border-color:
+    var(--poke5e-fr-red);
+
+  background:
+    #394247;
+
+  transform:
+    translateY(-1px);
+}
+
+
+.poke5e-pokemon-initiative:active:not(:disabled) {
+  transform:
+    translateY(0);
+}
+
+
+.poke5e-pokemon-initiative:disabled {
+  opacity: 0.48;
+
+  cursor: wait;
+}
+
+
+.poke5e-pokemon-initiative__label {
+  display: inline-flex;
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 6px;
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-size: 8px;
+  font-weight: 900;
+
+  text-transform: uppercase;
+}
+
+
+.poke5e-pokemon-initiative__label > i {
+  flex: 0 0 auto;
+
+  color:
+    var(--poke5e-fr-red);
+
+  font-size: 9px;
+}
+
+
+.poke5e-pokemon-initiative > strong {
+  min-width: 25px;
+
+  color:
+    var(--poke5e-fr-cream);
+
+  font-size: 11px;
+
+  text-align: right;
+}
+
+
+.poke5e-pokemon-initiative > small {
+  min-width: 23px;
+
+  color:
+    var(--poke5e-fr-muted);
+
+  font-size: 7px;
+  font-weight: 900;
+
+  text-align: right;
+}
+
+/* ============================================================
+ * MOVEMENT
+ * ============================================================ */
+
+.poke5e-pokemon-battle-grid__movement {
+  min-width: 0;
+}
+
+
+.poke5e-pokemon-movement {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 3px;
+
+  margin-top: 2px;
+}
+
+
+.poke5e-pokemon-movement__entry {
+  display: inline-flex;
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 3px;
+  padding: 2px 4px;
+
+  border:
+    1px solid
+    var(--poke5e-fr-border);
+
+  border-radius: 999px;
+
+  background:
+    rgba(0, 0, 0, 0.07);
+
+  white-space: nowrap;
+}
+
+
+.poke5e-pokemon-movement__entry i {
+  flex: 0 0 auto;
+
+  color:
+    var(--poke5e-fr-red);
+
+  font-size: 8px;
+}
+
+
+.poke5e-pokemon-movement__entry strong {
+  font-size: 8px;
+  line-height: 1;
+}
+
+
+.poke5e-pokemon-movement__entry small {
+  opacity: 0.62;
+
+  font-size: 6px;
+  line-height: 1;
+}
+
+
+.poke5e-pokemon-movement__entry--hover {
+  border-style: dashed;
+}
+
+/* ============================================================
+ * ABILITY
+ * ============================================================ */
+
+.poke5e-pokemon-ability {
+  display: grid;
+
+  grid-template-columns:
+    50px minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+
+.poke5e-pokemon-ability img {
+  width: 48px;
+  height: 48px;
+
+  border:
+    2px solid
+    var(--poke5e-fr-border);
+
+  border-radius: 8px;
+
+  background:
+    var(--poke5e-fr-panel-alt);
+
+  object-fit: cover;
+}
+
+
+.poke5e-pokemon-ability__details {
+  display: inline-flex;
+  align-items: center;
+
+  max-width: 100%;
+
+  gap: 6px;
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color:
+    var(--poke5e-fr-red);
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+
+.poke5e-pokemon-ability__details span {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.poke5e-pokemon-ability__details i {
+  flex: 0 0 auto;
+
+  opacity: 0.58;
+
+  font-size: 9px;
+
+  transition:
+    opacity 100ms ease,
+    transform 100ms ease;
+}
+
+
+.poke5e-pokemon-ability__details:hover i {
+  opacity: 1;
+
+  transform:
+    scale(1.12);
+}
+
+
+.poke5e-pokemon-ability__details:hover {
+  color:
+    var(--poke5e-fr-cream);
+}
+
+
+.poke5e-pokemon-ability p {
+  margin: 4px 0 0;
+
+  color:
+    var(--poke5e-fr-muted);
+
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+/* ============================================================
+ * HELD ITEM
+ * ============================================================ */
+
+.poke5e-pokemon-panel--held-item {
+  --poke5e-held-item-accent:
+    #c7af73;
+
+  --poke5e-held-item-soft:
+    rgba(199, 175, 115, 0.1);
+
+  align-content:
+    start;
+}
+
+
+/* ============================================================
+ * EQUIPMENT CARD
+ * ============================================================ */
+
+.poke5e-pokemon-held-item {
+  position:
+    relative;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  min-width:
+    0;
+
+  gap:
+    8px;
+
+  padding:
+    9px;
+
+  overflow:
+    hidden;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--poke5e-held-item-accent)
+      42%,
+      var(--poke5e-fr-border)
+    );
+
+  border-left:
+    3px solid
+    var(--poke5e-held-item-accent);
+
+  border-radius:
+    8px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--poke5e-held-item-soft),
+      rgba(48, 56, 60, 0.92) 34%,
+      var(--poke5e-fr-panel-deep)
+    );
+
+  box-shadow:
+    inset 0 0 0 1px
+      rgba(255, 255, 255, 0.025),
+    0 3px 8px
+      rgba(0, 0, 0, 0.18);
+}
+
+
+.poke5e-pokemon-held-item::after {
+  content:
+    "";
+
+  position:
+    absolute;
+
+  top:
+    -34px;
+
+  right:
+    -34px;
+
+  width:
+    90px;
+
+  height:
+    90px;
+
+  border:
+    8px solid
+    rgba(199, 175, 115, 0.045);
+
+  border-radius:
+    50%;
+
+  pointer-events:
+    none;
+}
+
+
+/* ============================================================
+ * HEADER
+ * ============================================================ */
+
+.poke5e-pokemon-held-item__header {
+  position:
+    relative;
+
+  z-index:
+    1;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    48px
+    minmax(0, 1fr)
+    24px;
+
+  align-items:
+    center;
+
+  min-width:
+    0;
+
+  gap:
+    8px;
+}
+
+
+/* ============================================================
+ * PORTRAIT
+ * ============================================================ */
+
+.poke5e-pokemon-held-item__portrait {
+  display:
+    grid;
+
+  width:
+    46px;
+
+  height:
+    46px;
+
+  place-items:
+    center;
+
+  overflow:
+    hidden;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--poke5e-held-item-accent)
+      55%,
+      var(--poke5e-fr-border)
+    );
+
+  border-radius:
+    9px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(199, 175, 115, 0.1),
+      var(--poke5e-fr-panel-deep) 68%
+    );
+
+  box-shadow:
+    inset 0 0 0 1px
+      rgba(255, 255, 255, 0.035),
+    0 2px 5px
+      rgba(0, 0, 0, 0.18);
+}
+
+
+.poke5e-pokemon-held-item__portrait
+img {
+  display:
+    block;
+
+  width:
+    38px;
+
+  height:
+    38px;
+
+  margin:
+    0;
+
+  border:
+    0;
+
+  background:
+    transparent;
+
+  object-fit:
+    contain;
+
+  filter:
+    drop-shadow(
+      0 2px 2px
+      rgba(0, 0, 0, 0.25)
+    );
+}
+
+
+/* ============================================================
+ * IDENTITY
+ * ============================================================ */
+
+.poke5e-pokemon-held-item__identity {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  min-width:
+    0;
+
+  gap:
+    3px;
+}
+
+
+.poke5e-pokemon-held-item__details {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  align-self:
+    flex-start;
+
+  max-width:
+    100%;
+
+  min-width:
+    0;
+
+  gap:
+    5px;
+
+  margin:
+    0;
+
+  padding:
+    0;
+
+  border:
+    0;
+
+  background:
+    transparent;
+
+  color:
+    var(--poke5e-fr-cream);
+
+  font-family:
+    inherit;
+
+  font-size:
+    11px;
+
+  font-weight:
+    900;
+
+  line-height:
+    1.15;
+
+  text-align:
+    left;
+
+  cursor:
+    pointer;
+}
+
+
+.poke5e-pokemon-held-item__details
+span {
+  min-width:
+    0;
+
+  overflow:
+    hidden;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+}
+
+
+.poke5e-pokemon-held-item__details
+i {
+  flex:
+    0 0 auto;
+
+  color:
+    var(--poke5e-held-item-accent);
+
+  opacity:
+    0.6;
+
+  font-size:
+    8px;
+
+  transition:
+    opacity 100ms ease,
+    transform 100ms ease;
+}
+
+
+.poke5e-pokemon-held-item__details:hover {
+  color:
+    var(--poke5e-held-item-accent);
+}
+
+
+.poke5e-pokemon-held-item__details:hover
+i {
+  opacity:
+    1;
+
+  transform:
+    scale(1.12);
+}
+
+
+.poke5e-pokemon-held-item__hint {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  align-self:
+    flex-start;
+
+  gap:
+    4px;
+
+  color:
+    var(--poke5e-fr-muted);
+
+  opacity:
+    0.66;
+
+  font-size:
+    6px;
+
+  font-weight:
+    800;
+
+  letter-spacing:
+    0.035em;
+
+  text-transform:
+    uppercase;
+}
+
+
+.poke5e-pokemon-held-item__hint
+i {
+  font-size:
+    6px;
+}
+
+
+/* ============================================================
+ * DESCRIPTION
+ * ============================================================ */
+
+.poke5e-pokemon-held-item__description {
+  position:
+    relative;
+
+  z-index:
+    1;
+
+  margin:
+    0;
+
+  padding:
+    7px 8px;
+
+  border-top:
+    1px solid
+    rgba(233, 225, 189, 0.1);
+
+  border-bottom:
+    1px solid
+    rgba(233, 225, 189, 0.08);
+
+  background:
+    rgba(0, 0, 0, 0.08);
+
+  color:
+    var(--poke5e-fr-muted);
+
+  font-size:
+    8px;
+
+  font-weight:
+    600;
+
+  line-height:
+    1.4;
+
+  text-align:
+    left;
+}
+
+
+/* ============================================================
+ * REMOVE
+ * ============================================================ */
+
+.poke5e-pokemon-held-item__remove {
+  position:
+    relative;
+
+  z-index:
+    2;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  width:
+    22px;
+
+  height:
+    22px;
+
+  margin:
+    0;
+
+  padding:
+    0;
+
+  border:
+    1px solid
+    transparent;
+
+  border-radius:
+    5px;
+
+  background:
+    rgba(0, 0, 0, 0.12);
+
+  color:
+    var(--poke5e-fr-muted);
+
+  opacity:
+    0.58;
+
+  cursor:
+    pointer;
+
+  transition:
+    opacity 100ms ease,
+    color 100ms ease,
+    border-color 100ms ease,
+    background 100ms ease,
+    transform 80ms ease;
+}
+
+
+.poke5e-pokemon-held-item:hover
+.poke5e-pokemon-held-item__remove {
+  opacity:
+    0.8;
+}
+
+
+.poke5e-pokemon-held-item__remove:hover:not(:disabled) {
+  border-color:
+    rgba(215, 91, 78, 0.55);
+
+  background:
+    rgba(215, 91, 78, 0.1);
+
+  color:
+    var(--poke5e-fr-red);
+
+  opacity:
+    1;
+
+  transform:
+    scale(1.04);
+}
+
+
+.poke5e-pokemon-held-item__remove:disabled {
+  opacity:
+    0.3;
+
+  cursor:
+    wait;
+}
+
+
+.poke5e-pokemon-held-item__remove
+i {
+  font-size:
+    8px;
+}
+
+
+/* ============================================================
+ * ACTIONS
+ * ============================================================ */
+
+.poke5e-pokemon-held-item__actions {
+  position:
+    relative;
+
+  z-index:
+    1;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    flex-end;
+}
+
+
+.poke5e-pokemon-held-item__transfer {
+  display:
+    grid;
+
+  grid-template-columns:
+    auto
+    minmax(0, 1fr)
+    auto;
+
+  align-items:
+    center;
+
+  width:
+    100%;
+
+  min-height:
+    30px;
+
+  gap:
+    6px;
+
+  margin:
+    0;
+
+  padding:
+    4px 8px;
+
+  border:
+    1px solid
+    rgba(199, 175, 115, 0.48);
+
+  border-radius:
+    6px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(199, 175, 115, 0.1),
+      rgba(26, 30, 33, 0.92)
+    );
+
+  color:
+    var(--poke5e-fr-cream);
+
+  font-family:
+    inherit;
+
+  font-size:
+    8px;
+
+  font-weight:
+    900;
+
+  cursor:
+    pointer;
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, 0.025);
+
+  transition:
+    border-color 100ms ease,
+    background 100ms ease,
+    color 100ms ease,
+    transform 80ms ease;
+}
+
+
+.poke5e-pokemon-held-item__transfer
+> i:first-child {
+  color:
+    var(--poke5e-held-item-accent);
+
+  font-size:
+    8px;
+}
+
+
+.poke5e-pokemon-held-item__transfer
+> i:last-child {
+  color:
+    var(--poke5e-fr-muted);
+
+  opacity:
+    0.58;
+
+  font-size:
+    6px;
+
+  transition:
+    transform 100ms ease,
+    opacity 100ms ease;
+}
+
+
+.poke5e-pokemon-held-item__transfer
+span {
+  overflow:
+    hidden;
+
+  text-align:
+    left;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+}
+
+
+.poke5e-pokemon-held-item__transfer:hover:not(:disabled) {
+  border-color:
+    var(--poke5e-held-item-accent);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(199, 175, 115, 0.17),
+      rgba(39, 36, 29, 0.92)
+    );
+
+  color:
+    #f3e6bc;
+
+  transform:
+    translateY(-1px);
+}
+
+
+.poke5e-pokemon-held-item__transfer:hover:not(:disabled)
+> i:last-child {
+  opacity:
+    1;
+
+  transform:
+    translateX(2px);
+}
+
+
+.poke5e-pokemon-held-item__transfer:active:not(:disabled) {
+  transform:
+    translateY(0);
+}
+
+
+.poke5e-pokemon-held-item__transfer:disabled {
+  opacity:
+    0.42;
+
+  cursor:
+    wait;
+}
+
+
+/* ============================================================
+ * HELD ITEM — EMPTY SLOT
+ * ============================================================ */
+
+.poke5e-pokemon-held-item-empty {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  flex-direction:
+    column;
+
+  min-height:
+    92px;
+
+  gap:
+    6px;
+
+  padding:
+    12px;
+
+  border:
+    1px dashed
+    rgba(199, 175, 115, 0.28);
+
+  border-radius:
+    8px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(199, 175, 115, 0.025),
+      rgba(255, 255, 255, 0.012)
+    );
+
+  color:
+    var(--poke5e-fr-muted);
+
+  text-align:
+    center;
+}
+
+
+.poke5e-pokemon-held-item-empty
+i {
+  color:
+    var(--poke5e-held-item-accent);
+
+  opacity:
+    0.55;
+
+  font-size:
+    20px;
+}
+
+
+.poke5e-pokemon-held-item-empty
+span {
+  font-size:
+    8px;
+
+  font-weight:
+    800;
+}
+
+/* ============================================================
+ * POKÉMON ITEM MANAGEMENT
+ * ============================================================ */
+
+.poke5e-pokemon-move-card__heading,
+.poke5e-pokemon-ability__heading {
+  display: flex;
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 5px;
+}
+
+
+.poke5e-pokemon-move-card__heading
+.poke5e-pokemon-move-card__details {
+  flex: 1 1 auto;
+
+  width: auto;
+  min-width: 0;
+}
+
+
+.poke5e-pokemon-ability__heading
+.poke5e-pokemon-ability__details {
+  flex: 1 1 auto;
+
+  min-width: 0;
+}
+
+
+.poke5e-pokemon-item-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  width: 22px;
+  height: 22px;
+
+  padding: 0;
+
+  border:
+    1px solid
+    transparent;
+
+  border-radius: 4px;
+
+  background:
+    transparent;
+
+  color:
+    var(--poke5e-fr-muted);
+
+  cursor: pointer;
+
+  opacity: 0.55;
+
+  transition:
+    opacity 100ms ease,
+    color 100ms ease,
+    border-color 100ms ease,
+    background 100ms ease;
+}
+
+
+.poke5e-pokemon-item-delete:hover:not(:disabled) {
+  opacity: 1;
+
+  color:
+    var(--poke5e-fr-red);
+
+  border-color:
+    rgba(215, 91, 78, 0.55);
+
+  background:
+    rgba(215, 91, 78, 0.08);
+}
+
+
+.poke5e-pokemon-item-delete:disabled {
+  opacity: 0.3;
+
+  cursor: wait;
+}
+
+
+.poke5e-pokemon-item-delete i {
+  font-size: 8px;
+}
+
+/* ============================================================
+ * MATCHUPS
+ * ============================================================ */
+
+.poke5e-pokemon-matchups {
+  display: flex;
+  flex-direction: column;
+
+  gap: 9px;
+}
+
+
+.poke5e-pokemon-matchup-group > strong {
+  display: block;
+
+  margin-bottom: 5px;
+
+  font-size: 8px;
+  font-weight: 900;
+
+  text-transform: uppercase;
+}
+
+
+.poke5e-pokemon-matchup-group > div {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 5px;
+}
+
+
+/* ============================================================
+ * TYPE BADGES
+ * ============================================================ */
+
+.poke5e-pokemon-type-badge {
+  --poke5e-type-color:
+    #777;
+
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 20px;
+
+  gap: 4px;
+  padding: 2px 8px;
+
+  border:
+    2px solid
+    rgba(0, 0, 0, 0.18);
+
+  border-radius: 999px;
+
+  background:
+    var(--poke5e-type-color);
+
+  color: white;
+
+  font-size: 8px;
+  font-weight: 900;
+
+  text-transform: uppercase;
+
+  text-shadow:
+    0 1px 1px
+    rgba(0, 0, 0, 0.35);
+}
+
+
+.poke5e-pokemon-type-badge small {
+  font-size: 7px;
+}
+
+
+/* ============================================================
+ * MOVES
+ * ============================================================ */
+
+.poke5e-pokemon-summary.is-busy {
+  cursor: wait;
+}
+
+
+.poke5e-pokemon-summary.is-busy
+.poke5e-pokemon-move-card {
+  pointer-events: none;
+}
+
+.poke5e-pokemon-panel--moves {
+  grid-column:
+    1 / -1;
+}
+
+
+.poke5e-pokemon-panel--moves > header {
+  justify-content: space-between;
+}
+
+
+.poke5e-pokemon-panel--moves > header > div {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+}
+
+
+.poke5e-pokemon-panel--moves > header > strong {
+  padding: 3px 8px;
+
+  border-radius: 999px;
+
+  background:
+    var(--poke5e-fr-red);
+
+  color: white;
+
+  font-size: 9px;
+}
+
+
+.poke5e-pokemon-moves {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 7px;
+}
+
+
+.poke5e-pokemon-move-card {
+  --poke5e-type-color:
+    #777;
+
+  display: grid;
+
+  grid-template-columns:
+    38px
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 8px;
+  padding: 7px;
+
+  border:
+    2px solid
+    #505b60;
+
+  border-left:
+    5px solid
+    var(--poke5e-type-color);
+
+  border-radius: 7px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #323b3f,
+      #292f33
+    );
+
+  color:
+    var(--poke5e-fr-ink);
+
+  transition:
+    transform 80ms ease,
+    border-color 120ms ease,
+    background-color 120ms ease;
+}
+
+
+.poke5e-pokemon-move-card:hover {
+  border-color:
+    var(--poke5e-type-color);
+
+  transform:
+    translateY(-1px);
+}
+
+
+.poke5e-pokemon-move-card > img {
+  width: 36px;
+  height: 36px;
+
+  border:
+    2px solid
+    rgba(0, 0, 0, 0.18);
+
+  border-radius: 6px;
+
+  object-fit: cover;
+}
+
+
+.poke5e-pokemon-move-card__body {
+  min-width: 0;
+}
+
+
+.poke5e-pokemon-move-card__details {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  min-width: 0;
+
+  gap: 5px;
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-family: inherit;
+
+  cursor: pointer;
+
+  text-align: left;
+}
+
+
+.poke5e-pokemon-move-card__details span {
+  flex: 1 1 auto;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.poke5e-pokemon-move-card__details i {
+  flex: 0 0 auto;
+
+  opacity: 0.45;
+
+  color:
+    var(--poke5e-type-color);
+
+  font-size: 8px;
+
+  transition:
+    opacity 100ms ease,
+    transform 100ms ease;
+}
+
+
+.poke5e-pokemon-move-card__details:hover {
+  color:
+    var(--poke5e-fr-cream);
+}
+
+
+.poke5e-pokemon-move-card__details:hover i {
+  opacity: 1;
+
+  transform:
+    scale(1.15);
+}
+
+
+.poke5e-pokemon-move-card__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 5px;
+
+  margin-top: 4px;
+}
+
+
+.poke5e-pokemon-move-card__meta > span {
+  font-size: 8px;
+}
+
+/* ============================================================
+ * MOVE POWER ABILITIES
+ * ============================================================ */
+
+.poke5e-pokemon-move-power {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  min-width:
+    0;
+
+  min-height:
+    19px;
+
+  gap:
+    4px;
+
+  padding:
+    2px 5px;
+
+  border:
+    1px solid
+    rgba(199, 175, 115, 0.26);
+
+  border-radius:
+    999px;
+
+  background:
+    rgba(199, 175, 115, 0.055);
+
+  color:
+    var(--poke5e-fr-muted);
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, 0.018);
+}
+
+
+.poke5e-pokemon-move-power__label {
+  color:
+    var(--poke5e-fr-cream);
+
+  opacity:
+    0.58;
+
+  font-size:
+    6px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    0.055em;
+
+  line-height:
+    1;
+
+  text-transform:
+    uppercase;
+}
+
+
+.poke5e-pokemon-move-power__values {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    2px;
+}
+
+
+.poke5e-pokemon-move-power__ability {
+  --poke5e-move-ability-color:
+    var(--poke5e-fr-cream);
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  min-width:
+    24px;
+
+  min-height:
+    14px;
+
+  padding:
+    1px 4px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--poke5e-move-ability-color)
+      35%,
+      transparent
+    );
+
+  border-radius:
+    999px;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--poke5e-move-ability-color)
+      9%,
+      transparent
+    );
+
+  color:
+    var(--poke5e-move-ability-color);
+
+  font-size:
+    7px;
+
+  font-weight:
+    900;
+
+  line-height:
+    1;
+
+  letter-spacing:
+    0.025em;
+}
+
+
+/* STR */
+
+.poke5e-pokemon-move-power__ability[
+  data-ability="str"
+] {
+  --poke5e-move-ability-color:
+    #d97268;
+}
+
+
+/* DEX */
+
+.poke5e-pokemon-move-power__ability[
+  data-ability="dex"
+] {
+  --poke5e-move-ability-color:
+    #78a8e8;
+}
+
+
+/* CON */
+
+.poke5e-pokemon-move-power__ability[
+  data-ability="con"
+] {
+  --poke5e-move-ability-color:
+    #78bd80;
+}
+
+
+/* INT */
+
+.poke5e-pokemon-move-power__ability[
+  data-ability="int"
+] {
+  --poke5e-move-ability-color:
+    #a58adb;
+}
+
+
+/* WIS */
+
+.poke5e-pokemon-move-power__ability[
+  data-ability="wis"
+] {
+  --poke5e-move-ability-color:
+    #d1b865;
+}
+
+
+/* CHA */
+
+.poke5e-pokemon-move-power__ability[
+  data-ability="cha"
+] {
+  --poke5e-move-ability-color:
+    #d98aaf;
+}
+
+.poke5e-pokemon-move-card__pp {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    3px;
+
+  min-height:
+    20px;
+
+  color:
+    var(--poke5e-fr-muted);
+
+  font-size:
+    8px;
+
+  font-weight:
+    800;
+}
+
+
+.poke5e-pokemon-move-card__pp
+> span {
+  flex:
+    0 0 auto;
+}
+
+
+.poke5e-pokemon-move-card__pp
+> strong {
+  flex:
+    0 0 auto;
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-size:
+    8px;
+
+  font-weight:
+    800;
+}
+
+
+.poke5e-pokemon-move-card__pp
+input {
+  width:
+    31px;
+
+  height:
+    19px;
+
+  margin:
+    0;
+
+  padding:
+    1px 3px;
+
+  border:
+    1px solid
+    var(--poke5e-fr-border);
+
+  border-radius:
+    4px;
+
+  outline:
+    0;
+
+  background:
+    var(--poke5e-fr-panel-deep);
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-family:
+    inherit;
+
+  font-size:
+    8px;
+
+  font-weight:
+    900;
+
+  text-align:
+    center;
+
+  appearance:
+    textfield;
+
+  transition:
+    border-color 100ms ease,
+    background 100ms ease,
+    box-shadow 100ms ease;
+}
+
+
+.poke5e-pokemon-move-card__pp
+input::-webkit-inner-spin-button,
+.poke5e-pokemon-move-card__pp
+input::-webkit-outer-spin-button {
+  margin:
+    0;
+
+  appearance:
+    none;
+}
+
+
+.poke5e-pokemon-move-card__pp
+input:hover:not(:disabled) {
+  border-color:
+    var(--poke5e-type-color);
+}
+
+
+.poke5e-pokemon-move-card__pp
+input:focus {
+  border-color:
+    var(--poke5e-type-color);
+
+  background:
+    #20272a;
+
+  box-shadow:
+    0 0 0 1px
+    color-mix(
+      in srgb,
+      var(--poke5e-type-color)
+      36%,
+      transparent
+    );
+}
+
+
+.poke5e-pokemon-move-card__pp
+input:disabled {
+  opacity:
+    0.55;
+
+  cursor:
+    wait;
+}
+
+.poke5e-pokemon-move-card__activities {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  flex-direction: column;
+
+  min-width: 86px;
+
+  gap: 4px;
+  padding-left: 8px;
+
+  border-left:
+    1px solid
+    rgba(255, 255, 255, 0.1);
+}
+
+
+.poke5e-pokemon-move-card__activity {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 78px;
+  min-height: 34px;
+
+  gap: 4px;
+  padding: 4px 6px;
+
+  border:
+    1px solid
+    var(--poke5e-fr-border);
+
+  border-radius: 6px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #3d474c,
+      #2c3438
+    );
+
+  color:
+    var(--poke5e-fr-ink);
+
+  cursor: pointer;
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, 0.035);
+
+  transition:
+    border-color 100ms ease,
+    background 100ms ease,
+    transform 80ms ease;
+}
+
+
+.poke5e-pokemon-move-card__activity:hover:not(:disabled) {
+  border-color:
+    var(--poke5e-type-color);
+
+  background:
+    linear-gradient(
+      180deg,
+      #485359,
+      #343d41
+    );
+
+  transform:
+    translateY(-1px);
+}
+
+
+.poke5e-pokemon-move-card__activity:active:not(:disabled) {
+  transform:
+    translateY(0);
+}
+
+
+.poke5e-pokemon-move-card__activity:disabled {
+  opacity: 0.48;
+
+  cursor: wait;
+}
+
+
+.poke5e-pokemon-move-card__activity i {
+  flex: 0 0 auto;
+
+  color:
+    var(--poke5e-type-color);
+
+  font-size: 12px;
+}
+
+
+.poke5e-pokemon-move-card__activity span {
+  overflow: hidden;
+
+  font-size: 7px;
+  font-weight: 900;
+
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+
+.poke5e-pokemon-move-card__activity small {
+  opacity: 0.62;
+
+  font-size: 6px;
+  white-space: nowrap;
+}
+
+
+.poke5e-pokemon-move-card__activity--scope {
+  min-width: 34px;
+  width: 34px;
+
+  min-height: 32px;
+
+  padding: 4px;
+}
+
+
+.poke5e-pokemon-move-card__activity--scope i {
+  font-size: 13px;
+}
+
+
+.poke5e-pokemon-move-card__unavailable {
+  max-width: 82px;
+
+  opacity: 0.5;
+
+  font-size: 7px;
+  font-style: italic;
+  line-height: 1.2;
+  text-align: center;
+}
+
+
+.poke5e-pokemon-struggle {
+  display: flex;
+  align-items: center;
+
+  align-self: flex-start;
+
+  gap: 6px;
+
+  margin-top: 2px;
+  padding: 5px 8px;
+
+  border:
+    2px dashed
+    #566166;
+
+  border-radius: 6px;
+
+  background:
+    rgba(255, 255, 255, 0.035);
+
+  color:
+    var(--poke5e-fr-muted);
+
+  font-size: 8px;
+}
+
+
+.poke5e-pokemon-struggle > span {
+  opacity: 0.65;
+
+  font-weight: 800;
+
+  text-transform: uppercase;
+}
+
+
+.poke5e-pokemon-struggle img {
+  width: 22px;
+  height: 22px;
+
+  border-radius: 4px;
+
+  object-fit: cover;
+}
+
+
+.poke5e-pokemon-struggle small {
+  opacity: 0.65;
+}
+
+.poke5e-pokemon-struggle__activities {
+  display: flex;
+  align-items: center;
+
+  gap: 4px;
+
+  margin-left: auto;
+}
+
+
+.poke5e-pokemon-struggle__activities
+.poke5e-pokemon-move-card__activity {
+  min-width: 34px;
+  width: auto;
+
+  min-height: 28px;
+
+  padding: 3px 6px;
+}
+
+.poke5e-pokemon-struggle__details {
+  display: inline-flex;
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 4px;
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-family: inherit;
+  font-size: 8px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.poke5e-pokemon-struggle__details i {
+  opacity: 0.45;
+
+  color:
+    var(--poke5e-fr-red);
+
+  font-size: 7px;
+}
+
+
+.poke5e-pokemon-struggle__details:hover {
+  color:
+    var(--poke5e-fr-cream);
+}
+
+
+.poke5e-pokemon-struggle__details:hover i {
+  opacity: 1;
+}
+
+/* ============================================================
+ * EMPTY
+ * ============================================================ */
+
+.poke5e-pokemon-empty {
+  opacity: 0.55;
+
+  font-size: 9px;
+  font-style: italic;
+}
+
+
+/* ============================================================
+ * TYPE PALETTE
+ * ============================================================ */
+
+.poke5e-pokemon-summary[data-pokemon-type="normal"],
+.poke5e-pokemon-summary [data-type="normal"],
+.poke5e-pokemon-summary [data-move-type="normal"] {
+  --poke5e-type-color: #8f8f78;
+  --poke5e-type-soft: rgba(143, 143, 120, 0.18);
+}
+
+
+.poke5e-pokemon-summary[data-pokemon-type="fire"],
+.poke5e-pokemon-summary [data-type="fire"],
+.poke5e-pokemon-summary [data-move-type="fire"] {
+  --poke5e-type-color: #e76f3c;
+  --poke5e-type-soft: rgba(231, 111, 60, 0.18);
+}
+
+
+.poke5e-pokemon-summary[data-pokemon-type="water"],
+.poke5e-pokemon-summary [data-type="water"],
+.poke5e-pokemon-summary [data-move-type="water"] {
+  --poke5e-type-color: #4f87d9;
+  --poke5e-type-soft: rgba(79, 135, 217, 0.18);
+}
+
+
+.poke5e-pokemon-summary[data-pokemon-type="electric"],
+.poke5e-pokemon-summary [data-type="electric"],
+.poke5e-pokemon-summary [data-move-type="electric"] {
+  --poke5e-type-color: #d9a91c;
+  --poke5e-type-soft: rgba(217, 169, 28, 0.2);
+}
+
+
+.poke5e-pokemon-summary[data-pokemon-type="grass"],
+.poke5e-pokemon-summary [data-type="grass"],
+.poke5e-pokemon-summary [data-move-type="grass"] {
+  --poke5e-type-color: #5c9c4a;
+  --poke5e-type-soft: rgba(92, 156, 74, 0.18);
+}
+
+
+.poke5e-pokemon-summary[data-pokemon-type="ice"],
+.poke5e-pokemon-summary [data-type="ice"],
+.poke5e-pokemon-summary [data-move-type="ice"] {
+  --poke5e-type-color: #5da9b3;
+}
+
+
+.poke5e-pokemon-summary[data-pokemon-type="fighting"],
+.poke5e-pokemon-summary [data-type="fighting"],
+.poke5e-pokemon-summary [data-move-type="fighting"] {
+  --poke5e-type-color: #b94a3c;
+}
+
+
+.poke5e-pokemon-summary[data-pokemon-type="poison"],
+.poke5e-pokemon-summary [data-type="poison"],
+.poke5e-pokemon-summary [data-move-type="poison"] {
+  --poke5e-type-color: #9555a5;
+}
+
+
+.poke5e-pokemon-summary[data-pokemon-type="ground"],
+.poke5e-pokemon-summary [data-type="ground"],
+.poke5e-pokemon-summary [data-move-type="ground"] {
+  --poke5e-type-color: #b89452;
+}
+
+
+.poke5e-pokemon-summary[data-pokemon-type="flying"],
+.poke5e-pokemon-summary [data-type="flying"],
+.poke5e-pokemon-summary [data-move-type="flying"] {
+  --poke5e-type-color: #7d87cf;
+}
+
+
+.poke5e-pokemon-summary[data-pokemon-type="psychic"],
+.poke5e-pokemon-summary [data-type="psychic"],
+.poke5e-pokemon-summary [data-move-type="psychic"] {
+  --poke5e-type-color: #d85d83;
+}
+
+
+.poke5e-pokemon-summary[data-pokemon-type="bug"],
+.poke5e-pokemon-summary [data-type="bug"],
+.poke5e-pokemon-summary [data-move-type="bug"] {
+  --poke5e-type-color: #87952d;
+}
+
+
+.poke5e-pokemon-summary[data-pokemon-type="rock"],
+.poke5e-pokemon-summary [data-type="rock"],
+.poke5e-pokemon-summary [data-move-type="rock"] {
+  --poke5e-type-color: #9c8738;
+}
+
+
+.poke5e-pokemon-summary[data-pokemon-type="ghost"],
+.poke5e-pokemon-summary [data-type="ghost"],
+.poke5e-pokemon-summary [data-move-type="ghost"] {
+  --poke5e-type-color: #675888;
+}
+
+
+.poke5e-pokemon-summary[data-pokemon-type="dragon"],
+.poke5e-pokemon-summary [data-type="dragon"],
+.poke5e-pokemon-summary [data-move-type="dragon"] {
+  --poke5e-type-color: #6250bb;
+}
+
+
+.poke5e-pokemon-summary[data-pokemon-type="dark"],
+.poke5e-pokemon-summary [data-type="dark"],
+.poke5e-pokemon-summary [data-move-type="dark"] {
+  --poke5e-type-color: #62564f;
+}
+
+
+.poke5e-pokemon-summary[data-pokemon-type="steel"],
+.poke5e-pokemon-summary [data-type="steel"],
+.poke5e-pokemon-summary [data-move-type="steel"] {
+  --poke5e-type-color: #7c8790;
+}
+
+
+.poke5e-pokemon-summary[data-pokemon-type="fairy"],
+.poke5e-pokemon-summary [data-type="fairy"],
+.poke5e-pokemon-summary [data-move-type="fairy"] {
+  --poke5e-type-color: #d27fa6;
+}
+
+
+.poke5e-pokemon-summary[data-pokemon-type="typeless"],
+.poke5e-pokemon-summary [data-type="typeless"],
+.poke5e-pokemon-summary [data-move-type="typeless"] {
+  --poke5e-type-color: #707070;
+}
+
+/* ============================================================
+ * POKÉMON EVOLUTION DIALOG
+ * ============================================================ */
+
+.poke5e-pokemon-level-up-window
+[data-evolution-config] {
+  --poke5e-evolution-accent:
+    #d75b4e;
+
+  --poke5e-evolution-green:
+    #63b66d;
+
+  --poke5e-evolution-gold:
+    #c7af73;
+
+  --poke5e-evolution-blue:
+    #6faae5;
+
+  --poke5e-evolution-text:
+    #eef0e7;
+
+  --poke5e-evolution-muted:
+    #aeb5ad;
+
+  --poke5e-evolution-panel:
+    rgba(25, 30, 34, 0.82);
+
+  --poke5e-level-up-accent:
+    var(--poke5e-evolution-accent);
+
+  --poke5e-level-up-soft:
+    rgba(215, 91, 78, 0.11);
+}
+
+
+/* ============================================================
+ * REQUIREMENTS
+ * ============================================================ */
+
+.poke5e-pokemon-evolution__requirements-section {
+  border-color:
+    rgba(215, 91, 78, 0.28);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(215, 91, 78, 0.07),
+      rgba(255, 255, 255, 0.018) 48%,
+      rgba(0, 0, 0, 0.035)
+    );
+}
+
+
+.poke5e-pokemon-evolution__requirements-summary {
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap:
+    7px;
+}
+
+
+.poke5e-pokemon-evolution__requirements-summary
+> span {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  min-height:
+    38px;
+
+  gap:
+    8px;
+
+  padding:
+    6px 9px;
+
+  border:
+    1px solid
+    rgba(215, 91, 78, 0.17);
+
+  border-radius:
+    7px;
+
+  background:
+    rgba(0, 0, 0, 0.08);
+}
+
+
+.poke5e-pokemon-evolution__requirements-summary
+small {
+  color:
+    var(--poke5e-evolution-muted);
+
+  font-size:
+    7px;
+
+  font-weight:
+    850;
+
+  letter-spacing:
+    0.045em;
+
+  text-transform:
+    uppercase;
+}
+
+
+.poke5e-pokemon-evolution__requirements-summary
+strong {
+  color:
+    var(--poke5e-evolution-accent);
+
+  font-size:
+    14px;
+}
+
+
+/* ============================================================
+ * REQUIREMENT GRID
+ * ============================================================ */
+
+.poke5e-pokemon-evolution__requirements-grid {
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap:
+    8px;
+}
+
+
+/* ============================================================
+ * REQUIREMENT CARD
+ * ============================================================ */
+
+.poke5e-pokemon-evolution__requirement {
+  --poke5e-requirement-color:
+    var(--poke5e-evolution-accent);
+
+  display:
+    grid;
+
+  grid-template-columns:
+    36px
+    minmax(0, 1fr);
+
+  align-items:
+    center;
+
+  min-width:
+    0;
+
+  min-height:
+    76px;
+
+  gap:
+    9px;
+
+  margin:
+    0;
+
+  padding:
+    9px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--poke5e-requirement-color)
+      42%,
+      rgba(255, 255, 255, 0.1)
+    );
+
+  border-left:
+    3px solid
+    var(--poke5e-requirement-color);
+
+  border-radius:
+    8px;
+
+  background:
+    linear-gradient(
+      120deg,
+      color-mix(
+        in srgb,
+        var(--poke5e-requirement-color)
+        10%,
+        transparent
+      ),
+      rgba(0, 0, 0, 0.075) 58%
+    );
+
+  color:
+    var(--poke5e-evolution-text);
+
+  box-sizing:
+    border-box;
+}
+
+
+.poke5e-pokemon-evolution__requirement[
+  data-requirement-state="met"
+] {
+  --poke5e-requirement-color:
+    var(--poke5e-evolution-green);
+}
+
+
+.poke5e-pokemon-evolution__requirement[
+  data-requirement-state="blocked"
+] {
+  --poke5e-requirement-color:
+    var(--poke5e-evolution-accent);
+}
+
+
+.poke5e-pokemon-evolution__requirement[
+  data-requirement-state="manual"
+] {
+  --poke5e-requirement-color:
+    var(--poke5e-evolution-gold);
+
+  cursor:
+    pointer;
+}
+
+
+.poke5e-pokemon-evolution__requirement--manual
+> input {
+  position:
+    absolute;
+
+  width:
+    1px;
+
+  height:
+    1px;
+
+  opacity:
+    0;
+
+  pointer-events:
+    none;
+}
+
+
+.poke5e-pokemon-evolution__requirement--manual:has(
+  input:checked
+) {
+  --poke5e-requirement-color:
+    var(--poke5e-evolution-green);
+}
+
+
+.poke5e-pokemon-evolution__requirement-icon {
+  display:
+    grid;
+
+  width:
+    34px;
+
+  height:
+    34px;
+
+  place-items:
+    center;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--poke5e-requirement-color)
+      44%,
+      transparent
+    );
+
+  border-radius:
+    50%;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--poke5e-requirement-color)
+      13%,
+      rgba(0, 0, 0, 0.1)
+    );
+
+  color:
+    var(--poke5e-requirement-color);
+
+  font-size:
+    12px;
+}
+
+
+.poke5e-pokemon-evolution__requirement-body {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  min-width:
+    0;
+
+  gap:
+    3px;
+}
+
+
+.poke5e-pokemon-evolution__requirement-body
+> small {
+  color:
+    var(--poke5e-requirement-color);
+
+  font-size:
+    7px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    0.055em;
+
+  text-transform:
+    uppercase;
+}
+
+
+.poke5e-pokemon-evolution__requirement-body
+> strong {
+  overflow-wrap:
+    anywhere;
+
+  color:
+    var(--poke5e-evolution-text);
+
+  font-size:
+    11px;
+
+  line-height:
+    1.3;
+}
+
+
+.poke5e-pokemon-evolution__requirement-status {
+  color:
+    var(--poke5e-evolution-muted);
+
+  font-size:
+    7px;
+
+  font-weight:
+    700;
+}
+
+
+.poke5e-pokemon-evolution__requirement--manual:has(
+  input:checked
+)
+[data-manual-pending] {
+  display:
+    none;
+}
+
+
+.poke5e-pokemon-evolution__requirement--manual:has(
+  input:checked
+)
+[data-manual-confirmed] {
+  display:
+    inline;
+}
+
+
+/* ============================================================
+ * ABILITY SECTION
+ * ============================================================ */
+
+.poke5e-pokemon-evolution__ability-section {
+  border-color:
+    rgba(199, 175, 115, 0.25);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(199, 175, 115, 0.055),
+      rgba(255, 255, 255, 0.015) 50%,
+      rgba(0, 0, 0, 0.03)
+    );
+}
+
+
+.poke5e-pokemon-evolution__ability-section
+> header
+> i {
+  background:
+    rgba(199, 175, 115, 0.12);
+
+  color:
+    var(--poke5e-evolution-gold);
+}
+
+
+/* ============================================================
+ * ABILITY CARD
+ * ============================================================ */
+
+.poke5e-pokemon-evolution__ability-card {
+  display:
+    grid;
+
+  grid-template-columns:
+    44px
+    minmax(0, 1fr);
+
+  align-items:
+    start;
+
+  gap:
+    10px;
+
+  padding:
+    10px;
+
+  border:
+    1px solid
+    rgba(199, 175, 115, 0.32);
+
+  border-left:
+    3px solid
+    var(--poke5e-evolution-gold);
+
+  border-radius:
+    8px;
+
+  background:
+    linear-gradient(
+      125deg,
+      rgba(199, 175, 115, 0.085),
+      rgba(0, 0, 0, 0.075) 55%
+    );
+}
+
+
+.poke5e-pokemon-evolution__ability-icon {
+  display:
+    grid;
+
+  width:
+    42px;
+
+  height:
+    42px;
+
+  place-items:
+    center;
+
+  border:
+    1px solid
+    rgba(199, 175, 115, 0.35);
+
+  border-radius:
+    50%;
+
+  background:
+    rgba(199, 175, 115, 0.1);
+
+  color:
+    var(--poke5e-evolution-gold);
+
+  font-size:
+    15px;
+}
+
+
+.poke5e-pokemon-evolution__ability-body {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  min-width:
+    0;
+
+  gap:
+    4px;
+}
+
+
+.poke5e-pokemon-evolution__ability-heading {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  flex-wrap:
+    wrap;
+
+  gap:
+    5px;
+}
+
+
+.poke5e-pokemon-evolution__ability-heading
+small {
+  color:
+    var(--poke5e-evolution-gold);
+
+  font-size:
+    7px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    0.06em;
+
+  text-transform:
+    uppercase;
+}
+
+
+.poke5e-pokemon-evolution__ability-heading
+> span {
+  padding:
+    2px 5px;
+
+  border:
+    1px solid
+    rgba(199, 175, 115, 0.28);
+
+  border-radius:
+    999px;
+
+  color:
+    var(--poke5e-evolution-gold);
+
+  font-size:
+    6px;
+
+  font-weight:
+    900;
+
+  text-transform:
+    uppercase;
+}
+
+
+.poke5e-pokemon-evolution__ability-body
+> strong {
+  color:
+    var(--poke5e-evolution-text);
+
+  font-size:
+    13px;
+
+  line-height:
+    1.2;
+}
+
+
+.poke5e-pokemon-evolution__ability-body
+> p {
+  margin:
+    0;
+
+  color:
+    var(--poke5e-evolution-muted);
+
+  font-size:
+    9px;
+
+  line-height:
+    1.45;
+}
+
+
+/* ============================================================
+ * ABILITY SELECTION
+ * ============================================================ */
+
+.poke5e-pokemon-evolution__ability-selection {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    8px;
+}
+
+
+.poke5e-pokemon-evolution__ability-selection
+> label {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    5px;
+
+  margin:
+    0;
+}
+
+
+.poke5e-pokemon-evolution__ability-selection
+> label
+> strong {
+  color:
+    var(--poke5e-evolution-muted);
+
+  font-size:
+    8px;
+
+  font-weight:
+    850;
+
+  text-transform:
+    uppercase;
+}
+
+
+.poke5e-pokemon-evolution__ability-selection
+select {
+  min-height:
+    34px;
+
+  border:
+    1px solid
+    rgba(199, 175, 115, 0.3);
+
+  border-radius:
+    7px;
+
+  background:
+    rgba(20, 24, 28, 0.92);
+
+  color:
+    var(--poke5e-evolution-text);
+
+  color-scheme:
+    dark;
+}
+
+
+.poke5e-pokemon-evolution__ability-selection
+select:focus {
+  border-color:
+    var(--poke5e-evolution-gold);
+
+  box-shadow:
+    0 0 0 1px
+    rgba(199, 175, 115, 0.2);
+}
+
+/* ============================================================
+ * RESPONSIVE
+ * ============================================================ */
+
+@media (max-width: 760px) {
+
+  .poke5e-pokemon-summary__hero {
+    grid-template-columns:
+      110px
+      minmax(0, 1fr);
+
+    min-height: 150px;
+  }
+
+
+  .poke5e-pokemon-summary__portrait {
+    width: 100px;
+    height: 100px;
+  }
+
+
+  .poke5e-pokemon-summary__portrait img {
+    width: 84px;
+    height: 84px;
+  }
+
+  .poke5e-pokemon-summary__portrait {
+  position:
+    relative;
+}
+
+
+.poke5e-pokemon-summary[
+  data-shiny-state="shiny"
+]
+.poke5e-pokemon-summary__portrait {
+  border-color:
+    #e8c85d;
+
+  box-shadow:
+    0 0 0 5px
+      rgba(255, 255, 255, 0.55),
+    0 0 16px
+      rgba(232, 200, 93, 0.3),
+    0 4px 10px
+      var(--poke5e-fr-shadow);
+}
+
+
+.poke5e-pokemon-summary[
+  data-shiny-state="shiny"
+]
+.poke5e-pokemon-summary__portrait::after {
+  content:
+    "✦";
+
+  position:
+    absolute;
+
+  top:
+    4px;
+
+  right:
+    6px;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  width:
+    22px;
+
+  height:
+    22px;
+
+  border:
+    2px solid
+    rgba(255, 244, 174, 0.82);
+
+  border-radius:
+    50%;
+
+  background:
+    #8b6d22;
+
+  color:
+    #fff0a0;
+
+  font-size:
+    13px;
+
+  font-weight:
+    900;
+
+  line-height:
+    1;
+
+  box-shadow:
+    0 2px 6px
+      rgba(0, 0, 0, 0.4),
+    0 0 8px
+      rgba(232, 200, 93, 0.34);
+
+  pointer-events:
+    none;
+}
+
+  .poke5e-pokemon-summary__dashboard {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .poke5e-pokemon-panel--moves {
+    grid-column:
+      auto;
+  }
+
+
+  .poke5e-pokemon-moves {
+    grid-template-columns:
+      1fr;
+  }
+
+  .poke5e-pokemon-technical__grid {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .poke5e-pokemon-skills {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .poke5e-pokemon-utility-row {
+    grid-template-columns:
+      1fr;
+  }
+}
+
+
+@media (max-width: 520px) {
+
+  .poke5e-pokemon-summary {
+    padding: 8px;
+  }
+
+
+  .poke5e-pokemon-summary__hero {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .poke5e-pokemon-summary__portrait {
+    grid-row:
+      auto;
+
+    justify-self:
+      center;
+  }
+
+
+  .poke5e-pokemon-stats,
+  .poke5e-pokemon-battle-grid {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .poke5e-pokemon-summary__toolbar {
+    position: static;
+
+    grid-column:
+      1 / -1;
+
+    justify-self:
+      center;
+  }
+
+
+  .poke5e-pokemon-technical__grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .poke5e-pokemon-skills {
+    grid-template-columns:
+      1fr;
+  }
+
+  .poke5e-pokemon-experience__footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+
+  .poke5e-pokemon-experience__ready {
+    margin-left: 0;
+  }
+
+    .poke5e-pokemon-nature {
+    grid-template-columns:
+      1fr;
+
+    max-width:
+      none;
+
+    align-items:
+      stretch;
+  }
+
+
+  .poke5e-pokemon-nature__modifiers {
+    justify-content:
+      flex-start;
+  }
+
+  .poke5e-pokemon-nickname {
+    width:
+      100%;
+  }
+
+
+  .poke5e-pokemon-nickname__input,
+  .poke5e-pokemon-nickname__text {
+    font-size:
+      21px;
+  }
+
+  .poke5e-pokemon-panel--statuses
+  > header {
+    align-items:
+      stretch;
+  }
+
+
+  .poke5e-pokemon-status-add {
+    width:
+      100%;
+
+    margin-left:
+      0;
+  }
+
+
+  .poke5e-pokemon-statuses {
+    grid-template-columns:
+      1fr;
+  }
+
+  .poke5e-pokemon-type-controls {
+    grid-template-columns:
+      1fr;
+
+    max-width:
+      none;
+  }
+
+  .poke5e-pokemon-gender--editable {
+    min-width:
+      108px;
+  }
+
+
+  .poke5e-pokemon-gender__select {
+    min-width:
+      68px;
+  }
+
+  .poke5e-pokemon-evolution__requirements-summary,
+  .poke5e-pokemon-evolution__requirements-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .poke5e-pokemon-evolution__ability-card {
+    grid-template-columns:
+      36px
+      minmax(0, 1fr);
+  }
+
+
+  .poke5e-pokemon-evolution__ability-icon {
+    width:
+      34px;
+
+    height:
+      34px;
+
+    font-size:
+      12px;
+  }
+}

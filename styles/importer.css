@@ -1,0 +1,540 @@
+/* ============================================================
+ * SHARED POKE5E ICONS
+ * ============================================================ */
+
+.poke5e-icon-pokeball {
+  display: inline-block !important;
+
+  width: 32px !important;
+  height: 32px !important;
+
+  min-width: 32px !important;
+  min-height: 32px !important;
+
+  margin: 0;
+
+  background:
+    url("../assets/ui/pokeball.png")
+    center
+    / 20px 20px
+    no-repeat !important;
+
+  font-size: 0 !important;
+  line-height: 16px !important;
+
+  vertical-align: middle;
+}
+
+
+.poke5e-icon-pokeball::before {
+  content: none !important;
+}
+
+.poke5e-icon-ultraball {
+  display: inline-block !important;
+
+  width: 32px !important;
+  height: 32px !important;
+
+  min-width: 32px !important;
+  min-height: 32px !important;
+
+  margin: 0;
+
+  background:
+    url("../assets/ui/ultraball.png")
+    center
+    / 20px 20px
+    no-repeat !important;
+
+  font-size: 0 !important;
+  line-height: 16px !important;
+
+  vertical-align: middle;
+}
+
+
+.poke5e-icon-ultraball::before {
+  content: none !important;
+}
+
+.poke5e-icon-pokedex {
+  display: inline-block !important;
+
+  width: 32px !important;
+  height: 32px !important;
+
+  min-width: 32px !important;
+  min-height: 32px !important;
+
+  margin: 0;
+
+  background:
+    url("../assets/ui/pokedex.png")
+    center
+    / 20px 20px
+    no-repeat !important;
+
+  font-size: 0 !important;
+  line-height: 16px !important;
+
+  vertical-align: middle;
+}
+
+
+.poke5e-icon-pokedex::before {
+  content: none !important;
+}
+
+/* ============================================================
+ * POKE5E LOCAL — IMPORTER
+ * ============================================================ */
+
+.poke5e-importer {
+  --poke5e-gap-xs: 4px;
+  --poke5e-gap-sm: 8px;
+  --poke5e-gap-md: 12px;
+  --poke5e-gap-lg: 16px;
+
+  --poke5e-radius-sm: 4px;
+  --poke5e-radius-md: 6px;
+  --poke5e-radius-lg: 8px;
+
+  --poke5e-border: rgba(0, 0, 0, 0.22);
+  --poke5e-border-soft: rgba(0, 0, 0, 0.12);
+
+  --poke5e-bg-soft: rgba(0, 0, 0, 0.035);
+  --poke5e-bg-hover: rgba(0, 0, 0, 0.07);
+  --poke5e-bg-selected: rgba(92, 132, 198, 0.16);
+
+  --poke5e-success: #3f8f5f;
+  --poke5e-danger: #b03a3a;
+  --poke5e-accent: #526fa4;
+
+  font-family: system-ui, "Segoe UI", sans-serif;
+}
+
+/* ============================================================
+ * WINDOW CONTENT
+ * ============================================================ */
+
+.poke5e-importer .window-content {
+  padding: 0;
+  overflow: hidden;
+}
+
+.poke5e-importer__content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  gap: var(--poke5e-gap-md);
+  padding: var(--poke5e-gap-md);
+}
+
+/* ============================================================
+ * FILTER BAR
+ * ============================================================ */
+
+.poke5e-importer__filters {
+  display: grid;
+  grid-template-columns: minmax(240px, 2fr) minmax(130px, 1fr) minmax(110px, 0.8fr) minmax(120px, 0.8fr);
+  gap: var(--poke5e-gap-sm);
+  align-items: center;
+}
+
+.poke5e-importer__filters input,
+.poke5e-importer__filters select {
+  width: 100%;
+  min-height: 34px;
+  margin: 0;
+  padding: 5px 8px;
+  border: 1px solid var(--poke5e-border);
+  border-radius: var(--poke5e-radius-md);
+  box-sizing: border-box;
+}
+
+.poke5e-importer__filters input:focus,
+.poke5e-importer__filters select:focus {
+  outline: 2px solid color-mix(in srgb, var(--poke5e-accent) 45%, transparent);
+  outline-offset: 1px;
+}
+
+.poke5e-importer__filters input[type="search"] {
+  font-size: 14px;
+}
+
+/* ============================================================
+ * SECONDARY ACTION BAR
+ * ============================================================ */
+
+.poke5e-importer__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--poke5e-gap-sm);
+  padding: 8px;
+  border: 1px solid var(--poke5e-border-soft);
+  border-radius: var(--poke5e-radius-md);
+  background: var(--poke5e-bg-soft);
+}
+
+.poke5e-importer__actions button {
+  flex: 0 0 auto;
+  min-height: 30px;
+  margin: 0;
+  padding: 4px 10px;
+  border-radius: var(--poke5e-radius-md);
+  font-size: 12px;
+}
+
+.poke5e-importer__actions label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 0 4px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 12px;
+}
+
+.poke5e-importer__actions label input {
+  margin: 0;
+}
+
+.poke5e-importer__counter {
+  margin-left: auto;
+  padding: 3px 7px;
+  border-radius: var(--poke5e-radius-sm);
+  background: rgba(0, 0, 0, 0.08);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ============================================================
+ * TABLE CONTAINER
+ * ============================================================ */
+
+.poke5e-importer__table-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid var(--poke5e-border);
+  border-radius: var(--poke5e-radius-lg);
+}
+
+/* ============================================================
+ * TABLE
+ * ============================================================ */
+
+.poke5e-importer__table {
+  width: 100%;
+  margin: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  font-size: 13px;
+}
+
+.poke5e-importer__table thead {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.poke5e-importer__table thead th {
+  height: 34px;
+  padding: 6px 8px;
+  border: 0;
+  border-bottom: 1px solid var(--poke5e-border);
+  background: var(--color-bg-option, rgba(35, 35, 35, 0.92));
+  font-size: 11px;
+  font-weight: 700;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.poke5e-importer__table tbody td {
+  height: 40px;
+  padding: 5px 8px;
+  border: 0;
+  border-bottom: 1px solid var(--poke5e-border-soft);
+  vertical-align: middle;
+}
+
+.poke5e-importer__table tbody tr {
+  transition:
+    background-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.poke5e-importer__table tbody tr:hover {
+  background: var(--poke5e-bg-hover);
+}
+
+.poke5e-importer__table tbody tr:has(
+  input[data-role="pokemon-checkbox"]:checked
+) {
+  background: var(--poke5e-bg-selected);
+}
+
+.poke5e-importer__table tbody tr:has(
+  input[data-role="pokemon-checkbox"]:checked
+) td:first-child {
+  box-shadow: inset 3px 0 0 var(--poke5e-accent);
+}
+
+/* Checkbox */
+
+.poke5e-importer__table th:nth-child(1),
+.poke5e-importer__table td:nth-child(1) {
+  width: 42px;
+  text-align: center;
+}
+
+.poke5e-importer__table input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* Pokédex number */
+
+.poke5e-importer__table th:nth-child(2),
+.poke5e-importer__table td:nth-child(2) {
+  width: 60px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Pokémon name */
+
+.poke5e-importer__table th:nth-child(3),
+.poke5e-importer__table td:nth-child(3) {
+  width: auto;
+}
+
+.poke5e-importer__table td:nth-child(3) strong {
+  display: block;
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.poke5e-importer__table .hint {
+  margin-top: 1px;
+  opacity: 0.55;
+  overflow: hidden;
+  font-size: 10px;
+  line-height: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Type */
+
+.poke5e-importer__table th:nth-child(4),
+.poke5e-importer__table td:nth-child(4) {
+  width: 130px;
+}
+
+/* SR */
+
+.poke5e-importer__table th:nth-child(5),
+.poke5e-importer__table td:nth-child(5) {
+  width: 70px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Level */
+
+.poke5e-importer__table th:nth-child(6),
+.poke5e-importer__table td:nth-child(6) {
+  width: 80px;
+  text-align: center;
+}
+
+.poke5e-importer__level input {
+  width: 58px;
+  height: 28px;
+  margin: 0;
+  padding: 2px 4px;
+  border: 1px solid var(--poke5e-border);
+  border-radius: var(--poke5e-radius-sm);
+  text-align: center;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Imported status */
+
+.poke5e-importer__table th:nth-child(7),
+.poke5e-importer__table td:nth-child(7) {
+  width: 48px;
+  text-align: center;
+}
+
+.poke5e-importer__status {
+  font-size: 15px;
+}
+
+.poke5e-importer__status .fa-circle-check {
+  color: var(--poke5e-success);
+}
+
+/* ============================================================
+ * FOOTER
+ * ============================================================ */
+
+.poke5e-importer__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  gap: var(--poke5e-gap-md);
+  padding-top: 2px;
+}
+
+.poke5e-importer__footer button {
+  min-height: 36px;
+  margin: 0;
+  padding: 6px 14px;
+  border-radius: var(--poke5e-radius-md);
+  font-weight: 600;
+}
+
+.poke5e-importer__footer button[data-action="repair"] {
+  flex: 0 0 auto;
+}
+
+.poke5e-importer__footer button[data-action="import"] {
+  flex: 0 0 auto;
+  min-width: 190px;
+}
+
+.poke5e-importer__footer button i {
+  margin-right: 5px;
+}
+
+/* ============================================================
+ * BUTTON FEEDBACK
+ * ============================================================ */
+
+.poke5e-importer button {
+  transition:
+    transform 80ms ease,
+    filter 100ms ease;
+}
+
+.poke5e-importer button:not(:disabled):hover {
+  filter: brightness(1.08);
+}
+
+.poke5e-importer button:not(:disabled):active {
+  transform: translateY(1px);
+}
+
+.poke5e-importer button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ============================================================
+ * EMPTY TABLE
+ * ============================================================ */
+
+.poke5e-importer__table tbody tr:only-child td[colspan] {
+  height: 120px;
+  opacity: 0.6;
+  text-align: center;
+  font-style: italic;
+}
+
+/* ============================================================
+ * SCROLLBAR
+ * ============================================================ */
+
+.poke5e-importer__table-wrap {
+  scrollbar-width: thin;
+}
+
+/* ============================================================
+ * RESPONSIVE
+ * ============================================================ */
+
+@media (max-width: 800px) {
+  .poke5e-importer__filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .poke5e-importer__filters input[type="search"] {
+    grid-column: 1 / -1;
+  }
+
+  .poke5e-importer__counter {
+    width: 100%;
+    margin-left: 0;
+    text-align: right;
+  }
+
+  .poke5e-importer__table th:nth-child(4),
+  .poke5e-importer__table td:nth-child(4) {
+    width: 100px;
+  }
+}
+
+@media (max-width: 620px) {
+  .poke5e-importer__filters {
+    grid-template-columns: 1fr;
+  }
+
+  .poke5e-importer__filters input[type="search"] {
+    grid-column: auto;
+  }
+
+  .poke5e-importer__footer {
+    flex-direction: column;
+  }
+
+  .poke5e-importer__footer button {
+    width: 100%;
+  }
+}
+
+/* ============================================================
+ * ACTOR DIRECTORY — COMPACT FOLDERS
+ *
+ * Mantiene el estilo compacto que ya habíamos definido.
+ * ============================================================ */
+
+#actors li.folder > .folder-header {
+  min-height: 26px;
+  height: 26px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  font-family: system-ui, "Segoe UI", sans-serif;
+  font-size: 13px;
+  line-height: 22px;
+}
+
+#actors li.folder > .folder-header h3 {
+  font-family: system-ui, "Segoe UI", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 22px;
+}
+
+#actors li.folder > .folder-header i {
+  font-size: 12px;
+}
+
+#actors li.folder {
+  margin-top: 1px;
+  margin-bottom: 1px;
+}

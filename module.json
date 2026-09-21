@@ -1,0 +1,48 @@
+{
+  "id": "poke5e-local",
+  "title": "Poke5e Local",
+  "description": "Base local de Pokemon 5e para Foundry VTT y D&D5e 5.3.3.",
+  "version": "0.18.8",
+
+  "authors": [
+    {
+      "name": "Pokemon FoundryVTT Project"
+    }
+  ],
+
+  "compatibility": {
+    "minimum": "13.351"
+  },
+
+  "system": [
+    "dnd5e"
+  ],
+
+  "relationships": {
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "5.3.3"
+        }
+      }
+    ]
+  },
+
+  "socket": true,
+
+  "esmodules": [
+    "scripts/main.mjs"
+  ],
+
+  "styles": [
+    "styles/importer.css",
+    "styles/trainer.css",
+    "styles/trainer-manager.css",
+    "styles/pokemon.css",
+    "styles/battle-transitions.css",
+    "styles/encounter-planner.css",
+    "styles/fakemon-studio.css"
+  ]
+}

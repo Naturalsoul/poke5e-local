@@ -1,0 +1,9435 @@
+/* ============================================================
+ * POKE5E — FAKEMON STUDIO
+ * TEAM ROCKET / FIRE RED INSPIRED
+ * ============================================================ */
+
+.poke5e-fakemon-studio {
+  --fakemon-bg: #141a1d;
+  --fakemon-surface: #1b2226;
+  --fakemon-panel: #242d31;
+  --fakemon-border: #566268;
+  --fakemon-border-soft: rgba(233, 225, 189, 0.12);
+  --fakemon-text: #edf0e8;
+  --fakemon-muted: #aeb6b7;
+  --fakemon-cream: #e9e1bd;
+  --fakemon-red: #d75b4e;
+  --fakemon-red-dark: #a83e35;
+  --fakemon-purple: #8d79dd;
+  --fakemon-shadow: rgba(0, 0, 0, 0.38);
+}
+
+/* ============================================================
+ * WINDOW FRAME
+ * ============================================================ */
+
+.poke5e-icon-pokedex-window {
+  display: inline-block !important;
+
+  flex:
+    0 0 18px;
+
+  width:
+    18px !important;
+
+  height:
+    18px !important;
+
+  min-width:
+    18px !important;
+
+  min-height:
+    18px !important;
+
+  margin:
+    0 !important;
+
+  background:
+    url("../assets/ui/pokedex.png")
+    center
+    / 16px 16px
+    no-repeat !important;
+
+  font-size:
+    0 !important;
+
+  line-height:
+    18px !important;
+
+  vertical-align:
+    middle;
+}
+
+
+.poke5e-icon-pokedex-window::before {
+  content:
+    none !important;
+}
+
+/* WINDOW */
+
+.poke5e-fakemon-studio .window-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 92% 4%,
+      rgba(215, 91, 78, 0.09),
+      transparent 280px
+    ),
+    linear-gradient(
+      180deg,
+      #20282c,
+      var(--fakemon-bg)
+    );
+
+  color: var(--fakemon-text);
+}
+
+
+.fakemon-studio__content {
+  display: grid;
+  grid-template-columns: 330px minmax(0, 1fr);
+
+  flex: 1 1 auto;
+
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+
+  font-family:
+    "Trebuchet MS",
+    system-ui,
+    sans-serif;
+}
+
+
+/* SIDEBAR */
+
+.fakemon-studio__sidebar {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+  min-height: 0;
+
+  gap: 10px;
+  padding: 12px;
+
+  border-right:
+    2px solid
+    var(--fakemon-border);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(36, 45, 49, 0.96),
+      rgba(20, 26, 29, 0.98)
+    );
+}
+
+
+.fakemon-studio__hero {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr);
+
+  align-items: stretch;
+
+  min-height: 62px;
+
+  gap: 10px;
+  padding: 10px 11px;
+
+  overflow: hidden;
+
+  border:
+    2px solid
+    var(--fakemon-border);
+
+  border-left:
+    5px solid
+    var(--fakemon-red);
+
+  border-radius: 9px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(215, 91, 78, 0.13),
+      rgba(39, 47, 51, 0.96) 44%,
+      rgba(20, 26, 29, 0.98)
+    );
+
+  box-shadow:
+    inset 0 0 0 1px
+      rgba(255, 255, 255, 0.035),
+    0 5px 14px
+      var(--fakemon-shadow);
+}
+
+
+.fakemon-studio__hero::after {
+  content: "";
+
+  position: absolute;
+
+  top: -54px;
+  right: -44px;
+
+  width: 130px;
+  height: 130px;
+
+  border:
+    11px solid
+    rgba(215, 91, 78, 0.075);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+
+.fakemon-studio__hero > div,
+.fakemon-studio__editor-header > div:first-child {
+  min-width: 0;
+}
+
+
+.fakemon-studio__hero small,
+.fakemon-studio__editor-header small {
+  display: block;
+
+  margin-bottom: 2px;
+
+  color: var(--fakemon-red);
+
+  font-size: 8px;
+  font-weight: 900;
+
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+
+.fakemon-studio__hero h2,
+.fakemon-studio__editor-header h2 {
+  margin: 0;
+
+  overflow: hidden;
+
+  color: var(--fakemon-text);
+
+  font-size: 20px;
+  line-height: 1.08;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fakemon-studio__hero h2 {
+  overflow: visible;
+
+  text-overflow: clip;
+}
+
+.fakemon-studio__hero-actions {
+  position: relative;
+  z-index: 1;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+
+  width: 100%;
+
+  gap: 6px;
+}
+
+
+.fakemon-studio__hero-actions
+button {
+  min-width: 0;
+  min-height: 28px;
+
+  padding:
+    3px
+    7px;
+
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__search {
+  display: grid;
+  grid-template-columns:
+    28px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  min-width: 0;
+
+  border:
+    1px solid
+    var(--fakemon-border);
+
+  border-radius: 6px;
+
+  background: #151c20;
+}
+
+
+.fakemon-studio__search > i {
+  color: var(--fakemon-red);
+
+  text-align: center;
+  font-size: 10px;
+}
+
+
+.fakemon-studio__search input {
+  width: 100%;
+
+  border: 0 !important;
+
+  background:
+    transparent !important;
+
+  box-shadow:
+    none !important;
+}
+
+
+.fakemon-studio__counter {
+  padding: 0 4px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 9px;
+  font-weight: 800;
+
+  text-align: center;
+}
+
+
+.fakemon-studio__species-list {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+
+  gap: 7px;
+
+  min-width: 0;
+  min-height: 0;
+
+  padding-right: 3px;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+}
+
+
+.fakemon-studio__species-card {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    28px;
+
+  align-items: stretch;
+
+  min-width: 0;
+  min-height: 62px;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    var(--fakemon-border);
+
+  border-left:
+    3px solid
+    transparent;
+
+  border-radius: 7px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(48, 58, 63, 0.72),
+      rgba(27, 34, 38, 0.78)
+    );
+
+  transition:
+    border-color 100ms ease,
+    background 100ms ease;
+}
+
+
+.fakemon-studio__species-card:hover {
+  border-color:
+    rgba(215, 91, 78, 0.58);
+}
+
+
+.fakemon-studio__species-card.is-selected {
+  border-color:
+    rgba(215, 91, 78, 0.72);
+
+  border-left-color:
+    var(--fakemon-red);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(215, 91, 78, 0.12),
+      rgba(27, 34, 38, 0.9)
+    );
+}
+
+
+.poke5e-fakemon-studio
+.fakemon-studio__species-main {
+  position: relative;
+
+  display: flex !important;
+
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 60px;
+
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    8px
+    42px
+    8px
+    44px !important;
+
+  border: 0 !important;
+  border-radius: 0 !important;
+
+  background:
+    transparent !important;
+
+  color:
+    inherit !important;
+
+  text-align: center;
+
+  box-shadow:
+    none !important;
+}
+
+.fakemon-studio__species-icon {
+  position: absolute;
+
+  left: 9px;
+  top: 50%;
+
+  display: grid;
+
+  width: 34px;
+  height: 34px;
+
+  place-items: center;
+
+  transform:
+    translateY(-50%);
+
+  border:
+    1px solid
+    rgba(215, 91, 78, 0.3);
+
+  border-radius: 50%;
+
+  background:
+    rgba(215, 91, 78, 0.07);
+
+  color:
+    var(--fakemon-red);
+
+  pointer-events: none;
+}
+
+
+.fakemon-studio__species-copy {
+  display: flex;
+
+  width: 100%;
+  min-width: 0;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 2px;
+
+  text-align: center;
+}
+
+
+.fakemon-studio__species-copy strong {
+  width: 100%;
+
+  overflow: hidden;
+
+  color:
+    var(--fakemon-cream);
+
+  font-size: 11px;
+  font-weight: 900;
+
+  line-height: 1.08;
+
+  text-align: center;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__species-copy small {
+  width: 100%;
+
+  overflow: hidden;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+  font-weight: 700;
+
+  line-height: 1.05;
+
+  text-align: center;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__species-copy span {
+  width: 100%;
+
+  overflow: hidden;
+
+  margin-top: 1px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8.5px;
+  font-weight: 800;
+
+  line-height: 1.1;
+
+  text-align: center;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__species-actions {
+  display: flex;
+  flex-direction: column;
+
+  border-left:
+    1px solid
+    var(--fakemon-border-soft);
+}
+
+
+.fakemon-studio__species-actions button {
+  flex: 1 1 50%;
+
+  width: 28px !important;
+  min-width: 28px !important;
+
+  padding: 0 !important;
+
+  border: 0 !important;
+  border-radius: 0 !important;
+
+  background:
+    transparent !important;
+
+  color:
+    var(--fakemon-muted) !important;
+
+  font-size: 8px !important;
+
+  box-shadow:
+    none !important;
+}
+
+
+.fakemon-studio__species-actions
+button:hover:not(:disabled) {
+  background:
+    rgba(215, 91, 78, 0.1) !important;
+
+  color:
+    var(--fakemon-red) !important;
+}
+
+
+/* WORKSPACE */
+
+.fakemon-studio__workspace {
+  min-width: 0;
+  min-height: 0;
+
+  padding: 14px;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+}
+
+
+.fakemon-studio__editor {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+
+  gap: 10px;
+}
+
+
+.fakemon-studio__editor-header {
+  position: sticky;
+
+  top: -14px;
+
+  z-index: 4;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+
+  min-height: 64px;
+
+  gap: 12px;
+
+  margin:
+    -14px
+    -14px
+    0;
+
+  padding: 11px 14px;
+
+  overflow: hidden;
+
+  border-bottom:
+    2px solid
+    var(--fakemon-border);
+
+  border-left:
+    5px solid
+    var(--fakemon-red);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(215, 91, 78, 0.12),
+      rgba(39, 47, 51, 0.98) 42%,
+      rgba(20, 26, 29, 0.99)
+    );
+
+  box-shadow:
+    0 5px 14px
+    var(--fakemon-shadow);
+}
+
+
+.fakemon-studio__editor-header::after {
+  content: "";
+
+  position: absolute;
+
+  top: -66px;
+  right: 70px;
+
+  width: 160px;
+  height: 160px;
+
+  border:
+    13px solid
+    rgba(215, 91, 78, 0.055);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+
+.fakemon-studio__editor-header
+> div:first-child,
+.fakemon-studio__editor-actions {
+  position: relative;
+  z-index: 1;
+}
+
+
+.fakemon-studio__editor-header
+> div:first-child
+> span {
+  display: block;
+
+  margin-top: 4px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+
+.fakemon-studio__editor-actions {
+  display: flex;
+
+  align-items: center;
+  justify-content: flex-end;
+
+  flex-wrap: nowrap;
+
+  gap: 6px;
+}
+
+
+/* TABS */
+
+.fakemon-studio__tabs {
+  position: sticky;
+
+  top: 50px;
+
+  z-index: 3;
+
+  display: flex;
+
+  gap: 4px;
+
+  margin: 0 -2px;
+
+  padding:
+    7px
+    2px
+    0;
+
+  overflow-x: auto;
+
+  border-bottom:
+    1px solid
+    var(--fakemon-border);
+
+  background:
+    rgba(20, 26, 29, 0.97);
+
+  scrollbar-width: thin;
+}
+
+
+.fakemon-studio__tab {
+  position: relative;
+
+  min-height: 32px !important;
+
+  padding:
+    5px
+    10px !important;
+
+  border:
+    1px solid
+    transparent !important;
+
+  border-bottom:
+    0 !important;
+
+  border-radius:
+    6px
+    6px
+    0
+    0 !important;
+
+  background:
+    transparent !important;
+
+  color:
+    var(--fakemon-muted) !important;
+
+  font-size: 9px !important;
+  font-weight: 900 !important;
+
+  white-space: nowrap;
+
+  box-shadow:
+    none !important;
+}
+
+
+.fakemon-studio__tab:hover:not(:disabled) {
+  border-color:
+    transparent !important;
+
+  background:
+    rgba(255, 255, 255, 0.035) !important;
+
+  color:
+    var(--fakemon-cream) !important;
+}
+
+
+.fakemon-studio__tab.is-active {
+  border-color:
+    var(--fakemon-border) !important;
+
+  background:
+    var(--fakemon-panel) !important;
+
+  color:
+    var(--fakemon-cream) !important;
+}
+
+
+.fakemon-studio__tab.is-active::after {
+  content: "";
+
+  position: absolute;
+
+  left: 8px;
+  right: 8px;
+  bottom: -1px;
+
+  height: 2px;
+
+  background:
+    var(--fakemon-red);
+}
+
+
+.fakemon-studio__tab i {
+  color:
+    var(--fakemon-red);
+}
+
+
+[data-studio-tab][hidden] {
+  display:
+    none !important;
+}
+
+
+/* PANELS */
+
+.fakemon-studio__panel {
+  min-width: 0;
+
+  padding: 11px;
+
+  border:
+    2px solid
+    var(--fakemon-border);
+
+  border-radius: 8px;
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--fakemon-panel),
+      var(--fakemon-surface)
+    );
+
+  box-shadow:
+    inset 0 0 0 1px
+      rgba(255, 255, 255, 0.025),
+    0 3px 9px
+      rgba(0, 0, 0, 0.22);
+}
+
+
+.fakemon-studio__panel > header {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  min-height: 26px;
+
+  margin-bottom: 9px;
+  padding-bottom: 6px;
+
+  border-bottom:
+    1px solid
+    var(--fakemon-border-soft);
+}
+
+
+.fakemon-studio__panel > header i {
+  width: 18px;
+
+  color:
+    var(--fakemon-red);
+
+  text-align: center;
+}
+
+
+.fakemon-studio__panel > header h3 {
+  margin: 0;
+
+  color:
+    var(--fakemon-cream);
+
+  font-size: 12px;
+  font-weight: 900;
+
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+
+.fakemon-studio__panel > header small {
+  margin-left: auto;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+}
+
+.fakemon-studio__section-label {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin:
+    12px
+    0
+    8px;
+
+  padding-top: 9px;
+
+  border-top:
+    1px solid
+    var(--fakemon-border-soft);
+
+  color:
+    var(--fakemon-cream);
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+
+.fakemon-studio__section-label i {
+  color:
+    var(--fakemon-red);
+}
+
+/* FORMS */
+
+.fakemon-studio__grid {
+  display: grid;
+
+  gap: 8px;
+
+  margin-bottom: 9px;
+}
+
+
+.fakemon-studio__grid--2 {
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+}
+
+
+.fakemon-studio__grid--3 {
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+}
+
+
+.fakemon-studio__grid--4 {
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(0, 1fr)
+    );
+}
+
+
+.fakemon-studio__field {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 4px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+  font-weight: 800;
+}
+
+
+.fakemon-studio__field > span {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+  font-weight: 800;
+}
+
+
+.fakemon-studio__field small,
+.poke5e-fakemon-studio .hint {
+  color:
+    var(--fakemon-muted);
+
+  opacity: 0.72;
+
+  font-size: 8px;
+  font-weight: 600;
+}
+
+
+.poke5e-fakemon-studio
+:is(
+  input[type="text"],
+  input[type="search"],
+  input[type="number"],
+  select,
+  textarea
+) {
+  min-width: 0;
+
+  border:
+    1px solid
+    var(--fakemon-border);
+
+  border-radius: 5px;
+
+  outline: 0;
+
+  background:
+    #151c20;
+
+  color:
+    var(--fakemon-text);
+
+  font-family: inherit;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  box-sizing:
+    border-box;
+
+  transition:
+    border-color 100ms ease,
+    background 100ms ease,
+    box-shadow 100ms ease;
+}
+
+
+.poke5e-fakemon-studio
+:is(
+  input[type="text"],
+  input[type="search"],
+  input[type="number"],
+  select
+) {
+  height: 30px;
+
+  padding: 3px 7px;
+}
+
+
+.poke5e-fakemon-studio
+textarea {
+  min-height: 82px;
+
+  padding: 7px;
+
+  resize: vertical;
+
+  line-height: 1.35;
+}
+
+
+.poke5e-fakemon-studio
+:is(
+  input[type="text"],
+  input[type="search"],
+  input[type="number"],
+  select,
+  textarea
+):focus {
+  border-color:
+    var(--fakemon-red);
+
+  background:
+    #1b2428;
+
+  box-shadow:
+    0 0 0 1px
+    rgba(215, 91, 78, 0.24);
+}
+
+
+.poke5e-fakemon-studio
+input[readonly] {
+  opacity: 0.62;
+
+  cursor: not-allowed;
+}
+
+.fakemon-studio__toggles {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px 16px;
+
+  margin-top: 8px;
+}
+
+
+.fakemon-studio__toggle,
+.fakemon-studio__inline-check {
+  display: inline-flex;
+
+  align-items: center;
+
+  flex-direction: row;
+
+  gap: 6px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+/* ============================================================
+ * STATS
+ * ============================================================ */
+
+.fakemon-studio__stats-overview {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+  gap: 9px;
+
+  margin-bottom: 10px;
+}
+
+.fakemon-studio__stats-block {
+  min-width: 0;
+
+  margin-top: 9px;
+
+  padding: 9px;
+
+  border:
+    1px solid
+    var(--fakemon-border-soft);
+
+  border-radius: 7px;
+
+  background:
+    rgba(0, 0, 0, 0.075);
+}
+
+
+.fakemon-studio__stats-block-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  margin-bottom: 8px;
+}
+
+
+.fakemon-studio__stats-block-header
+> div {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+
+.fakemon-studio__stats-block-header
+i {
+  color:
+    var(--fakemon-red);
+}
+
+
+.fakemon-studio__stats-block-header
+strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+
+.fakemon-studio__stats-block-header
+small {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+}
+
+
+.fakemon-studio__stat-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      6,
+      minmax(72px, 1fr)
+    );
+
+  gap: 7px;
+}
+
+
+.fakemon-studio__stat-card {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 4px;
+
+  padding: 8px 6px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.62);
+
+  border-radius: 7px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(48, 58, 63, 0.55),
+      rgba(20, 26, 29, 0.72)
+    );
+
+  text-align: center;
+}
+
+
+.fakemon-studio__stat-card-icon {
+  display: grid;
+
+  width: 27px;
+  height: 27px;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(215, 91, 78, 0.08);
+
+  color:
+    var(--fakemon-red);
+
+  font-size: 10px;
+}
+
+
+.fakemon-studio__stat-card-copy {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  align-items: center;
+}
+
+
+.fakemon-studio__stat-card-copy
+strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 11px;
+  line-height: 1;
+}
+
+
+.fakemon-studio__stat-card-copy
+small {
+  max-width: 100%;
+
+  overflow: hidden;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__stat-card input {
+  width: 100%;
+
+  height: 32px !important;
+
+  padding:
+    2px
+    4px !important;
+
+  text-align: center;
+
+  font-size: 14px !important;
+  font-weight: 900 !important;
+}
+
+.fakemon-studio__stats-detail-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 9px;
+}
+
+
+.fakemon-studio__stats-block
+.fakemon-studio__collection {
+  margin-top: 0;
+  padding-top: 0;
+
+  border-top: 0;
+}
+
+
+.fakemon-studio__stats-block
+.fakemon-studio__collection-header {
+  margin-bottom: 6px;
+}
+
+
+.fakemon-studio__stats-block
+.fakemon-studio__collection-header
+strong {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+}
+
+.fakemon-studio__metric-card {
+  display: grid;
+
+  grid-template-columns:
+    34px
+    minmax(0, 1fr)
+    76px;
+
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 8px;
+
+  padding: 9px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.68);
+
+  border-left:
+    3px solid
+    var(--fakemon-red);
+
+  border-radius: 7px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(215, 91, 78, 0.065),
+      rgba(0, 0, 0, 0.08)
+    );
+}
+
+
+.fakemon-studio__metric-icon {
+  display: grid;
+
+  width: 34px;
+  height: 34px;
+
+  place-items: center;
+
+  border:
+    1px solid
+    rgba(215, 91, 78, 0.34);
+
+  border-radius: 50%;
+
+  background:
+    rgba(215, 91, 78, 0.075);
+
+  color:
+    var(--fakemon-red);
+
+  font-size: 13px;
+}
+
+
+.fakemon-studio__metric-copy {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 1px;
+}
+
+
+.fakemon-studio__metric-copy small {
+  overflow: hidden;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__metric-copy strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 14px;
+  line-height: 1;
+}
+
+
+.fakemon-studio__metric-card
+:is(
+  input,
+  select
+) {
+  width: 100%;
+
+  height: 34px !important;
+
+  text-align: center;
+
+  font-size: 14px !important;
+  font-weight: 900 !important;
+}
+
+/* COLLECTIONS */
+
+.fakemon-studio__collection {
+  margin-top: 10px;
+  padding-top: 10px;
+
+  border-top:
+    1px solid
+    var(--fakemon-border-soft);
+}
+
+
+.fakemon-studio__collection-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  margin-bottom: 7px;
+}
+
+
+.fakemon-studio__collection-header
+strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 10px;
+}
+
+
+.fakemon-studio__collection-rows {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+
+.fakemon-studio__collection-row {
+  display: grid;
+
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 6px;
+
+  padding: 5px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.58);
+
+  border-radius: 6px;
+
+  background:
+    rgba(0, 0, 0, 0.08);
+}
+
+
+.fakemon-studio__collection-row--ability {
+  grid-template-columns:
+    minmax(180px, 1fr)
+    90px
+    30px;
+}
+
+
+.fakemon-studio__collection-row--move {
+  grid-template-columns:
+    75px
+    minmax(220px, 1fr)
+    30px;
+}
+
+
+.fakemon-studio__collection-row--tm {
+  grid-template-columns:
+    75px
+    minmax(220px, 1fr)
+    95px
+    30px;
+}
+
+
+.fakemon-studio__collection-row--speed {
+  grid-template-columns:
+    minmax(160px, 1fr)
+    90px
+    70px
+    30px;
+}
+
+
+.fakemon-studio__collection-row--sense {
+  grid-template-columns:
+    minmax(180px, 1fr)
+    100px
+    30px;
+}
+
+
+.fakemon-studio__remove {
+  width: 30px !important;
+  min-width: 30px !important;
+
+  padding: 0 !important;
+
+  border-color:
+    rgba(215, 91, 78, 0.32) !important;
+
+  background:
+    rgba(215, 91, 78, 0.05) !important;
+
+  color:
+    var(--fakemon-red) !important;
+}
+
+
+/* BUTTONS */
+
+.poke5e-fakemon-studio
+.window-content
+button {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 30px;
+
+  gap: 5px;
+
+  padding: 4px 8px;
+
+  border:
+    1px solid
+    var(--fakemon-border);
+
+  border-radius: 5px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.035),
+      rgba(0, 0, 0, 0.12)
+    );
+
+  color:
+    var(--fakemon-text);
+
+  font-family: inherit;
+
+  font-size: 9px;
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.poke5e-fakemon-studio
+.window-content
+button:hover:not(:disabled) {
+  border-color:
+    var(--fakemon-red);
+
+  background:
+    rgba(215, 91, 78, 0.09);
+}
+
+
+.poke5e-fakemon-studio
+.window-content
+button.primary {
+  border-color:
+    var(--fakemon-red);
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--fakemon-red),
+      var(--fakemon-red-dark)
+    );
+
+  color: #fff;
+}
+
+
+/* VALIDATION */
+
+.fakemon-studio__validation {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 8px 10px;
+
+  border:
+    1px solid
+    var(--fakemon-border);
+
+  border-radius: 6px;
+
+  background:
+    rgba(0, 0, 0, 0.1);
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+
+.fakemon-studio__validation[
+  data-kind="success"
+] {
+  border-color:
+    rgba(99, 182, 109, 0.6);
+
+  color: #8ed099;
+}
+
+
+.fakemon-studio__validation[
+  data-kind="error"
+] {
+  border-color:
+    rgba(215, 91, 78, 0.65);
+
+  color: #e78379;
+}
+
+
+.fakemon-studio__validation[
+  data-kind="info"
+] {
+  border-color:
+    rgba(99, 149, 219, 0.58);
+
+  color: #8db2e6;
+}
+
+
+/* EVOLUTION */
+
+.fakemon-studio__evolution-panel {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+
+.fakemon-studio__evolution-toolbar,
+.fakemon-studio__evolution-editor-actions,
+.fakemon-studio__evolution-editor-header,
+.fakemon-studio__evolution-group-header,
+.fakemon-studio__evolution-card,
+.fakemon-studio__evolution-card-meta {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
+
+.fakemon-studio__evolution-toolbar {
+  flex-wrap: wrap;
+}
+
+
+.fakemon-studio__evolution-columns {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 9px;
+}
+
+
+.fakemon-studio__evolution-group {
+  min-width: 0;
+
+  padding: 9px;
+
+  border:
+    1px solid
+    var(--fakemon-border-soft);
+
+  border-radius: 7px;
+
+  background:
+    rgba(0, 0, 0, 0.08);
+}
+
+
+.fakemon-studio__evolution-group-header {
+  margin-bottom: 7px;
+
+  color:
+    var(--fakemon-cream);
+
+  font-size: 10px;
+}
+
+
+.fakemon-studio__evolution-group-header
+i {
+  color:
+    var(--fakemon-red);
+}
+
+
+.fakemon-studio__evolution-group-header
+span {
+  margin-left: auto;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+}
+
+
+.fakemon-studio__evolution-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+
+.fakemon-studio__evolution-empty {
+  padding: 10px;
+
+  border:
+    1px dashed
+    var(--fakemon-border);
+
+  border-radius: 6px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 9px;
+
+  text-align: center;
+}
+
+
+.fakemon-studio__evolution-card {
+  justify-content: space-between;
+
+  min-width: 0;
+
+  padding: 8px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.66);
+
+  border-left:
+    3px solid
+    var(--fakemon-purple);
+
+  border-radius: 6px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(141, 121, 221, 0.06),
+      rgba(0, 0, 0, 0.08)
+    );
+}
+
+
+.fakemon-studio__evolution-card-main {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+
+.fakemon-studio__evolution-card-main
+strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 10px;
+}
+
+
+.fakemon-studio__evolution-card-main
+small,
+.fakemon-studio__evolution-card-main
+span {
+  overflow: hidden;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+
+  text-overflow: ellipsis;
+}
+
+
+.fakemon-studio__evolution-card-meta {
+  flex: 0 0 auto;
+}
+
+
+.fakemon-studio__evolution-badge {
+  padding: 2px 6px;
+
+  border:
+    1px solid
+    var(--fakemon-border);
+
+  border-radius: 999px;
+
+  font-size: 7px;
+  font-weight: 900;
+}
+
+
+.fakemon-studio__evolution-badge[
+  data-kind="custom"
+] {
+  border-color:
+    rgba(141, 121, 221, 0.62);
+
+  color: #ad9ff0;
+}
+
+
+.fakemon-studio__evolution-badge[
+  data-kind="official"
+] {
+  color:
+    var(--fakemon-muted);
+}
+
+
+.fakemon-studio__evolution-card-actions {
+  display: flex;
+
+  gap: 4px;
+}
+
+
+.fakemon-studio__evolution-card-actions
+button {
+  width: 28px;
+  min-width: 28px;
+
+  padding: 0;
+}
+
+
+.fakemon-studio__evolution-editor {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+  padding: 10px;
+
+  border:
+    1px solid
+    rgba(141, 121, 221, 0.6);
+
+  border-radius: 7px;
+
+  background:
+    rgba(141, 121, 221, 0.045);
+}
+
+
+.fakemon-studio__evolution-editor-header {
+  justify-content: space-between;
+}
+
+
+.fakemon-studio__evolution-editor-header
+> div {
+  display: flex;
+
+  flex-direction: column;
+}
+
+
+.fakemon-studio__evolution-editor-header
+small {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+  font-weight: 900;
+
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+
+.fakemon-studio__evolution-editor-header
+strong {
+  color:
+    var(--fakemon-cream);
+}
+
+
+.fakemon-studio__evolution-subsection {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 7px;
+
+  padding-top: 9px;
+
+  border-top:
+    1px solid
+    var(--fakemon-border-soft);
+}
+
+
+.fakemon-studio__evolution-condition-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+
+.fakemon-studio__evolution-condition {
+  display: grid;
+
+  grid-template-columns:
+    145px
+    minmax(180px, 1fr)
+    30px;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+
+.fakemon-studio__evolution-points {
+  display: grid;
+
+  grid-template-columns:
+    minmax(180px, 1fr)
+    110px;
+
+  align-items: center;
+
+  gap: 8px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+
+.fakemon-studio__evolution-editor-actions {
+  justify-content: flex-end;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1050px) {
+  .fakemon-studio__content {
+    grid-template-columns:
+      250px
+      minmax(0, 1fr);
+  }
+
+  .fakemon-studio__editor-header {
+    grid-template-columns: 1fr;
+  }
+
+  .fakemon-studio__editor-actions {
+    justify-content: flex-start;
+  }
+
+  .fakemon-studio__tabs {
+    top: 102px;
+  }
+
+  .fakemon-studio__grid--4,
+  .fakemon-studio__grid--3 {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .fakemon-studio__stat-grid {
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(72px, 1fr)
+      );
+  }
+}
+
+
+@media (max-width: 820px) {
+  .fakemon-studio__content {
+    grid-template-columns:
+      220px
+      minmax(0, 1fr);
+  }
+
+  .fakemon-studio__grid--2,
+  .fakemon-studio__grid--3,
+  .fakemon-studio__grid--4,
+  .fakemon-studio__evolution-columns {
+    grid-template-columns:
+      1fr;
+  }
+
+  .fakemon-studio__evolution-condition {
+    grid-template-columns:
+      125px
+      minmax(140px, 1fr)
+      30px;
+  }
+
+  .fakemon-studio__stats-overview,
+  .fakemon-studio__stats-detail-grid {
+    grid-template-columns:
+      1fr;
+  }
+}
+
+/* ============================================================
+ * FAKEMON STUDIO — MOVES & ABILITIES v2.2
+ * ============================================================ */
+
+.fakemon-studio__panel--moves {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+
+.fakemon-studio__moves-top-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  align-items: start;
+
+  gap: 9px;
+}
+
+
+.fakemon-studio__moves-card {
+  min-width: 0;
+
+  padding: 9px;
+
+  border:
+    1px solid
+    var(--fakemon-border-soft);
+
+  border-radius: 7px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(48, 58, 63, 0.38),
+      rgba(0, 0, 0, 0.075)
+    );
+}
+
+
+.fakemon-studio__moves-card-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  min-height: 30px;
+
+  margin-bottom: 7px;
+}
+
+
+.fakemon-studio__moves-card-header
+> div {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+
+.fakemon-studio__moves-card-header
+> div > i {
+  display: grid;
+
+  width: 24px;
+  height: 24px;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(215, 91, 78, 0.08);
+
+  color:
+    var(--fakemon-red);
+
+  font-size: 9px;
+}
+
+
+.fakemon-studio__moves-card-header
+span {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 10px;
+  font-weight: 900;
+
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+
+.fakemon-studio__moves-card-header
+button {
+  min-height: 27px;
+
+  padding:
+    3px
+    7px;
+
+  font-size: 8px;
+}
+
+
+.fakemon-studio__moves-count {
+  display: inline-grid;
+
+  min-width: 24px;
+  height: 24px;
+
+  place-items: center;
+
+  border:
+    1px solid
+    var(--fakemon-border);
+
+  border-radius: 999px;
+
+  color:
+    var(--fakemon-muted) !important;
+
+  font-size: 8px !important;
+}
+
+
+/* TABLE */
+
+.fakemon-studio__catalog-table {
+  min-width: 0;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.55);
+
+  border-radius: 6px;
+
+  background:
+    rgba(0, 0, 0, 0.075);
+}
+
+
+.fakemon-studio__catalog-head {
+  display: grid;
+
+  align-items: center;
+
+  min-height: 25px;
+
+  gap: 6px;
+
+  padding:
+    4px
+    6px;
+
+  border-bottom:
+    1px solid
+    var(--fakemon-border);
+
+  background:
+    rgba(0, 0, 0, 0.18);
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-weight: 900;
+
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+
+.fakemon-studio__catalog-head--ability {
+  grid-template-columns:
+    minmax(180px, 1fr)
+    94px
+    30px;
+}
+
+
+.fakemon-studio__catalog-head--move {
+  grid-template-columns:
+    82px
+    minmax(200px, 1fr)
+    30px;
+}
+
+
+.fakemon-studio__catalog-head--tm {
+  grid-template-columns:
+    76px
+    minmax(200px, 1fr)
+    100px
+    30px;
+}
+
+
+.fakemon-studio__catalog-body {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+}
+
+
+.fakemon-studio__catalog-row {
+  display: grid;
+
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 6px;
+
+  padding:
+    6px;
+
+  border-bottom:
+    1px solid
+    var(--fakemon-border-soft);
+
+  transition:
+    background 100ms ease;
+}
+
+
+.fakemon-studio__catalog-row:last-child {
+  border-bottom: 0;
+}
+
+
+.fakemon-studio__catalog-row:hover {
+  background:
+    rgba(255, 255, 255, 0.025);
+}
+
+
+.fakemon-studio__catalog-row--ability {
+  grid-template-columns:
+    minmax(180px, 1fr)
+    94px
+    30px;
+}
+
+
+.fakemon-studio__catalog-row--move {
+  grid-template-columns:
+    82px
+    minmax(200px, 1fr)
+    30px;
+}
+
+
+.fakemon-studio__catalog-row--tm {
+  grid-template-columns:
+    76px
+    minmax(200px, 1fr)
+    100px
+    30px;
+}
+
+
+/* CANONICAL REFERENCE */
+
+.fakemon-studio__reference-cell {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+
+.fakemon-studio__reference-cell
+input {
+  width: 100%;
+}
+
+
+.fakemon-studio__reference-cell
+small {
+  display: block;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  padding-left: 2px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* LEVEL */
+
+.fakemon-studio__level-cell {
+  display: grid;
+
+  grid-template-columns:
+    22px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 3px;
+}
+
+
+.fakemon-studio__level-cell
+span {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-weight: 900;
+}
+
+
+.fakemon-studio__level-cell
+input {
+  width: 100%;
+
+  padding:
+    2px
+    3px !important;
+
+  text-align: center;
+
+  font-weight: 900;
+}
+
+
+/* HIDDEN ABILITY */
+
+.fakemon-studio__hidden-ability-toggle {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 30px;
+
+  gap: 5px;
+
+  padding:
+    3px
+    5px;
+
+  border:
+    1px solid
+    rgba(141, 121, 221, 0.4);
+
+  border-radius: 5px;
+
+  background:
+    rgba(141, 121, 221, 0.045);
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+  font-weight: 800;
+}
+
+
+.fakemon-studio__hidden-ability-toggle
+input {
+  margin: 0;
+}
+
+
+.fakemon-studio__hidden-ability-toggle
+span {
+  display: flex;
+
+  align-items: center;
+
+  gap: 4px;
+}
+
+
+.fakemon-studio__hidden-ability-toggle
+i {
+  color:
+    var(--fakemon-purple);
+
+  font-size: 8px;
+}
+
+
+/* EGG MOVES */
+
+.fakemon-studio__egg-moves-field {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+
+.fakemon-studio__egg-moves-field
+> span {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+  font-weight: 800;
+}
+
+
+.fakemon-studio__egg-moves-field
+textarea {
+  width: 100%;
+  min-height: 100px;
+
+  line-height: 1.4;
+}
+
+
+.fakemon-studio__egg-moves-field
+small {
+  color:
+    var(--fakemon-muted);
+
+  opacity: 0.72;
+
+  font-size: 7px;
+}
+
+
+/* TM */
+
+.fakemon-studio__tm-number,
+.fakemon-studio__tm-cost {
+  width: 100%;
+
+  text-align: center;
+
+  font-weight: 900 !important;
+}
+
+
+/* EMPTY */
+
+.fakemon-studio__catalog-empty {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  min-height: 48px;
+
+  padding: 10px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+  font-weight: 700;
+
+  text-align: center;
+}
+
+
+.fakemon-studio__catalog-empty
+i {
+  color:
+    var(--fakemon-red);
+
+  opacity: 0.72;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1050px) {
+
+  .fakemon-studio__moves-top-grid {
+    grid-template-columns:
+      1fr;
+  }
+}
+
+
+@media (max-width: 820px) {
+
+  .fakemon-studio__catalog-head--ability,
+  .fakemon-studio__catalog-row--ability {
+    grid-template-columns:
+      minmax(150px, 1fr)
+      82px
+      30px;
+  }
+
+
+  .fakemon-studio__catalog-head--move,
+  .fakemon-studio__catalog-row--move {
+    grid-template-columns:
+      72px
+      minmax(150px, 1fr)
+      30px;
+  }
+
+
+  .fakemon-studio__catalog-head--tm,
+  .fakemon-studio__catalog-row--tm {
+    grid-template-columns:
+      66px
+      minmax(150px, 1fr)
+      82px
+      30px;
+  }
+}
+
+/* ============================================================
+ * FAKEMON STUDIO — MEDIA & ARTWORK v2.2.3
+ * ============================================================ */
+
+.fakemon-studio__panel--media {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+
+.fakemon-studio__media-columns {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 10px;
+}
+
+
+.fakemon-studio__media-variant {
+  min-width: 0;
+
+  padding: 9px;
+
+  border:
+    1px solid
+    var(--fakemon-border-soft);
+
+  border-radius: 8px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(48, 58, 63, 0.42),
+      rgba(0, 0, 0, 0.08)
+    );
+}
+
+
+.fakemon-studio__media-variant[
+  data-kind="shiny"
+] {
+  border-color:
+    rgba(141, 121, 221, 0.32);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(141, 121, 221, 0.055),
+      rgba(0, 0, 0, 0.08)
+    );
+}
+
+
+.fakemon-studio__media-variant-header {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  min-height: 28px;
+
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+
+  border-bottom:
+    1px solid
+    var(--fakemon-border-soft);
+}
+
+
+.fakemon-studio__media-variant-header
+i {
+  display: grid;
+
+  width: 24px;
+  height: 24px;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(215, 91, 78, 0.08);
+
+  color:
+    var(--fakemon-red);
+
+  font-size: 9px;
+}
+
+
+.fakemon-studio__media-variant[
+  data-kind="shiny"
+]
+.fakemon-studio__media-variant-header
+i {
+  background:
+    rgba(141, 121, 221, 0.09);
+
+  color:
+    var(--fakemon-purple);
+}
+
+
+.fakemon-studio__media-variant-header
+strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 10px;
+  font-weight: 900;
+
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+
+.fakemon-studio__media-preview-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 8px;
+}
+
+
+/* CARD */
+
+.fakemon-studio__media-card {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 7px;
+
+  padding: 7px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.56);
+
+  border-radius: 7px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(27, 34, 38, 0.92),
+      rgba(20, 26, 29, 0.94)
+    );
+
+  transition:
+    border-color 100ms ease,
+    background 100ms ease;
+}
+
+
+.fakemon-studio__media-card:hover {
+  border-color:
+    rgba(215, 91, 78, 0.46);
+}
+
+
+.fakemon-studio__media-variant[
+  data-kind="shiny"
+]
+.fakemon-studio__media-card:hover {
+  border-color:
+    rgba(141, 121, 221, 0.58);
+}
+
+
+.fakemon-studio__media-card-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  min-width: 0;
+
+  gap: 5px;
+}
+
+
+.fakemon-studio__media-card-header
+> div {
+  display: flex;
+
+  min-width: 0;
+
+  align-items: center;
+
+  gap: 5px;
+}
+
+
+.fakemon-studio__media-card-header
+> div > i {
+  color:
+    var(--fakemon-red);
+
+  font-size: 8px;
+}
+
+
+.fakemon-studio__media-variant[
+  data-kind="shiny"
+]
+.fakemon-studio__media-card-header
+> div > i {
+  color:
+    var(--fakemon-purple);
+}
+
+
+.fakemon-studio__media-card-header
+strong {
+  overflow: hidden;
+
+  color:
+    var(--fakemon-cream);
+
+  font-size: 9px;
+  font-weight: 900;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* STATUS */
+
+.fakemon-studio__media-status {
+  flex: 0 0 auto;
+
+  padding:
+    2px
+    5px;
+
+  border:
+    1px solid
+    var(--fakemon-border);
+
+  border-radius: 999px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 6.5px;
+  font-weight: 900;
+
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__media-card[
+  data-state="custom"
+]
+.fakemon-studio__media-status {
+  border-color:
+    rgba(99, 182, 109, 0.45);
+
+  color:
+    #8ed099;
+}
+
+
+.fakemon-studio__media-card[
+  data-state="fallback"
+]
+.fakemon-studio__media-status {
+  border-color:
+    rgba(217, 169, 28, 0.45);
+
+  color:
+    #dfc262;
+}
+
+
+.fakemon-studio__media-card[
+  data-state="empty"
+]
+.fakemon-studio__media-status {
+  opacity: 0.72;
+}
+
+
+.fakemon-studio__media-card.is-error
+.fakemon-studio__media-status {
+  border-color:
+    rgba(215, 91, 78, 0.62);
+
+  color:
+    #e78379;
+}
+
+
+/* PREVIEW */
+
+.fakemon-studio__media-preview {
+  position: relative;
+
+  display: grid;
+
+  width: 100%;
+
+  aspect-ratio: 1 / 1;
+
+  place-items: center;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.5);
+
+  border-radius: 6px;
+
+  background-color:
+    #161d20;
+
+  background-image:
+    linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.025) 25%,
+      transparent 25%
+    ),
+    linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.025) 25%,
+      transparent 25%
+    ),
+    linear-gradient(
+      45deg,
+      transparent 75%,
+      rgba(255, 255, 255, 0.025) 75%
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 75%,
+      rgba(255, 255, 255, 0.025) 75%
+    );
+
+  background-position:
+    0 0,
+    0 6px,
+    6px -6px,
+    -6px 0;
+
+  background-size:
+    12px
+    12px;
+}
+
+
+.fakemon-studio__media-preview
+img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  padding: 8px;
+
+  object-fit: contain;
+
+  box-sizing: border-box;
+}
+
+
+.fakemon-studio__media-preview
+img[hidden] {
+  display: none;
+}
+
+
+.fakemon-studio__media-placeholder {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-direction: column;
+
+  gap: 5px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+  font-weight: 700;
+
+  text-align: center;
+}
+
+
+.fakemon-studio__media-placeholder[
+  hidden
+] {
+  display: none;
+}
+
+
+.fakemon-studio__media-placeholder
+i {
+  color:
+    var(--fakemon-border);
+
+  font-size: 24px;
+}
+
+
+.fakemon-studio__media-card.is-error
+.fakemon-studio__media-placeholder
+i {
+  color:
+    var(--fakemon-red);
+}
+
+
+/* PATH */
+
+.fakemon-studio__media-path {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+
+.fakemon-studio__media-path
+> span {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-weight: 900;
+
+  text-transform: uppercase;
+}
+
+
+.fakemon-studio__media-path
+input {
+  width: 100%;
+
+  font-size: 9px !important;
+}
+
+
+.fakemon-studio__media-path
+small {
+  min-height: 18px;
+
+  color:
+    var(--fakemon-muted);
+
+  opacity: 0.72;
+
+  font-size: 7px;
+
+  line-height: 1.25;
+}
+
+
+/* INFO */
+
+.fakemon-studio__media-hint {
+  margin: 0;
+
+  padding:
+    7px
+    9px;
+
+  border:
+    1px solid
+    var(--fakemon-border-soft);
+
+  border-radius: 6px;
+
+  background:
+    rgba(0, 0, 0, 0.075);
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+
+.fakemon-studio__media-hint
+strong {
+  color:
+    var(--fakemon-cream);
+}
+
+
+.fakemon-studio__media-hint
+code {
+  padding:
+    1px
+    4px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.45);
+
+  border-radius: 4px;
+
+  background:
+    #151c20;
+
+  color:
+    var(--fakemon-cream);
+
+  font-size: 8px;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1050px) {
+
+  .fakemon-studio__media-columns {
+    grid-template-columns:
+      1fr;
+  }
+}
+
+
+@media (max-width: 820px) {
+
+  .fakemon-studio__media-preview-grid {
+    grid-template-columns:
+      1fr;
+  }
+}
+
+/* ============================================================
+ * FAKEMON STUDIO — IDENTITY & QOL v2.3
+ * ============================================================ */
+
+
+/* EDITOR IDENTITY */
+
+.fakemon-studio__editor-header {
+  min-height: 78px;
+}
+
+
+.fakemon-studio__editor-identity {
+  display: grid;
+
+  grid-template-columns:
+    54px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 10px;
+}
+
+
+.fakemon-studio__identity-art {
+  position: relative;
+
+  display: grid;
+
+  width: 54px;
+  height: 54px;
+
+  place-items: center;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    rgba(215, 91, 78, 0.38);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(215, 91, 78, 0.09),
+      rgba(20, 26, 29, 0.88)
+    );
+}
+
+
+.fakemon-studio__identity-art
+img {
+  position: absolute;
+
+  inset: 3px;
+
+  display: block;
+
+  width:
+    calc(100% - 6px);
+
+  height:
+    calc(100% - 6px);
+
+  object-fit: contain;
+}
+
+
+.fakemon-studio__identity-art
+img[hidden] {
+  display: none;
+}
+
+
+.fakemon-studio__identity-art-fallback {
+  display: grid;
+
+  width: 100%;
+  height: 100%;
+
+  place-items: center;
+
+  color:
+    var(--fakemon-red);
+
+  font-size: 18px;
+}
+
+
+.fakemon-studio__identity-art-fallback[
+  hidden
+] {
+  display: none;
+}
+
+
+.fakemon-studio__identity-copy {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+
+.fakemon-studio__identity-title {
+  display: flex;
+
+  align-items: baseline;
+
+  min-width: 0;
+
+  flex-wrap: wrap;
+
+  gap: 5px 8px;
+}
+
+
+.fakemon-studio__identity-title
+h2 {
+  min-width: 0;
+}
+
+
+.fakemon-studio__identity-id {
+  max-width: 210px;
+
+  overflow: hidden;
+
+  padding:
+    2px
+    6px;
+
+  border:
+    1px solid
+    var(--fakemon-border);
+
+  border-radius: 999px;
+
+  background:
+    rgba(0, 0, 0, 0.13);
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-weight: 800;
+
+  line-height: 1.2;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__identity-meta {
+  display: flex;
+
+  align-items: center;
+
+  min-width: 0;
+
+  flex-wrap: wrap;
+
+  gap: 5px;
+}
+
+
+.fakemon-studio__identity-types {
+  display: inline-flex;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 4px;
+}
+
+
+.fakemon-studio__type-badge {
+  --fakemon-type-color:
+    var(--fakemon-border);
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 17px;
+
+  padding:
+    1px
+    6px;
+
+  border:
+    1px solid
+    var(--fakemon-type-color);
+
+  border-radius: 999px;
+
+  background:
+    rgba(0, 0, 0, 0.14);
+
+  color:
+    var(--fakemon-type-color);
+
+  font-size: 6.5px;
+  font-weight: 900;
+
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+
+.fakemon-studio__type-badge[
+  data-type="normal"
+] {
+  --fakemon-type-color: #a8a77a;
+}
+
+
+.fakemon-studio__type-badge[
+  data-type="fire"
+] {
+  --fakemon-type-color: #ee8130;
+}
+
+
+.fakemon-studio__type-badge[
+  data-type="water"
+] {
+  --fakemon-type-color: #6390f0;
+}
+
+
+.fakemon-studio__type-badge[
+  data-type="electric"
+] {
+  --fakemon-type-color: #f7d02c;
+}
+
+
+.fakemon-studio__type-badge[
+  data-type="grass"
+] {
+  --fakemon-type-color: #7ac74c;
+}
+
+
+.fakemon-studio__type-badge[
+  data-type="ice"
+] {
+  --fakemon-type-color: #96d9d6;
+}
+
+
+.fakemon-studio__type-badge[
+  data-type="fighting"
+] {
+  --fakemon-type-color: #c22e28;
+}
+
+
+.fakemon-studio__type-badge[
+  data-type="poison"
+] {
+  --fakemon-type-color: #a33ea1;
+}
+
+
+.fakemon-studio__type-badge[
+  data-type="ground"
+] {
+  --fakemon-type-color: #e2bf65;
+}
+
+
+.fakemon-studio__type-badge[
+  data-type="flying"
+] {
+  --fakemon-type-color: #a98ff3;
+}
+
+
+.fakemon-studio__type-badge[
+  data-type="psychic"
+] {
+  --fakemon-type-color: #f95587;
+}
+
+
+.fakemon-studio__type-badge[
+  data-type="bug"
+] {
+  --fakemon-type-color: #a6b91a;
+}
+
+
+.fakemon-studio__type-badge[
+  data-type="rock"
+] {
+  --fakemon-type-color: #b6a136;
+}
+
+
+.fakemon-studio__type-badge[
+  data-type="ghost"
+] {
+  --fakemon-type-color: #8c6bb1;
+}
+
+
+.fakemon-studio__type-badge[
+  data-type="dragon"
+] {
+  --fakemon-type-color: #8b64ff;
+}
+
+
+.fakemon-studio__type-badge[
+  data-type="dark"
+] {
+  --fakemon-type-color: #a58a78;
+}
+
+
+.fakemon-studio__type-badge[
+  data-type="steel"
+] {
+  --fakemon-type-color: #b7b7ce;
+}
+
+
+.fakemon-studio__type-badge[
+  data-type="fairy"
+] {
+  --fakemon-type-color: #d685ad;
+}
+
+
+.fakemon-studio__identity-metric {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 3px;
+
+  min-height: 17px;
+
+  padding:
+    1px
+    6px;
+
+  border:
+    1px solid
+    var(--fakemon-border-soft);
+
+  border-radius: 999px;
+
+  background:
+    rgba(0, 0, 0, 0.1);
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-weight: 800;
+}
+
+
+.fakemon-studio__identity-metric
+strong {
+  color:
+    var(--fakemon-cream);
+
+  font-weight: 900;
+}
+
+
+/* STICKY TABS AFTER LARGER HEADER */
+
+.fakemon-studio__tabs {
+  top: 64px;
+}
+
+
+/* SIDEBAR THUMBNAIL */
+
+.fakemon-studio__species-icon {
+  overflow: hidden;
+}
+
+
+.fakemon-studio__species-icon
+img {
+  position: absolute;
+
+  inset: 2px;
+
+  z-index: 2;
+
+  display: block;
+
+  width:
+    calc(100% - 4px);
+
+  height:
+    calc(100% - 4px);
+
+  object-fit: contain;
+
+  border-radius: 50%;
+}
+
+
+.fakemon-studio__species-icon
+img[hidden] {
+  display: none;
+}
+
+
+.fakemon-studio__species-icon.has-image
+> i {
+  display: none;
+}
+
+
+/* MEDIA FILE PICKER */
+
+.fakemon-studio__media-path-control {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    30px;
+
+  align-items: center;
+
+  gap: 4px;
+
+  min-width: 0;
+}
+
+
+.fakemon-studio__media-path-control
+input {
+  width: 100%;
+}
+
+
+.poke5e-fakemon-studio
+.fakemon-studio__media-browse {
+  width: 30px !important;
+  min-width: 30px !important;
+
+  padding: 0 !important;
+
+  border-color:
+    rgba(215, 91, 78, 0.32);
+
+  color:
+    var(--fakemon-red);
+}
+
+
+.poke5e-fakemon-studio
+.fakemon-studio__media-browse:hover:not(:disabled) {
+  border-color:
+    var(--fakemon-red);
+
+  background:
+    rgba(215, 91, 78, 0.1);
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1050px) {
+
+  .fakemon-studio__tabs {
+    top: 106px;
+  }
+}
+
+
+@media (max-width: 820px) {
+
+  .fakemon-studio__editor-identity {
+    grid-template-columns:
+      46px
+      minmax(0, 1fr);
+
+    gap: 8px;
+  }
+
+
+  .fakemon-studio__identity-art {
+    width: 46px;
+    height: 46px;
+  }
+
+
+  .fakemon-studio__identity-id {
+    max-width: 150px;
+  }
+}
+
+/* ============================================================
+ * FAKEMON STUDIO — GUIDED STATS v2.4
+ * ============================================================ */
+
+.fakemon-studio__proficiency-grid {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.45fr)
+    minmax(220px, 0.55fr);
+
+  gap: 9px;
+}
+
+
+.fakemon-studio__proficiency-group {
+  min-width: 0;
+
+  padding: 8px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.55);
+
+  border-radius: 7px;
+
+  background:
+    rgba(0, 0, 0, 0.075);
+}
+
+
+.fakemon-studio__proficiency-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 7px;
+
+  margin-bottom: 7px;
+}
+
+
+.fakemon-studio__proficiency-header
+> div {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+
+.fakemon-studio__proficiency-header
+i {
+  color:
+    var(--fakemon-red);
+
+  font-size: 9px;
+}
+
+
+.fakemon-studio__proficiency-header
+strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+
+.fakemon-studio__proficiency-header
+> span {
+  display: grid;
+
+  min-width: 22px;
+  height: 22px;
+
+  place-items: center;
+
+  border:
+    1px solid
+    var(--fakemon-border);
+
+  border-radius: 999px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-weight: 900;
+}
+
+
+.fakemon-studio__choice-grid {
+  display: grid;
+
+  gap: 5px;
+}
+
+
+.fakemon-studio__choice-grid--skills {
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+}
+
+
+.fakemon-studio__choice-grid--saves {
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+}
+
+
+.fakemon-studio__choice {
+  display: flex;
+
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 6px;
+
+  min-height: 34px;
+
+  padding:
+    4px
+    6px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.48);
+
+  border-radius: 5px;
+
+  background:
+    rgba(20, 26, 29, 0.55);
+
+  cursor: pointer;
+
+  transition:
+    border-color 100ms ease,
+    background 100ms ease;
+}
+
+
+.fakemon-studio__choice:hover {
+  border-color:
+    rgba(215, 91, 78, 0.5);
+
+  background:
+    rgba(215, 91, 78, 0.035);
+}
+
+
+.fakemon-studio__choice
+input {
+  flex: 0 0 auto;
+
+  margin: 0;
+
+  accent-color:
+    var(--fakemon-red);
+}
+
+
+.fakemon-studio__choice-copy {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 1px;
+}
+
+
+.fakemon-studio__choice-copy
+strong {
+  overflow: hidden;
+
+  color:
+    var(--fakemon-text);
+
+  font-size: 8px;
+  font-weight: 900;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__choice-copy
+small {
+  overflow: hidden;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 6.5px;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__choice
+input:checked
++
+.fakemon-studio__choice-copy
+strong {
+  color:
+    var(--fakemon-cream);
+}
+
+
+.fakemon-studio__proficiency-extra {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+  margin-top: 7px;
+  padding-top: 7px;
+
+  border-top:
+    1px solid
+    var(--fakemon-border-soft);
+}
+
+
+.fakemon-studio__proficiency-extra
+> span {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-weight: 900;
+
+  text-transform: uppercase;
+}
+
+
+.fakemon-studio__proficiency-extra
+small {
+  color:
+    var(--fakemon-muted);
+
+  opacity: 0.68;
+
+  font-size: 7px;
+}
+
+
+/* GUIDED MOVEMENT / SENSES */
+
+.fakemon-studio__collection-row--speed
+input[
+  data-field="type"
+],
+.fakemon-studio__collection-row--sense
+input[
+  data-field="type"
+] {
+  font-weight: 800;
+}
+
+
+.fakemon-studio__collection-row--speed
+select[
+  data-field="unit"
+] {
+  width: 100%;
+
+  text-align: center;
+
+  font-weight: 900;
+}
+
+
+@media (max-width: 1050px) {
+
+  .fakemon-studio__proficiency-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .fakemon-studio__choice-grid--skills {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+}
+
+
+@media (max-width: 820px) {
+
+  .fakemon-studio__choice-grid--skills,
+  .fakemon-studio__choice-grid--saves {
+    grid-template-columns:
+      1fr;
+  }
+}
+
+/* ============================================================
+ * FAKEMON STUDIO — LIVE REFERENCES v2.4.2
+ * ============================================================ */
+
+.fakemon-studio__reference-feedback {
+  display: flex !important;
+
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 4px;
+
+  padding-left: 2px;
+
+  font-size: 7px;
+  font-weight: 800;
+
+  line-height: 1.2;
+}
+
+
+.fakemon-studio__reference-feedback
+i {
+  flex: 0 0 auto;
+
+  font-size: 7px;
+}
+
+
+.fakemon-studio__reference-feedback
+span {
+  min-width: 0;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* NEUTRAL */
+
+.fakemon-studio__reference-cell[
+  data-reference-state="neutral"
+]
+.fakemon-studio__reference-feedback {
+  color:
+    var(--fakemon-muted);
+}
+
+
+/* VALID */
+
+.fakemon-studio__reference-cell[
+  data-reference-state="valid"
+]
+input {
+  border-color:
+    rgba(99, 182, 109, 0.55);
+}
+
+
+.fakemon-studio__reference-cell[
+  data-reference-state="valid"
+]
+.fakemon-studio__reference-feedback {
+  color:
+    #8ed099;
+}
+
+
+/* INVALID */
+
+.fakemon-studio__reference-cell[
+  data-reference-state="invalid"
+]
+input {
+  border-color:
+    rgba(215, 91, 78, 0.7);
+
+  background:
+    rgba(215, 91, 78, 0.045);
+}
+
+
+.fakemon-studio__reference-cell[
+  data-reference-state="invalid"
+]
+.fakemon-studio__reference-feedback {
+  color:
+    #e78379;
+}
+
+
+/* EGG MOVES */
+
+.fakemon-studio__egg-reference-feedback {
+  display: flex;
+
+  align-items: flex-start;
+
+  min-height: 14px;
+
+  gap: 4px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-weight: 800;
+
+  line-height: 1.3;
+}
+
+
+.fakemon-studio__egg-reference-feedback
+i {
+  flex: 0 0 auto;
+
+  margin-top: 1px;
+}
+
+
+.fakemon-studio__egg-moves-field[
+  data-reference-state="valid"
+]
+textarea {
+  border-color:
+    rgba(99, 182, 109, 0.55);
+}
+
+
+.fakemon-studio__egg-moves-field[
+  data-reference-state="valid"
+]
+.fakemon-studio__egg-reference-feedback {
+  color:
+    #8ed099;
+}
+
+
+.fakemon-studio__egg-moves-field[
+  data-reference-state="invalid"
+]
+textarea {
+  border-color:
+    rgba(215, 91, 78, 0.7);
+
+  background:
+    rgba(215, 91, 78, 0.045);
+}
+
+
+.fakemon-studio__egg-moves-field[
+  data-reference-state="invalid"
+]
+.fakemon-studio__egg-reference-feedback {
+  color:
+    #e78379;
+}
+
+
+/* KEEP FOCUS VISIBLE */
+
+.poke5e-fakemon-studio
+.fakemon-studio__reference-cell
+input:focus,
+.poke5e-fakemon-studio
+.fakemon-studio__egg-moves-field
+textarea:focus {
+  box-shadow:
+    0 0 0 1px
+    rgba(215, 91, 78, 0.24);
+}
+
+/* ============================================================
+ * FAKEMON STUDIO — INLINE SPECIES VALIDATION v2.4.3
+ * ============================================================ */
+
+.fakemon-studio__inline-validation,
+.fakemon-studio__inline-group-validation {
+  display: flex;
+
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 4px;
+
+  margin-top: 2px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-weight: 800;
+
+  line-height: 1.25;
+}
+
+
+.fakemon-studio__inline-validation
+i,
+.fakemon-studio__inline-group-validation
+i {
+  flex: 0 0 auto;
+
+  font-size: 7px;
+}
+
+
+.fakemon-studio__inline-validation
+span,
+.fakemon-studio__inline-group-validation
+span {
+  min-width: 0;
+}
+
+
+/* ============================================================
+ * VALID
+ * ============================================================ */
+
+.fakemon-studio__field[
+  data-inline-state="valid"
+]
+> :is(
+  input,
+  select
+),
+.fakemon-studio__metric-card[
+  data-inline-state="valid"
+]
+> :is(
+  input,
+  select
+),
+.fakemon-studio__stat-card[
+  data-inline-state="valid"
+]
+> input {
+  border-color:
+    rgba(99, 182, 109, 0.5);
+}
+
+
+.fakemon-studio__inline-validation[
+  data-kind="valid"
+],
+.fakemon-studio__inline-group-validation[
+  data-kind="valid"
+] {
+  color:
+    #8ed099;
+}
+
+
+/* ============================================================
+ * WARNING
+ * ============================================================ */
+
+.fakemon-studio__field[
+  data-inline-state="warning"
+]
+> :is(
+  input,
+  select
+),
+.fakemon-studio__metric-card[
+  data-inline-state="warning"
+]
+> :is(
+  input,
+  select
+),
+.fakemon-studio__stat-card[
+  data-inline-state="warning"
+]
+> input {
+  border-color:
+    rgba(217, 169, 28, 0.7);
+
+  background:
+    rgba(217, 169, 28, 0.035);
+}
+
+
+.fakemon-studio__inline-validation[
+  data-kind="warning"
+],
+.fakemon-studio__inline-group-validation[
+  data-kind="warning"
+] {
+  color:
+    #dfc262;
+}
+
+
+/* ============================================================
+ * INVALID
+ * ============================================================ */
+
+.fakemon-studio__field[
+  data-inline-state="invalid"
+]
+> :is(
+  input,
+  select
+),
+.fakemon-studio__metric-card[
+  data-inline-state="invalid"
+]
+> :is(
+  input,
+  select
+),
+.fakemon-studio__stat-card[
+  data-inline-state="invalid"
+]
+> input {
+  border-color:
+    rgba(215, 91, 78, 0.76);
+
+  background:
+    rgba(215, 91, 78, 0.045);
+}
+
+
+.fakemon-studio__inline-validation[
+  data-kind="invalid"
+],
+.fakemon-studio__inline-group-validation[
+  data-kind="invalid"
+] {
+  color:
+    #e78379;
+}
+
+
+/* ============================================================
+ * NEUTRAL
+ * ============================================================ */
+
+.fakemon-studio__inline-validation[
+  data-kind="neutral"
+] {
+  color:
+    var(--fakemon-muted);
+
+  opacity: 0.72;
+}
+
+
+/* ============================================================
+ * COMPACT STAT CARDS
+ * ============================================================ */
+
+.fakemon-studio__metric-card
+> .fakemon-studio__inline-validation {
+  grid-column:
+    1 / -1;
+
+  margin-top: 0;
+}
+
+
+.fakemon-studio__stat-card
+> .fakemon-studio__inline-validation {
+  justify-content: center;
+
+  width: 100%;
+
+  text-align: center;
+}
+
+
+/* ============================================================
+ * ABILITY REQUIREMENT
+ * ============================================================ */
+
+.fakemon-studio__inline-group-validation {
+  margin-top: 7px;
+  padding-top: 6px;
+
+  border-top:
+    1px solid
+    var(--fakemon-border-soft);
+}
+
+
+.fakemon-studio__moves-card[
+  data-inline-state="invalid"
+]
+.fakemon-studio__inline-group-validation {
+  color:
+    #e78379;
+}
+
+/* ============================================================
+ * FAKEMON STUDIO — UNSAVED CHANGES v2.5
+ * ============================================================ */
+
+.fakemon-studio__dirty-indicator {
+  display: inline-flex;
+
+  align-items: center;
+
+  flex: 0 0 auto;
+
+  gap: 5px;
+
+  min-height: 24px;
+
+  padding:
+    3px
+    7px;
+
+  border:
+    1px solid
+    rgba(217, 169, 28, 0.48);
+
+  border-radius: 999px;
+
+  background:
+    rgba(217, 169, 28, 0.055);
+
+  color:
+    #dfc262;
+
+  font-size: 7.5px;
+  font-weight: 900;
+
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__dirty-indicator[
+  data-dirty="false"
+] {
+  display: none;
+}
+
+
+.fakemon-studio__dirty-indicator
+i {
+  font-size: 6px;
+}
+
+
+/* EVOLUTION */
+
+.fakemon-studio__evolution-editor-header-actions {
+  display: flex;
+
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 6px;
+
+  flex: 0 0 auto;
+}
+
+
+.fakemon-studio__dirty-indicator--evolution {
+  min-height: 22px;
+
+  padding:
+    2px
+    6px;
+}
+
+
+@media (max-width: 1050px) {
+
+  .fakemon-studio__editor-actions {
+    flex-wrap: wrap;
+  }
+
+
+  .fakemon-studio__evolution-editor-header {
+    align-items: flex-start;
+  }
+
+
+  .fakemon-studio__evolution-editor-header-actions {
+    flex-wrap: wrap;
+  }
+}
+
+/* ============================================================
+ * FAKEMON STUDIO — OFFICIAL TEMPLATE v2.6
+ * ============================================================ */
+
+.poke5e-fakemon-template-dialog {
+  --fakemon-bg: #141a1d;
+  --fakemon-surface: #1b2226;
+  --fakemon-panel: #242d31;
+  --fakemon-border: #566268;
+  --fakemon-border-soft: rgba(233, 225, 189, 0.12);
+  --fakemon-text: #edf0e8;
+  --fakemon-muted: #aeb6b7;
+  --fakemon-cream: #e9e1bd;
+  --fakemon-red: #d75b4e;
+}
+
+
+.poke5e-fakemon-template-dialog
+.window-content {
+  background:
+    linear-gradient(
+      180deg,
+      var(--fakemon-panel),
+      var(--fakemon-bg)
+    );
+
+  color:
+    var(--fakemon-text);
+}
+
+
+.fakemon-template-picker {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+  padding:
+    4px
+    2px;
+}
+
+
+.fakemon-template-picker__intro {
+  margin: 0;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+
+.fakemon-template-picker__field {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+
+.fakemon-template-picker__field
+> span {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 9px;
+  font-weight: 900;
+}
+
+
+.poke5e-fakemon-template-dialog
+.fakemon-template-picker__field
+input {
+  width: 100%;
+  height: 32px;
+
+  padding:
+    4px
+    8px;
+
+  border:
+    1px solid
+    var(--fakemon-border);
+
+  border-radius: 5px;
+
+  outline: 0;
+
+  background:
+    #151c20;
+
+  color:
+    var(--fakemon-text);
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+
+.poke5e-fakemon-template-dialog
+.fakemon-template-picker__field
+input:focus {
+  border-color:
+    var(--fakemon-red);
+
+  box-shadow:
+    0 0 0 1px
+    rgba(215, 91, 78, 0.24);
+}
+
+
+.fakemon-template-picker__notice {
+  display: grid;
+
+  grid-template-columns:
+    28px
+    minmax(0, 1fr);
+
+  align-items: start;
+
+  gap: 8px;
+
+  padding: 9px;
+
+  border:
+    1px solid
+    var(--fakemon-border-soft);
+
+  border-radius: 6px;
+
+  background:
+    rgba(0, 0, 0, 0.1);
+}
+
+
+.fakemon-template-picker__notice
+> i {
+  display: grid;
+
+  width: 28px;
+  height: 28px;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(215, 91, 78, 0.08);
+
+  color:
+    var(--fakemon-red);
+}
+
+
+.fakemon-template-picker__notice
+> div {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+
+.fakemon-template-picker__notice
+strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 9px;
+}
+
+
+.fakemon-template-picker__notice
+span {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+
+@media (max-width: 1050px) {
+
+  .fakemon-studio__hero {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .fakemon-studio__hero-actions {
+    justify-content:
+      flex-start;
+  }
+}
+
+/* ============================================================
+ * FAKEMON STUDIO — BACKUP / RESTORE v2.7
+ * ============================================================ */
+
+.fakemon-studio__backup-actions {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 6px;
+}
+
+
+.poke5e-fakemon-studio
+.fakemon-studio__backup-actions
+button {
+  min-width: 0;
+  min-height: 27px;
+
+  padding:
+    3px
+    6px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+}
+
+
+.poke5e-fakemon-studio
+.fakemon-studio__backup-actions
+button:hover:not(:disabled) {
+  color:
+    var(--fakemon-cream);
+}
+
+
+/* ============================================================
+ * BACKUP DIALOG
+ * ============================================================ */
+
+.poke5e-fakemon-backup-dialog {
+  --fakemon-bg: #141a1d;
+  --fakemon-panel: #242d31;
+  --fakemon-border: #566268;
+  --fakemon-border-soft:
+    rgba(233, 225, 189, 0.12);
+  --fakemon-text: #edf0e8;
+  --fakemon-muted: #aeb6b7;
+  --fakemon-cream: #e9e1bd;
+  --fakemon-red: #d75b4e;
+}
+
+
+.poke5e-fakemon-backup-dialog
+.window-content {
+  background:
+    linear-gradient(
+      180deg,
+      var(--fakemon-panel),
+      var(--fakemon-bg)
+    );
+
+  color:
+    var(--fakemon-text);
+}
+
+
+.fakemon-backup-picker,
+.fakemon-backup-confirm {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+  padding:
+    4px
+    2px;
+}
+
+
+.fakemon-backup-picker__intro,
+.fakemon-backup-confirm
+> p {
+  margin: 0;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+
+.fakemon-backup-picker__field {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+
+.fakemon-backup-picker__field
+> span {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 9px;
+  font-weight: 900;
+}
+
+
+.poke5e-fakemon-backup-dialog
+input[type="file"] {
+  width: 100%;
+
+  padding: 6px;
+
+  border:
+    1px solid
+    var(--fakemon-border);
+
+  border-radius: 5px;
+
+  background:
+    #151c20;
+
+  color:
+    var(--fakemon-text);
+
+  font-size: 9px;
+}
+
+
+.poke5e-fakemon-backup-dialog
+input[type="file"]::file-selector-button {
+  margin-right: 8px;
+  padding:
+    4px
+    8px;
+
+  border:
+    1px solid
+    var(--fakemon-border);
+
+  border-radius: 4px;
+
+  background:
+    rgba(255, 255, 255, 0.04);
+
+  color:
+    var(--fakemon-text);
+
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+
+.fakemon-backup-picker__notice {
+  display: grid;
+
+  grid-template-columns:
+    30px
+    minmax(0, 1fr);
+
+  align-items: start;
+
+  gap: 8px;
+
+  padding: 9px;
+
+  border:
+    1px solid
+    var(--fakemon-border-soft);
+
+  border-radius: 6px;
+
+  background:
+    rgba(0, 0, 0, 0.1);
+}
+
+
+.fakemon-backup-picker__notice
+> i {
+  display: grid;
+
+  width: 30px;
+  height: 30px;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(99, 149, 219, 0.08);
+
+  color:
+    #8db2e6;
+}
+
+
+.fakemon-backup-picker__notice
+> div {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+
+.fakemon-backup-picker__notice
+strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 9px;
+}
+
+
+.fakemon-backup-picker__notice
+span {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+
+/* RESTORE SUMMARY */
+
+.fakemon-backup-confirm__summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(0, 1fr)
+    );
+
+  gap: 6px;
+}
+
+
+.fakemon-backup-confirm__summary
+> span {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 2px;
+
+  padding: 8px 5px;
+
+  border:
+    1px solid
+    var(--fakemon-border-soft);
+
+  border-radius: 6px;
+
+  background:
+    rgba(0, 0, 0, 0.1);
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-weight: 800;
+
+  text-align: center;
+}
+
+
+.fakemon-backup-confirm__summary
+strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 14px;
+}
+
+
+.fakemon-backup-confirm
+.fakemon-backup-confirm__warning {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 8px;
+
+  border:
+    1px solid
+    rgba(215, 91, 78, 0.5);
+
+  border-radius: 6px;
+
+  background:
+    rgba(215, 91, 78, 0.055);
+
+  color:
+    #e78379;
+
+  font-size: 8px;
+  font-weight: 900;
+}
+
+
+@media (max-width: 560px) {
+
+  .fakemon-backup-confirm__summary {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+}
+
+/* ============================================================
+ * FAKEMON STUDIO — EVOLUTION UX v2.8
+ * ============================================================ */
+
+.fakemon-studio__evolution-card {
+  align-items: stretch;
+  flex-direction: column;
+
+  gap: 8px;
+
+  padding: 9px;
+}
+
+
+.fakemon-studio__evolution-card-route {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    28px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+
+.fakemon-studio__evolution-route-node {
+  display: grid;
+
+  grid-template-columns:
+    30px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 7px;
+
+  padding: 7px;
+
+  border:
+    1px solid
+    var(--fakemon-border-soft);
+
+  border-radius: 6px;
+
+  background:
+    rgba(0, 0, 0, 0.09);
+}
+
+
+.fakemon-studio__evolution-route-node
+> span {
+  display: grid;
+
+  width: 30px;
+  height: 30px;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(215, 91, 78, 0.08);
+
+  color:
+    var(--fakemon-red);
+}
+
+
+.fakemon-studio__evolution-route-node[
+  data-kind="to"
+]
+> span {
+  background:
+    rgba(141, 121, 221, 0.09);
+
+  color:
+    var(--fakemon-purple);
+}
+
+
+.fakemon-studio__evolution-route-node
+> div {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 1px;
+}
+
+
+.fakemon-studio__evolution-route-node
+small {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 6.5px;
+  font-weight: 900;
+
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+
+.fakemon-studio__evolution-route-node
+strong {
+  overflow: hidden;
+
+  color:
+    var(--fakemon-cream);
+
+  font-size: 9px;
+  font-weight: 900;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__evolution-route-node
+em {
+  overflow: hidden;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 6.5px;
+  font-style: normal;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__evolution-card-arrow {
+  display: grid;
+
+  place-items: center;
+
+  color:
+    var(--fakemon-purple);
+
+  font-size: 11px;
+}
+
+
+.fakemon-studio__evolution-condition-badges {
+  display: flex;
+
+  min-width: 0;
+
+  flex-wrap: wrap;
+
+  gap: 4px;
+}
+
+
+.fakemon-studio__evolution-condition-badge {
+  display: inline-flex;
+
+  align-items: center;
+
+  max-width: 100%;
+
+  gap: 4px;
+
+  min-height: 20px;
+
+  padding:
+    2px
+    6px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.6);
+
+  border-radius: 999px;
+
+  background:
+    rgba(0, 0, 0, 0.11);
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+}
+
+
+.fakemon-studio__evolution-condition-badge
+i {
+  flex: 0 0 auto;
+
+  color:
+    var(--fakemon-purple);
+}
+
+
+.fakemon-studio__evolution-condition-badge
+strong {
+  flex: 0 0 auto;
+
+  color:
+    var(--fakemon-cream);
+
+  font-size: 7px;
+}
+
+
+.fakemon-studio__evolution-condition-badge
+span {
+  min-width: 0;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__evolution-points-badge,
+.fakemon-studio__evolution-readonly {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 4px;
+
+  min-height: 20px;
+
+  padding:
+    2px
+    6px;
+
+  border:
+    1px solid
+    var(--fakemon-border-soft);
+
+  border-radius: 999px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-weight: 900;
+
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__evolution-points-badge
+i {
+  color:
+    #8ed099;
+}
+
+
+.fakemon-studio__evolution-readonly
+i {
+  color:
+    var(--fakemon-muted);
+}
+
+
+.fakemon-studio__evolution-card-meta {
+  justify-content: flex-end;
+
+  flex-wrap: wrap;
+}
+
+
+.fakemon-studio__evolution-card-meta
+.fakemon-studio__evolution-points-badge {
+  margin-right: auto;
+}
+
+
+/* GUIDED CONDITION CARDS */
+
+.fakemon-studio__evolution-condition {
+  display: flex;
+
+  align-items: stretch;
+
+  flex-direction: column;
+
+  gap: 6px;
+
+  padding: 8px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.62);
+
+  border-radius: 7px;
+
+  background:
+    rgba(0, 0, 0, 0.08);
+}
+
+
+.fakemon-studio__evolution-condition-header {
+  display: grid;
+
+  grid-template-columns:
+    28px
+    minmax(0, 1fr)
+    30px;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+
+.fakemon-studio__evolution-condition-icon {
+  display: grid;
+
+  width: 28px;
+  height: 28px;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(141, 121, 221, 0.09);
+
+  color:
+    var(--fakemon-purple);
+
+  font-size: 9px;
+}
+
+
+.fakemon-studio__evolution-condition-header
+select {
+  width: 100%;
+
+  font-weight: 900;
+}
+
+
+.fakemon-studio__evolution-condition-value {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+  padding-left: 34px;
+}
+
+
+.fakemon-studio__evolution-condition-value
+:is(
+  input,
+  select,
+  textarea
+) {
+  width: 100%;
+}
+
+
+.fakemon-studio__evolution-condition-value
+textarea {
+  min-height: 54px;
+}
+
+
+.fakemon-studio__evolution-condition-value
+small {
+  color:
+    var(--fakemon-muted);
+
+  opacity: 0.78;
+
+  font-size: 7px;
+  line-height: 1.3;
+}
+
+
+.fakemon-studio__evolution-condition[
+  data-condition-type="special"
+] {
+  border-color:
+    rgba(141, 121, 221, 0.4);
+
+  background:
+    rgba(141, 121, 221, 0.035);
+}
+
+
+@media (max-width: 820px) {
+
+  .fakemon-studio__evolution-card-route {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .fakemon-studio__evolution-card-arrow {
+    transform:
+      rotate(90deg);
+  }
+
+
+  .fakemon-studio__evolution-condition-value {
+    padding-left: 0;
+  }
+}
+
+/* ============================================================
+ * FAKEMON STUDIO — MOVES & ABILITIES DND v2.8.1a
+ * ============================================================ */
+
+.fakemon-studio__ability-drop-zone {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 7px;
+
+  padding: 5px;
+
+  border:
+    1px dashed
+    transparent;
+
+  border-radius: 7px;
+
+  transition:
+    border-color 120ms ease,
+    background 120ms ease,
+    box-shadow 120ms ease;
+}
+
+
+.fakemon-studio__ability-drop-zone.is-drag-over {
+  border-color:
+    var(--fakemon-red);
+
+  background:
+    rgba(215, 91, 78, 0.065);
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(215, 91, 78, 0.15);
+}
+
+
+.fakemon-studio__ability-list {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+
+/* ============================================================
+ * ABILITY CARD
+ *
+ * Mismo lenguaje visual que la Ability de Pokémon Sheet:
+ *
+ * - imagen 48px
+ * - identidad principal
+ * - nombre destacado
+ * - descripción compacta
+ * ============================================================ */
+
+.fakemon-studio__ability-card {
+  display: grid;
+
+  grid-template-columns:
+    50px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 10px;
+
+  padding: 8px;
+
+  border:
+    2px solid
+    #505b60;
+
+  border-left:
+    5px solid
+    var(--fakemon-red);
+
+  border-radius: 7px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #323b3f,
+      #292f33
+    );
+
+  transition:
+    border-color 120ms ease,
+    transform 80ms ease;
+}
+
+
+.fakemon-studio__ability-card:hover {
+  border-color:
+    var(--fakemon-red);
+
+  transform:
+    translateY(-1px);
+}
+
+
+.fakemon-studio__ability-card
+> img {
+  width: 48px;
+  height: 48px;
+
+  border:
+    2px solid
+    var(--fakemon-border);
+
+  border-radius: 8px;
+
+  background:
+    rgba(255, 255, 255, 0.035);
+
+  object-fit: cover;
+}
+
+
+.fakemon-studio__ability-card-body {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+
+.fakemon-studio__ability-card-heading {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: space-between;
+
+  min-width: 0;
+
+  gap: 8px;
+}
+
+
+.fakemon-studio__ability-card-heading
+> div:first-child {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 1px;
+}
+
+
+.fakemon-studio__ability-card-heading
+strong {
+  overflow: hidden;
+
+  color:
+    var(--fakemon-red);
+
+  font-size: 13px;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__ability-card-heading
+small {
+  overflow: hidden;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__ability-card
+p {
+  margin: 4px 0 0;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+
+.fakemon-studio__ability-card-actions {
+  display: flex;
+
+  flex: 0 0 auto;
+
+  align-items: center;
+
+  gap: 5px;
+}
+
+
+.fakemon-studio__ability-card
+.fakemon-studio__hidden-ability-toggle {
+  min-height: 26px;
+
+  padding:
+    3px
+    6px;
+
+  white-space: nowrap;
+}
+
+
+/* ============================================================
+ * MANUAL / UNRESOLVED
+ * ============================================================ */
+
+.fakemon-studio__ability-card--unresolved {
+  grid-template-columns:
+    40px
+    minmax(0, 1fr)
+    auto;
+
+  border-left-color:
+    var(--fakemon-border);
+}
+
+
+.fakemon-studio__ability-card-placeholder {
+  display: grid;
+
+  width: 38px;
+  height: 38px;
+
+  place-items: center;
+
+  border:
+    1px solid
+    var(--fakemon-border);
+
+  border-radius: 7px;
+
+  background:
+    rgba(255, 255, 255, 0.025);
+
+  color:
+    var(--fakemon-muted);
+}
+
+
+/* ============================================================
+ * EMPTY
+ * ============================================================ */
+
+.fakemon-studio__ability-empty {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 58px;
+
+  gap: 6px;
+
+  padding: 10px;
+
+  border:
+    1px dashed
+    var(--fakemon-border);
+
+  border-radius: 6px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+  font-weight: 700;
+}
+
+
+.fakemon-studio__ability-empty
+i {
+  color:
+    var(--fakemon-red);
+}
+
+
+/* ============================================================
+ * DROP HINT
+ * ============================================================ */
+
+.fakemon-studio__catalog-drop-hint {
+  display: grid;
+
+  grid-template-columns:
+    30px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 8px;
+
+  min-height: 46px;
+
+  padding: 7px 9px;
+
+  border:
+    1px dashed
+    rgba(215, 91, 78, 0.38);
+
+  border-radius: 6px;
+
+  background:
+    rgba(215, 91, 78, 0.025);
+}
+
+
+.fakemon-studio__catalog-drop-hint
+> i {
+  display: grid;
+
+  width: 30px;
+  height: 30px;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(215, 91, 78, 0.08);
+
+  color:
+    var(--fakemon-red);
+}
+
+
+.fakemon-studio__catalog-drop-hint
+> div {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+
+.fakemon-studio__catalog-drop-hint
+strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 8px;
+  font-weight: 900;
+}
+
+
+.fakemon-studio__catalog-drop-hint
+span {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  line-height: 1.3;
+}
+
+
+.fakemon-studio__ability-drop-zone.is-drag-over
+.fakemon-studio__catalog-drop-hint {
+  border-style: solid;
+
+  border-color:
+    var(--fakemon-red);
+
+  background:
+    rgba(215, 91, 78, 0.09);
+}
+
+
+@media (max-width: 820px) {
+
+  .fakemon-studio__ability-card-heading {
+    flex-direction: column;
+  }
+
+
+  .fakemon-studio__ability-card-actions {
+    width: 100%;
+
+    justify-content: flex-start;
+  }
+
+
+  .fakemon-studio__ability-card--unresolved {
+    grid-template-columns:
+      38px
+      minmax(0, 1fr);
+  }
+
+
+  .fakemon-studio__ability-card--unresolved
+  .fakemon-studio__ability-card-actions {
+    grid-column:
+      1 / -1;
+  }
+}
+
+/* ============================================================
+ * FAKEMON STUDIO — MOVE CARDS & DND v2.8.1b
+ * ============================================================ */
+
+.fakemon-studio__moves-card-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+
+.fakemon-studio__move-drop-zone {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 7px;
+
+  padding: 5px;
+
+  border:
+    1px dashed
+    transparent;
+
+  border-radius: 7px;
+
+  transition:
+    border-color 120ms ease,
+    background 120ms ease,
+    box-shadow 120ms ease;
+}
+
+
+.fakemon-studio__move-drop-zone.is-drag-over {
+  border-color:
+    var(--fakemon-red);
+
+  background:
+    rgba(215, 91, 78, 0.065);
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(215, 91, 78, 0.15);
+}
+
+
+.fakemon-studio__move-drop-zone.is-drag-over
+.fakemon-studio__catalog-drop-hint {
+  border-style: solid;
+
+  border-color:
+    var(--fakemon-red);
+
+  background:
+    rgba(215, 91, 78, 0.09);
+}
+
+
+.fakemon-studio__move-list {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+
+.fakemon-studio__move-card {
+  --fakemon-move-type-color:
+    #8c969b;
+
+  display: grid;
+
+  grid-template-columns:
+    38px
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 8px;
+
+  padding:
+    6px
+    7px;
+
+  border:
+    1px solid
+    #505b60;
+
+  border-left:
+    4px solid
+    var(--fakemon-move-type-color);
+
+  border-radius: 6px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #323b3f,
+      #292f33
+    );
+
+  transition:
+    border-color 120ms ease,
+    transform 80ms ease;
+}
+
+
+.fakemon-studio__move-card:hover {
+  border-color:
+    var(--fakemon-move-type-color);
+
+  transform:
+    translateY(-1px);
+}
+
+
+.fakemon-studio__move-card
+> img {
+  width: 36px;
+  height: 36px;
+
+  border:
+    2px solid
+    rgba(0, 0, 0, 0.18);
+
+  border-radius: 6px;
+
+  background:
+    rgba(255, 255, 255, 0.035);
+
+  object-fit: cover;
+}
+
+
+.fakemon-studio__move-card-body {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+
+.fakemon-studio__move-card-heading {
+  display: flex;
+
+  min-width: 0;
+
+  align-items: baseline;
+
+  gap: 6px;
+}
+
+
+.fakemon-studio__move-card-heading
+strong {
+  overflow: hidden;
+
+  color:
+    var(--fakemon-cream);
+
+  font-size: 11px;
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__move-card-heading
+small {
+  overflow: hidden;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-weight: 700;
+
+  opacity: 0.72;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-studio__move-card-meta {
+  display: flex;
+
+  min-width: 0;
+
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 5px;
+}
+
+
+.fakemon-studio__move-type-badge,
+.fakemon-studio__move-pp,
+.fakemon-studio__move-power {
+  display: inline-flex;
+
+  align-items: center;
+
+  min-height: 19px;
+
+  border-radius: 999px;
+}
+
+
+.fakemon-studio__move-type-badge {
+  padding:
+    2px
+    6px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--fakemon-move-type-color)
+      48%,
+      transparent
+    );
+
+  background:
+    color-mix(
+      in srgb,
+      var(--fakemon-move-type-color)
+      10%,
+      transparent
+    );
+
+  color:
+    var(--fakemon-move-type-color);
+
+  font-size: 7px;
+  font-weight: 900;
+
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+
+.fakemon-studio__move-pp {
+  gap: 3px;
+
+  padding:
+    2px
+    6px;
+
+  border:
+    1px solid
+    var(--fakemon-border-soft);
+
+  background:
+    rgba(0, 0, 0, 0.12);
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-weight: 800;
+}
+
+
+.fakemon-studio__move-pp
+strong {
+  color:
+    var(--fakemon-text);
+
+  font-size: 8px;
+  font-weight: 900;
+}
+
+
+.fakemon-studio__move-power {
+  gap: 4px;
+
+  padding:
+    2px
+    5px;
+
+  border:
+    1px solid
+    rgba(199, 175, 115, 0.26);
+
+  background:
+    rgba(199, 175, 115, 0.055);
+
+  color:
+    var(--fakemon-muted);
+}
+
+
+.fakemon-studio__move-power-label {
+  color:
+    var(--fakemon-cream);
+
+  opacity: 0.58;
+
+  font-size: 6px;
+  font-weight: 900;
+
+  letter-spacing: 0.055em;
+  line-height: 1;
+
+  text-transform: uppercase;
+}
+
+
+.fakemon-studio__move-power-values {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 2px;
+}
+
+
+.fakemon-studio__move-power-ability {
+  --fakemon-move-ability-color:
+    var(--fakemon-cream);
+
+  display: inline-flex;
+
+  min-width: 24px;
+  min-height: 14px;
+
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    1px
+    4px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--fakemon-move-ability-color)
+      35%,
+      transparent
+    );
+
+  border-radius: 999px;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--fakemon-move-ability-color)
+      9%,
+      transparent
+    );
+
+  color:
+    var(--fakemon-move-ability-color);
+
+  font-size: 7px;
+  font-weight: 900;
+
+  letter-spacing: 0.025em;
+  line-height: 1;
+}
+
+
+.fakemon-studio__move-power-ability[
+  data-ability="str"
+] {
+  --fakemon-move-ability-color:
+    #d97268;
+}
+
+
+.fakemon-studio__move-power-ability[
+  data-ability="dex"
+] {
+  --fakemon-move-ability-color:
+    #78a8e8;
+}
+
+
+.fakemon-studio__move-power-ability[
+  data-ability="con"
+] {
+  --fakemon-move-ability-color:
+    #78bd80;
+}
+
+
+.fakemon-studio__move-power-ability[
+  data-ability="int"
+] {
+  --fakemon-move-ability-color:
+    #a58adb;
+}
+
+
+.fakemon-studio__move-power-ability[
+  data-ability="wis"
+] {
+  --fakemon-move-ability-color:
+    #d1b865;
+}
+
+
+.fakemon-studio__move-power-ability[
+  data-ability="cha"
+] {
+  --fakemon-move-ability-color:
+    #d98aaf;
+}
+
+
+.fakemon-studio__move-card-controls {
+  display: flex;
+
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 6px;
+}
+
+
+.fakemon-studio__move-card-controls--tm {
+  align-items: flex-end;
+}
+
+
+.fakemon-studio__move-level-control,
+.fakemon-studio__move-tm-control {
+  display: flex;
+
+  align-items: center;
+
+  gap: 4px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-weight: 900;
+}
+
+
+.fakemon-studio__move-tm-control {
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  gap: 2px;
+}
+
+
+.poke5e-fakemon-studio
+.fakemon-studio__move-level-control
+input {
+  width: 46px;
+  height: 26px;
+
+  padding:
+    2px
+    4px;
+
+  text-align: center;
+}
+
+
+.poke5e-fakemon-studio
+.fakemon-studio__move-tm-control
+input {
+  height: 26px;
+
+  padding:
+    2px
+    5px;
+
+  text-align: center;
+}
+
+
+.poke5e-fakemon-studio
+.fakemon-studio__move-tm-control
+.fakemon-studio__tm-number {
+  width: 56px;
+}
+
+
+.poke5e-fakemon-studio
+.fakemon-studio__move-tm-control
+.fakemon-studio__tm-cost {
+  width: 78px;
+}
+
+
+.fakemon-studio__move-card-placeholder {
+  display: grid;
+
+  width: 36px;
+  height: 36px;
+
+  place-items: center;
+
+  border:
+    1px dashed
+    var(--fakemon-border);
+
+  border-radius: 6px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 13px;
+}
+
+
+.fakemon-studio__move-card--unresolved {
+  border-left-color:
+    var(--fakemon-muted);
+}
+
+
+.fakemon-studio__move-card--unresolved
+.fakemon-studio__reference-cell {
+  min-width: 0;
+}
+
+
+.fakemon-studio__move-empty {
+  display: flex;
+
+  min-height: 54px;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 10px;
+
+  border:
+    1px dashed
+    var(--fakemon-border);
+
+  border-radius: 6px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+  font-weight: 700;
+}
+
+
+.fakemon-studio__move-empty
+i {
+  color:
+    var(--fakemon-red);
+}
+
+
+@media (max-width: 920px) {
+
+  .fakemon-studio__move-card {
+    grid-template-columns:
+      38px
+      minmax(0, 1fr);
+  }
+
+
+  .fakemon-studio__move-card-controls {
+    grid-column:
+      1 / -1;
+
+    justify-content: flex-start;
+
+    padding-left: 46px;
+  }
+}
+
+
+@media (max-width: 820px) {
+
+  .fakemon-studio__moves-card-header-actions,
+  .fakemon-studio__move-card-controls--tm {
+    flex-wrap: wrap;
+  }
+}
+
+/* ============================================================
+ * FAKEMON STUDIO — COMPACT MOVES LAYOUT v2.8.1c
+ * ============================================================ */
+
+
+/* ============================================================
+ * GENERAL DENSITY
+ * ============================================================ */
+
+.fakemon-studio__panel--moves {
+  gap: 8px;
+}
+
+
+.fakemon-studio__moves-card {
+  padding: 8px;
+}
+
+
+.fakemon-studio__moves-card-header {
+  min-height: 27px;
+
+  margin-bottom: 6px;
+}
+
+
+.fakemon-studio__moves-card-header-actions {
+  min-width: 0;
+}
+
+
+/* ============================================================
+ * RESOLVED MOVE CARDS
+ *
+ * El ID canónico no forma parte del lenguaje visual habitual
+ * de la Pokémon Sheet.
+ *
+ * Los Moves sin resolver mantienen su input manual.
+ * ============================================================ */
+
+.fakemon-studio__move-card:not(
+  .fakemon-studio__move-card--unresolved
+)
+.fakemon-studio__move-card-heading
+small {
+  display: none;
+}
+
+
+/* ============================================================
+ * COMPACT CARD
+ * ============================================================ */
+
+.fakemon-studio__move-card {
+  grid-template-columns:
+    34px
+    minmax(0, 1fr)
+    auto;
+
+  gap: 6px;
+
+  padding:
+    5px
+    6px;
+}
+
+
+.fakemon-studio__move-card
+> img {
+  width: 32px;
+  height: 32px;
+
+  border-radius: 5px;
+}
+
+
+.fakemon-studio__move-card-body {
+  gap: 3px;
+}
+
+
+.fakemon-studio__move-card-heading
+strong {
+  font-size: 10px;
+}
+
+
+.fakemon-studio__move-card-meta {
+  gap: 4px;
+}
+
+
+.fakemon-studio__move-type-badge,
+.fakemon-studio__move-pp,
+.fakemon-studio__move-power {
+  min-height: 17px;
+}
+
+
+.fakemon-studio__move-type-badge {
+  padding:
+    1px
+    5px;
+
+  font-size: 6.5px;
+}
+
+
+.fakemon-studio__move-pp {
+  padding:
+    1px
+    5px;
+}
+
+
+.fakemon-studio__move-power {
+  padding:
+    1px
+    4px;
+}
+
+
+.fakemon-studio__move-power-ability {
+  min-width: 22px;
+  min-height: 13px;
+
+  padding:
+    1px
+    3px;
+
+  font-size: 6.5px;
+}
+
+
+/* ============================================================
+ * EGG MOVES
+ *
+ * Están dentro de una columna de 50%, así que usamos una sola
+ * columna pero con Cards mucho más compactas.
+ * ============================================================ */
+
+.fakemon-studio__move-drop-zone[
+  data-fakemon-drop-zone="egg-move"
+]
+.fakemon-studio__move-list {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr);
+
+  gap: 5px;
+}
+
+
+.fakemon-studio__move-drop-zone[
+  data-fakemon-drop-zone="egg-move"
+]
+.fakemon-studio__move-card {
+  grid-template-columns:
+    32px
+    minmax(0, 1fr)
+    30px;
+
+  min-height: 44px;
+
+  padding:
+    4px
+    5px;
+}
+
+
+.fakemon-studio__move-drop-zone[
+  data-fakemon-drop-zone="egg-move"
+]
+.fakemon-studio__move-card
+> img {
+  width: 30px;
+  height: 30px;
+}
+
+
+/* ============================================================
+ * LEVEL LEARNSET
+ *
+ * El panel utiliza todo el ancho, así que aprovechamos dos
+ * columnas.
+ * ============================================================ */
+
+.fakemon-studio__move-drop-zone[
+  data-fakemon-drop-zone="level-move"
+]
+.fakemon-studio__move-list {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  align-items: start;
+
+  gap: 6px;
+}
+
+
+.fakemon-studio__move-drop-zone[
+  data-fakemon-drop-zone="level-move"
+]
+.fakemon-studio__move-card {
+  min-height: 48px;
+}
+
+
+.fakemon-studio__move-level-control {
+  gap: 3px;
+}
+
+
+.poke5e-fakemon-studio
+.fakemon-studio__move-level-control
+input {
+  width: 42px;
+  height: 25px;
+
+  padding:
+    1px
+    3px;
+}
+
+
+/* ============================================================
+ * TECHNICAL MACHINES
+ *
+ * También usamos dos columnas, pero TM # y Coste bajan a una
+ * fila de controles propia para no aplastar el nombre del Move.
+ * ============================================================ */
+
+.fakemon-studio__move-drop-zone[
+  data-fakemon-drop-zone="tm"
+]
+.fakemon-studio__move-list {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  align-items: start;
+
+  gap: 6px;
+}
+
+
+.fakemon-studio__move-drop-zone[
+  data-fakemon-drop-zone="tm"
+]
+.fakemon-studio__move-card {
+  grid-template-columns:
+    34px
+    minmax(0, 1fr);
+}
+
+
+.fakemon-studio__move-drop-zone[
+  data-fakemon-drop-zone="tm"
+]
+.fakemon-studio__move-card-controls {
+  grid-column:
+    1 / -1;
+
+  justify-content: flex-end;
+
+  gap: 5px;
+
+  padding-left: 40px;
+}
+
+
+.fakemon-studio__move-drop-zone[
+  data-fakemon-drop-zone="tm"
+]
+.fakemon-studio__move-tm-control {
+  flex-direction: row;
+
+  align-items: center;
+
+  gap: 3px;
+}
+
+
+.poke5e-fakemon-studio
+.fakemon-studio__move-drop-zone[
+  data-fakemon-drop-zone="tm"
+]
+.fakemon-studio__tm-number {
+  width: 48px;
+}
+
+
+.poke5e-fakemon-studio
+.fakemon-studio__move-drop-zone[
+  data-fakemon-drop-zone="tm"
+]
+.fakemon-studio__tm-cost {
+  width: 68px;
+}
+
+
+/* ============================================================
+ * DROP TARGETS
+ *
+ * Menos altura cuando no estamos arrastrando.
+ * ============================================================ */
+
+.fakemon-studio__move-drop-zone
+.fakemon-studio__catalog-drop-hint {
+  min-height: 36px;
+
+  grid-template-columns:
+    25px
+    minmax(0, 1fr);
+
+  gap: 6px;
+
+  padding:
+    5px
+    7px;
+}
+
+
+.fakemon-studio__move-drop-zone
+.fakemon-studio__catalog-drop-hint
+> i {
+  width: 25px;
+  height: 25px;
+
+  font-size: 8px;
+}
+
+
+.fakemon-studio__move-drop-zone
+.fakemon-studio__catalog-drop-hint
+strong {
+  font-size: 7.5px;
+}
+
+
+.fakemon-studio__move-drop-zone
+.fakemon-studio__catalog-drop-hint
+span {
+  font-size: 6.5px;
+}
+
+
+/* ============================================================
+ * ABILITY / EGG BALANCE
+ * ============================================================ */
+
+.fakemon-studio__moves-top-grid
+> .fakemon-studio__moves-card {
+  align-self: start;
+
+  width: 100%;
+
+  box-sizing:
+    border-box;
+}
+
+
+/* ============================================================
+ * RESPONSIVE
+ * ============================================================ */
+
+@media (max-width: 1050px) {
+
+  .fakemon-studio__move-drop-zone[
+    data-fakemon-drop-zone="level-move"
+  ]
+  .fakemon-studio__move-list,
+  .fakemon-studio__move-drop-zone[
+    data-fakemon-drop-zone="tm"
+  ]
+  .fakemon-studio__move-list {
+    grid-template-columns:
+      1fr;
+  }
+}
+
+
+@media (max-width: 820px) {
+
+  .fakemon-studio__move-drop-zone[
+    data-fakemon-drop-zone="tm"
+  ]
+  .fakemon-studio__move-card-controls {
+    padding-left: 0;
+
+    justify-content:
+      flex-start;
+  }
+}
+
+/* ============================================================
+ * FAKEMON STUDIO — DESIGN WIZARD v3.0.1
+ * ============================================================ */
+
+.poke5e-fakemon-studio
+.fakemon-studio__wizard-launch {
+  grid-column:
+    1 / -1;
+
+  border-color:
+    rgba(141, 121, 221, 0.56);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(141, 121, 221, 0.15),
+      rgba(141, 121, 221, 0.055)
+    );
+
+  color:
+    #c2b8f2;
+}
+
+
+.poke5e-fakemon-studio
+.fakemon-studio__wizard-launch:hover:not(:disabled) {
+  border-color:
+    var(--fakemon-purple);
+
+  background:
+    rgba(141, 121, 221, 0.16);
+
+  color:
+    #d7d0fa;
+}
+
+.poke5e-fakemon-wizard-dialog {
+  --fakemon-bg: #141a1d;
+  --fakemon-panel: #242d31;
+  --fakemon-border: #566268;
+  --fakemon-border-soft:
+    rgba(233, 225, 189, 0.12);
+  --fakemon-text: #edf0e8;
+  --fakemon-muted: #aeb6b7;
+  --fakemon-cream: #e9e1bd;
+  --fakemon-red: #d75b4e;
+  --fakemon-purple: #8d79dd;
+}
+
+
+.poke5e-fakemon-wizard-dialog
+.window-content {
+  background:
+    radial-gradient(
+      circle at 92% 4%,
+      rgba(141, 121, 221, 0.10),
+      transparent 240px
+    ),
+    linear-gradient(
+      180deg,
+      var(--fakemon-panel),
+      var(--fakemon-bg)
+    );
+
+  color:
+    var(--fakemon-text);
+}
+
+
+.fakemon-wizard {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 12px;
+
+  padding:
+    3px 2px;
+
+  font-family:
+    "Trebuchet MS",
+    system-ui,
+    sans-serif;
+}
+
+
+.fakemon-wizard__progress {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  padding-bottom: 8px;
+
+  border-bottom:
+    1px solid
+    var(--fakemon-border-soft);
+}
+
+
+.fakemon-wizard__progress
+> span {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+  font-weight: 900;
+
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+
+.fakemon-wizard__progress
+> div {
+  display: flex;
+
+  gap: 4px;
+}
+
+
+.fakemon-wizard__progress
+i {
+  display: block;
+
+  width: 28px;
+  height: 4px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(86, 98, 104, 0.52);
+}
+
+
+.fakemon-wizard__progress
+i.is-active {
+  background:
+    var(--fakemon-purple);
+}
+
+
+.fakemon-wizard__intro {
+  display: grid;
+
+  grid-template-columns:
+    38px
+    minmax(0, 1fr);
+
+  align-items: start;
+
+  gap: 9px;
+
+  padding: 10px;
+
+  border:
+    1px solid
+    rgba(141, 121, 221, 0.35);
+
+  border-radius: 7px;
+
+  background:
+    rgba(141, 121, 221, 0.045);
+}
+
+
+.fakemon-wizard__intro
+> i {
+  display: grid;
+
+  width: 38px;
+  height: 38px;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(141, 121, 221, 0.10);
+
+  color:
+    var(--fakemon-purple);
+
+  font-size: 14px;
+}
+
+
+.fakemon-wizard__intro
+> div {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+
+.fakemon-wizard__intro
+strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 11px;
+}
+
+
+.fakemon-wizard__intro
+span {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+
+.fakemon-wizard__form-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 9px;
+}
+
+
+.fakemon-wizard__field {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+
+.fakemon-wizard__field--wide {
+  grid-column:
+    1 / -1;
+}
+
+
+.fakemon-wizard__field
+> span {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 8px;
+  font-weight: 900;
+}
+
+
+.fakemon-wizard__field
+small {
+  color:
+    var(--fakemon-muted);
+
+  opacity: 0.75;
+
+  font-size: 7px;
+  line-height: 1.35;
+}
+
+
+.poke5e-fakemon-wizard-dialog
+:is(
+  input[type="text"],
+  select
+) {
+  width: 100%;
+  height: 32px;
+
+  padding:
+    4px 8px;
+
+  border:
+    1px solid
+    var(--fakemon-border);
+
+  border-radius: 5px;
+
+  outline: 0;
+
+  background:
+    #151c20;
+
+  color:
+    var(--fakemon-text);
+
+  font-family: inherit;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+.poke5e-fakemon-wizard-dialog
+:is(
+  input[type="text"],
+  select
+):focus {
+  border-color:
+    var(--fakemon-purple);
+
+  box-shadow:
+    0 0 0 1px
+    rgba(141, 121, 221, 0.24);
+}
+
+
+.fakemon-wizard__archetype-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 7px;
+}
+
+
+.fakemon-wizard__archetype-choice {
+  display: grid;
+
+  grid-template-columns:
+    18px
+    minmax(0, 1fr);
+
+  align-items: start;
+
+  gap: 7px;
+
+  min-height: 62px;
+
+  padding: 8px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.55);
+
+  border-radius: 6px;
+
+  background:
+    rgba(0, 0, 0, 0.08);
+
+  cursor: pointer;
+}
+
+
+.fakemon-wizard__archetype-choice:hover,
+.fakemon-wizard__archetype-choice:has(
+  input:checked
+) {
+  border-color:
+    rgba(141, 121, 221, 0.68);
+
+  background:
+    rgba(141, 121, 221, 0.075);
+}
+
+
+.fakemon-wizard__archetype-choice
+input {
+  margin:
+    3px 0 0;
+
+  accent-color:
+    var(--fakemon-purple);
+}
+
+
+.fakemon-wizard__archetype-choice
+> span {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+
+.fakemon-wizard__archetype-choice
+strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 9px;
+}
+
+
+.fakemon-wizard__archetype-choice
+small {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  line-height: 1.35;
+}
+
+
+.fakemon-wizard__priority-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 8px;
+}
+
+
+.fakemon-wizard__priority-card {
+  display: grid;
+
+  grid-template-columns:
+    30px
+    minmax(0, 1fr)
+    126px;
+
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 7px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.55);
+
+  border-radius: 6px;
+
+  background:
+    rgba(0, 0, 0, 0.08);
+}
+
+
+.fakemon-wizard__priority-card
+> i {
+  display: grid;
+
+  width: 30px;
+  height: 30px;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(215, 91, 78, 0.075);
+
+  color:
+    var(--fakemon-red);
+}
+
+
+.fakemon-wizard__result-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  padding: 10px;
+
+  border:
+    1px solid
+    rgba(141, 121, 221, 0.38);
+
+  border-left:
+    4px solid
+    var(--fakemon-purple);
+
+  border-radius: 7px;
+
+  background:
+    rgba(141, 121, 221, 0.06);
+}
+
+
+.fakemon-wizard__result-header
+h3 {
+  margin: 0;
+
+  color:
+    var(--fakemon-cream);
+
+  font-size: 18px;
+}
+
+
+.fakemon-wizard__confidence {
+  padding:
+    4px 8px;
+
+  border:
+    1px solid
+    var(--fakemon-border);
+
+  border-radius: 999px;
+
+  font-size: 7px;
+  font-weight: 900;
+}
+
+
+.fakemon-wizard__confidence[
+  data-level="high"
+] {
+  border-color:
+    rgba(99, 182, 109, 0.52);
+
+  color:
+    #8ed099;
+}
+
+
+.fakemon-wizard__confidence[
+  data-level="medium"
+] {
+  border-color:
+    rgba(217, 169, 28, 0.55);
+
+  color:
+    #dfc262;
+}
+
+
+.fakemon-wizard__confidence[
+  data-level="low"
+] {
+  border-color:
+    rgba(215, 91, 78, 0.58);
+
+  color:
+    #e78379;
+}
+
+
+.fakemon-wizard__headline-metrics {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+  gap: 7px;
+}
+
+
+.fakemon-wizard__metric {
+  display: grid;
+
+  grid-template-columns:
+    28px
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+
+  gap: 2px 7px;
+
+  padding: 7px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.55);
+
+  border-radius: 6px;
+
+  background:
+    rgba(0, 0, 0, 0.08);
+}
+
+
+.fakemon-wizard__metric
+> i {
+  grid-row:
+    1 / 3;
+
+  display: grid;
+
+  width: 28px;
+  height: 28px;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(215, 91, 78, 0.075);
+
+  color:
+    var(--fakemon-red);
+}
+
+
+.fakemon-wizard__metric
+strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 14px;
+}
+
+
+.fakemon-wizard__attribute-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      6,
+      minmax(0, 1fr)
+    );
+
+  gap: 6px;
+}
+
+
+.fakemon-wizard__attribute {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 2px;
+
+  padding: 7px 4px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.55);
+
+  border-radius: 6px;
+
+  background:
+    rgba(0, 0, 0, 0.08);
+}
+
+
+.fakemon-wizard__attribute
+strong {
+  color:
+    var(--fakemon-purple);
+
+  font-size: 8px;
+}
+
+
+.fakemon-wizard__attribute
+span {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 15px;
+  font-weight: 900;
+}
+
+
+.fakemon-wizard__comparables {
+  padding: 8px;
+
+  border:
+    1px solid
+    var(--fakemon-border-soft);
+
+  border-radius: 7px;
+
+  background:
+    rgba(0, 0, 0, 0.075);
+}
+
+
+.fakemon-wizard__comparable-list {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 5px;
+}
+
+
+.fakemon-wizard__comparable {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 7px;
+
+  padding: 6px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.42);
+
+  border-radius: 5px;
+
+  background:
+    rgba(20, 26, 29, 0.62);
+}
+
+
+.fakemon-wizard__comparable
+> span {
+  color:
+    #8ed099;
+
+  font-size: 9px;
+  font-weight: 900;
+}
+
+
+.fakemon-wizard__method-note {
+  display: grid;
+
+  grid-template-columns:
+    24px
+    minmax(0, 1fr);
+
+  gap: 7px;
+
+  padding: 7px;
+
+  border:
+    1px solid
+    rgba(99, 149, 219, 0.30);
+
+  border-radius: 6px;
+
+  background:
+    rgba(99, 149, 219, 0.045);
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  line-height: 1.4;
+}
+
+
+@media (max-width: 720px) {
+
+  .fakemon-wizard__form-grid,
+  .fakemon-wizard__archetype-grid,
+  .fakemon-wizard__priority-grid,
+  .fakemon-wizard__headline-metrics,
+  .fakemon-wizard__comparable-list {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .fakemon-wizard__attribute-grid {
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(0, 1fr)
+      );
+  }
+}
+
+/* ============================================================
+ * FAKEMON STUDIO — WIZARD CATALOG RECOMMENDATIONS v3.0.2
+ * ============================================================ */
+
+.fakemon-wizard--catalog {
+  max-height:
+    640px;
+
+  padding-right:
+    4px;
+
+  overflow-x:
+    hidden;
+
+  overflow-y:
+    auto;
+
+  scrollbar-gutter:
+    stable;
+}
+
+
+.fakemon-wizard__catalog-columns {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 8px;
+}
+
+
+.fakemon-wizard__recommendation-section {
+  min-width: 0;
+
+  padding: 8px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.55);
+
+  border-radius: 7px;
+
+  background:
+    rgba(0, 0, 0, 0.075);
+}
+
+
+.fakemon-wizard__recommendation-section--wide {
+  width: 100%;
+}
+
+
+.fakemon-wizard__recommendation-section
+> header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  margin-bottom: 7px;
+  padding-bottom: 6px;
+
+  border-bottom:
+    1px solid
+    var(--fakemon-border-soft);
+}
+
+
+.fakemon-wizard__recommendation-section
+> header
+> div {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+
+.fakemon-wizard__recommendation-section
+> header i {
+  color:
+    var(--fakemon-purple);
+}
+
+
+.fakemon-wizard__recommendation-section
+> header strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+
+.fakemon-wizard__recommendation-section
+> header
+> span {
+  display: grid;
+
+  min-width: 22px;
+  height: 22px;
+
+  place-items: center;
+
+  border:
+    1px solid
+    var(--fakemon-border);
+
+  border-radius: 999px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-weight: 900;
+}
+
+
+.fakemon-wizard__recommendation-list {
+  display: grid;
+
+  grid-template-columns:
+    1fr;
+
+  gap: 5px;
+}
+
+
+.fakemon-wizard__recommendation-section--wide
+.fakemon-wizard__recommendation-list {
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+}
+
+
+.fakemon-wizard__recommendation-card {
+  display: grid;
+
+  grid-template-columns:
+    18px
+    minmax(0, 1fr);
+
+  align-items: start;
+
+  min-width: 0;
+
+  gap: 7px;
+
+  padding: 7px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.48);
+
+  border-radius: 6px;
+
+  background:
+    rgba(20, 26, 29, 0.58);
+
+  cursor: pointer;
+
+  transition:
+    border-color 100ms ease,
+    background 100ms ease;
+}
+
+
+.fakemon-wizard__recommendation-card:hover,
+.fakemon-wizard__recommendation-card:has(
+  input:checked
+) {
+  border-color:
+    rgba(141, 121, 221, 0.62);
+
+  background:
+    rgba(141, 121, 221, 0.06);
+}
+
+
+.fakemon-wizard__recommendation-card
+> input {
+  margin:
+    3px 0 0;
+
+  accent-color:
+    var(--fakemon-purple);
+}
+
+
+.fakemon-wizard__recommendation-card-body {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+
+.fakemon-wizard__recommendation-heading {
+  display: flex;
+
+  align-items: center;
+
+  min-width: 0;
+
+  flex-wrap: wrap;
+
+  gap: 4px;
+}
+
+
+.fakemon-wizard__recommendation-heading
+strong {
+  min-width: 0;
+
+  overflow: hidden;
+
+  color:
+    var(--fakemon-cream);
+
+  font-size: 9px;
+  font-weight: 900;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-wizard__recommendation-heading
+em {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 3px;
+
+  padding:
+    1px
+    5px;
+
+  border:
+    1px solid
+    rgba(141, 121, 221, 0.4);
+
+  border-radius: 999px;
+
+  color:
+    #b8acf4;
+
+  font-size: 6.5px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+
+.fakemon-wizard__affinity-score {
+  flex: 0 0 auto;
+
+  margin-left: auto;
+
+  color:
+    #8ed099;
+
+  font-size: 8px;
+  font-weight: 900;
+}
+
+
+.fakemon-wizard__recommendation-card-body
+> small {
+  color:
+    var(--fakemon-muted);
+
+  opacity: 0.8;
+
+  font-size: 6.5px;
+  line-height: 1.35;
+}
+
+
+.fakemon-wizard__move-meta {
+  display: flex;
+
+  align-items: center;
+
+  min-width: 0;
+
+  flex-wrap: wrap;
+
+  gap: 4px;
+}
+
+
+.fakemon-wizard__move-meta
+> span,
+.fakemon-wizard__move-type {
+  display: inline-flex;
+
+  align-items: center;
+
+  min-height: 17px;
+
+  padding:
+    1px
+    5px;
+
+  border:
+    1px solid
+    var(--fakemon-border-soft);
+
+  border-radius: 999px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 6.5px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+
+.fakemon-wizard__move-type {
+  border-color:
+    color-mix(
+      in srgb,
+      var(--wizard-type-color)
+      48%,
+      transparent
+    );
+
+  background:
+    color-mix(
+      in srgb,
+      var(--wizard-type-color)
+      10%,
+      transparent
+    );
+
+  color:
+    var(--wizard-type-color);
+
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+
+.fakemon-wizard__recommendation-empty {
+  padding: 10px;
+
+  border:
+    1px dashed
+    var(--fakemon-border);
+
+  border-radius: 6px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+
+  text-align: center;
+}
+
+
+@media (max-width: 760px) {
+
+  .fakemon-wizard__catalog-columns,
+  .fakemon-wizard__recommendation-section--wide
+  .fakemon-wizard__recommendation-list {
+    grid-template-columns:
+      1fr;
+  }
+}
+
+/* ============================================================
+ * FAKEMON STUDIO — WIZARD REVIEW & EXPLAINABILITY v3.0.3
+ * ============================================================ */
+
+.fakemon-wizard--review {
+  max-height: 650px;
+  padding-right: 4px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+
+.fakemon-wizard__review-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+  padding: 10px;
+
+  border:
+    1px solid
+    rgba(141, 121, 221, 0.42);
+
+  border-left:
+    4px solid
+    var(--fakemon-purple);
+
+  border-radius: 7px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(141, 121, 221, 0.09),
+      rgba(20, 26, 29, 0.76)
+    );
+}
+
+
+.fakemon-wizard__review-header small {
+  display: block;
+
+  color:
+    var(--fakemon-purple);
+
+  font-size: 7px;
+  font-weight: 900;
+
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+
+.fakemon-wizard__review-header h3 {
+  margin: 2px 0;
+
+  color:
+    var(--fakemon-cream);
+
+  font-size: 19px;
+}
+
+
+.fakemon-wizard__review-header
+> div:first-child
+> span {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+  font-weight: 800;
+}
+
+
+.fakemon-wizard__review-status {
+  display: flex;
+
+  align-items: flex-end;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+
+.fakemon-wizard__review-warning-count {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  min-height: 23px;
+
+  padding:
+    3px
+    7px;
+
+  border:
+    1px solid
+    rgba(99, 182, 109, 0.42);
+
+  border-radius: 999px;
+
+  color:
+    #8ed099;
+
+  font-size: 7px;
+  font-weight: 900;
+}
+
+
+.fakemon-wizard__review-warning-count[
+  data-warning="true"
+] {
+  border-color:
+    rgba(217, 169, 28, 0.58);
+
+  color:
+    #dfc262;
+}
+
+
+.fakemon-wizard__review-metrics {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      6,
+      minmax(0, 1fr)
+    );
+
+  gap: 6px;
+}
+
+
+.fakemon-wizard__review-metric {
+  display: grid;
+
+  grid-template-columns:
+    24px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap:
+    1px
+    6px;
+
+  min-width: 0;
+
+  padding: 7px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.52);
+
+  border-radius: 6px;
+
+  background:
+    rgba(0, 0, 0, 0.08);
+}
+
+
+.fakemon-wizard__review-metric
+> i {
+  grid-row:
+    1 / 3;
+
+  display: grid;
+
+  width: 24px;
+  height: 24px;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(141, 121, 221, 0.08);
+
+  color:
+    var(--fakemon-purple);
+
+  font-size: 8px;
+}
+
+
+.fakemon-wizard__review-metric small {
+  overflow: hidden;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 6.5px;
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-wizard__review-metric strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 12px;
+}
+
+
+.fakemon-wizard__review-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  align-items: start;
+
+  gap: 8px;
+}
+
+
+.fakemon-wizard__review-panel,
+.fakemon-wizard__review-checks {
+  min-width: 0;
+
+  padding: 9px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.55);
+
+  border-radius: 7px;
+
+  background:
+    rgba(0, 0, 0, 0.075);
+}
+
+
+.fakemon-wizard__review-panel
+> header,
+.fakemon-wizard__review-checks
+> header {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+
+  border-bottom:
+    1px solid
+    var(--fakemon-border-soft);
+}
+
+
+.fakemon-wizard__review-checks
+> header {
+  justify-content:
+    space-between;
+}
+
+
+.fakemon-wizard__review-checks
+> header
+> div {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+
+.fakemon-wizard__review-panel
+> header i,
+.fakemon-wizard__review-checks
+> header i {
+  color:
+    var(--fakemon-purple);
+}
+
+
+.fakemon-wizard__review-panel
+> header strong,
+.fakemon-wizard__review-checks
+> header strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+
+.fakemon-wizard__review-checks
+> header small,
+.fakemon-wizard__review-copy small,
+.fakemon-wizard__review-attributes small,
+.fakemon-wizard__review-abilities
+> small,
+.fakemon-wizard__review-subsection
+> small {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 6.5px;
+  font-weight: 900;
+
+  text-transform: uppercase;
+}
+
+
+.fakemon-wizard__review-copy,
+.fakemon-wizard__review-attributes,
+.fakemon-wizard__review-learnset-summary {
+  display: grid;
+
+  gap: 5px;
+}
+
+
+.fakemon-wizard__review-copy {
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+}
+
+
+.fakemon-wizard__review-attributes {
+  grid-template-columns:
+    repeat(
+      6,
+      minmax(0, 1fr)
+    );
+
+  margin-top: 7px;
+}
+
+
+.fakemon-wizard__review-learnset-summary {
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(0, 1fr)
+    );
+}
+
+
+.fakemon-wizard__review-copy
+> span,
+.fakemon-wizard__review-attributes
+> span,
+.fakemon-wizard__review-learnset-summary
+> span {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 2px;
+
+  min-height: 38px;
+
+  padding: 5px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.42);
+
+  border-radius: 5px;
+
+  background:
+    rgba(20, 26, 29, 0.52);
+
+  text-align: center;
+}
+
+
+.fakemon-wizard__review-copy strong,
+.fakemon-wizard__review-attributes strong,
+.fakemon-wizard__review-learnset-summary strong {
+  max-width: 100%;
+
+  overflow: hidden;
+
+  color:
+    var(--fakemon-cream);
+
+  font-size: 9px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-wizard__review-learnset-summary strong {
+  font-size: 13px;
+}
+
+
+.fakemon-wizard__review-abilities,
+.fakemon-wizard__review-subsection {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+
+  margin-top: 8px;
+}
+
+
+.fakemon-wizard__review-abilities
+> div,
+.fakemon-wizard__review-chips {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 4px;
+}
+
+
+.fakemon-wizard__review-abilities
+> div
+> span,
+.fakemon-wizard__review-chips
+> span {
+  padding:
+    3px
+    6px;
+
+  border:
+    1px solid
+    rgba(141, 121, 221, 0.38);
+
+  border-radius: 999px;
+
+  background:
+    rgba(141, 121, 221, 0.05);
+
+  color:
+    #c2b8f2;
+
+  font-size: 7px;
+  font-weight: 800;
+}
+
+
+.fakemon-wizard__review-move-list,
+.fakemon-wizard__review-check-list {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 5px;
+}
+
+
+.fakemon-wizard__review-move-list {
+  max-height: 160px;
+
+  overflow-y: auto;
+}
+
+
+.fakemon-wizard__review-move-list
+> span {
+  display: grid;
+
+  grid-template-columns:
+    42px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 5px;
+
+  padding: 4px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.38);
+
+  border-radius: 5px;
+
+  background:
+    rgba(20, 26, 29, 0.46);
+}
+
+
+.fakemon-wizard__review-move-list small {
+  color:
+    var(--fakemon-purple);
+
+  font-size: 6.5px;
+  font-weight: 900;
+}
+
+
+.fakemon-wizard__review-move-list strong {
+  overflow: hidden;
+
+  color:
+    var(--fakemon-text);
+
+  font-size: 7.5px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-wizard__review-check {
+  display: grid;
+
+  grid-template-columns:
+    24px
+    minmax(0, 1fr);
+
+  align-items: start;
+
+  gap: 6px;
+
+  padding: 7px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.48);
+
+  border-left:
+    3px solid
+    rgba(99, 149, 219, 0.58);
+
+  border-radius: 6px;
+
+  background:
+    rgba(20, 26, 29, 0.52);
+}
+
+
+.fakemon-wizard__review-check
+> i {
+  display: grid;
+
+  width: 24px;
+  height: 24px;
+
+  place-items: center;
+
+  color:
+    #8db2e6;
+}
+
+
+.fakemon-wizard__review-check strong {
+  display: block;
+
+  color:
+    var(--fakemon-text);
+
+  font-size: 7.5px;
+
+  line-height: 1.35;
+}
+
+
+.fakemon-wizard__review-check small {
+  display: block;
+
+  margin-top: 2px;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 6.5px;
+  font-weight: 800;
+
+  text-transform: uppercase;
+}
+
+
+.fakemon-wizard__review-check[
+  data-status="warning"
+] {
+  border-left-color:
+    rgba(217, 169, 28, 0.78);
+}
+
+
+.fakemon-wizard__review-check[
+  data-status="warning"
+]
+> i {
+  color:
+    #dfc262;
+}
+
+
+.fakemon-wizard__review-check[
+  data-status="pass"
+] {
+  border-left-color:
+    rgba(99, 182, 109, 0.72);
+}
+
+
+.fakemon-wizard__review-check[
+  data-status="pass"
+]
+> i {
+  color:
+    #8ed099;
+}
+
+
+@media (max-width: 760px) {
+
+  .fakemon-wizard__review-header {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+  }
+
+
+  .fakemon-wizard__review-status {
+    align-items:
+      flex-start;
+  }
+
+
+  .fakemon-wizard__review-metrics {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+
+  .fakemon-wizard__review-grid,
+  .fakemon-wizard__review-check-list,
+  .fakemon-wizard__review-move-list {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .fakemon-wizard__review-attributes {
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(0, 1fr)
+      );
+  }
+}
+
+/* ============================================================
+ * FAKEMON STUDIO — EVOLUTION-AWARE WIZARD v3.1.0 / v3.1.1
+ * ============================================================ */
+
+.fakemon-wizard__mode-grid,
+.fakemon-wizard__evolution-setup-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 8px;
+}
+
+
+.fakemon-wizard__mode-card {
+  display: grid;
+
+  grid-template-columns:
+    34px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 9px;
+
+  min-width: 0;
+
+  padding: 10px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.56);
+
+  border-radius: 7px;
+
+  background:
+    rgba(0, 0, 0, 0.08);
+}
+
+
+.fakemon-wizard__mode-card > i {
+  display: grid;
+
+  width: 34px;
+  height: 34px;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(141, 121, 221, 0.08);
+
+  color:
+    var(--fakemon-purple);
+}
+
+
+.fakemon-wizard__mode-card > div {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+
+.fakemon-wizard__mode-card strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 10px;
+}
+
+
+.fakemon-wizard__mode-card span {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+  line-height: 1.35;
+}
+
+
+.fakemon-wizard__mode-card--evolution {
+  border-color:
+    rgba(141, 121, 221, 0.55);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(141, 121, 221, 0.09),
+      rgba(0, 0, 0, 0.08)
+    );
+}
+
+
+.fakemon-wizard__evolution-profile {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+  padding: 9px;
+
+  border:
+    1px solid
+    rgba(141, 121, 221, 0.48);
+
+  border-radius: 7px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(141, 121, 221, 0.055),
+      rgba(0, 0, 0, 0.075)
+    );
+}
+
+
+.fakemon-wizard__evolution-profile > header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  padding-bottom: 6px;
+
+  border-bottom:
+    1px solid
+    var(--fakemon-border-soft);
+}
+
+
+.fakemon-wizard__evolution-profile > header > div {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+
+.fakemon-wizard__evolution-profile > header i {
+  color:
+    var(--fakemon-purple);
+}
+
+
+.fakemon-wizard__evolution-profile > header strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 9px;
+  font-weight: 900;
+
+  text-transform: uppercase;
+}
+
+
+.fakemon-wizard__evolution-profile > header small {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+}
+
+
+.fakemon-wizard__evolution-profile-summary,
+.fakemon-wizard__review-evolution-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+  gap: 6px;
+}
+
+
+.fakemon-wizard__evolution-profile-summary > span,
+.fakemon-wizard__review-evolution-grid > span {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 2px;
+
+  padding: 6px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.42);
+
+  border-radius: 5px;
+
+  background:
+    rgba(20, 26, 29, 0.52);
+}
+
+
+.fakemon-wizard__evolution-profile-summary small,
+.fakemon-wizard__review-evolution-grid small {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 6.5px;
+  font-weight: 900;
+
+  text-transform: uppercase;
+}
+
+
+.fakemon-wizard__evolution-profile-summary strong,
+.fakemon-wizard__review-evolution-grid strong {
+  overflow: hidden;
+
+  color:
+    var(--fakemon-cream);
+
+  font-size: 9px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.fakemon-wizard__evolution-profile-summary em {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+  font-style: normal;
+}
+
+
+.fakemon-wizard__evolution-delta-table {
+  overflow: hidden;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.48);
+
+  border-radius: 6px;
+}
+
+
+.fakemon-wizard__evolution-delta-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(90px, 1fr)
+    repeat(
+      3,
+      minmax(70px, 0.7fr)
+    );
+
+  align-items: center;
+
+  gap: 6px;
+
+  min-height: 27px;
+
+  padding:
+    4px
+    7px;
+
+  border-bottom:
+    1px solid
+    var(--fakemon-border-soft);
+}
+
+
+.fakemon-wizard__evolution-delta-row:last-child {
+  border-bottom: 0;
+}
+
+
+.fakemon-wizard__evolution-delta-row > :not(:first-child) {
+  text-align: center;
+}
+
+
+.fakemon-wizard__evolution-delta-row strong,
+.fakemon-wizard__evolution-delta-row span {
+  color:
+    var(--fakemon-text);
+
+  font-size: 7.5px;
+}
+
+
+.fakemon-wizard__evolution-delta-row--head {
+  background:
+    rgba(0, 0, 0, 0.16);
+}
+
+
+.fakemon-wizard__evolution-delta-row--head span {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 6.5px;
+  font-weight: 900;
+
+  text-transform: uppercase;
+}
+
+
+.fakemon-wizard__evolution-pairs {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+
+.fakemon-wizard__evolution-pairs > small {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 6.5px;
+  font-weight: 900;
+
+  text-transform: uppercase;
+}
+
+
+.fakemon-wizard__evolution-pair-list {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 5px;
+}
+
+
+.fakemon-wizard__evolution-pair-list > span {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 6px;
+
+  min-width: 0;
+
+  padding:
+    5px
+    6px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.4);
+
+  border-radius: 5px;
+
+  background:
+    rgba(20, 26, 29, 0.46);
+
+  color:
+    var(--fakemon-text);
+
+  font-size: 7px;
+}
+
+
+.fakemon-wizard__evolution-pair-list em {
+  flex: 0 0 auto;
+
+  color:
+    var(--fakemon-purple);
+
+  font-style: normal;
+  font-weight: 900;
+}
+
+
+.fakemon-wizard__review-panel--evolution {
+  border-color:
+    rgba(141, 121, 221, 0.46);
+}
+
+
+.fakemon-wizard__review-evolution-grid {
+  grid-template-columns:
+    repeat(
+      5,
+      minmax(0, 1fr)
+    );
+}
+
+
+@media (max-width: 760px) {
+
+  .fakemon-wizard__mode-grid,
+  .fakemon-wizard__evolution-setup-grid,
+  .fakemon-wizard__evolution-profile-summary,
+  .fakemon-wizard__evolution-pair-list,
+  .fakemon-wizard__review-evolution-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .fakemon-wizard__evolution-delta-row {
+    grid-template-columns:
+      minmax(72px, 1fr)
+      repeat(
+        3,
+        minmax(54px, 0.7fr)
+      );
+  }
+}
+
+/* ============================================================
+ * FAKEMON WIZARD — EVOLUTION RULE v3.1.3
+ * ============================================================ */
+
+.fakemon-wizard__evolution-rule-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 8px;
+}
+
+
+.fakemon-wizard__evolution-rule-note {
+  display: grid;
+
+  grid-template-columns:
+    26px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 8px;
+
+  border:
+    1px solid
+    rgba(141, 121, 221, 0.42);
+
+  border-radius: 6px;
+
+  background:
+    rgba(141, 121, 221, 0.055);
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 8px;
+  line-height: 1.35;
+}
+
+
+.fakemon-wizard__evolution-rule-note > i {
+  color:
+    var(--fakemon-purple);
+
+  text-align: center;
+}
+
+
+.fakemon-wizard__evolution-rule-conditions {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 7px;
+
+  padding: 9px;
+
+  border:
+    1px solid
+    var(--fakemon-border-soft);
+
+  border-radius: 7px;
+
+  background:
+    rgba(0, 0, 0, 0.07);
+}
+
+
+.fakemon-wizard__evolution-rule-conditions > header {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
+
+.fakemon-wizard__evolution-rule-conditions > header > i {
+  color:
+    var(--fakemon-red);
+}
+
+
+.fakemon-wizard__evolution-rule-conditions > header > div {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+}
+
+
+.fakemon-wizard__evolution-rule-conditions > header strong {
+  color:
+    var(--fakemon-cream);
+
+  font-size: 9px;
+}
+
+
+.fakemon-wizard__evolution-rule-conditions > header small {
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+}
+
+
+.fakemon-wizard__evolution-rule-condition-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+
+.fakemon-wizard__evolution-rule-condition {
+  display: grid;
+
+  grid-template-columns:
+    150px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 6px;
+
+  border:
+    1px solid
+    rgba(86, 98, 104, 0.44);
+
+  border-radius: 5px;
+
+  background:
+    rgba(20, 26, 29, 0.48);
+}
+
+
+.fakemon-wizard__evolution-rule-condition > small {
+  grid-column:
+    1 / -1;
+
+  color:
+    var(--fakemon-muted);
+
+  font-size: 7px;
+}
+
+
+@media (max-width: 760px) {
+
+  .fakemon-wizard__evolution-rule-grid,
+  .fakemon-wizard__evolution-rule-condition {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .fakemon-wizard__evolution-rule-condition > small {
+    grid-column:
+      1;
+  }
+}

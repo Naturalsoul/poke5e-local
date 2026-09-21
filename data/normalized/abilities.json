@@ -1,0 +1,3966 @@
+{
+  "schemaVersion": "0.2.0",
+  "generatedAt": "2026-08-14T02:42:41.961Z",
+  "items": [
+    {
+      "id": "adaptability",
+      "deprecated": false,
+      "name": {
+        "en": "Adaptability",
+        "es": "Adaptabilidad"
+      },
+      "description": {
+        "en": "When this Pokémon uses a move of its own type, it may roll the damage twice and choose either total.",
+        "es": "Cuando este Pokémon usa un movimiento de su mismo tipo, puede tirar los dados de daño dos veces y elegir cualquier resultado."
+      }
+    },
+    {
+      "id": "aftermath",
+      "deprecated": false,
+      "name": {
+        "en": "Aftermath",
+        "es": "Detonación"
+      },
+      "description": {
+        "en": "This Pokémon deals damage to an attacker equal to half of the damage received when knocked out by a melee move.",
+        "es": "Este Pokémon inflige daño a un atacante igual a la mitad del daño recibido al ser debilitado por un movimiento cuerpo a cuerpo."
+      }
+    },
+    {
+      "id": "air-lock",
+      "deprecated": false,
+      "name": {
+        "en": "Air Lock",
+        "es": "Esclusa de Aire"
+      },
+      "description": {
+        "en": "While this Pokémon is in battle, weather-related abilities have no effect on the Pokémon that have them.",
+        "es": "Mientras este Pokémon está en combate, habilidades relacionadas con el clima no tienen efecto en los Pokémon que las posean."
+      }
+    },
+    {
+      "id": "air-slash",
+      "deprecated": true,
+      "name": {
+        "en": "Air Slash",
+        "es": "Tajo Aéreo"
+      },
+      "description": {
+        "en": "This Pokémon knows Air Slash as a fifth move. The move is forgotten if it takes any other form.",
+        "es": "Este Pokémon conoce Tajo Aéreo como quinto movimiento. El movimiento se olvida si toma cualquier otra forma."
+      }
+    },
+    {
+      "id": "analytic",
+      "deprecated": false,
+      "name": {
+        "en": "Analytic",
+        "es": "Cálculo Final"
+      },
+      "description": {
+        "en": "After this Pokémon misses an attack, its next attack is done at advantage.",
+        "es": "Después de que este Pokémon falle un ataque, su siguiente ataque tiene ventaja."
+      }
+    },
+    {
+      "id": "anger-point",
+      "deprecated": false,
+      "name": {
+        "en": "Anger Point",
+        "es": "Irascible"
+      },
+      "description": {
+        "en": "After suffering a critical hit, this Pokémon doubles the damage dice for a single move it activates on the following turn.",
+        "es": "Después de sufrir un golpe crítico, este Pokémon duplica los dados de daño para uno de los movimientos que active en el siguiente turno."
+      }
+    },
+    {
+      "id": "anger-shell",
+      "deprecated": false,
+      "name": {
+        "en": "Anger Shell",
+        "es": "Coraza Ira"
+      },
+      "description": {
+        "en": "When this Pokémon's HP drops below half its maximum HP, its AC drops by 2, but its STR and DEX scores each increase by 2, up to a maximum of 22. After a long rest, this Pokémon's AC, STR, and DEX return to their former values.",
+        "es": "Cuando los puntos de golpe de este Pokémon se reducen a la mitad o menos de su salud máxima, su CA disminuye en 2, pero su Fuerza y Destreza aumentan cada uno en 2 hasta un máximo de 22. Después de un descanso largo, su CA, Fuerza y Destreza vuelven a sus valores originales."
+      }
+    },
+    {
+      "id": "anticipation",
+      "deprecated": false,
+      "name": {
+        "en": "Anticipation",
+        "es": "Anticipación"
+      },
+      "description": {
+        "en": "When this Pokémon enters the battle, an opponent must reveal if it has a move that the Pokémon is vulnerable to. The move itself does not have to be revealed, only that there is such a move.",
+        "es": "Cuando este Pokémon entra en combate, un oponente debe revelar si tiene un movimiento al que este Pokémon sea vulnerable. No es necesario revelar el movimiento en sí, solo confirmar su existencia."
+      }
+    },
+    {
+      "id": "arena-trap",
+      "deprecated": false,
+      "name": {
+        "en": "Arena Trap",
+        "es": "Trampa Arena"
+      },
+      "description": {
+        "en": "Grounded creatures within 50 feet of this Pokémon may not flee or switch out, except by item, Move, or ability.",
+        "es": "Las criaturas terrestres a 50 pies o menos de este Pokémon no pueden huir ni ser cambiadas, excepto mediante un objeto, movimiento o habilidad."
+      }
+    },
+    {
+      "id": "armor-tail",
+      "deprecated": false,
+      "name": {
+        "en": "Armor Tail",
+        "es": "Cola Armadura"
+      },
+      "description": {
+        "en": "While this Pokémon is out, hostile Pokémon within sight cannot use moves that require a bonus action to use.",
+        "es": "Mientras este Pokémon está en juego, los Pokémon hostiles que están a la vista no pueden usar movimientos que requieran una acción adicional."
+      }
+    },
+    {
+      "id": "aroma-veil",
+      "deprecated": false,
+      "name": {
+        "en": "Aroma Veil",
+        "es": "Velo Aroma"
+      },
+      "description": {
+        "en": "Any ally within 15 feet of this Pokémon automatically passes any WIS save they are required to make.",
+        "es": "Cualquier aliado a 15 pies o menos de este Pokémon supera automáticamente cualquier tirada de salvación de Sabiduría que deba realizar."
+      }
+    },
+    {
+      "id": "as-one",
+      "deprecated": false,
+      "name": {
+        "en": "As One",
+        "es": "Unidad Ecuestre"
+      },
+      "description": {
+        "en": "Opponents in combat with this Pokémon cannot eat held berries. Upon causing an opponent to faint, this Pokémon may immediately move up to 20ft take another action. This ability cannot be swapped off this Pokémon.",
+        "es": "Los oponentes que estén en combate con este Pokémon no pueden consumir bayas equipadas. Al debilitar a un oponente, este Pokémon puede moverse inmediatamente hasta 20 pies y realizar otra acción. Esta habilidad no puede ser reemplazada."
+      }
+    },
+    {
+      "id": "aura-break",
+      "deprecated": false,
+      "name": {
+        "en": "Aura Break",
+        "es": "Rompeaura"
+      },
+      "description": {
+        "en": "When this Pokémon is in battle, the boost of Fairy Aura and Dark Aura abilities is reversed, Any applicable move type activated within 100 feet deals half damage instead of double.",
+        "es": "Cuando este Pokémon está en combate, invierte el efecto de las habilidades Aura Feérica y Aura Oscura. Los movimientos del tipo afectados que se usen dentro de un radio de 100 pies infligen la mitad del daño en lugar del doble."
+      }
+    },
+    {
+      "id": "bad-dreams",
+      "deprecated": false,
+      "name": {
+        "en": "Bad Dreams",
+        "es": "Mal Sueño"
+      },
+      "description": {
+        "en": "If an opponent in battle with this Pokémon falls asleep, they take an amount of damage equal to this Pokémon's proficiency bonus at the end of each of their turns.",
+        "es": "Si un oponente en combate con este Pokémon se queda dormido, sufre una cantidad de daño igual al bonificador de competencia de este Pokémon al final de cada uno de sus turnos."
+      }
+    },
+    {
+      "id": "ball-fetch",
+      "deprecated": false,
+      "name": {
+        "en": "Ball Fetch",
+        "es": "Recogebolas"
+      },
+      "description": {
+        "en": "This Pokémon has advantage catching or intercepting thrown/falling objects.",
+        "es": "Este Pokémon tiene ventaja atrapando o interceptando objetos lanzados/soltados."
+      }
+    },
+    {
+      "id": "battery",
+      "deprecated": false,
+      "name": {
+        "en": "Battery",
+        "es": "Batería"
+      },
+      "description": {
+        "en": "Allies that activate electric-type moves within 20 feet of this Pokémon double their damage dice.",
+        "es": "Los aliados que activan movimientos de tipo Eléctrico a 20 pies o menos de este Pokémon duplican sus dados de daño."
+      }
+    },
+    {
+      "id": "battle-armor",
+      "deprecated": false,
+      "name": {
+        "en": "Battle Armor",
+        "es": "Armadura Batalla"
+      },
+      "description": {
+        "en": "This Pokémon is immune to extra damage dealt by a Critical Hit.",
+        "es": "Este Pokémon es inmune a daño extra infligido por un golpe crítico."
+      }
+    },
+    {
+      "id": "beads-of-ruin",
+      "deprecated": false,
+      "name": {
+        "en": "Beads of Ruin",
+        "es": "Abalorio Debacle"
+      },
+      "description": {
+        "en": "Creatures within 60ft of this Pokémon which do not have a \"* of Ruin\" ability have -4 Charisma score, to a minimum of 1. This effect does not stack, and the creature's Charisma score is restored upon leaving the area of effect.",
+        "es": "Las criaturas a 60 pies o menos de este Pokémon que no tengan una habilidad \"* Debacle\" sufren -4 a la puntuación de Carisma, hasta un mínimo de 1. Este efecto no se acumula y la puntuación de Constitución de las criaturas se restaura al salir del área de efecto."
+      }
+    },
+    {
+      "id": "beast-boost",
+      "deprecated": false,
+      "name": {
+        "en": "Beast Boost",
+        "es": "Ultra Impulso"
+      },
+      "description": {
+        "en": "Upon causing an opponent to faint, this Pokémon increases the ability scores of its saving throw proficiencies by 2 until the end of combat. This is stackable up to a maximum of +10 to any one ability score.",
+        "es": "Al debilitar a un oponente, este Pokémon incrementa las puntuaciones de característica de sus competencias en tiradas de salvación en 2 hasta el final del combate. Este efecto puede acumularse hasta un máximo de +10 en cada una de las puntuaciones de característica."
+      }
+    },
+    {
+      "id": "berserk",
+      "deprecated": false,
+      "name": {
+        "en": "Berserk",
+        "es": "Cólera"
+      },
+      "description": {
+        "en": "When this Pokémon falls below 25% of its maximum health, all of its attacks are rolled with disadvantage, but deal double their damage. If a move activated requires a saving throw, the target(s) have advantage on the roll.",
+        "es": "Cuando los puntos de golpe de este Pokémon se reducen a 25% o menos de su salud máxima, todos sus ataques se realizan con desventaja, pero infligen el doble de daño. Si un movimiento requiere una tirada de salvación, los objetivos tienen ventaja en esa tirada."
+      }
+    },
+    {
+      "id": "big-pecks",
+      "deprecated": false,
+      "name": {
+        "en": "Big Pecks",
+        "es": "Sacapecho"
+      },
+      "description": {
+        "en": "This Pokémon's AC cannot be reduced by an opponent's moves.",
+        "es": "La CA de este Pokémon no puede ser reducida por movimientos de los oponentes."
+      }
+    },
+    {
+      "id": "blaze",
+      "deprecated": false,
+      "name": {
+        "en": "Blaze",
+        "es": "Mar Llamas"
+      },
+      "description": {
+        "en": "This Pokémon doubles its STAB bonus when it has 25% or less of its maximum health.",
+        "es": "Este Pokémon duplica su bonificador por STAB cuando tiene 25% o menos de su salud máxima."
+      }
+    },
+    {
+      "id": "blizzard",
+      "deprecated": true,
+      "name": {
+        "en": "Blizzard",
+        "es": "Ventisca"
+      },
+      "description": {
+        "en": "This Pokémon knows Blizzard as a fifth move. The move is forgotten if it takes any other form.",
+        "es": "Este Pokémon conoce Ventisca como quinto movimiento. El movimiento se olvida si toma cualquier otra forma."
+      }
+    },
+    {
+      "id": "bulletproof",
+      "deprecated": false,
+      "name": {
+        "en": "Bulletproof",
+        "es": "Antibalas"
+      },
+      "description": {
+        "en": "This Pokémon is immune to damage from moves with Bullet, Ball, or Bomb in their name.",
+        "es": "Este Pokémon es inmune a daño de movimientos con Bala, Balón, Bola, Bomba o Cañón, en su nombre."
+      }
+    },
+    {
+      "id": "cheek-pouch",
+      "deprecated": false,
+      "name": {
+        "en": "Cheek Pouch",
+        "es": "Carrillo"
+      },
+      "description": {
+        "en": "When this Pokémon eats any type of berry, it heals for an additional 10% of its maximum HP (rounded up to the nearest whole number).",
+        "es": "Cuando este Pokémon come cualquier tipo de baya, se cura un 10% adicional de su salud máxima."
+      }
+    },
+    {
+      "id": "chilling-neigh",
+      "deprecated": false,
+      "name": {
+        "en": "Chilling Neigh",
+        "es": "Relincho Blanco"
+      },
+      "description": {
+        "en": "Upon causing an opponent to faint, this Pokémon may immediately move up to 20ft take another action.",
+        "es": "Al debilitar a un oponente, este Pokémon puede moverse inmediatamente hasta 20 pies y realizar otra acción."
+      }
+    },
+    {
+      "id": "chlorophyll",
+      "deprecated": false,
+      "name": {
+        "en": "Chlorophyll",
+        "es": "Clorofila"
+      },
+      "description": {
+        "en": "This Pokémon’s speed is doubled in harsh sunlight.",
+        "es": "La velocidad de movimiento de este Pokémon se duplica bajo sol abrasador."
+      }
+    },
+    {
+      "id": "clear-body",
+      "deprecated": false,
+      "name": {
+        "en": "Clear Body",
+        "es": "Cuerpo Puro"
+      },
+      "description": {
+        "en": "Other Pokémon's moves or abilities cannot lower this Pokémon stats.",
+        "es": "Los movimientos o habilidades de otros Pokémon no pueden reducir las estadísticas de este Pokémon."
+      }
+    },
+    {
+      "id": "cloud-nine",
+      "deprecated": false,
+      "name": {
+        "en": "Cloud Nine",
+        "es": "Aclimatación"
+      },
+      "description": {
+        "en": "While this Pokémon is in battle, weather-related abilities have no effect on the Pokémon that have them.",
+        "es": "Mientras este Pokémon está en combate, habilidades relacionadas con el clima no tienen efecto en los Pokémon que las posean."
+      }
+    },
+    {
+      "id": "color-change",
+      "deprecated": false,
+      "name": {
+        "en": "Color Change",
+        "es": "Cambio Color"
+      },
+      "description": {
+        "en": "When hit by a damaging attack, this Pokémon's type changes to the type that hit it. It takes on the new type's resistances, vulnerabilities, and immunities.",
+        "es": "Después de ser dañado por un ataque, el tipo de este Pokémon cambia al tipo del ataque usado. Toma las resistencias, vulnerabilidades e inmunidades del nuevo tipo."
+      }
+    },
+    {
+      "id": "comatose",
+      "deprecated": false,
+      "name": {
+        "en": "Comatose",
+        "es": "Letargo Perenne"
+      },
+      "description": {
+        "en": "This Pokémon is in a continuous state of drowsiness. It is immune to the sleep condition, but is considered affected by sleep for all moves that require a Pokémon to be asleep to use or activate additional effects (Snore, Sleep Talk, Wake-Up Slap, Dream Eater, etc.)",
+        "es": "Este Pokémon está en un estado continuo de somnolencia. Es inmune a la condición de sueño, pero es considerado como dormido para todos los movimientos que requieran a un Pokémon de estar dormido para usarse o activar efectos secundarios (Ronquido, Sonámbulo, Espabila, Comesueños, etc.)."
+      }
+    },
+    {
+      "id": "commander",
+      "deprecated": false,
+      "name": {
+        "en": "Commander",
+        "es": "Comandar"
+      },
+      "description": {
+        "en": "Once per long rest, this Pokémon may use its action to leap into the mouth of a nearby Dondozo. While in the mouth, this Pokémon may not take actions that target creatures or objects outside of Dondozo's body; additionally, it cannot itself be targeted. While in the mouth, the Dondozo gains proficiency to WIS saves. This Pokémon may use an action to leave Dondozo's mouth, or it is ejected from the mouth at an adjacent space if Dondozo faints.",
+        "es": "Una vez por descanso largo, este Pokémon puede usar su acción para saltar a la boca de un Dondozo cercano. Mientras está en su boca, Este Pokémon no puede tomar acciones que haga objetivo a criaturas u objetos fuera del cuerpo de Dondozo. Además, este Pokémon no puede ser seleccionado. Mientras está en la boca, Dondozo gana competencia en tiradas de salvación de Sabiduría. Este Pokémon puede realizar una acción para salir de la boca de Dondozo, o será expulsado de la boca a un espacio adyacente si Dondozo es debilitado."
+      }
+    },
+    {
+      "id": "competitive",
+      "deprecated": false,
+      "name": {
+        "en": "Competitive",
+        "es": "Tenacidad"
+      },
+      "description": {
+        "en": "This Pokémon adds its proficiency bonus to damage rolls while poisoned, burned, confused, or paralyzed.",
+        "es": "Este Pokémon añade su bonificador por competencia a sus tiradas de daño mientras está envenenado, quemado, confundido o paralizado."
+      }
+    },
+    {
+      "id": "compound-eyes",
+      "deprecated": false,
+      "name": {
+        "en": "Compound Eyes",
+        "es": "Ojo Compuesto"
+      },
+      "description": {
+        "en": "This Pokémon gets an additional +1 to attack rolls.",
+        "es": "Este Pokémon tiene +1 a las tiradas de ataque."
+      }
+    },
+    {
+      "id": "contrary",
+      "deprecated": false,
+      "name": {
+        "en": "Contrary",
+        "es": "Respondón"
+      },
+      "description": {
+        "en": "Moves that affect this Pokémon's stats have the opposite effect. (For example, Defense Curl would lower AC by 4. Growl would increase its attack by +1)",
+        "es": "Los movimientos que afecten a las estadísticas de este Pokémon tienen el efecto opuesto. (Por ejemplo, Rizo defensa reduciría la CA en 4. Gruñido aumentaría su ataque en +1.)"
+      }
+    },
+    {
+      "id": "corrosion",
+      "deprecated": false,
+      "name": {
+        "en": "Corrosion",
+        "es": "Corrosión"
+      },
+      "description": {
+        "en": "This Pokémon's moves ignore the poison immunity of creatures granted by their Pokémon type, and can inflict the poisoned status on poison and steel type creatures. If the target’s secondary type gives it vulnerability or resistance to the damage, it follows the secondary type for that effect.",
+        "es": "Los movimientos de este Pokémon ignoran la inmunidad al tipo veneno de las criaturas que la tengan, y puede envenenar a criaturas del tipo Veneno y Acero. Si el tipo secundario del objetivo le da vulnerabilidad o resistencia al daño, se aplica la interacción correspondiente según el segundo tipo."
+      }
+    },
+    {
+      "id": "costar",
+      "deprecated": false,
+      "name": {
+        "en": "Costar",
+        "es": "Unísono"
+      },
+      "description": {
+        "en": "When this Pokémon is within 5ft of an ally, it has advantage on its attack rolls.",
+        "es": "Cuando este Pokémon está a 5 pies o menos de un aliado, tiene ventaja en tiradas de ataque."
+      }
+    },
+    {
+      "id": "cotton-down",
+      "deprecated": false,
+      "name": {
+        "en": "Cotton Down",
+        "es": "Pelusa"
+      },
+      "description": {
+        "en": "When this Pokémon is damaged, cotton spews everywhere. The area within 10ft of this Pokémon becomes difficult terrain for everything except Grass monotypes until the beginning of its next turn.",
+        "es": "Cuando este Pokémon es dañado, esparce algodón por doquier. El área en un rango de 10 pies de este Pokémon se considera terreno difícil para todas las criaturas excepto las del monotipo Planta hasta el principio de su siguiente turno."
+      }
+    },
+    {
+      "id": "cud-chew",
+      "deprecated": false,
+      "name": {
+        "en": "Cud Chew",
+        "es": "Rumia"
+      },
+      "description": {
+        "en": "After consuming a berry, on the following turn, this Pokémon may consume the berry a second time, thereafter consuming it permanently.",
+        "es": "Después de consumir una baya, en el siguiente turno, este Pokémon puede consumir la baya una segunda vez, esta vez de forma permanente."
+      }
+    },
+    {
+      "id": "curious-medicine",
+      "deprecated": false,
+      "name": {
+        "en": "Curious Medicine",
+        "es": "Medicina Extraña"
+      },
+      "description": {
+        "en": "As a bonus action, this Pokémon can reset changes to the ability scores, AC, and attack modifier of either itself or an ally within 30 ft. This Pokémon may do this a number of times equal to its INT modifier (minimum of once), and it resets on a long rest.",
+        "es": "Como acción adicional, este Pokémon puede reiniciar cambios a las puntuaciones de característica, CA y modificadores de ataque de sí mismo o de un aliado a 30 pies o menos. Este Pokémon puede hacer esto un número de veces igual a su modificador de Inteligencia (como mínimo uno), y se reinicia con un descanso largo."
+      }
+    },
+    {
+      "id": "cursed-body",
+      "deprecated": false,
+      "name": {
+        "en": "Cursed Body",
+        "es": "Cuerpo Maldito"
+      },
+      "description": {
+        "en": "When hit by a melee attack, this Pokémon may roll 1d4. On a result of 4, the opponent who made the attack cannot use the same move on its next turn.",
+        "es": "Tras ser golpeado con un ataque cuerpo a cuerpo, este Pokémon puede tirar un d4. En un resultado de 4, el oponente que hizo el ataque no puede usar el mismo movimiento en su siguiente turno."
+      }
+    },
+    {
+      "id": "cute-charm",
+      "deprecated": false,
+      "name": {
+        "en": "Cute Charm",
+        "es": "Gran Encanto"
+      },
+      "description": {
+        "en": "Once per short rest, you can impose disadvantage on an enemy attack roll of your choice.",
+        "es": "Una vez por descanso corto, puedes imponer desventaja en una tirada de ataque de un enemigo a tu elección."
+      }
+    },
+    {
+      "id": "damp",
+      "deprecated": false,
+      "name": {
+        "en": "Damp",
+        "es": "Humedad"
+      },
+      "description": {
+        "en": "This Pokémon is unaffected by Self Destruct and Explosion moves.",
+        "es": "Este Pokémon no se ve afectado por los movimientos Autodestrucción y Explosión."
+      }
+    },
+    {
+      "id": "dancer",
+      "deprecated": false,
+      "name": {
+        "en": "Dancer",
+        "es": "Pareja de Baile"
+      },
+      "description": {
+        "en": "If any creature within sight of this Pokémon activates a move with Dance in its name, this Pokémon may immediately use one of its moves as a reaction.",
+        "es": "Si cualquier criatura a la vista de este Pokémon activa un movimiento con Danza en su nombre, este Pokémon puede usar inmediatamente uno de sus movimientos como reacción."
+      }
+    },
+    {
+      "id": "dark-aura",
+      "deprecated": false,
+      "name": {
+        "en": "Dark Aura",
+        "es": "Aura Oscura"
+      },
+      "description": {
+        "en": "When this Pokémon is in battle, all dark-type moves by allies or opponents within 100 feet deal double their damage.",
+        "es": "Cuando este Pokémon está en combate, todos los movimientos de tipo Siniestro a 100 pies o menos infligen el doble de daño."
+      }
+    },
+    {
+      "id": "dauntless-shield",
+      "deprecated": false,
+      "name": {
+        "en": "Dauntless Shield",
+        "es": "Escudo Recio"
+      },
+      "description": {
+        "en": "Melee attacks made against this Pokémon have disadvantage.",
+        "es": "Los ataques cuerpo a cuerpo contra este Pokémon tienen desventaja."
+      }
+    },
+    {
+      "id": "dazzling",
+      "deprecated": false,
+      "name": {
+        "en": "Dazzling",
+        "es": "Cuerpo Vívido"
+      },
+      "description": {
+        "en": "Creatures within line of sight of this Pokémon cannot use bonus actions to activate Moves. Moves that would normally have a Move Time of \"1 bonus action\" instead have a Move Time of \"1 action\".",
+        "es": "Las criaturas a la vista de este Pokémon no pueden usar acciones adicionales para activar movimientos. Los movimientos que normalmente tendrían un tiempo de lanzamiento de \"1 acción adicional\" en su lugar tienen un tiempo de lanzamiento de \"1 acción\"."
+      }
+    },
+    {
+      "id": "defeatist",
+      "deprecated": false,
+      "name": {
+        "en": "Defeatist",
+        "es": "Flaqueza"
+      },
+      "description": {
+        "en": "When this Pokémon drops below 25% of its maximum HP, all of its attacks are rolled with disadvantage.",
+        "es": "Cuando los puntos de golpe de este Pokémon se reducen a 25% o menos de su salud máxima, todos sus ataques se realizan con desventaja."
+      }
+    },
+    {
+      "id": "defiant",
+      "deprecated": false,
+      "name": {
+        "en": "Defiant",
+        "es": "Competitivo"
+      },
+      "description": {
+        "en": "While this Pokémon is suffering from a negative status effect or stat change imposed by an opponent, it gains +2 to all attack rolls.",
+        "es": "Mientras este Pokémon sufre de efectos de estado negativos o cambios de estadísticas impuestos por un oponente, gana +2 a todas las tiradas de ataque."
+      }
+    },
+    {
+      "id": "desolate-land",
+      "deprecated": false,
+      "name": {
+        "en": "Desolate Land",
+        "es": "Desolate Land"
+      },
+      "description": {
+        "en": "For as long as this Pokémon is engaged in combat, the weather is Extremely Harsh Sunlight and cannot be changed. Extremely Harsh Sunlight is the same as Harsh Sunlight, with the additional effect that Water-type damage is nullified. If Primordial Sea is also active, then the weather is simultaneously Extremely Harsh Sunlight and Heavy Rain.",
+        "es": "For as long as this Pokémon is engaged in combat, the weather is Extremely Harsh Sunlight and cannot be changed. Extremely Harsh Sunlight is the same as Harsh Sunlight, with the additional effect that Water-type damage is nullified. If Primordial Sea is also active, then the weather is simultaneously Extremely Harsh Sunlight and Heavy Rain."
+      }
+    },
+    {
+      "id": "disguise",
+      "deprecated": false,
+      "name": {
+        "en": "Disguise",
+        "es": "Disfraz"
+      },
+      "description": {
+        "en": "This Pokémon has a disguise which gives it a temporary hp boost equal to twice its level. When the temporary hit points fall to zero, the disguise breaks and requires a short rest to repair.",
+        "es": "Este Pokémon tiene un disfraz que le da puntos de golpe temporales igual al doble de su nivel. Cuando los puntos de golpe temporales bajan a cero, el disfraz se rompe y requiere de un descanso corto para repararse."
+      }
+    },
+    {
+      "id": "download",
+      "deprecated": false,
+      "name": {
+        "en": "Download",
+        "es": "Descarga"
+      },
+      "description": {
+        "en": "Once per short rest, this Pokémon can choose a different damage type for one of their normal attacks.",
+        "es": "Una vez por descanso corto, este Pokémon puede elegir un tipo de daño diferente para uno de sus ataques de tipo Normal."
+      }
+    },
+    {
+      "id": "dragons-maw",
+      "deprecated": false,
+      "name": {
+        "en": "Dragon's Maw",
+        "es": "Mandíbula Dragón"
+      },
+      "description": {
+        "en": "When this Pokémon uses a dragon-type move, it may roll the damage twice and choose either total.",
+        "es": "Cuando este Pokémon usa un movimiento de tipo Dragón, puede lanzar los dados de daño dos veces y elegir cualquier resultado."
+      }
+    },
+    {
+      "id": "drifter",
+      "deprecated": false,
+      "name": {
+        "en": "Drifter",
+        "es": "Deriva"
+      },
+      "description": {
+        "en": "In windy conditions (DM discretion), this Pokémon's flying (hover) speed is doubled until windy conditions cease.",
+        "es": "En condiciones de viento (a discreción del DM), la velocidad de vuelo (flotar) de este Pokémon se duplica hasta que cesen dichas condiciones."
+      }
+    },
+    {
+      "id": "drizzle",
+      "deprecated": false,
+      "name": {
+        "en": "Drizzle",
+        "es": "Llovizna"
+      },
+      "description": {
+        "en": "When this Pokémon enters an outside battle, the weather immediately changes to light rain for 5 rounds. In the case of another Pokémon with a similar weather ability, the tie goes to the Pokémon with the highest DEX score.",
+        "es": "Cuando este Pokémon entra en combate en exteriores, el clima cambia inmediatamente a lluvia ligera durante 5 rondas. En caso de que otro Pokémon tenga una habilidad climática similar, el empate se resuelve a favor del Pokémon con la puntuación de Destreza más alta."
+      }
+    },
+    {
+      "id": "drought",
+      "deprecated": false,
+      "name": {
+        "en": "Drought",
+        "es": "Sequía"
+      },
+      "description": {
+        "en": "When this Pokémon enters an outside battle, the weather immediately changes to bright sunlight for 5 rounds. In the case of another Pokémon with a similar weather ability, the tie goes to the Pokémon with the highest DEX score.",
+        "es": "Cuando este Pokémon entra en combate en exteriores, el clima cambia inmediatamente a sol abrasador durante 5 rondas. En caso de que otro Pokémon tenga una habilidad climática similar, el empate se resuelve a favor del Pokémon con la puntuación de Destreza más alta."
+      }
+    },
+    {
+      "id": "dry-skin",
+      "deprecated": false,
+      "name": {
+        "en": "Dry Skin",
+        "es": "Piel Seca"
+      },
+      "description": {
+        "en": "At the end of each of this Pokémon's turns, it takes an amount of damage equal to its proficiency modifier in harsh sunlight, or heals for the same amount during rain.",
+        "es": "Al final de cada uno de los turnos de este Pokémon, sufre daño igual a su bonificador por competencia en sol abrasador o se cura la misma cantidad durante lluvia."
+      }
+    },
+    {
+      "id": "early-bird",
+      "deprecated": false,
+      "name": {
+        "en": "Early Bird",
+        "es": "Madrugar"
+      },
+      "description": {
+        "en": "This Pokémon has advantage on the D20 roll to wake from the asleep condition.",
+        "es": "Este Pokémon tiene ventaja en tiradas para dejar de estar dormido."
+      }
+    },
+    {
+      "id": "earth-eater",
+      "deprecated": false,
+      "name": {
+        "en": "Earth Eater",
+        "es": "Geofagia"
+      },
+      "description": {
+        "en": "This Pokémon takes no damage from ground-type attacks. Instead, half of any ground damage done is absorbed, restoring the Pokémon's HP.",
+        "es": "Este Pokémon no sufre daño de ataques de tipo Tierra. En su lugar, la mitad de cualquier daño de tierrarecibido es absorbido, recuperando puntos de golpe de este Pokémon."
+      }
+    },
+    {
+      "id": "effect-spore",
+      "deprecated": false,
+      "name": {
+        "en": "Effect Spore",
+        "es": "Efecto Espora"
+      },
+      "description": {
+        "en": "When hit by a melee attack, roll a d4. On a 4, deal an amount of grass damage equal to your proficiency modifier to your attacker.",
+        "es": "Tras ser golpeado con un ataque cuerpo a cuerpo, tira un d4. En un resultado de 4, inflige una cantidad de daño de planta igual a tu bonificador por competencia al atacante."
+      }
+    },
+    {
+      "id": "electric-surge",
+      "deprecated": false,
+      "name": {
+        "en": "Electric Surge",
+        "es": "Electrogénesis"
+      },
+      "description": {
+        "en": "If the move is known, this Pokémon may use the Electric Terrain move as a bonus action.",
+        "es": "Si conoce el movimiento, este Pokémon puede usar Campo Eléctrico como acción adicional."
+      }
+    },
+    {
+      "id": "electromorphosis",
+      "deprecated": false,
+      "name": {
+        "en": "Electromorphosis",
+        "es": "Dinamo"
+      },
+      "description": {
+        "en": "When this Pokémon takes damage, it may double the MOVE damage modifier of its next electric-type move.",
+        "es": "Cuando este Pokémon recibe daño, puede duplicar el Daño de Movimiento de su siguiente movimiento de tipo Eléctrico."
+      }
+    },
+    {
+      "id": "embody-aspect-cornerstone",
+      "deprecated": false,
+      "name": {
+        "en": "Embody Aspect (Cornerstone)",
+        "es": "Evocarrecuerdos (Máscara Cimiento)"
+      },
+      "description": {
+        "en": "This Pokémon automatically gains this ability when Terastallized. This Pokémon's CON score becomes 23, unless it is already higher.",
+        "es": "Este Pokémon gana esta habilidad automáticamente cuando se Teracristaliza. La Constitución de este Pokémon es 23, a no ser que fuera más alta."
+      }
+    },
+    {
+      "id": "embody-aspect-heartflame",
+      "deprecated": false,
+      "name": {
+        "en": "Embody Aspect (Heartflame)",
+        "es": "Evocarrecuerdos (Máscara Horno)"
+      },
+      "description": {
+        "en": "This Pokémon automatically gains this ability when Terastallized. This Pokémon's STR score becomes 23, unless it is already higher.",
+        "es": "Este Pokémon gana esta habilidad automáticamente cuando se Teracristaliza. La Destreza de este Pokémon es 23, a no ser que fuera más alta."
+      }
+    },
+    {
+      "id": "embody-aspect-teal",
+      "deprecated": false,
+      "name": {
+        "en": "Embody Aspect (Teal)",
+        "es": "Evocarrecuerdos (Máscara Turquesa)"
+      },
+      "description": {
+        "en": "This Pokémon automatically gains this ability when Terastallized. This Pokémon's DEX score becomes 23, unless it is already higher.",
+        "es": "Este Pokémon gana esta habilidad automáticamente cuando se Teracristaliza. La Fuerza de este Pokémon es 23, a no ser que fuera más alta."
+      }
+    },
+    {
+      "id": "embody-aspect-wellspring",
+      "deprecated": false,
+      "name": {
+        "en": "Embody Aspect (Wellspring)",
+        "es": "Evocarrecuerdos (Máscara Fuente)"
+      },
+      "description": {
+        "en": "This Pokémon automatically gains this ability when Terastallized. This Pokémon's CHA score becomes 23, unless it is already higher.",
+        "es": "Este Pokémon gana esta habilidad automáticamente cuando se Teracristaliza. El Carisma de este Pokémon es 23, a no ser que fuera más alto."
+      }
+    },
+    {
+      "id": "emergency-exit",
+      "deprecated": false,
+      "name": {
+        "en": "Emergency Exit",
+        "es": "Retirada"
+      },
+      "description": {
+        "en": "At any time this Pokémon is damaged when it is at or below 50% of its maximum HP, its trainer may switch it out as a free action.",
+        "es": "En cualquier momento que este Pokémon sea dañado cuando tiene la mitad o menos de su salud máxima, su entrenador puede tomar la acción de Cambio en este Pokémon gratuita."
+      }
+    },
+    {
+      "id": "fairy-aura",
+      "deprecated": false,
+      "name": {
+        "en": "Fairy Aura",
+        "es": "Aura Feérica"
+      },
+      "description": {
+        "en": "When this Pokémon is in battle, all fairy-type moves within 100 feet of you deal double their damage.",
+        "es": "Cuando este Pokémon está en combate, todos los movimientos de tipo Hada a 100 pies o menos infligen el doble de daño."
+      }
+    },
+    {
+      "id": "filter",
+      "deprecated": false,
+      "name": {
+        "en": "Filter",
+        "es": "Filtro"
+      },
+      "description": {
+        "en": "When hit by a move type this Pokémon is vulnerable to, it may roll a d4. In a result of 4, it does not take the additional damage.",
+        "es": "Cuando este Pokémon es alcanzado por un movimiento de un tipo al que es vulnerable, puede tirar un d4. En un resultado de 4, no recibe el daño adicional de la vulnerabilidad."
+      }
+    },
+    {
+      "id": "flame-body",
+      "deprecated": false,
+      "name": {
+        "en": "Flame Body",
+        "es": "Cuerpo Llama"
+      },
+      "description": {
+        "en": "The flames from this Pokémon's body shine dim light in a 15 ft radius. In addition, when hit by a melee attack, roll a d10. On a 10, the attacker is burned.",
+        "es": "Las llamas del cuerpo de este Pokémon emiten luz tenue en un radio de 15 pies. Además, cuando es golpeado por un ataque cuerpo a cuerpo, tira un d10. En un resultado de 10, el atacante queda quemado."
+      }
+    },
+    {
+      "id": "flare-boost",
+      "deprecated": false,
+      "name": {
+        "en": "Flare Boost",
+        "es": "Ímpetu Ardiente"
+      },
+      "description": {
+        "en": "This Pokémon adds proficiency to its damage rolls while burned.",
+        "es": "Este Pokémon añade su bonificador por competencia a sus tiradas de daño mientras está quemado."
+      }
+    },
+    {
+      "id": "flash-fire",
+      "deprecated": false,
+      "name": {
+        "en": "Flash Fire",
+        "es": "Absorbe Fuego"
+      },
+      "description": {
+        "en": "This Pokémon takes no damage from fire or fire-type attacks. Instead, immediately after taking a hit from a fire-type move, or in open flames, double the STAB bonus on the next fire-type move.",
+        "es": "Este Pokémon no recibe daño de fuego o ataques de tipo Fuego. En su lugar, inmediatamente después de ser golpeado por un movimiento de tipo Fuego o al estar en contacto con llamas, duplica el bonificador de STAB de su siguiente movimiento de tipo fuego."
+      }
+    },
+    {
+      "id": "flower-gift",
+      "deprecated": false,
+      "name": {
+        "en": "Flower Gift",
+        "es": "Don Floral"
+      },
+      "description": {
+        "en": "During harsh sunlight, ally Pokémon within 30 feet of this Pokémon add their proficiency bonus to damage rolls.",
+        "es": "Durante sol abrasador, los Pokémon aliados a 30 pies o menos de este Pokémon añaden su bonificador por competencia a sus tiradas de ataque."
+      }
+    },
+    {
+      "id": "flower-veil",
+      "deprecated": false,
+      "name": {
+        "en": "Flower Veil",
+        "es": "Velo Flor"
+      },
+      "description": {
+        "en": "Any grass-type ally within 15 feet of this Pokémon is immune to new status effects.",
+        "es": "Cualquier aliado de tipo Planta a 15 pies o menos de este Pokémon es inmune a nuevos efectos de estado."
+      }
+    },
+    {
+      "id": "fluffy",
+      "deprecated": false,
+      "name": {
+        "en": "Fluffy",
+        "es": "Peluche"
+      },
+      "description": {
+        "en": "This Pokemon is vulnerable to fire-type moves, but takes half damage from any melee attack (that isn't fire-type).",
+        "es": "Este Pokémon es vulnerable a movimientos de tipo Fuego, pero recibe la mitad de daño de ataques cuerpo a cuerpo (que no sean de tipo Fuego)."
+      }
+    },
+    {
+      "id": "forecast",
+      "deprecated": false,
+      "name": {
+        "en": "Forecast",
+        "es": "Predicción"
+      },
+      "description": {
+        "en": "This Pokémon changes form with the weather. In rain it becomes water-type, in harsh sunlight it becomes fire-type, in cold and snowy conditions it becomes ice-type. In all other conditions it is normal-type. Its STAB, resistance, immunities, and vulnerabilities change to match the form it takes.",
+        "es": "Este Pokémon cambia de forma con el clima. En lluvia pasa a ser tipo Agua, en sol abrasador pasa a ser tipo Fuego, en condiciones frías y nevadas pasa a ser tipo Hielo. En todas las demás condiciones climáticas es tipo Normal. Su bonificador por STAB, resistencias, inmunidades y vulnerabilidades cambian a corde con el tipo actual."
+      }
+    },
+    {
+      "id": "forewarn",
+      "deprecated": false,
+      "name": {
+        "en": "Forewarn",
+        "es": "Alerta"
+      },
+      "description": {
+        "en": "When this Pokémon enters battle, it selects a target to reveal the move it knows with the most damage output. In the case of a tie, the target can choose which move it reveals.",
+        "es": "Cuando este Pokémon entra en combate, elige un objetivo para que revele el movimiento que conoce con más daño. En caso de empate, el objetivo puede elegir qué movimiento revelar."
+      }
+    },
+    {
+      "id": "form-change-arceus",
+      "deprecated": true,
+      "name": {
+        "en": "Form Change (Arceus)",
+        "es": "Cambio de Forma (Arceus)"
+      },
+      "description": {
+        "en": "Arceus' default type is Normal. It can change its type by holding an Elemental Plate. While holding this plate, the signature move, Judgment, also changes its type to match Arceus.",
+        "es": "El tipo por defecto de Arceus es Normal. Puede cambiar su tipo al equiparle una Tabla Elemental. Mientras tenga equipada esta tabla, el movimiento insignia, Sentencia, tambien cambia su tipo para igualar el de Arceus."
+      }
+    },
+    {
+      "id": "form-change-cherrim",
+      "deprecated": true,
+      "name": {
+        "en": "Form Change (Cherrim)",
+        "es": "Cambio de Forma (Cherrim)"
+      },
+      "description": {
+        "en": "Cherrim changes appearance depending on the weather. In strong sunlight, it blossoms into Sunshine Form.",
+        "es": "Cherrim cambia su apariencia dependiendo del clima. En sol abrasador, florece en su Forma Soleada."
+      }
+    },
+    {
+      "id": "form-change-giratina",
+      "deprecated": true,
+      "name": {
+        "en": "Form Change (Giratina)",
+        "es": "Cambio de Forma (Giratina)"
+      },
+      "description": {
+        "en": "Giratina's default form is Altered Forme. When it is given a Griseous Orb to hold, or any time it is in its home plane, the Distortion World, it takes on the Origin Forme.",
+        "es": "La forma por defecto de Giratina es Forma Modificada. Cuando tiene equipada la Griseosfera o mientras esté en su plano natal, el Mundo Distorsión, toma la Forma Origen."
+      }
+    },
+    {
+      "id": "form-change-hoopa",
+      "deprecated": true,
+      "name": {
+        "en": "Form Change (Hoopa)",
+        "es": "Cambio de Forma (Hoopa)"
+      },
+      "description": {
+        "en": "When holding the Prison Bottle, Hoopa Confined changes form to Hoopa Unbound.",
+        "es": "Mientras tiene equipada la Vasija de Castigo, Hoopa Contenido cambia de forma a Hoopa Desatado."
+      }
+    },
+    {
+      "id": "form-change-keldeo",
+      "deprecated": true,
+      "name": {
+        "en": "Form Change (Keldeo)",
+        "es": "Cambio de Forma (Keldeo)"
+      },
+      "description": {
+        "en": "Keldeo's standard form is Ordinary Form. When it learns the move Secret Sword, it changes into Resolute Form as long as the move is in its move list.",
+        "es": "La forma por defecto de Keldeo es Forma Habitual. Cuando aprende el movimiento Espada Santa, cambia a Forma Brío por tanto tiempo como el movimiento esté en su lista de movimientos."
+      }
+    },
+    {
+      "id": "form-change-kyurem",
+      "deprecated": true,
+      "name": {
+        "en": "Form Change (Kyurem)",
+        "es": "Cambio de Forma (Kyurem)"
+      },
+      "description": {
+        "en": "While in the presence of a willing Reshiram or Zekrom, Kyurem can fuse with one of the willing Pokemon, at will, with the help of a DNA Splicer. This process is called Absofusion and will result in a White Kyurem (if fused with Reshiram) or Black Kyurem (if fused with Zekrom).",
+        "es": "Mientras esté en presencia de un Reshiram o Zekrom dispuesto, Kyurem puede fusionarse con uno de ellos a voluntad con la ayuda de una Punta ADN. Este proceso es llamado Absofusión y da como resultado a un Kyurem Blanco (si se fusiona con Reshiram) o un Kyurem Negro (si se fusiona con Zekrom)."
+      }
+    },
+    {
+      "id": "form-change-meloetta",
+      "deprecated": true,
+      "name": {
+        "en": "Form Change (Meloetta)",
+        "es": "Cambio de Forma (Meloetta)"
+      },
+      "description": {
+        "en": "As long as Meloetta is outside of battle, it assumes Aria Forme. When the move Relic Song is used, Meloettta interchanges between Aria Forme and Pirouette Forme.",
+        "es": "Mientras Meloetta esté fuera de combate, asume la Forma Lírica. Cuando usa el movimiento Canto Arcaico, Meloetta alterna entre la Forma Lírica y la Forma Danza."
+      }
+    },
+    {
+      "id": "form-change-necrozma",
+      "deprecated": true,
+      "name": {
+        "en": "Form Change (Necrozma)",
+        "es": "Cambio de Forma (Necrozma)"
+      },
+      "description": {
+        "en": "Necrozma can fuse with a willing Solgaleo, at will, with the help of the N-Solarizer, or Lunala with the help of the N-Lunarizer. The fusion will result in a Dusk Mane Necrozma (if fused with Solgaleo) or Dawn Wings Necrozma (if fused with Lunala) with the same current HP.",
+        "es": "Necrozma puede fusionarse con un Solgaleo dispuesto a voluntad con la ayuda de un Necrosol, o con una Lunala con la ayuda de una Necroluna. La fusión resultará en un Necrozma Melena Crepuscular (si se fusiona con Solgaleo) o en Necrozma Alas del Alba (si se fusiona con Lunala) con los mismos puntos de golpe actuales."
+      }
+    },
+    {
+      "id": "form-change-ogerpon",
+      "deprecated": true,
+      "name": {
+        "en": "Form Change (Ogerpon)",
+        "es": "Cambio de Forma (Ogerpon)"
+      },
+      "description": {
+        "en": "Ogerpon's form changes depending on the type of mask it wears. The four masks it can wear are the Teal Mask (Grass), Wellspring Mask (Water), Heartflame Mask (Fire), and Cornerstone Mask (Rock). Additionally, when terastallized, Ogerpon's type changes to that of its mask, regardless of its Tera Type.",
+        "es": "Las formas de Ogerpon cambian dependiendo del tipo de la máscara que lleve. Las cuatro máscaras que puede llevar son Máscara Turquesa (Planta), Máscara Fuente (Agua), Máscara Horno (Fuego) y Máscara Cimiento (Roca). Además, cuando se teracristaliza, el tipo de Ogerpon cambia al de la máscara, independientemente de su teratipo."
+      }
+    },
+    {
+      "id": "form-change-oricorio",
+      "deprecated": true,
+      "name": {
+        "en": "Form Change (Oricorio)",
+        "es": "Cambio de Forma (Oricorio)"
+      },
+      "description": {
+        "en": "This Pokémon's form can change by giving it a certain kind of Nectar. Red Nectar changes it to Baile Style, Pink Nectar changes it to Pa'u Style, Purple Nectar changes it to Sensu Style, and Yellow Nectar changes it to Pom-Pom Style.",
+        "es": "La forma de este Pokémon puede cambiar usando cierto tipo de Néctar. El Néctar Rojo lo cambia a Estilo Apasionado, el Néctar Rosa lo cambia a Estilo Plácido, el Néctar Violeta lo cambia a Estilo Refinado y el Néctar Amarillo lo cambia a Estilo Animado."
+      }
+    },
+    {
+      "id": "form-change-rotom",
+      "deprecated": true,
+      "name": {
+        "en": "Form Change (Rotom)",
+        "es": "Cambio de Forma (Rotom)"
+      },
+      "description": {
+        "en": "Rotom has 5 alternate forms that it can take when it is near a household appliance. As a bonus action, Rotom can take the Heat Form, Wash Form, Frost Form, Fan Form, or Mow Form, changing its typing and stats. The form is dependent on the type of appliance it possesses (DM Discretion). separate stat blocks are provided for each form.",
+        "es": "Rotom tiene 5 formas alternativas que puede tomar cuando está cerca de electrodomésticos. Como acción adicional, Rotom puede tomar la Forma Calor, Forma Lavado, Forma Frío, Forma Ventilador o Forma Corte, cambiando sus tipos y estadísticas. La forma depende del electrodoméstico que posea (a discreción del DM). Se proporcionan bloques de estadísticas separados para cada forma."
+      }
+    },
+    {
+      "id": "form-change-shaymin",
+      "deprecated": true,
+      "name": {
+        "en": "Form Change (Shaymin)",
+        "es": "Cambio de Forma (Shaymin)"
+      },
+      "description": {
+        "en": "Shaymin's default form is Land. When Given a Gracidea Flower to hold, it can change to Sky Form, taking on new typing, statistics, and moves",
+        "es": "La forma por defecto de Shaymin es Forma Tierra. Cuando tiene equipada una Gracídea, puede cambiar a Forma Cielo, tomando nuevos tipos,"
+      }
+    },
+    {
+      "id": "form-change-terapagos",
+      "deprecated": true,
+      "name": {
+        "en": "Form Change (Terapagos)",
+        "es": "Cambio de Forma (Terapagos)"
+      },
+      "description": {
+        "en": "Terapagos changes into its Stellar Form whenever it terastallizes. In Stellar Form, its type is Stellar regardless of its Tera Type. When its terastallization ends, it reverts back to either its Normal Form or Terastal Form, whichever it was when it terastallized.",
+        "es": "Terapagos cambia a su Forma Astral cuando se teracristaliza. En Forma Astral, su tipo es Astral independientemente de su teratipo. Cuando termina su teracristalización, vuelve a su Forma Normal o a su Forma Teracristal, según la forma que tuviera al iniciar la teracristalización."
+      }
+    },
+    {
+      "id": "form-change-ultra-necrozma",
+      "deprecated": true,
+      "name": {
+        "en": "Form Change (Ultra Necrozma)",
+        "es": "Cambio de Forma (Ultra Necrozma)"
+      },
+      "description": {
+        "en": "This Pokémon can transform into Ultra Necrozma as a bonus action on its turn. When it does, the transformation is treated as a permanent mega evolution, following the rules as stated in the Pokémon 5e Player Handbook.",
+        "es": "Este Pokémon puede transformarse en Ultra Necrozma como acción adicional durante su turno. Cuando lo hace, la transformación se considera una megaevolución permanente, siguiendo las reglas indicadas en el Manual del Jugador de Pokémon 5e."
+      }
+    },
+    {
+      "id": "friend-guard",
+      "deprecated": false,
+      "name": {
+        "en": "Friend Guard",
+        "es": "Compiescolta"
+      },
+      "description": {
+        "en": "Once per long rest, when an ally within 15 feet of this Pokémon is hit by an attack, it may choose to halve the damage dealt.",
+        "es": "Una vez por descanso largo, cuando un aliado a 15 pies de este Pokémon es golpeado por un ataque, puede elegir reducir el daño recibido a la mitad."
+      }
+    },
+    {
+      "id": "frisk",
+      "deprecated": false,
+      "name": {
+        "en": "Frisk",
+        "es": "Cacheo"
+      },
+      "description": {
+        "en": "Upon entering a battle, a single opponent’s held item is revealed, if it has one.",
+        "es": "Cuando este Pokémon entra en combate, un objeto equipado por un oponente es revelado, si tiene alguno."
+      }
+    },
+    {
+      "id": "full-metal-body",
+      "deprecated": false,
+      "name": {
+        "en": "Full Metal Body",
+        "es": "Guardia Metálica"
+      },
+      "description": {
+        "en": "Other Pokémon's moves or abilities cannot lower this Pokémon stats.",
+        "es": "Los movimientos y habilidades de otros Pokémon no pueden reducir las estadísticas de este Pokémon."
+      }
+    },
+    {
+      "id": "fur-coat",
+      "deprecated": false,
+      "name": {
+        "en": "Fur Coat",
+        "es": "Pelaje Recio"
+      },
+      "description": {
+        "en": "Once per long rest, this Pokémon may halve the damage dealt to it from any one attack.",
+        "es": "Una vez por descanso largo, este Pokémon puede reducir a la mitad el daño que reciba de cualquier ataque."
+      }
+    },
+    {
+      "id": "gale-wings",
+      "deprecated": false,
+      "name": {
+        "en": "Gale Wings",
+        "es": "Alas Vendaval"
+      },
+      "description": {
+        "en": "This Pokémon adds an additional +1 to hit when using flying-type attacks.",
+        "es": "Este Pokémon obtiene +1 a las tiradas de ataque cuando usa movimientos de tipo Volador."
+      }
+    },
+    {
+      "id": "galvanize",
+      "deprecated": false,
+      "name": {
+        "en": "Galvanize",
+        "es": "Piel Eléctrica"
+      },
+      "description": {
+        "en": "All of this Pokémon's normal-type moves are electric-type.",
+        "es": "Todos los movimientos de tipo Normal de este Pokémon son de tipo Eléctrico."
+      }
+    },
+    {
+      "id": "gluttony",
+      "deprecated": false,
+      "name": {
+        "en": "Gluttony",
+        "es": "Gula"
+      },
+      "description": {
+        "en": "This Pokémon must eat its held berry when it falls below ½ of its maximum HP.",
+        "es": "Este Pokémon debe consumir la baya que tiene equipada cuando sus puntos de golpe bajen a la mitad o menos de su salud máxima."
+      }
+    },
+    {
+      "id": "good-as-gold",
+      "deprecated": false,
+      "name": {
+        "en": "Good as Gold",
+        "es": "Cuerpo Áureo"
+      },
+      "description": {
+        "en": "This Pokémon is immune to status effects.",
+        "es": "Este Pokémon es inmune a efectos de estado."
+      }
+    },
+    {
+      "id": "gooey",
+      "deprecated": false,
+      "name": {
+        "en": "Gooey",
+        "es": "Baba"
+      },
+      "description": {
+        "en": "When this Pokémon is hit with a melee attack, roll 1d4. On a result of 3 or 4, the attacker's speed is reduced to 0 until the end of its next turn.",
+        "es": "Tras ser golpeado con un ataque cuerpo a cuerpo, tira un d4. En un resultado de 3 o 4, la velocidad del atacante se reduce a 0 hasta el final su siguiente turno."
+      }
+    },
+    {
+      "id": "gorilla-tactics",
+      "deprecated": false,
+      "name": {
+        "en": "Gorilla Tactics",
+        "es": "Monotema"
+      },
+      "description": {
+        "en": "When this Pokémon enters the battlefield, choose one of its moves. Double the MOVE damage modifier for the selected move; the MOVE damage modifier for this Pokémon's other moves becomes 0. The effect resets when this Pokémon leaves the battlefield.",
+        "es": "Cuando este Pokémon entra en combate, elige uno de sus movimientos. Duplica el modificador Daño de Movimiento del movimiento elegido; el Daño de Movimiento del resto de movimientos de este Pokémon pasa a ser 0. El efecto se reinicia cuando este Pokémon sale del combate."
+      }
+    },
+    {
+      "id": "grass-pelt",
+      "deprecated": false,
+      "name": {
+        "en": "Grass Pelt",
+        "es": "Manto Frondoso"
+      },
+      "description": {
+        "en": "This Pokémon gains +1 to AC while in grassy terrain.",
+        "es": "Este Pokémon gana +1 a la CA mientras está sobre Campo de Hierba."
+      }
+    },
+    {
+      "id": "grassy-surge",
+      "deprecated": false,
+      "name": {
+        "en": "Grassy Surge",
+        "es": "Herbogénesis"
+      },
+      "description": {
+        "en": "If the move is known, this Pokémon may use the Grassy Terrain move as a bonus action.",
+        "es": "Si conoce el movimiento, este Pokémon puede usar Campo de Hierba como acción adicional."
+      }
+    },
+    {
+      "id": "grim-neigh",
+      "deprecated": false,
+      "name": {
+        "en": "Grim Neigh",
+        "es": "Relincho Negro"
+      },
+      "description": {
+        "en": "Upon causing an opponent to faint, this Pokémon may immediately move up to 20ft take another action.",
+        "es": "Al debilitar a un oponente, este Pokémon puede moverse inmediatamente hasta 20 pies y realizar otra acción."
+      }
+    },
+    {
+      "id": "guard-dog",
+      "deprecated": false,
+      "name": {
+        "en": "Guard Dog",
+        "es": "Perro Guardián"
+      },
+      "description": {
+        "en": "This Pokémon cannot be forcibly switched out by other moves. Intimidation rolls made against this Pokémon have disadvantage. This Pokémon is unaffected by the Intimidate ability.",
+        "es": "Este Pokémon no puede ser cambiado forzosamente por otros movimientos. Las pruebas de Intimidación contra este Pokémon tienen desventaja. Este Pokémon no se ve afectado por la habilidad Intimidación de otros Pokémon."
+      }
+    },
+    {
+      "id": "gulp-missile",
+      "deprecated": false,
+      "name": {
+        "en": "Gulp Missile",
+        "es": "Tragamisil"
+      },
+      "description": {
+        "en": "May Grapple as a bonus action after completing either Surf or Dive. As a bonus action, may launch a creature grappled by you up to 15ft, dealing fall damage equivalent to the distance launched.",
+        "es": "Este Pokémon puede Agarrar como acción adicional después de usar Surf o Buceo. Como acción adicional, este Pokémon puede lanzar a una criatura que esté agarrando a hasta 15 pies de distancia, infligiendo daño de caída igual a la distancia."
+      }
+    },
+    {
+      "id": "guts",
+      "deprecated": false,
+      "name": {
+        "en": "Guts",
+        "es": "Agallas"
+      },
+      "description": {
+        "en": "When this Pokémon is burned or poisoned, they are not affected by the disadvantage or reduced damage effects. They still take damage at the end of each of their turns.",
+        "es": "Cuando este Pokémon está envenenado o quemado, no se ve afectado por los efectos de desventaja ni reducción de daño de estos estados. Sigue recibiendo daño al final de cada uno de sus turnos."
+      }
+    },
+    {
+      "id": "hadron-engine",
+      "deprecated": false,
+      "name": {
+        "en": "Hadron Engine",
+        "es": "Motor Hadrónico"
+      },
+      "description": {
+        "en": "As a bonus action, this Pokémon may change the terrain to electric terrain for 5 rounds; this bonus action may be used twice per short rest. In electric terrain, this Pokémon has advantage on attack rolls using DEX or WIS as the move power.",
+        "es": "Como acción adicional, este Pokémon puede cambiar el campo a Campo Eléctrico por 5 turnos; esta acción adicional puede ser usada dos veces por descanso corto. En Campo Eléctrico, este Pokémon tiene ventaja en tiradas de ataque usando Destreza o Sabiduría como Poder de Movimiento."
+      }
+    },
+    {
+      "id": "harvest",
+      "deprecated": false,
+      "name": {
+        "en": "Harvest",
+        "es": "Cosecha"
+      },
+      "description": {
+        "en": "At the end of this Pokémon's turn, if it used a berry, roll 1d4. On a result of 3 or 4, it regains that berry as a held item.",
+        "es": "Al final del turno de este Pokémon, si ha usado una baya, tira un d4. En un resultado de 3 o 4, recupera la baya."
+      }
+    },
+    {
+      "id": "healer",
+      "deprecated": false,
+      "name": {
+        "en": "Healer",
+        "es": "Alma Cura"
+      },
+      "description": {
+        "en": "As an action, this Pokemon may touch a creature to heal poison, burn, or paralysis. When it uses this ability, roll a d4. On the a result of 1 or 2, the status effect is moved to itself.",
+        "es": "Como acción, este Pokémon puede tocar a una criatura y curarle envenenamiento, quemadura o parálisis. Cuando usa esta habilidad, tira un d4. En un resultado de 1 o 2, el efecto de estado se transfiere a este Pokémon."
+      }
+    },
+    {
+      "id": "heatproof",
+      "deprecated": false,
+      "name": {
+        "en": "Heatproof",
+        "es": "Ignífugo"
+      },
+      "description": {
+        "en": "This Pokemon takes half the damage it otherwise would from Fire damage, and is immune to the burning condition.",
+        "es": "Este Pokémon recibe la mitad de daño que normalmente sufriría por ataques de tipo Fuego y es inmune a la condición quemado."
+      }
+    },
+    {
+      "id": "heavy-metal",
+      "deprecated": false,
+      "name": {
+        "en": "Heavy Metal",
+        "es": "Metal Pesado"
+      },
+      "description": {
+        "en": "This Pokémon is especially heavy. Once per long rest, after being targeted by an attack, it may increase its AC by 2 if it would cause an attack to miss.",
+        "es": "Este Pokémon es especialmente pesado. Una vez por descanso largo, al de ser objetivo de un ataque, puede aumentar su CA en 2 si eso provoca que el ataque falle."
+      }
+    },
+    {
+      "id": "honey-gather",
+      "deprecated": false,
+      "name": {
+        "en": "Honey Gather",
+        "es": "Recogemiel"
+      },
+      "description": {
+        "en": "At the end of each battle, this Pokémon may roll a d20 + its proficiency bonus. On a result of 20 or higher, its trainer adds a Honey to their inventory.",
+        "es": "Al final de cada combate, este Pokémon puede tirar un d20 + su bonificador por competencia. En un resultado de 20 o superior, su entrenador añade Miel a su inventario."
+      }
+    },
+    {
+      "id": "hospitality",
+      "deprecated": false,
+      "name": {
+        "en": "Hospitality",
+        "es": "Hospitalidad"
+      },
+      "description": {
+        "en": "At the start of its turn, all allies within 20ft of this Pokémon gain 1d4 temporary HP. This replaces existing temporary HP.",
+        "es": "Al final de su turno, todos los aliados a 20 pies o menos de este Pokémon ganan 1d4 de puntos de golpe temporales."
+      }
+    },
+    {
+      "id": "huge-power",
+      "deprecated": false,
+      "name": {
+        "en": "Huge Power",
+        "es": "Potencia"
+      },
+      "description": {
+        "en": "Once per short rest, this Pokémon may double the damage dice for a single damage roll. The player must announce that they are using this ability before the attack roll.",
+        "es": "Una vez por descanso corto, este Pokémon puede duplicar los dados para una tirada de daño. El jugador debe anunciar el uso de esta habilidad antes de la tirada de ataque."
+      }
+    },
+    {
+      "id": "hunger-switch",
+      "deprecated": false,
+      "name": {
+        "en": "Hunger Switch",
+        "es": "Mutapetito"
+      },
+      "description": {
+        "en": "At the start of its turn, this Pokemon switches to Hangry Mode if it was in Full Belly Mode, or switches to Full Belly Mode if it was in Hangry Mode.",
+        "es": "Al principio de su turno, este Pokémon cambia a Forma Voraz si estaba en Forma Saciada, o cambia a Forma Saciada si estaba en Forma Voraz."
+      }
+    },
+    {
+      "id": "hustle",
+      "deprecated": false,
+      "name": {
+        "en": "Hustle",
+        "es": "Entusiasmo"
+      },
+      "description": {
+        "en": "When you score a critical hit, you may immediately gain an additional action on your turn. If this action is used to make an attack, you have disadvantage on the roll. You may only ever have one additional action per round.",
+        "es": "Inmediatamente después de que este Pokémon impacte un golpe crítico, puedes ganar una acción extra en tu turno. Si esta acción es usada para realizar un ataque, tienes desventaja en la tirada. Solo puedes tener una acción extra por turno de esta forma."
+      }
+    },
+    {
+      "id": "hydration",
+      "deprecated": false,
+      "name": {
+        "en": "Hydration",
+        "es": "Hidratación"
+      },
+      "description": {
+        "en": "This Pokémon is unaffected by negative status ailments in water or during rainy conditions.",
+        "es": "Este Pokémon no se ve afectado por efectos de estado negativos mientras esté en agua o bajo lluvia."
+      }
+    },
+    {
+      "id": "hydro-pump",
+      "deprecated": true,
+      "name": {
+        "en": "Hydro Pump",
+        "es": "Hidrobomba"
+      },
+      "description": {
+        "en": "This Pokémon knows Hydro Pump as a fifth move. The move is forgotten if it takes any other form.",
+        "es": "Este Pokémon conoce Hidrobomba como quinto movimiento. El movimiento se olvida si toma cualquier otra forma."
+      }
+    },
+    {
+      "id": "hyper-cutter",
+      "deprecated": false,
+      "name": {
+        "en": "Hyper Cutter",
+        "es": "Corte Fuerte"
+      },
+      "description": {
+        "en": "This Pokémon’s attack or damage bonuses cannot be decreased by an opponent’s moves.",
+        "es": "Las modificadores de ataque o daño de este Pokémon no pueden ser reducidos por movimientos de un oponente."
+      }
+    },
+    {
+      "id": "ice-body",
+      "deprecated": false,
+      "name": {
+        "en": "Ice Body",
+        "es": "Gélido"
+      },
+      "description": {
+        "en": "While it is snowing or hailing, this Pokémon heals for an amount of HP equal to its proficiency modifier at the end of each of its turns. This Pokémon takes no damage from hail.",
+        "es": "Mientrás este nevando o granizando, este Pokémon se cura una cantidad de puntos de golpe igual a su bonificador por competencia al final de cada uno de sus turnos. Esta Pokémon no recibe daño del granizo."
+      }
+    },
+    {
+      "id": "ice-face",
+      "deprecated": false,
+      "name": {
+        "en": "Ice Face",
+        "es": "Cara de Hielo"
+      },
+      "description": {
+        "en": "This Pokémon has two forms: Ice Form and No-Ice Form. When in Ice Form, the first time this pokémon takes damage, it takes half that damage but transforms into No-Ice Form. When in No-Ice Form, this pokemon's AC is decreased by 3 and each of its movement speeds are increased by 5 ft. This Pokémon reverts back to Ice Form after a short rest, or on the start of its turn when in the hail.",
+        "es": "Este Pokémon tiene dos formas: Cara de Hielo y Cara Deshielo. Cuando está en forma Cara de Hielo, la primera vez que este Pokémon sufre daño, recibe la mitad del daño pero cambia de forma a Cara Deshielo. Cuando está en su forma Cara Deshielo, la CA de este Pokémon se reduce en 3 y su velocidad aumenta en 5 pies. Este Pokémon vuelve a su forma Cara de Hielo después de un descanso corto o al principio de su turno cuando graniza."
+      }
+    },
+    {
+      "id": "ice-scales",
+      "deprecated": false,
+      "name": {
+        "en": "Ice Scales",
+        "es": "Escama de Hielo"
+      },
+      "description": {
+        "en": "This Pokémon has resistance to damange dealt by moves whose power is one of INT, WIS, or CHA.",
+        "es": "Este Pokémon tiene resistencia al daño producido por movimientos cuyo poder es de Inteligencia, Sabiduría o Carisma."
+      }
+    },
+    {
+      "id": "illuminate",
+      "deprecated": false,
+      "name": {
+        "en": "Illuminate",
+        "es": "Iluminación"
+      },
+      "description": {
+        "en": "This Pokémon knows the Light cantrip and can cast it at will.",
+        "es": "Este Pokémon conoce el truco Luz y puede lanzarlo a voluntad."
+      }
+    },
+    {
+      "id": "illusion",
+      "deprecated": false,
+      "name": {
+        "en": "Illusion",
+        "es": "Ilusión"
+      },
+      "description": {
+        "en": "This Pokémon can take the visual form of any Pokémon it can see. It can do this a number of times per long rest equal to its level. This illusion lasts for one hour or until the Pokémon is hit by a damaging move.",
+        "es": "Este Pokémon puede tomar la forma visual de cualquier Pokémon que pueda ver. Puede hacer esto un número de veces por descanso largo igual a su nivel. Esta ilusión dura una hora o hasta que el Pokémon sea golpeado por un ataque."
+      }
+    },
+    {
+      "id": "immunity",
+      "deprecated": false,
+      "name": {
+        "en": "Immunity",
+        "es": "Inmunidad"
+      },
+      "description": {
+        "en": "This Pokémon is immune to becoming poisoned.",
+        "es": "Este Pokémon es inmune a estar envenendado."
+      }
+    },
+    {
+      "id": "imposter",
+      "deprecated": false,
+      "name": {
+        "en": "Imposter",
+        "es": "Impostor"
+      },
+      "description": {
+        "en": "This Pokémon can use Transform as a bonus action.",
+        "es": "Este Pokémon puede usar Transformación como acción adicional."
+      }
+    },
+    {
+      "id": "infiltrator",
+      "deprecated": false,
+      "name": {
+        "en": "Infiltrator",
+        "es": "Allanamiento"
+      },
+      "description": {
+        "en": "This Pokémon bypasses Light Screen, Reflect, Substitute, Mist, Safeguard, and Aurora Veil.",
+        "es": "Este Pokémon ignora Pantalla de Luz, Reflejo, Sustituto, Neblina, Velo Sagrado y Velo Aurora."
+      }
+    },
+    {
+      "id": "innards-out",
+      "deprecated": false,
+      "name": {
+        "en": "Innards Out",
+        "es": "Revés"
+      },
+      "description": {
+        "en": "When this Pokémon is knocked out by a damaging move, the attacker takes an amount of typeless damage equal to the amount of HP lost.",
+        "es": "Cuando este Pokémon queda debilitado por un ataque, el atacante pierde una cantidad de puntos de daño igual a la cantidad de puntos de golpe perdidos."
+      }
+    },
+    {
+      "id": "inner-focus",
+      "deprecated": false,
+      "name": {
+        "en": "Inner Focus",
+        "es": "Fuerza Mental"
+      },
+      "description": {
+        "en": "This Pokémon is immune to flinching.",
+        "es": "Este Pokémon es inmune a retroceder."
+      }
+    },
+    {
+      "id": "insomnia",
+      "deprecated": false,
+      "name": {
+        "en": "Insomnia",
+        "es": "Insomnio"
+      },
+      "description": {
+        "en": "This Pokémon is immune to sleep.",
+        "es": "Este Pokémon es inmune a quedarse dormido."
+      }
+    },
+    {
+      "id": "intimidate",
+      "deprecated": false,
+      "name": {
+        "en": "Intimidate",
+        "es": "Intimidación"
+      },
+      "description": {
+        "en": "Once per short rest, you can impose disadvantage on an enemy attack roll of your choice.",
+        "es": "Una vez por descanso corto, puedes imponer desventaja en una tirada de ataque de un enemigo a tu elección."
+      }
+    },
+    {
+      "id": "intrepid-sword",
+      "deprecated": false,
+      "name": {
+        "en": "Intrepid Sword",
+        "es": "Espada Indómita"
+      },
+      "description": {
+        "en": "This Pokémon makes melee attacks with advantage.",
+        "es": "Este Pokémon realiza ataques cuerpo a cuerpo con ventaja."
+      }
+    },
+    {
+      "id": "iron-barbs",
+      "deprecated": false,
+      "name": {
+        "en": "Iron Barbs",
+        "es": "Punta Acero"
+      },
+      "description": {
+        "en": "When this Pokémon is hit by a melee attack, it may roll a d4. On a 4, deal an amount of steel damage equal to its proficiency modifier to its attacker.",
+        "es": "Cuando este Pokémon es golpeado por un ataque cuerpo a cuerpo, puede tirar un d4. En un resultado de 4, inflige una cantidad de daño de acero igual a su bonificador por competencia a su atacante."
+      }
+    },
+    {
+      "id": "iron-fist",
+      "deprecated": false,
+      "name": {
+        "en": "Iron Fist",
+        "es": "Puño Férreo"
+      },
+      "description": {
+        "en": "When attacking with a punch-based move (Mega Punch, Dynamic Punch, Ice/Fire/Thunder Punch, etc.), this Pokémon may roll the damage twice and choose either total.",
+        "es": "Al atacar con un movimiento basado en puñetazos (Megapuño, Puño Hielo/Fuego/Trueno, etc.), este Pokémon puede tirar los dados de daño dos veces y elegir cualquier resultado."
+      }
+    },
+    {
+      "id": "justified",
+      "deprecated": false,
+      "name": {
+        "en": "Justified",
+        "es": "Justiciero"
+      },
+      "description": {
+        "en": "When this Pokémon is hit by a dark-type move, it gets advantage on its next attack.",
+        "es": "Cuando este Pokémon es golpeado por un movimiento de tipo Siniestro, gana ventaja en su siguiente ataque."
+      }
+    },
+    {
+      "id": "keen-eye",
+      "deprecated": false,
+      "name": {
+        "en": "Keen Eye",
+        "es": "Vista Lince"
+      },
+      "description": {
+        "en": "This Pokémon ignores disadvantage when it relates to sight.",
+        "es": "Este Pokémon ignora la desventaja en tiradas relacionadas con la visión."
+      }
+    },
+    {
+      "id": "klutz",
+      "deprecated": false,
+      "name": {
+        "en": "Klutz",
+        "es": "Zoquete"
+      },
+      "description": {
+        "en": "This Pokémon cannot hold an item.",
+        "es": "Este Pokémon no puede tener equipado un objeto."
+      }
+    },
+    {
+      "id": "leaf-guard",
+      "deprecated": false,
+      "name": {
+        "en": "Leaf Guard",
+        "es": "Defensa Hoja"
+      },
+      "description": {
+        "en": "This Pokémon does not suffer from any negative status ailments in harsh sunlight.",
+        "es": "Este Pokémon no se ve afectado por efectos de estado negativos mientras esté bajo sol abrasador."
+      }
+    },
+    {
+      "id": "leaf-storm",
+      "deprecated": true,
+      "name": {
+        "en": "Leaf Storm",
+        "es": "Lluevehojas"
+      },
+      "description": {
+        "en": "This Pokémon knows Leaf Storm as a fifth move. The move is forgotten if it takes any other form.",
+        "es": "Este Pokémon conoce Lluevehojas como quinto movimiento. El movimiento se olvida si toma cualquier otra forma."
+      }
+    },
+    {
+      "id": "levitate",
+      "deprecated": false,
+      "name": {
+        "en": "Levitate",
+        "es": "Levitación"
+      },
+      "description": {
+        "en": "This Pokémon is immune to ground moves.",
+        "es": "Este Pokémon es inmune a movimientos de tierra."
+      }
+    },
+    {
+      "id": "libero",
+      "deprecated": false,
+      "name": {
+        "en": "Libero",
+        "es": "Líbero"
+      },
+      "description": {
+        "en": "While executing a move, this Pokémon's type becomes the same as that of the move and may add its STAB bonus to it.",
+        "es": "Mientras ejecuta un movimiento, el tipo de este Pokémon se convierte en el mismo tipo del movimiento y puede añadirle su bonificador por STAB."
+      }
+    },
+    {
+      "id": "light-metal",
+      "deprecated": false,
+      "name": {
+        "en": "Light Metal",
+        "es": "Metal Liviano"
+      },
+      "description": {
+        "en": "This Pokémon is especially light for its species. Once per long rest, it may impose disadvantage on an attack roll against it.",
+        "es": "Este Pokémon es especialmente ligero para su especie. Una vez por descanso largo, puede imponer desventaja en una tirada de ataque contra él."
+      }
+    },
+    {
+      "id": "lightning-rod",
+      "deprecated": false,
+      "name": {
+        "en": "Lightning Rod",
+        "es": "Pararrayos"
+      },
+      "description": {
+        "en": "If this Pokemon or an ally within 30 feet is targeted with a direct electric-type, damage-dealing move, the Pokemon may use a reaction to redirect the target to itself and take half damage from it if it hits.",
+        "es": "Si este Pokémon o un aliado a 30 pies o menos es objetivo de un movimiento directo de tipo Eléctrico que cause daño, este Pokémon puede usar su reacción para redirigir el objetivo hacia sí mismo. Si el ataque acierta, recibe solo la mitad del daño."
+      }
+    },
+    {
+      "id": "limber",
+      "deprecated": false,
+      "name": {
+        "en": "Limber",
+        "es": "Flexibilidad"
+      },
+      "description": {
+        "en": "This Pokémon is immune to being paralyzed.",
+        "es": "Este Pokémon es inmune a ser paralizado."
+      }
+    },
+    {
+      "id": "lingering-aroma",
+      "deprecated": false,
+      "name": {
+        "en": "Lingering Aroma",
+        "es": "Olor Persistente"
+      },
+      "description": {
+        "en": "When this Pokémon is hit by a melee attack or hits with a melee attack, one random ability of its attacker changes to Lingering Aroma until the end of the encounter or until switched out.",
+        "es": "Cuando este Pokémon es golpeado por un ataque cuerpo a cuerpo o golpea con un ataque cuerpo a cuerpo, una habilidad aleatoria del oponente se transforma en Olor Persistente hasta el final del combate o hasta que sea cambiado."
+      }
+    },
+    {
+      "id": "liquid-ooze",
+      "deprecated": false,
+      "name": {
+        "en": "Liquid Ooze",
+        "es": "Viscosecreción"
+      },
+      "description": {
+        "en": "If an enemy uses a leeching or absorb move against this Pokémon, the Pokémon must make a DC 12 CON save or become poisoned.",
+        "es": "Si un oponente usa un movimiento de drenaje o absorción contra este Pokémon, deberá realizar una tirada de salvación de Constitución CD 12 o pasará a estar envenenado."
+      }
+    },
+    {
+      "id": "liquid-voice",
+      "deprecated": false,
+      "name": {
+        "en": "Liquid Voice",
+        "es": "Voz Fluida"
+      },
+      "description": {
+        "en": "Any sound-based move activated by this Pokémon is water-type.",
+        "es": "Cualquier movimiento basado en sonido usado por este Pokémon es de tipo Agua."
+      }
+    },
+    {
+      "id": "long-reach",
+      "deprecated": false,
+      "name": {
+        "en": "Long Reach",
+        "es": "Remoto"
+      },
+      "description": {
+        "en": "This Pokémon has an additional 5 feet of reach with all melee attacks and Attacks of Opportunity.",
+        "es": "Este Pokémon tiene un alcance adicional de 5 pies con todos los ataques cuerpo a cuerpo y ataques de oportunidad."
+      }
+    },
+    {
+      "id": "magic-bounce",
+      "deprecated": false,
+      "name": {
+        "en": "Magic Bounce",
+        "es": "Espejo Mágico"
+      },
+      "description": {
+        "en": "Once per long rest, when succumbing to a negative status effect, this Pokémon can instead reflect the effect back on the attacker.",
+        "es": "Una vez por descanso largo, cuando este Pokémon está a punto de verse afectado por un efecto de estado negativo, puede reflejarlo hacia el atacante en su lugar."
+      }
+    },
+    {
+      "id": "magic-guard",
+      "deprecated": false,
+      "name": {
+        "en": "Magic Guard",
+        "es": "Muro Mágico"
+      },
+      "description": {
+        "en": "If this Pokémon is subjected to a move that forces it to make a saving throw to take only half damage, it instead takes no damage on a success.",
+        "es": "Si este Pokémon es objetivo de un movimiento que le obliga a realizar una tirada de salvación para recibir solo la mitad del daño, en caso de éxito no recibe daño alguno."
+      }
+    },
+    {
+      "id": "magician",
+      "deprecated": false,
+      "name": {
+        "en": "Magician",
+        "es": "Prestidigitador"
+      },
+      "description": {
+        "en": "If not already holding an item, this Pokémon steals the held item of any Pokémon it hits with a melee attack.",
+        "es": "Si este Pokémon no está equipado con ningún objeto, roba el objeto equipado de cualquier Pokémon al que impacte con un ataque cuerpo a cuerpo."
+      }
+    },
+    {
+      "id": "magma-armor",
+      "deprecated": false,
+      "name": {
+        "en": "Magma Armor",
+        "es": "Escudo Magma"
+      },
+      "description": {
+        "en": "This Pokémon is immune to freezing.",
+        "es": "Este Pokémon es inmune a estar congelado."
+      }
+    },
+    {
+      "id": "magnet-pull",
+      "deprecated": false,
+      "name": {
+        "en": "Magnet Pull",
+        "es": "Imán"
+      },
+      "description": {
+        "en": "Steel opponents in battle with this Pokémon may not switch out or flee.",
+        "es": "Los oponentes de tipo Acero que estén en combate con este Pokémon no pueden ser cambiados ni huir."
+      }
+    },
+    {
+      "id": "marvel-scale",
+      "deprecated": false,
+      "name": {
+        "en": "Marvel Scale",
+        "es": "Escama Especial"
+      },
+      "description": {
+        "en": "This Pokémon's AC increase by 2 when suffering from a negative status condition.",
+        "es": "La CA de este Pokémon aumenta en 2 cuando sufre de efectos de estado negativos."
+      }
+    },
+    {
+      "id": "mega-launcher",
+      "deprecated": false,
+      "name": {
+        "en": "Mega Launcher",
+        "es": "Megadisparador"
+      },
+      "description": {
+        "en": "Aura and Pulse moves made by this Pokémon deal additional damage/healing equal to this Pokémon's proficiency bonus.",
+        "es": "Movimientos de Aura y Pulso (Pulso dragón, Hidropulso, Esfera Aural, etc.) realizados por este Pokémon infligen daño/cura adicional igual al bonificador por competencia de este Pokémon."
+      }
+    },
+    {
+      "id": "merciless",
+      "deprecated": false,
+      "name": {
+        "en": "Merciless",
+        "es": "Ensañamiento"
+      },
+      "description": {
+        "en": "This Pokémon doubles their damage dice when dealing damage to an opponent that is poisoned.",
+        "es": "Este Pokémon duplica sus dados de daño cuando golpea a un oponente que está envenenado."
+      }
+    },
+    {
+      "id": "mimicry",
+      "deprecated": false,
+      "name": {
+        "en": "Mimicry",
+        "es": "Mimetismo"
+      },
+      "description": {
+        "en": "This Pokémon's type changes depending on the terrain. If a Terrain move is active, this Pokémon's type becomes the Terrain move's type. This Pokémon's type reverts once the Terrain move deactivates.",
+        "es": "El tipo de este Pokémon cambia dependiendo del campo. Si un Campo está activo, el tipo de este Pokémon pasa a ser del tipo del Campo. Su tipo se revierte cuando deja de estar sobre un Campo."
+      }
+    },
+    {
+      "id": "minds-eye",
+      "deprecated": false,
+      "name": {
+        "en": "Mind's Eye",
+        "es": "Ojo Mental"
+      },
+      "description": {
+        "en": "This Pokémon ignores immunity to its Normal- and Fighting-type moves. It also ignores disadvantage on attacks it makes against targets it can see.",
+        "es": "Este Pokémon ignora la inmunidad de sus movimientos de tipo Normal y Lucha."
+      }
+    },
+    {
+      "id": "minus",
+      "deprecated": false,
+      "name": {
+        "en": "Minus",
+        "es": "Menos"
+      },
+      "description": {
+        "en": "This Pokémon boosts its attack and damage rolls by 2 if an ally also has a Plus or Minus ability",
+        "es": "Este Pokémon tiene +2 en tiradas de ataque y daño si un aliado en juego también tiene la habilidad Menos o tiene la habilidad Más."
+      }
+    },
+    {
+      "id": "mirror-armor",
+      "deprecated": false,
+      "name": {
+        "en": "Mirror Armor",
+        "es": "Coraza Reflejo"
+      },
+      "description": {
+        "en": "When affected by an effect that lowers this Pokémon's attack roll, AC, movement, or ability scores, the same effect is applied to the source (if applicable).",
+        "es": "Cuando este Pokémon se ve afectado por un efecto que reduzca sus tiradas de ataque, CA, movimiento o puntuaciones de característica, el mismo efecto se aplica también a la fuente (si es aplicable)."
+      }
+    },
+    {
+      "id": "misty-surge",
+      "deprecated": false,
+      "name": {
+        "en": "Misty Surge",
+        "es": "Nublogénesis"
+      },
+      "description": {
+        "en": "If the move is known, this Pokémon may use the Misty Terrain move as a bonus action.",
+        "es": "Si conoce el movimiento, este Pokémon puede usar Campo de Niebla como acción adicional."
+      }
+    },
+    {
+      "id": "mold-breaker",
+      "deprecated": false,
+      "name": {
+        "en": "Mold Breaker",
+        "es": "Rompemoldes"
+      },
+      "description": {
+        "en": "This Pokémon's moves ignore any abilities that would lessen their effect or ability to hit an opponent (Due to things like Water Absorb, Snow Cloak, Thick Fat, Sturdy, etc.)",
+        "es": "Los movimientos de este Pokémon ignoran cualquier habilidad que reduciría su efecto o su probabilidad de impactar a un oponente (como Absorbe Agua, Manto Níveo, Sebo, Robustez, etc.)."
+      }
+    },
+    {
+      "id": "moody",
+      "deprecated": false,
+      "name": {
+        "en": "Moody",
+        "es": "Veleta"
+      },
+      "description": {
+        "en": "At the end of each long rest, this Pokémon rerolls on the nature table, replacing its nature with the result until the next long rest.",
+        "es": "Al final de cada descanso largo, este Pokémon vuelve a tirar en la tabla de naturalezas, reemplazando su naturaleza actual por el nuevo resultado hasta el próximo descanso largo."
+      }
+    },
+    {
+      "id": "motor-drive",
+      "deprecated": false,
+      "name": {
+        "en": "Motor Drive",
+        "es": "Electromotor"
+      },
+      "description": {
+        "en": "When hit by an electric-type move, if not immune, this Pokémon's speed increases by 10 feet until the end of combat (up to a max of 50 additional feet).",
+        "es": "Al ser golpeado por un movimiento de tipo Eléctrico, si no es inmune, la velocidad de este Pokémon aumenta en 10 pies hasta el final del combate (hasta un máximo de 50 pies adicionales)."
+      }
+    },
+    {
+      "id": "moxie",
+      "deprecated": false,
+      "name": {
+        "en": "Moxie",
+        "es": "Autoestima"
+      },
+      "description": {
+        "en": "Upon causing an opponent to faint, this Pokémon may immediately take another action.",
+        "es": "Al debilitar a un oponente, este Pokémon duplica los dados de daño de un movimiento que active en el siguiente turno."
+      }
+    },
+    {
+      "id": "multiscale",
+      "deprecated": false,
+      "name": {
+        "en": "Multiscale",
+        "es": "Multiescamas"
+      },
+      "description": {
+        "en": "If this Pokémon is at full health, the first damage dealt to it is halved.",
+        "es": "Si este Pokémon tiene la salud al máximo, el primer daño que reciba se reduce a la mitad."
+      }
+    },
+    {
+      "id": "multitype",
+      "deprecated": false,
+      "name": {
+        "en": "Multitype",
+        "es": "Multitipo"
+      },
+      "description": {
+        "en": "This Pokémon's type and form change to match the type of Elemental Plate this Pokémon holds. The Plate cannot be affected by any item-removing ability or move.",
+        "es": "El tipo de este Pokémon y su forma cambian para igualar el tipo de la Tabla Elemental equipada. La Tabla no puede ser afectada por ninguna habilidad ni movimiento que elimine objetos."
+      }
+    },
+    {
+      "id": "mummy",
+      "deprecated": false,
+      "name": {
+        "en": "Mummy",
+        "es": "Momia"
+      },
+      "description": {
+        "en": "When this Pokémon is hit by a melee attack, one random ability of its attacker changes to Mummy for the remainder of the encounter.",
+        "es": "Cuando este Pokémon es golpeado por un ataque cuerpo a cuerpo, una habilidad aleatoria de su atacante cambia a Momia durante el resto del combate."
+      }
+    },
+    {
+      "id": "mycelium-might",
+      "deprecated": false,
+      "name": {
+        "en": "Mycelium Might",
+        "es": "Poder fúngico"
+      },
+      "description": {
+        "en": "Once per short rest, when causing a creature to make a save that inflicts a status condition on failure, this Pokémon may invoke Mycelium Might to cause that creature to roll the save with disadvantage.",
+        "es": "Una vez por descanso corto, cuando este Pokémon hace que una criatura realice una tirada de salvación que imponga un efecto de estado en caso de fallo, puede invocar Poder Fúngico para causar que la criatura haga la tirada con desventaja."
+      }
+    },
+    {
+      "id": "natural-cure",
+      "deprecated": false,
+      "name": {
+        "en": "Natural Cure",
+        "es": "Cura Natural"
+      },
+      "description": {
+        "en": "This Pokémon is cured of negative status ailments upon returning to its Pokeball.",
+        "es": "Este Pokémon es curado de efectos de estado al regresar a su Pokéball."
+      }
+    },
+    {
+      "id": "neuroforce",
+      "deprecated": false,
+      "name": {
+        "en": "Neuroforce",
+        "es": "Fuerza Cerebral"
+      },
+      "description": {
+        "en": "When this Pokémon damages a creature with a super effective move, it may roll the damage dice twice and use the higher result.",
+        "es": "Cuando este Pokémon inflige daño a una criatura con un movimiento muy eficaz, puede lanzar los dados de daño dos veces y usar el mayor resultado."
+      }
+    },
+    {
+      "id": "neutralizing-gas",
+      "deprecated": false,
+      "name": {
+        "en": "Neutralizing Gas",
+        "es": "Gas Reactivo"
+      },
+      "description": {
+        "en": "The abilities of Pokémon within 30ft of this Pokémon are nullified and cannot trigger. This nullification does not apply to the Neutralizing Gas ability or any form changes.",
+        "es": "Las habilidades de los Pokémon que se encuentren a 30 pies o menos de este Pokémon quedan anuladas y no pueden activarse. Esta anulación no se aplica a la propia hablidad Gas Reactivo ni a los cambios de forma."
+      }
+    },
+    {
+      "id": "no-guard",
+      "deprecated": false,
+      "name": {
+        "en": "No Guard",
+        "es": "Indefenso"
+      },
+      "description": {
+        "en": "Any attack made by or against this Pokémon has advantage.",
+        "es": "Cualquier ataque realizado por o contra este Pokémon tiene ventaja."
+      }
+    },
+    {
+      "id": "normalize",
+      "deprecated": false,
+      "name": {
+        "en": "Normalize",
+        "es": "Normalidad"
+      },
+      "description": {
+        "en": "Every move this Pokémon activates is Normal type.",
+        "es": "Todos los movimientos que usa este Pokémon se vuelven de tipo Normal."
+      }
+    },
+    {
+      "id": "oblivious",
+      "deprecated": false,
+      "name": {
+        "en": "Oblivious",
+        "es": "Despiste"
+      },
+      "description": {
+        "en": "This Pokémon is immune to moves that attempt to charm or taunt it.",
+        "es": "Este Pokémon es inmune a movimientos que intenten seducirlo o provocarlo."
+      }
+    },
+    {
+      "id": "opportunist",
+      "deprecated": false,
+      "name": {
+        "en": "Opportunist",
+        "es": "Oportunista"
+      },
+      "description": {
+        "en": "When the AC, STR, DEX, CON, INT, WIS, or CHA of an enemy this Pokémon can see increases, then this Pokémon's corresponding attribute increases by the same amount. This effect lasts for the duration of battle, or for 1 minute.",
+        "es": "Cuando la CA, Fuerza, Destreza, Constitución, Inteligencia, Sabiduría o Carisma de una criatura a 30 pies o menos de este Pokémon aumenta, el atributo correspondiente de este Pokémon aumenta en la misma cantidad. Este efecto dura hasta el final del combate o durante 1 minuto (lo que ocurra primero)."
+      }
+    },
+    {
+      "id": "orichalcum-pulse",
+      "deprecated": false,
+      "name": {
+        "en": "Orichalcum Pulse",
+        "es": "Latido Oricalco"
+      },
+      "description": {
+        "en": "As a bonus action, this Pokémon may change the weather to harsh sunlight for 5 rounds; this bonus action may be used twice per short rest. In harsh sunlight, this Pokémon has advantage on attack rolls using STR or CON as the move power.",
+        "es": "Como acción adicional, este Pokémon puede cambiar el clima a sol abrasador por 5 rondas; esta acción adicional puede ser usada dos veces por descanso corto. En sol abrasador, este Pokémon tiene ventaja en las tiradas de ataque usando Fuerza o Constitución como Poder de Movimiento."
+      }
+    },
+    {
+      "id": "overcoat",
+      "deprecated": false,
+      "name": {
+        "en": "Overcoat",
+        "es": "Funda"
+      },
+      "description": {
+        "en": "This Pokémon does not take damage from weather-related moves and phenomena like Hail, Weather Ball, etc.",
+        "es": "Este Pokémon no recibe daño de movimientos ni fenómenos relacionados con el clima, como Granizo, Meteorobola, etc."
+      }
+    },
+    {
+      "id": "overgrow",
+      "deprecated": false,
+      "name": {
+        "en": "Overgrow",
+        "es": "Espesura"
+      },
+      "description": {
+        "en": "This Pokémon doubles its STAB bonus when it has 25% or less of its maximum health.",
+        "es": "Este Pokémon duplica su bonificador por STAB cuando tiene 25% o menos de su salud máxima."
+      }
+    },
+    {
+      "id": "overheat",
+      "deprecated": true,
+      "name": {
+        "en": "Overheat",
+        "es": "Onda Ígnea"
+      },
+      "description": {
+        "en": "This Pokémon knows Overheat as a fifth move. The move is forgotten if it takes any other form.",
+        "es": "Este Pokémon conoce Onda Ígnea como quinto movimiento. El movimiento se olvida si toma cualquier otra forma."
+      }
+    },
+    {
+      "id": "own-tempo",
+      "deprecated": false,
+      "name": {
+        "en": "Own Tempo",
+        "es": "Ritmo Propio"
+      },
+      "description": {
+        "en": "This Pokémon is immune to becoming confused.",
+        "es": "Una vez por descanso largo, cuando este Pokémon falla una tirada de salvación contra una condición negativa, puede elegir superarla en su lugar."
+      }
+    },
+    {
+      "id": "paper-thin",
+      "deprecated": false,
+      "name": {
+        "en": "Paper Thin",
+        "es": "Piel de Papel"
+      },
+      "description": {
+        "en": "This Pokémon always has a maximum HP of 1. (Shedinja only. Cannot be passed or swapped)",
+        "es": "Este Pokémon siempre tiene un máximo de 1 punto de golpe. (Solo Shedinja. No se puede transferir ni intercambiar)"
+      }
+    },
+    {
+      "id": "pastel-veil",
+      "deprecated": false,
+      "name": {
+        "en": "Pastel Veil",
+        "es": "Velo Pastel"
+      },
+      "description": {
+        "en": "This Pokémon and its allies cannot be poisoned for as long as it is in combat.",
+        "es": "Mientras este Pokémon esté en combate, él y sus aliados no pueden ser envenenados."
+      }
+    },
+    {
+      "id": "perish-body",
+      "deprecated": false,
+      "name": {
+        "en": "Perish Body",
+        "es": "Cuerpo Mortal"
+      },
+      "description": {
+        "en": "When hit by a melee attack, this Pokémon and its attacker will faint in 3 rounds, at the start of their respective turn, unless fleeing or switched out by their trainer before the end of the three rounds.",
+        "es": "Cuando este Pokémon es impactado por un ataque cuerpo a cuerpo, tanto él como su atacante quedarán debilitados en 3 asaltos, al inicio de sus respectivos turnos, a menos que huyan o sean cambiados por su entrenador antes de que finalicen las tres rondas."
+      }
+    },
+    {
+      "id": "pickpocket",
+      "deprecated": false,
+      "name": {
+        "en": "Pickpocket",
+        "es": "Hurto"
+      },
+      "description": {
+        "en": "When hit by a melee attack, this Pokémon may use a reaction to attempt to steal the creature's held item with a Sleight of Hand check contested by the target's Passive Perception. After the first attempt, all other attempts against the same opponent are rolled at disadvantage.",
+        "es": "Cuando este Pokémon es impactado por un ataque cuerpo a cuerpo, puede usar su reacción para intentar robar el objeto equipado del atacante mediante una prueba de Juego de Manos enfrentado contra la Percepción Pasiva del objetivo. Tras el primer intento, todos los intentos posteriores contra ese mismo oponente se realizan con desventaja."
+      }
+    },
+    {
+      "id": "pickup",
+      "deprecated": false,
+      "name": {
+        "en": "Pickup",
+        "es": "Recogida"
+      },
+      "description": {
+        "en": "If an opponent uses a consumable held item in battle, this Pokémon gains a copy of it if it is not currently holding an item.",
+        "es": "Si un oponente consume un objeto equipado durante el combate, este Pokémon obtiene una copia de dicho objeto, siempre que no tenga actualmente ningún objeto equipado."
+      }
+    },
+    {
+      "id": "pixilate",
+      "deprecated": false,
+      "name": {
+        "en": "Pixilate",
+        "es": "Piel Feérica"
+      },
+      "description": {
+        "en": "All of this Pokémon's normal-type moves become fairy-type.",
+        "es": "Todos los movimientos que usa este Pokémon se vuelven de tipo Hada."
+      }
+    },
+    {
+      "id": "plus",
+      "deprecated": false,
+      "name": {
+        "en": "Plus",
+        "es": "Más"
+      },
+      "description": {
+        "en": "This Pokémon boosts its attack and damage rolls by 2 if an ally also has a Plus or Minus ability",
+        "es": "Este Pokémon tiene +2 en tiradas de ataque y daño si un aliado en juego también tiene la habilidad Más o tiene la habilidad Menos."
+      }
+    },
+    {
+      "id": "poison-heal",
+      "deprecated": false,
+      "name": {
+        "en": "Poison Heal",
+        "es": "Antídoto"
+      },
+      "description": {
+        "en": "This Pokémon does not suffer the disadvantage effects of the poisoned status condition. Additionally, when this pokemon would take poison-type damage or damage from the poisoned condition, it instead recovers HP equal to half the damage it would have taken.",
+        "es": "Este Pokémon no sufre los efectos de desventaja de la condición Envenenado. Además, recupera la mitad de todo el daño de tipo Veneno que recibiría, ya sea por ataques o por la condición de Envenenado, incluyendo el daño al final de cada uno de sus turnos."
+      }
+    },
+    {
+      "id": "poison-point",
+      "deprecated": false,
+      "name": {
+        "en": "Poison Point",
+        "es": "Punto Tóxico"
+      },
+      "description": {
+        "en": "When this Pokémon is hit with a melee attack, roll a 1d4. On a result of 4, the attacker takes an amount of poison damage equal to this Pokémon’s proficiency modifier.",
+        "es": "Cuando este Pokémon es impactado por un ataque cuerpo a cuerpo, tira un d4. En un resultado de 4, el atacante recibe una cantidad de daño de Veneno igual al bonificador de competencia de este Pokémon."
+      }
+    },
+    {
+      "id": "poison-puppeteer",
+      "deprecated": false,
+      "name": {
+        "en": "Poison Puppeteer",
+        "es": "Títere Tóxico"
+      },
+      "description": {
+        "en": "When this Pokémon inflicts the Poisoned or Badly Poisoned condition, it also inflicts the Charmed condition. Creatures charmed this way may attempt to break from the charm at the end of each of their turns with a CHA save against this Pokémon's CHA DC.",
+        "es": "Cuando este Pokémon inflige la condición Envenenado o Gravemente envenenado, también impone la condición Hechizado. Las criaturas hechizadas de esta manera pueden intentar romper el hechizo al final de cada uno de sus turnos con una tirada de salvación de Carisma contra la CD de Carisma de este Pokémon."
+      }
+    },
+    {
+      "id": "poison-touch",
+      "deprecated": false,
+      "name": {
+        "en": "Poison Touch",
+        "es": "Toque Tóxico"
+      },
+      "description": {
+        "en": "On melee attacks made by this Pokémon, roll a d10 on a hit. On a result of a 10, the target is poisoned.",
+        "es": "En los ataques cuerpo a cuerpo realizados por este Pokémon, tira un d10 si aciertas. Si obtienes un 10, el objetivo queda envenenado."
+      }
+    },
+    {
+      "id": "power-construct-10",
+      "deprecated": false,
+      "name": {
+        "en": "Power Construct (10%)",
+        "es": "Agrupamiento (10%)"
+      },
+      "description": {
+        "en": "When Zygarde 10% is reduced to less than half of its maximum HP, it changes to Zygarde 50% Forme and recovers all hit points.",
+        "es": "Cuando los puntos de golpe de Zygarde 10% se reducen a la mitad o menos, cambia a su Forma Zygarde 50% y recupera todos sus puntos de golpe."
+      }
+    },
+    {
+      "id": "power-construct-100",
+      "deprecated": false,
+      "name": {
+        "en": "Power Construct (100%)",
+        "es": "Agrupamiento (100%)"
+      },
+      "description": {
+        "en": "When Zygarde is reduced to less than half of its maximum HP, it changes to Complete Forme and stays in that form, regardless of HP changes.",
+        "es": "Cuando los puntos de golpe de Zygarde se reducen a la mitad o menos, cambia a su Forma Completo y permanece en esta forma, in importar los cambios posteriores en sus puntos de golpe."
+      }
+    },
+    {
+      "id": "power-construct-50",
+      "deprecated": false,
+      "name": {
+        "en": "Power Construct (50%)",
+        "es": "Agrupamiento (50%)"
+      },
+      "description": {
+        "en": "When Zygarde 50% is reduced to less than half of its maximum HP, it changes to Complete Forme and recovers all hit points.",
+        "es": "Cuando los puntos de golpe de Zygarde 50% se reducen a la mitad o menos, cambia a su Forma Completo y recupera todos sus puntos de golpe."
+      }
+    },
+    {
+      "id": "power-of-alchemy",
+      "deprecated": false,
+      "name": {
+        "en": "Power of Alchemy",
+        "es": "Reacción Química"
+      },
+      "description": {
+        "en": "When switched in after an ally faints, this Pokémon copies the non-hidden ability of the fainted ally until switched out.",
+        "es": "Cuando entra en combate después de que un aliado se debilite, este Pokémon copia la habilidad no oculta del aliado debilitado hasta que sea cambiado."
+      }
+    },
+    {
+      "id": "power-spot",
+      "deprecated": false,
+      "name": {
+        "en": "Power Spot",
+        "es": "Fuente Energía"
+      },
+      "description": {
+        "en": "Allies within 15 ft of this Pokemon may add 1d6 to damage they deal from moves. This die may only be used once per move per turn. At level 10, the bonus damage becomes 1d8 instead.",
+        "es": "Los aliados que se encuentren a 15 pies o menos de este Pokémon pueden sumar 1d6 al daño que infligen con sus movimientos. Este dado solo se puede usar una vez por movimiento por turno. En el nivel 10, la bonificación de daño pasa a ser 1d8."
+      }
+    },
+    {
+      "id": "prankster",
+      "deprecated": false,
+      "name": {
+        "en": "Prankster",
+        "es": "Bromista"
+      },
+      "description": {
+        "en": "Once per short rest, this Pokémon can move to the top of initiative order in a single round, but must use a status-affecting move on its turn.",
+        "es": "Una vez por descanso corto, este Pokémon puede pasar al primer lugar del orden de iniciativa en una sola ronda, pero debe usar un Movimiento de Estado en su turno."
+      }
+    },
+    {
+      "id": "pressure",
+      "deprecated": false,
+      "name": {
+        "en": "Pressure",
+        "es": "Presión"
+      },
+      "description": {
+        "en": "Any move targeting this Pokémon directly (non-area of effect moves) reduces its PP by two when activated.",
+        "es": "Cualquier movimiento que tenga como objetivo directamente a este Pokémon (movimientos que no sean de área de efecto) reduce su PP en dos al activarse."
+      }
+    },
+    {
+      "id": "primordial-sea",
+      "deprecated": false,
+      "name": {
+        "en": "Primordial Sea",
+        "es": "Primordial Sea"
+      },
+      "description": {
+        "en": "For as long as this Pokémon is engaged in combat, the weather is Heavy Rain and cannot be changed. Heavy Rain is the same as Rain, with the additional effect that Fire-type damage is nullified. If Desolate Land is also active, then the weather is simultaneously Extremely Harsh Sunlight and Heavy Rain.",
+        "es": "For as long as this Pokémon is engaged in combat, the weather is Heavy Rain and cannot be changed. Heavy Rain is the same as Rain, with the additional effect that Fire-type damage is nullified. If Desolate Land is also active, then the weather is simultaneously Extremely Harsh Sunlight and Heavy Rain."
+      }
+    },
+    {
+      "id": "prism-armor",
+      "deprecated": false,
+      "name": {
+        "en": "Prism Armor",
+        "es": "Armadura Prisma"
+      },
+      "description": {
+        "en": "When this Pokémon is subject to damage in its vulnerabilities list, roll the damage dice twice and use the lower result for the damage calculation.",
+        "es": "Cuando este Pokémon recibe daño de un tipo al que es vulnerable, tira dos veces los dados de daño y utiliza el resultado menor para calcular el daño."
+      }
+    },
+    {
+      "id": "propeller-tail",
+      "deprecated": false,
+      "name": {
+        "en": "Propeller Tail",
+        "es": "Hélide Caudal"
+      },
+      "description": {
+        "en": "This Pokémon's ignores the effects of moves that alters the targets of its own moves (such as Follow Me).",
+        "es": "Este Pokémon ignora los efectos de los movimientos que alteran los objetivos de sus propios movimientos (como Señuelo)."
+      }
+    },
+    {
+      "id": "protean",
+      "deprecated": false,
+      "name": {
+        "en": "Protean",
+        "es": "Mutatipo"
+      },
+      "description": {
+        "en": "This Pokémon's type changes to the type of move it uses, just before the move is used. It takes on the new type's resistances, vulnerabilities, and immunities.",
+        "es": "El tipo de este Pokémon cambia al tipo del movimiento que utiliza justo antes de usarlo. Adquiere las resistencias, vulnerabilidades e inmunidades del nuevo tipo."
+      }
+    },
+    {
+      "id": "protosynthesis",
+      "deprecated": false,
+      "name": {
+        "en": "Protosynthesis",
+        "es": "Paleosíntesis"
+      },
+      "description": {
+        "en": "This Pokémon may have a STR and CON scores up to 22. In harsh sunlight, this Pokémon has advantage on STR and CON saves.",
+        "es": "Este Pokémon puede tener una Fuerza y una Constitución de hasta 22. Bajo sol abrasador, este Pokémon tiene ventaja en las tiradas de salvación de Fuerza y Constitución."
+      }
+    },
+    {
+      "id": "psychic-surge",
+      "deprecated": false,
+      "name": {
+        "en": "Psychic Surge",
+        "es": "Psicogénesis"
+      },
+      "description": {
+        "en": "If the move is known, this Pokémon may use the Psychic Terrain move as a bonus action.",
+        "es": "Si conoce el movimiento, este Pokémon puede usar Campo Psíquico como acción adicional."
+      }
+    },
+    {
+      "id": "punk-rock",
+      "deprecated": false,
+      "name": {
+        "en": "Punk Rock",
+        "es": "Punk Rock"
+      },
+      "description": {
+        "en": "When this Pokémon uses a sound-based move, it adds its STAB bonus to the damage. This Pokémon has resistance to sound-based moves.",
+        "es": "Cuando este Pokémon usa un movimiento basado en sonido, añade su bonificador por STAB al daño. Este Pokémon tiene resistencia a los movimientos basados en sonido."
+      }
+    },
+    {
+      "id": "pure-power",
+      "deprecated": false,
+      "name": {
+        "en": "Pure Power",
+        "es": "Energía Pura"
+      },
+      "description": {
+        "en": "Once per short rest, this Pokémon may double the damage dice for a single damage roll. The player must announce that they are using this ability before the attack roll.",
+        "es": "Una vez por descanso corto, este Pokémon puede duplicar los dados para una tirada de daño. El jugador debe anunciar el uso de esta habilidad antes de la tirada de ataque."
+      }
+    },
+    {
+      "id": "purifying-salt",
+      "deprecated": false,
+      "name": {
+        "en": "Purifying Salt",
+        "es": "Sal Purificadora"
+      },
+      "description": {
+        "en": "This Pokémon has resistance to Ghost-type damage, and it cannot be afflicted with non-volatile status conditions.",
+        "es": "Este Pokémon tiene resistencia al daño de tipo Fantasma y no puede ser afectado por condiciones de estado no volátiles (envenenado, congelado, quemado, etc.)."
+      }
+    },
+    {
+      "id": "quark-drive",
+      "deprecated": false,
+      "name": {
+        "en": "Quark Drive",
+        "es": "Carga Cuark"
+      },
+      "description": {
+        "en": "This Pokémon may have a DEX and WIS scores up to 22. On electric terrain, this Pokémon has advantage on DEX and WIS saves.",
+        "es": "Este Pokémon puede tener una Destreza y una Sabiduría de hasta 22. Bajo sol abrasador, este Pokémon tiene ventaja en las tiradas de salvación de Destreza y Sabiduría."
+      }
+    },
+    {
+      "id": "queenly-majesty",
+      "deprecated": false,
+      "name": {
+        "en": "Queenly Majesty",
+        "es": "Regia Presencia"
+      },
+      "description": {
+        "en": "Creatures within line of sight of this Pokémon cannot use bonus actions to activate Moves. Moves that would normally have a Move Time of \"1 bonus action\" instead have a Move Time of \"1 action\".",
+        "es": "Las criaturas a la vista de este Pokémon no pueden usar acciones adicionales para activar movimientos. Los movimientos que normalmente tendrían un tiempo de lanzamiento de \"1 acción adicional\" en su lugar tienen una tiempo de lanzamiento de \"1 acción\"."
+      }
+    },
+    {
+      "id": "quick-draw",
+      "deprecated": false,
+      "name": {
+        "en": "Quick Draw",
+        "es": "Mano Rápida"
+      },
+      "description": {
+        "en": "This Pokémon has advantage on initiative rolls.",
+        "es": "Este Pokémon tiene ventaja en tiradas de iniciativa."
+      }
+    },
+    {
+      "id": "quick-feet",
+      "deprecated": false,
+      "name": {
+        "en": "Quick Feet",
+        "es": "Pies Rápidos"
+      },
+      "description": {
+        "en": "When suffering from a negative status condition, this Pokémon’s speed increases by 15 ft.",
+        "es": "Mientras sufre de una condición de estado negativa, la velocidad de movimiento de este Pokémon aumenta en 15 pies."
+      }
+    },
+    {
+      "id": "rain-dish",
+      "deprecated": false,
+      "name": {
+        "en": "Rain Dish",
+        "es": "Cura Lluvia"
+      },
+      "description": {
+        "en": "In rainy conditions, this Pokémon heals for an amount of HP equal to its proficiency bonus at the end of each of its turns.",
+        "es": "Bajo lluvia, este Pokémon se cura una cantidad de puntos de golpe igual a su bonificador por competencia al final de cada uno de sus turnos."
+      }
+    },
+    {
+      "id": "rattled",
+      "deprecated": false,
+      "name": {
+        "en": "Rattled",
+        "es": "Cobardía"
+      },
+      "description": {
+        "en": "When this Pokémon is hit by a damaging Dark, Bug, or Ghost move, it makes its next attack at advantage.",
+        "es": "Cuando este Pokémon recibe daño de un ataque de tipo Siniestro, Bicho o Fantasma, obtiene ventaja en su siguiente ataque."
+      }
+    },
+    {
+      "id": "receiver",
+      "deprecated": false,
+      "name": {
+        "en": "Receiver",
+        "es": "Receptor"
+      },
+      "description": {
+        "en": "When switched in after an ally faints, this Pokémon copies the non-hidden ability of the fainted ally until switched out.",
+        "es": "Cuando entra en combate después de que un aliado se debilite, este Pokémon copia la habilidad no oculta del aliado debilitado hasta que sea cambiado."
+      }
+    },
+    {
+      "id": "reckless",
+      "deprecated": false,
+      "name": {
+        "en": "Reckless",
+        "es": "Audaz"
+      },
+      "description": {
+        "en": "When attacking with moves with recoil damage, this Pokémon doubles its STAB bonus.",
+        "es": "Cuando ataca con movimientos que causan daño de retroceso, este Pokémon duplica su bonificador por STAB."
+      }
+    },
+    {
+      "id": "refrigerate",
+      "deprecated": false,
+      "name": {
+        "en": "Refrigerate",
+        "es": "Piel Helada"
+      },
+      "description": {
+        "en": "All of this Pokémon's normal-type moves become ice-type.",
+        "es": "Todos los movimientos que usa este Pokémon se vuelven de tipo Hielo."
+      }
+    },
+    {
+      "id": "regenerator",
+      "deprecated": false,
+      "name": {
+        "en": "Regenerator",
+        "es": "Regeneración"
+      },
+      "description": {
+        "en": "Once per long rest, this Pokémon regains hit points equal to its level when it returns to its Pokéball.",
+        "es": "Una vez por descanso largo, este Pokémon recupera puntos de golpe iguales a su nivel cuando regresa a su Pokéball."
+      }
+    },
+    {
+      "id": "ripen",
+      "deprecated": false,
+      "name": {
+        "en": "Ripen",
+        "es": "Maduración"
+      },
+      "description": {
+        "en": "Doubles the effects of berries consumed.",
+        "es": "Duplica el efecto de las bayas consumidas."
+      }
+    },
+    {
+      "id": "rivalry",
+      "deprecated": false,
+      "name": {
+        "en": "Rivalry",
+        "es": "Rivalidad"
+      },
+      "description": {
+        "en": "This Pokémon adds its proficiency bonus to damage when attacking a Pokémon of the same type.",
+        "es": "Este Pokémon añade su bonificador por competencia al daño cuando ataca a otro Pokémon del mismo tipo."
+      }
+    },
+    {
+      "id": "rks-system",
+      "deprecated": false,
+      "name": {
+        "en": "RKS System",
+        "es": "Sistema Alfa"
+      },
+      "description": {
+        "en": "This Pokémon's type is determined by the memory disc it holds. If not holding a memory disc, this Pokémon's type is normal.",
+        "es": "El tipo de este Pokémon está determinado por el disco que lleve equipado (MT). Si no tiene equipado un disco, este Pokémon es de tipo Normal."
+      }
+    },
+    {
+      "id": "rock-head",
+      "deprecated": false,
+      "name": {
+        "en": "Rock Head",
+        "es": "Cabeza Roca"
+      },
+      "description": {
+        "en": "This Pokémon takes no recoil damage.",
+        "es": "Este Pokémon no recibe daño de retroceso."
+      }
+    },
+    {
+      "id": "rocky-payload",
+      "deprecated": false,
+      "name": {
+        "en": "Rocky Payload",
+        "es": "Transportarrocas"
+      },
+      "description": {
+        "en": "When this Pokémon uses a rock-type move, it may roll the damage twice and choose either total.",
+        "es": "Cuando este Pokémon usa un movimiento de tipo Roca, puede tirar los dados de daño dos veces y elegir cualquier resultado."
+      }
+    },
+    {
+      "id": "rough-skin",
+      "deprecated": false,
+      "name": {
+        "en": "Rough Skin",
+        "es": "Piel Tosca"
+      },
+      "description": {
+        "en": "When this Pokémon is hit by a melee attack, it may roll a d4. On a 4, deal an amount of typeless damage equal to its proficiency modifier to its attacker.",
+        "es": "Cuando este Pokémon es golpeado por un ataque cuerpo a cuerpo, puede tirar un d4. En un resultado de 4, inflige una cantidad de daño sin tipo igual a su bonificador por competencia al atacante."
+      }
+    },
+    {
+      "id": "run-away",
+      "deprecated": false,
+      "name": {
+        "en": "Run Away",
+        "es": "Fuga"
+      },
+      "description": {
+        "en": "This Pokémon cannot be the target of an attack of opportunity.",
+        "es": "Este Pokémon no puede ser objetivo de un ataque de oportunidad."
+      }
+    },
+    {
+      "id": "sand-force",
+      "deprecated": false,
+      "name": {
+        "en": "Sand Force",
+        "es": "Poder Arena"
+      },
+      "description": {
+        "en": "This Pokémon is immune to Sandstorm damage. During a Sandstorm, this Pokémon can double its STAB when it hits an opponent.",
+        "es": "Durante una tormenta de arena, este Pokémon puede duplicar su bonificador por STAB al golpear a un oponente."
+      }
+    },
+    {
+      "id": "sand-rush",
+      "deprecated": false,
+      "name": {
+        "en": "Sand Rush",
+        "es": "Ímpetu Arena"
+      },
+      "description": {
+        "en": "This Pokémon is immune to Sandstorm damage, and its speed is doubled in desert terrain, or during a Sandstorm.",
+        "es": "Este Pokémon es inmune al daño de las tormentas de arena, y su velocidad de movimiento se duplica en desiertos o durante tormentas de arena."
+      }
+    },
+    {
+      "id": "sand-spit",
+      "deprecated": false,
+      "name": {
+        "en": "Sand Spit",
+        "es": "Expulsarena"
+      },
+      "description": {
+        "en": "When this Pokémon takes damage, it may use its reaction to cause a Sandstorm centered on self with a radius of 30ft. The Sandstorm lasts for five rounds. The Pokémon may do this a number of times equal to its proficiency bonus, and it resets after a long rest.",
+        "es": "Cuando este Pokémon recibe daño, puede usar su reacción para levantar una tormenta de arena centrada sobre sí mismo con un radio de 30 pies. La tormenta de arena dura 5 rondas. El Pokémon puede hacer esto un número de veces igual a su bonificador por competencia, y se reinicia después de un descanso largo."
+      }
+    },
+    {
+      "id": "sand-stream",
+      "deprecated": false,
+      "name": {
+        "en": "Sand Stream",
+        "es": "Chorro Arena"
+      },
+      "description": {
+        "en": "When this Pokémon enters an outside battle, the weather immediately changes to a Sandstorm for 5 rounds. In the case of another Pokémon with a similar weather ability, the tie goes to the Pokémon with the highest DEX score.",
+        "es": "Cuando este Pokémon entra en combate en exteriores, el clima cambia inmediatamente a tormenta de arena durante 5 rondas. En caso de que otro Pokémon tenga una habilidad climática similar, el empate se resuelve a favor del Pokémon con la puntuación de Destreza más alta."
+      }
+    },
+    {
+      "id": "sand-veil",
+      "deprecated": false,
+      "name": {
+        "en": "Sand Veil",
+        "es": "Velo Arena"
+      },
+      "description": {
+        "en": "This Pokémon is immune to Sandstorm damage. In addition, its AC increases by 2 in desert terrain, or during a Sandstorm.",
+        "es": "Este Pokémon es inmune al daño de las tormentas de arena. Además, su CA aumenta en 2 en desiertos o durante tormentas de arena."
+      }
+    },
+    {
+      "id": "sap-sipper",
+      "deprecated": false,
+      "name": {
+        "en": "Sap Sipper",
+        "es": "Herbívoro"
+      },
+      "description": {
+        "en": "This Pokémon takes no damage from grass-type attacks. If hit by a grass type move, it takes no damage and instead absorbs the energy, granting advantage on its next attack.",
+        "es": "Este Pokémon no recibe daño de ataques de tipo planta. Si es golpeado por un movimiento de tipo planta, no recibe daño y en su lugar absorbe la energía, obteniendo ventaja en su siguiente ataque."
+      }
+    },
+    {
+      "id": "schooling",
+      "deprecated": false,
+      "name": {
+        "en": "Schooling",
+        "es": "Banco"
+      },
+      "description": {
+        "en": "Beginning at level 5, this Pokémon may change to School Form as a free action when it begins its turn above 25% of its maximum health. In School Form, the Pokémon adds 5 to its AC and Strength, Dexterity, and Constitution ability scores (Additional CON does not alter this Pokemon's HP in this form). The Pokémon reverts back to Solo Form when it falls below 25% of maximum health, and must complete a short rest before activating this ability again.",
+        "es": "A partir de nivel 5, este Pokémon puede cambiar a Forma Banco como acción gratuita cuando empieza su turno por encima del 25% de su salud máxima. En Forma Banco, el Pokémon aumenta en 5 su CA, Fuerza, Destreza y Constitución (Este aumento de Constitución no altera los puntos de golpe). Este Pokémon regresa a su Forma Individual cuando está por debajo del 25% de su salud máxima, y debe completar un descanso corto antes de activar esta habilidad de nuevo."
+      }
+    },
+    {
+      "id": "scrappy",
+      "deprecated": false,
+      "name": {
+        "en": "Scrappy",
+        "es": "Intrépido"
+      },
+      "description": {
+        "en": "This Pokémon's Normal and Fighting type moves ignore immunities granted by a Pokémon's type. If a target’s secondary type gives it vulnerability or resistance to the attack, it follows the secondary type for that effect.",
+        "es": "Los movimientos de tipo Normal y Lucha de este Pokémon ignoran las inmunidades otorgadas por el tipo de otro Pokémon. Si el tipo secundario del objetivo le da vulnerabilidad o resistencia al daño, se aplica la interacción correspondiente según el segundo tipo."
+      }
+    },
+    {
+      "id": "screen-cleaner",
+      "deprecated": false,
+      "name": {
+        "en": "Screen Cleaner",
+        "es": "Antibarrera"
+      },
+      "description": {
+        "en": "Light Screen, Reflect, and Aurora Veil have no effect within 40ft of this Pokémon.",
+        "es": "Pantalla de Luz, Reflejo y Velo Aurora no tienen efecto a 40 pies o menos de este Pokémon."
+      }
+    },
+    {
+      "id": "seed-sower",
+      "deprecated": false,
+      "name": {
+        "en": "Seed Sower",
+        "es": "Disemillar"
+      },
+      "description": {
+        "en": "When hit by a damaging attack, this Pokémon may use its reaction to use the Grassy Terrain move. The Pokémon does not need to know this move, and it costs no PP to use. This may be used up to three times per long rest.",
+        "es": "Cuando es dañado por un ataque, este Pokémon puede usar su reacción para usar el movimiento Herbogénesis. El Pokémon no necesita saber el movimiento, y no cuesta PP usarlo."
+      }
+    },
+    {
+      "id": "serene-grace",
+      "deprecated": false,
+      "name": {
+        "en": "Serene Grace",
+        "es": "Dicha"
+      },
+      "description": {
+        "en": "The Move DC to pass a saving throw against one of this Pokémon's moves is increased by 1.",
+        "es": "La CD para superar una tirada de salvación contra un movimiento de este Pokémon aumenta en 1."
+      }
+    },
+    {
+      "id": "shadow-shield",
+      "deprecated": false,
+      "name": {
+        "en": "Shadow Shield",
+        "es": "Guardia Espectro"
+      },
+      "description": {
+        "en": "If this Pokémon is at full health, the first damage dealt to it is halved.",
+        "es": "Si este Pokémon tiene la salud al máximo, el primer daño que reciba se reduce a la mitad."
+      }
+    },
+    {
+      "id": "shadow-tag",
+      "deprecated": false,
+      "name": {
+        "en": "Shadow Tag",
+        "es": "Sobra Trampa"
+      },
+      "description": {
+        "en": "Creatures within 50 feet of this Pokémon may not flee or switch out, except by item, Move, or ability.",
+        "es": "Las criaturas a 50 pies o menos de este Pokémon no pueden huir ni ser cambiadas, excepto por un objeto, movimiento o habilidad."
+      }
+    },
+    {
+      "id": "sharpness",
+      "deprecated": false,
+      "name": {
+        "en": "Sharpness",
+        "es": "Cortante"
+      },
+      "description": {
+        "en": "Moves with 'Cut', 'Blade', 'Slash', 'Edge', 'Cleave', 'Razor', 'Sword', or 'Axe' in their name have their MOVE damage modifier doubled.",
+        "es": "Los movimientos que tengan en su nombre \"Corte\", \"Filo\", \"Cuchilla\", \"Espada\", \"Filo\", \"Tajo\", \"Hoja\" o \"Hachazo\" duplican su modificador de Poder de Movimiento."
+      }
+    },
+    {
+      "id": "shed-skin",
+      "deprecated": false,
+      "name": {
+        "en": "Shed Skin",
+        "es": "Mudar"
+      },
+      "description": {
+        "en": "If this Pokémon is affected by a negative status ailment, they can roll a d4 at the end of each of their turns. On a result of 4, they are cured.",
+        "es": "Si este Pokémon es afectado por un efecto de estado negativo, tira un d4 al final de cada uno de sus turnos. En un resultado de 4, se cura el estado negativo."
+      }
+    },
+    {
+      "id": "sheer-force",
+      "deprecated": false,
+      "name": {
+        "en": "Sheer Force",
+        "es": "Potencia Bruta"
+      },
+      "description": {
+        "en": "When activating a move that has a chance to impose a stat change or inflict a status, this creature instead doubles its MOVE modifier (not STAB) for the damage with no chance of the additional effect.",
+        "es": "Al usar un movimiento que tenga probabilidad de imponer un cambio de estadísticas o infligir una condición de estado, en su lugar duplica el modificador del Poder de Movimiento y no puede activar el efecto adicional."
+      }
+    },
+    {
+      "id": "shell-armor",
+      "deprecated": false,
+      "name": {
+        "en": "Shell Armor",
+        "es": "Caparazón"
+      },
+      "description": {
+        "en": "This Pokémon is immune to extra damage dealt by a Critical Hit.",
+        "es": "Este Pokémon es inmune al daño extra infligido por golpes críticos."
+      }
+    },
+    {
+      "id": "shield-dust",
+      "deprecated": false,
+      "name": {
+        "en": "Shield Dust",
+        "es": "Polvo Escudo"
+      },
+      "description": {
+        "en": "Once per long rest, this Pokémon can ignore a negative status condition that results from an enemy move.",
+        "es": "Una vez por descanso largo, este Pokémon puede ignorar una condición de estado negativa provocada por el movimiento de un oponente."
+      }
+    },
+    {
+      "id": "shields-down",
+      "deprecated": false,
+      "name": {
+        "en": "Shields Down",
+        "es": "Escudo Limitado"
+      },
+      "description": {
+        "en": "This Pokémon is immune to Non-Volatile status effects while in Meteor Form. When this Pokémon falls below 50% of its maximum hp, its outer shell breaks and it changes to Core Form. In Core Form, it adds 6 points to its DEX, but reduces its AC by 4. The Pokémon must complete a short rest to restore itself to Meteor Form.",
+        "es": "Este Pokémon es inmune a los efectos de estádo no volátiles (envenenado, quemado, etc.) mientras está en Forma Meteorito. Cuando los puntos de golpe de este Pokémon se reducen a la mitad o menos, su coraza exterior se rompe y cambia a Forma Núcleo. En Forma Núcleo, añade +6 a su Destreza, pero reduce su CA en 4. Este Pokémon debe completar un descanso corto para restaurar su Forma Meteorito."
+      }
+    },
+    {
+      "id": "simple",
+      "deprecated": false,
+      "name": {
+        "en": "Simple",
+        "es": "Simple"
+      },
+      "description": {
+        "en": "Once per short rest, you may double this Pokémon's Move modifier for a single attack or damage roll.",
+        "es": "Una vez por descanso corto, puedes duplicar el modificador de Poder de Movimiento de este Pokémon para una sola tirada de ataque o de daño."
+      }
+    },
+    {
+      "id": "skill-link",
+      "deprecated": false,
+      "name": {
+        "en": "Skill Link",
+        "es": "Encadenado"
+      },
+      "description": {
+        "en": "Combo moves that have the ability to hit more than once, after the same attack roll, are guaranteed to hit at least twice. (Fury Swipes, Double Slap, Water Shuriken, etc.)",
+        "es": "Habilidades de combo que pueden golpear varias veces tras una misma tirada de ataque están garantizados a impactar al menos dos veces (como Golpes Furia, Doble Bofetón, Shuriken de Agua, etc.)."
+      }
+    },
+    {
+      "id": "slow-start",
+      "deprecated": false,
+      "name": {
+        "en": "Slow Start",
+        "es": "Inicio Lento"
+      },
+      "description": {
+        "en": "During the first two rounds of each combat, this Pokémon's speed is halved and its attacks are made at disadvantage.",
+        "es": "Durante las dos primeras rondas de combate, la velocidad de movimiento de este Pokémon se reduce a la mitad y realiza sus ataques con desventaja."
+      }
+    },
+    {
+      "id": "slush-rush",
+      "deprecated": false,
+      "name": {
+        "en": "Slush Rush",
+        "es": "Quitanieves"
+      },
+      "description": {
+        "en": "This Pokémon is immune to Hail damage, and its speed is doubled in arctic conditions, or during a hailstorm.",
+        "es": "Este Pokémon es inmune al daño de granizo, y su velocidad de movimiento se duplica en condiciones árticas o durante granizo."
+      }
+    },
+    {
+      "id": "sniper",
+      "deprecated": false,
+      "name": {
+        "en": "Sniper",
+        "es": "Francotirador"
+      },
+      "description": {
+        "en": "On a critical hit made by this Pokémon, triple the dice roll instead of doubling it.",
+        "es": "Cuando este Pokémon impacta un golpe crítico, tira los dados de daño tres veces en lugar de dos."
+      }
+    },
+    {
+      "id": "snow-cloak",
+      "deprecated": false,
+      "name": {
+        "en": "Snow Cloak",
+        "es": "Manto Níveo"
+      },
+      "description": {
+        "en": "This Pokémon is immune to Hail damage. It's AC is increased by 2 in arctic conditions, or when it is snowing or hailing.",
+        "es": "Este Pokémon es inmune al daño de granizo. Su CA aumenta en 2 en condiciones árticas, o cuando está nevando o granizando."
+      }
+    },
+    {
+      "id": "snow-warning",
+      "deprecated": false,
+      "name": {
+        "en": "Snow Warning",
+        "es": "Nevada"
+      },
+      "description": {
+        "en": "When this Pokémon enters an outside battle, the weather immediately changes to hail for 5 rounds. In the case of another Pokémon with a similar weather ability, the tie goes to the Pokémon with the highest DEX score.",
+        "es": "Cuando este Pokémon entra en combate en exteriores, el clima cambia inmediatamente a granizo durante 5 rondas. En caso de que otro Pokémon tenga una habilidad climática similar, el empate se resuelve a favor del Pokémon con la puntuación de Destreza más alta."
+      }
+    },
+    {
+      "id": "solar-power",
+      "deprecated": false,
+      "name": {
+        "en": "Solar Power",
+        "es": "Poder Solar"
+      },
+      "description": {
+        "en": "Damage rolls for this Pokémon get an additional +2 during harsh sunlight.",
+        "es": "Las tiradas de daño de este Pokémon obtienen +2 bajo sol abrasador."
+      }
+    },
+    {
+      "id": "solid-rock",
+      "deprecated": false,
+      "name": {
+        "en": "Solid Rock",
+        "es": "Roca Sólida"
+      },
+      "description": {
+        "en": "This Pokémon does not take any additional damage from a critical hit.",
+        "es": "Este Pokémon no recibe daño adicional de golpes críticos."
+      }
+    },
+    {
+      "id": "soul-heart",
+      "deprecated": false,
+      "name": {
+        "en": "Soul-Heart",
+        "es": "Coránima"
+      },
+      "description": {
+        "en": "Upon seeing an ally faint, this Pokémon increases the ability scores of its saving throw proficiencies by 2 until the end of combat. This is stackable up to a maximum of +10 to any one ability score.",
+        "es": "Cuando este Pokémon presencia que un aliado es debilitado, aumenta en 2 sus puntuaciones de característica de las tiradas de salvación en las que tenga competencia hasta el final del combate. Este efecto puede acumularse hasta un máximo de +10 en cada característica."
+      }
+    },
+    {
+      "id": "soundproof",
+      "deprecated": false,
+      "name": {
+        "en": "Soundproof",
+        "es": "Insonorizar"
+      },
+      "description": {
+        "en": "This Pokémon is immune to sound-based moves.",
+        "es": "Este Pokémon es inmune a movimientos relacionados con sonido."
+      }
+    },
+    {
+      "id": "speed-boost",
+      "deprecated": false,
+      "name": {
+        "en": "Speed Boost",
+        "es": "Impulso"
+      },
+      "description": {
+        "en": "This Pokémon's speed is increased by 10 feet while in an environment related to its type (DM Discretion).",
+        "es": "La velocidad de movimiento de este Pokémon aumenta en 10 pies mientras está en un entorno relacionado con su tipo (a discreción del DM)."
+      }
+    },
+    {
+      "id": "stakeout",
+      "deprecated": false,
+      "name": {
+        "en": "Stakeout",
+        "es": "Vigilante"
+      },
+      "description": {
+        "en": "When an opponent is switched out in battle, until the end of this Pokémon's next turn following the switch, it doubles the damage it deals to the replacement.",
+        "es": "Cuando un oponente es cambiado durante el combate, este Pokémon duplica su daño si ataca al Pokémon de reemplazo en el primer turno inmediatamente después del cambio."
+      }
+    },
+    {
+      "id": "stall",
+      "deprecated": false,
+      "name": {
+        "en": "Stall",
+        "es": "Rezagado"
+      },
+      "description": {
+        "en": "This Pokémon is always last in initiative order.",
+        "es": "Este Pokémon es siempre el último en el orden de iniciativa."
+      }
+    },
+    {
+      "id": "stalwart",
+      "deprecated": false,
+      "name": {
+        "en": "Stalwart",
+        "es": "Acérrimo"
+      },
+      "description": {
+        "en": "This Pokémon may always choose its targets, ignoring the effects of moves that redirect targetting.",
+        "es": "Este Pokémon puede elegir siempre a sus objetivos, ignorando el efecto de movimientos que redirigen el objetivo."
+      }
+    },
+    {
+      "id": "stamina",
+      "deprecated": false,
+      "name": {
+        "en": "Stamina",
+        "es": "Firmeza"
+      },
+      "description": {
+        "en": "When this Pokémon is damaged by a move, increase its AC by 2 until the start of its next turn. This ability does not stack and will remain in effect if the Pokémon is successfully attacked multiple turns in a row.",
+        "es": "Cuando este Pokémon es dañado por un movimiento, aumenta su CA en 2 hasta el final de su siguiente turno. Esta habilidad no se acumula, pero permanece activa si el Pokémon es atacado con éxito en varios turnos consecutivos."
+      }
+    },
+    {
+      "id": "stance-change",
+      "deprecated": false,
+      "name": {
+        "en": "Stance Change",
+        "es": "Cambio Táctico"
+      },
+      "description": {
+        "en": "Aegislash has two forms. When Aegislash uses King's Shield, even if the reaction is unsucessful, it changes to Shield Forme, swapping its AC and DEX stats. When it uses a damaging move, Aegislash immediately returns to Blade Forme, returning its stats to normal.",
+        "es": "Aegislash tiene dos formas. Cuando Aegislash usa Escudo Real, cambia inmediatamente a Forma Escudo, intercambiando sus estadísticas de CA con su Destreza. Cuando usa un movimiento que cause daño, Aegislash vuelve inmediatamente a Forma Filo, recuperando sus estadísticas normales."
+      }
+    },
+    {
+      "id": "static",
+      "deprecated": false,
+      "name": {
+        "en": "Static",
+        "es": "Electricidad Estática"
+      },
+      "description": {
+        "en": "When this Pokémon is hit by a melee attack, roll a d4. On a result of 4, the attacker takes an amount of electric damage equal to this Pokemon's proficiency bonus.",
+        "es": "Cuando este Pokémon es golpeado por un ataque cuerpo a cuerpo, tira un d4. En un resultado de 4, el atacante recibe una cantidad de daño de tipo Eléctico igual al bonificador por competencia de este Pokémon."
+      }
+    },
+    {
+      "id": "steadfast",
+      "deprecated": false,
+      "name": {
+        "en": "Steadfast",
+        "es": "Impasible"
+      },
+      "description": {
+        "en": "Once per long rest, when this Pokémon fails a saving throw against a negative condition, it can choose to pass instead.",
+        "es": "Una vez por descanso largo, cuando este Pokémon falla una tirada de salvación contra una condición negativa, puede elegir superarla en su lugar."
+      }
+    },
+    {
+      "id": "steam-engine",
+      "deprecated": false,
+      "name": {
+        "en": "Steam Engine",
+        "es": "Combustible"
+      },
+      "description": {
+        "en": "When damaged by a Fire- or Water-type move, this Pokémon's walking speed becomes double its base value until the end of its next turn.",
+        "es": "Cuando este Pokémon es dañado por un movimiento de tipo Fuego o Agua, su velocidad de movimiento se duplica hasta el final de su siguiente turno."
+      }
+    },
+    {
+      "id": "steelworker",
+      "deprecated": false,
+      "name": {
+        "en": "Steelworker",
+        "es": "Acero Templado"
+      },
+      "description": {
+        "en": "This Pokémon adds its proficiency bonus to damage dealt by steel-type moves.",
+        "es": "Este Pokémon añade su bonificador por competencia al daño cuando ataca con movimientos de tipo Acero."
+      }
+    },
+    {
+      "id": "steely-spirit",
+      "deprecated": false,
+      "name": {
+        "en": "Steely Spirit",
+        "es": "Alma Acerada"
+      },
+      "description": {
+        "en": "This Pokémon and allies of this Pokémon within 30ft of it boost the damage roll of their Steel-type moves by this Pokémon's CHA modifier. This effect may stack up to two times.",
+        "es": "Este Pokémon y sus aliados a 30 pies o menos aumentan el daño de sus movimientos de tipo Acero en una cantidad igual al modificador de Carisma de este Pokémon. Este efecto puede acumularse hasta un máximo de dos veces."
+      }
+    },
+    {
+      "id": "stench",
+      "deprecated": false,
+      "name": {
+        "en": "Stench",
+        "es": "Hedor"
+      },
+      "description": {
+        "en": "When this Pokémon is hit by a melee attack, roll a d10. On a 10, the attacker flinches.",
+        "es": "Cuando este Pokémon es golpeado por un ataque cuerpo a cuerpo, tira un d10. En un resultado de 10, el atacante retrocede."
+      }
+    },
+    {
+      "id": "sticky-hold",
+      "deprecated": false,
+      "name": {
+        "en": "Sticky Hold",
+        "es": "Viscosidad"
+      },
+      "description": {
+        "en": "Held items cannot be stolen or knocked away from this Pokémon.",
+        "es": "Los objetos equipados a este Pokémon no pueden ser robados ni arrojados."
+      }
+    },
+    {
+      "id": "storm-drain",
+      "deprecated": false,
+      "name": {
+        "en": "Storm Drain",
+        "es": "Colector"
+      },
+      "description": {
+        "en": "If this Pokemon or an ally within 30 feet is targeted with a direct water-type, damage-dealing move, the Pokemon may use a reaction to redirect the target to itself and take half damage from it if it hits.",
+        "es": "Si este Pokémon o un aliado a 30 pies o menos es objetivo de un movimiento directo de tipo Agua que cause daño, este Pokémon puede usar su reacción para redirigir el objetivo hacia sí mismo. Si el ataque acierta, recibe solo la mitad del daño."
+      }
+    },
+    {
+      "id": "strong-jaw",
+      "deprecated": false,
+      "name": {
+        "en": "Strong Jaw",
+        "es": "Mandíbula Fuerte"
+      },
+      "description": {
+        "en": "For biting moves activated by this Pokémon (Bite, Thunder Fang, Crunch, etc.), they may roll the damage twice and choose either total.",
+        "es": "Cuando este Pokémon usa un movimiento de mordida (Mordisco, Colmillo Rayo, Triturar, etc.), puede tirar los dados de daño dos veces y elegir cualquier resultado."
+      }
+    },
+    {
+      "id": "sturdy",
+      "deprecated": false,
+      "name": {
+        "en": "Sturdy",
+        "es": "Robustez"
+      },
+      "description": {
+        "en": "When taking damage equal to half or more of your current HP, roll a d4. On a result of 3 or 4, halve the damage dealt.",
+        "es": "Al recibir daño igual a la mitad o más de sus puntos de golpe máximos, tira un d4. En un resultado de 3 o 4, reduce el daño a la mitad."
+      }
+    },
+    {
+      "id": "suction-cups",
+      "deprecated": false,
+      "name": {
+        "en": "Suction Cups",
+        "es": "Ventosas"
+      },
+      "description": {
+        "en": "This Pokémon cannot be forced out of battle by an opponent’s moves.",
+        "es": "Este Pokémon no puede ser forzado a salir del combate por movimientos de los oponentes."
+      }
+    },
+    {
+      "id": "super-luck",
+      "deprecated": false,
+      "name": {
+        "en": "Super Luck",
+        "es": "Afortunado"
+      },
+      "description": {
+        "en": "This Pokémon increases its critical hit range by 1 (20 to 19+, etc.)",
+        "es": "Este Pokémon aumenta su rango de golpe crítico en 1 (20 a 19+, etc.)."
+      }
+    },
+    {
+      "id": "supersweet-syrup",
+      "deprecated": false,
+      "name": {
+        "en": "Supersweet Syrup",
+        "es": "Néctar Dulce"
+      },
+      "description": {
+        "en": "Attack rolls made against creatures within 30ft of this Pokémon gain 1d4 on the roll. Creatures with no sense of smell are not affected by this ability.",
+        "es": "Las tiradas de daño que se realizan a 30 pies o menos de este Pokémon obtienen +1d4 a la tirada. Las criaturas sin sentido del olfato no se ven afectadas por esta habilidad."
+      }
+    },
+    {
+      "id": "supreme-overlord",
+      "deprecated": false,
+      "name": {
+        "en": "Supreme Overlord",
+        "es": "General Supremo"
+      },
+      "description": {
+        "en": "This Pokémon adds +1 to its attack rolls for each currently downed ally, up to a maximum of +5.",
+        "es": "Este Pokémon añade +1 a sus tiradas de ataque por cada aliado debilitado, hasta un máximo de +5."
+      }
+    },
+    {
+      "id": "surge-surfer",
+      "deprecated": false,
+      "name": {
+        "en": "Surge Surfer",
+        "es": "Cola Surf"
+      },
+      "description": {
+        "en": "When this Pokémon begins its turn in the area of effect from Electric Terrain, its speed is doubled until the start of its next turn.",
+        "es": "Cuando este Pokémon empieza su turno sobre un Campo Eléctrico, su velocidad de movimiento se duplica durante ese turno."
+      }
+    },
+    {
+      "id": "swarm",
+      "deprecated": false,
+      "name": {
+        "en": "Swarm",
+        "es": "Enjambre"
+      },
+      "description": {
+        "en": "This Pokémon doubles its STAB bonus when it has 25% or less of its maximum health.",
+        "es": "Este Pokémon duplica su bonificador por STAB cuando tiene 25% o menos de su salud máxima."
+      }
+    },
+    {
+      "id": "sweet-veil",
+      "deprecated": false,
+      "name": {
+        "en": "Sweet Veil",
+        "es": "Velo Dulce"
+      },
+      "description": {
+        "en": "Any ally within 15 feet of this Pokémon is immune to the sleep condition.",
+        "es": "Cualquier aliado a 15 pies o menos de este Pokémon es inmune a quedarse dormido."
+      }
+    },
+    {
+      "id": "swift-swim",
+      "deprecated": false,
+      "name": {
+        "en": "Swift Swim",
+        "es": "Nado Rápido"
+      },
+      "description": {
+        "en": "This Pokémon's speed is doubled in rainy conditions.",
+        "es": "La velocidad de movimiento de este Pokémon se duplica bajo lluvia."
+      }
+    },
+    {
+      "id": "sword-of-ruin",
+      "deprecated": false,
+      "name": {
+        "en": "Sword of Ruin",
+        "es": "Espada Debacle"
+      },
+      "description": {
+        "en": "Creatures within 60ft of this Pokémon which do not have a \"* of Ruin\" ability have -4 Constitution score, to a minimum of 1. This effect does not stack, and the creature's Constitution score is restored upon leaving the area of effect.",
+        "es": "Las criaturas a 60 pies o menos de este Pokémon que no tengan una habilidad \"* Debacle\" sufren -4 a la puntuación de Constitución, hasta un mínimo de 1. Este efecto no se acumula y la puntuación de Constitución de las criaturas se restaura al salir del área de efecto."
+      }
+    },
+    {
+      "id": "symbiosis",
+      "deprecated": false,
+      "name": {
+        "en": "Symbiosis",
+        "es": "Simbiosis"
+      },
+      "description": {
+        "en": "This Pokémon may swap held items with an ally as a free action, as long as they are within 15 feet of each other.",
+        "es": "Este Pokémon puede intercambiar sus objetos equipados con un aliado como acción gratuita, siempre que estén a 15 pies o menos el uno del otro."
+      }
+    },
+    {
+      "id": "synchronize",
+      "deprecated": false,
+      "name": {
+        "en": "Synchronize",
+        "es": "Sincronía"
+      },
+      "description": {
+        "en": "If this Pokémon becomes burned, paralyzed, or poisoned, its attacker receives the negative status condition as well (if not immune).",
+        "es": "Si este Pokémon es quemado, paralizado o envenenado, el atacante también recibe la misma condición de estado negativa (si no es inmune)."
+      }
+    },
+    {
+      "id": "tablets-of-ruin",
+      "deprecated": false,
+      "name": {
+        "en": "Tablets of Ruin",
+        "es": "Tablilla Debacle"
+      },
+      "description": {
+        "en": "Creatures within 60ft of this Pokémon which do not have a \"* of Ruin\" ability have -4 Strength score, to a minimum of 1. This effect does not stack, and the creature's Strength score is restored upon leaving the area of effect.",
+        "es": "Las criaturas a 60 pies o menos de este Pokémon que no tengan una habilidad \"* Debacle\" sufren -4 a la puntuación de Fuerza, hasta un mínimo de 1. Este efecto no se acumula y la puntuación de Constitución de las criaturas se restaura al salir del área de efecto."
+      }
+    },
+    {
+      "id": "tangled-feet",
+      "deprecated": false,
+      "name": {
+        "en": "Tangled Feet",
+        "es": "Tumbos"
+      },
+      "description": {
+        "en": "Attacks against this Pokémon have disadvantage when it is confused.",
+        "es": "Los ataques realizados contra este Pokémon tienen desventaja cuando está confundido."
+      }
+    },
+    {
+      "id": "tangling-hair",
+      "deprecated": false,
+      "name": {
+        "en": "Tangling Hair",
+        "es": "Rizos Rebeldes"
+      },
+      "description": {
+        "en": "Opponents within melee range of this Pokémon cannot take the Disengage action to move away.",
+        "es": "Los oponentes a alcance cuerpo a cuerpo de este Pokémon no pueden usar la acción Destrabarse para alejarse."
+      }
+    },
+    {
+      "id": "technician",
+      "deprecated": false,
+      "name": {
+        "en": "Technician",
+        "es": "Experto"
+      },
+      "description": {
+        "en": "For damaging moves activated by this Pokémon with 15 max PP or more, they may roll the damage twice and choose either total.",
+        "es": "Cuando este Pokémon usa movimientos que causan daño y tienen 15 PP máximos o más, puede tirar los dados de daño dos veces y elegir cualquier resultado."
+      }
+    },
+    {
+      "id": "telepathy",
+      "deprecated": false,
+      "name": {
+        "en": "Telepathy",
+        "es": "Telepatía"
+      },
+      "description": {
+        "en": "This Pokémon cannot be damaged by its allies' attacks.",
+        "es": "Este Pokémon no puede ser dañado por ataques de sus aliados"
+      }
+    },
+    {
+      "id": "tera-shell",
+      "deprecated": false,
+      "name": {
+        "en": "Tera Shell",
+        "es": "Teracaparazón"
+      },
+      "description": {
+        "en": "While Terapagos is at full HP, it is resistant to all damage types.",
+        "es": "Mientras Terapagos tiene la salud al máximo, tiene resistencia a todo los tipos de daño."
+      }
+    },
+    {
+      "id": "tera-shift",
+      "deprecated": false,
+      "name": {
+        "en": "Tera Shift",
+        "es": "Teracambio"
+      },
+      "description": {
+        "en": "Terapagos can shift into its Terastal form a number of times per day equal to its CON modifier as a free action. It reverts to its normal form after 10 minutes or at will.",
+        "es": "Terapagos puede cambiar a su Forma Terastal un número de veces por día igual a su modificador de Constitución como acción gratuita. Regresa a su Forma Normal después de 10 minutos o a voluntad."
+      }
+    },
+    {
+      "id": "teraform-zero",
+      "deprecated": false,
+      "name": {
+        "en": "Teraform Zero",
+        "es": "Teraformación 0"
+      },
+      "description": {
+        "en": "While Terapagos is in its Stellar Form, all terrain and weather effects within 1000ft end, and the terrain and weather cannot be changed.",
+        "es": "Mientras Terapagos está en Forma Astral, todos los efectos de clima y campos a 1000 pies terminan, y no pueden ser modificados mientras dure la forma."
+      }
+    },
+    {
+      "id": "teravolt",
+      "deprecated": false,
+      "name": {
+        "en": "Teravolt",
+        "es": "Terravoltaje"
+      },
+      "description": {
+        "en": "This Pokémon’s moves completely ignore any ability that would hinder or prevent their effect on the target or the user's ability to hit the target.",
+        "es": "Los movimientos de este Pokémon ignoran completamente cualquier habilidad que pudiera reducir su efecto sobre el objetivo o impedir que el usuario golpee."
+      }
+    },
+    {
+      "id": "thermal-exchange",
+      "deprecated": false,
+      "name": {
+        "en": "Thermal Exchange",
+        "es": "Termoconversión"
+      },
+      "description": {
+        "en": "This Pokémon cannot be burned. When this Pokémon takes fire-type damage, it makes its next attack with advantage.",
+        "es": "Este Pokémon no puede ser quemado. Cuando este Pokémon recibe daño de fuego, realiza su siguiente ataque con ventaja."
+      }
+    },
+    {
+      "id": "thick-fat",
+      "deprecated": false,
+      "name": {
+        "en": "Thick Fat",
+        "es": "Sebo"
+      },
+      "description": {
+        "en": "This Pokemon takes half the damage it otherwise would from Ice and Fire damage.",
+        "es": "Este Pokémon recibe la mitad de daño que normalmente sufriría por ataques de tipo Hielo y Fuego."
+      }
+    },
+    {
+      "id": "tinted-lens",
+      "deprecated": false,
+      "name": {
+        "en": "Tinted Lens",
+        "es": "Cromolente"
+      },
+      "description": {
+        "en": "This Pokémon’s moves ignore resistances.",
+        "es": "Este Pokémon ignora las resistencias de otras criaturas."
+      }
+    },
+    {
+      "id": "torrent",
+      "deprecated": false,
+      "name": {
+        "en": "Torrent",
+        "es": "Torrente"
+      },
+      "description": {
+        "en": "This Pokémon doubles its STAB bonus when it has 25% or less of its maximum health.",
+        "es": "Este Pokémon duplica su bonificador por STAB cuando tiene 25% o menos de su salud máxima."
+      }
+    },
+    {
+      "id": "tough-claws",
+      "deprecated": false,
+      "name": {
+        "en": "Tough Claws",
+        "es": "Garra Dura"
+      },
+      "description": {
+        "en": "A successful melee attack by this Pokémon automatically gets STAB, regardless of its type. If it would normally get STAB, double the STAB bonus when adding to damage.",
+        "es": "Cuando este Pokémon impacta con un ataque cuerpo a cuerpo, obtiene automáticamente el bonificador por STAB, independientemente de su tipo. Si normalmente ya obtuviera STAB, duplica el bonificador por STAB al añadirlo al daño."
+      }
+    },
+    {
+      "id": "toxic-boost",
+      "deprecated": false,
+      "name": {
+        "en": "Toxic Boost",
+        "es": "Ímpetu Tóxico"
+      },
+      "description": {
+        "en": "When this Pokémon is hit by a poison-type attack, its next attack is rolled at advantage.",
+        "es": "Cuando este Pokémon es golpeado por un ataque de tipo Veneno, realiza su siguiente ataque con ventaja."
+      }
+    },
+    {
+      "id": "toxic-chain",
+      "deprecated": false,
+      "name": {
+        "en": "Toxic Chain",
+        "es": "Cadena Tóxica"
+      },
+      "description": {
+        "en": "When this Pokémon lands a hit against a target using a melee attack, the target must make a CON save DC 16, becoming badly poisoned on failure.",
+        "es": "Cuando este Pokémon golpea con un ataque cuerpo a cuerpo, el objetivo debe superar una tirada de salvación de Constitución CD 16 o pasará a estar gravemente envenenado."
+      }
+    },
+    {
+      "id": "toxic-debris",
+      "deprecated": false,
+      "name": {
+        "en": "Toxic Debris",
+        "es": "Capa Tóxica"
+      },
+      "description": {
+        "en": "When this Pokémon is damaged, it may use its reaction to emit toxic spikes. Each creature within 5ft of it must make a DEX save against a DC of this Pokémon's level + 2. On failure, the creature is poisoned.",
+        "es": "Cuando este Pokémon es dañado, puede usar su reacción para liberar púas tóxicas. Todas las criaturas a 5 pies de él deben realizar una tirada de salvación de Destreza CD igual a su nivel +2. Si fallan, quedan envenenadas."
+      }
+    },
+    {
+      "id": "trace",
+      "deprecated": false,
+      "name": {
+        "en": "Trace",
+        "es": "Calco"
+      },
+      "description": {
+        "en": "This Pokémon copies a random ability of an opponent when entering battle. The ability cannot be Flower Gift, Forecast, Illusion, Imposter, Multitype, Trace, Wonder Guard, or Zen Mode.",
+        "es": "Este Pokémon copia una habilidad aleatoria de un oponente cuando entra en combate. La habilidad no puede ser Don Floral, Predicción, Illusión, Impostor, Multitipo, Calco, Superguarda o Modo Daruma."
+      }
+    },
+    {
+      "id": "transformer",
+      "deprecated": false,
+      "name": {
+        "en": "Transformer",
+        "es": "Transformador"
+      },
+      "description": {
+        "en": "This Pokémon has a standard Normal form from which all stats are based, but may change forms as a bonus action to drastically change its abilities. The forms it can take are Attack, Defense, and Speed. In Attack form, it adds an additional +5 to its attack rolls, but all attacks against it has advantage. In Defense form, its AC increases by 3, but its attacks are rolled at disadvantage. If the activated move requires a save, the target(s) have advantage. In Speed form, it gains an additional attack action each turn, but the attack is done at disadvantage. If it is a move that requires a save, the target(s) have advantage.",
+        "es": "Este Pokémon tiene una Forma Normal en la que se basan todas sus estadísticas, pero puede cambiar de forma como acción adicional para alterar drásticamente sus capacidades. Las formas disponibles son Ataque, Defensa y Velocidad. En Forma Ataque, añade +5 a sus tiradas de ataque, pero todos ataques contra él tienen ventaja. En Forma Defensa, su CA aumenta en 3, pero sus ataques se realizan con desventaja. Si el movimiento usado requiere de tirada de salvación, los objetivos tiran con ventaja. En Forma Velocidad, gana un ataque extra cada turno, pero dicho ataque se realiza con desventaja. Si es un movimiento que requiere tirada de salvación, los objetivos tiran con ventaja."
+      }
+    },
+    {
+      "id": "transistor",
+      "deprecated": false,
+      "name": {
+        "en": "Transistor",
+        "es": "Transistor"
+      },
+      "description": {
+        "en": "When this Pokémon uses an electric-type move, it may roll the damage twice and choose either total.",
+        "es": "Cuando este Pokémon usa un movimiento de tipo Eléctrico, puede lanzar los dados de daño dos veces y elegir cualquier resultado."
+      }
+    },
+    {
+      "id": "triage",
+      "deprecated": false,
+      "name": {
+        "en": "Triage",
+        "es": "Primer Auxilio"
+      },
+      "description": {
+        "en": "This Pokémon's healing or draining moves have a move time of 1 bonus action.",
+        "es": "Los movimientos de cura o drenado de este Pokémon tienen un tiempo de lanzamiento de 1 acción adicional."
+      }
+    },
+    {
+      "id": "truant",
+      "deprecated": false,
+      "name": {
+        "en": "Truant",
+        "es": "Pereza"
+      },
+      "description": {
+        "en": "This Pokémon cannot use the same move in back to back rounds.",
+        "es": "Este Pokémon no puede usar el mismo movimiento en dos rondas consecutivas."
+      }
+    },
+    {
+      "id": "turboblaze",
+      "deprecated": false,
+      "name": {
+        "en": "Turboblaze",
+        "es": "Turbollama"
+      },
+      "description": {
+        "en": "This Pokémon’s moves completely ignore any ability that would hinder or prevent their effect on the target or the user's ability to hit the target.",
+        "es": "Los movimientos de este Pokémon ignoran completamente cualquier habilidad que pudiera reducir su efecto sobre el objetivo o impedir que el usuario golpee."
+      }
+    },
+    {
+      "id": "unaware",
+      "deprecated": false,
+      "name": {
+        "en": "Unaware",
+        "es": "Ignorante"
+      },
+      "description": {
+        "en": "When this Pokémon attacks an opponent, it ignores any stat changes the opponent has been affected with after the start of battle.",
+        "es": "Cuando este Pokémon ataca a un oponente, ignora cualquier cambio de estadística del objetivo desde que empezó el combate."
+      }
+    },
+    {
+      "id": "unburden",
+      "deprecated": false,
+      "name": {
+        "en": "Unburden",
+        "es": "Liviano"
+      },
+      "description": {
+        "en": "While this Pokémon is not holding an item, it gains 10 feet to its speed.",
+        "es": "Mientras este Pokémon no lleva equipado un objeto, su velocidad de movimiento aumenta en 10 pies."
+      }
+    },
+    {
+      "id": "unnerve",
+      "deprecated": false,
+      "name": {
+        "en": "Unnerve",
+        "es": "Nerviosismo"
+      },
+      "description": {
+        "en": "Opponents in combat with this Pokémon cannot eat held berries.",
+        "es": "Los oponentes en combate con este Pokémon no pueden consumir bayas equipadas."
+      }
+    },
+    {
+      "id": "unseen-fist",
+      "deprecated": false,
+      "name": {
+        "en": "Unseen Fist",
+        "es": "Puño Invisible"
+      },
+      "description": {
+        "en": "Melee attacks this Pokémon make may damage through the opponent's use of Protect or Detect.",
+        "es": "Los ataques cuerpo a cuerpo de este Pokémon pueden infligir daño incluso si el oponente usa Protección o Detección."
+      }
+    },
+    {
+      "id": "vessel-of-ruin",
+      "deprecated": false,
+      "name": {
+        "en": "Vessel of Ruin",
+        "es": "Caldero Debacle"
+      },
+      "description": {
+        "en": "Creatures within 60ft of this Pokémon which do not have a \"* of Ruin\" ability have -4 Wisdom score, to a minimum of 1. This effect does not stack, and the creature's Wisdom score is restored upon leaving the area of effect.",
+        "es": "Las criaturas a 60 pies o menos de este Pokémon que no tengan una habilidad \"* Debacle\" sufren -4 a la puntuación de Sabiduría, hasta un mínimo de 1. Este efecto no se acumula y la puntuación de Constitución de las criaturas se restaura al salir del área de efecto."
+      }
+    },
+    {
+      "id": "victory-star",
+      "deprecated": false,
+      "name": {
+        "en": "Victory Star",
+        "es": "Tinovictoria"
+      },
+      "description": {
+        "en": "While this Pokémon is in battle, all allied Pokémon add an additional +1 to their attack rolls.",
+        "es": "Mientras este Pokémon está en combate, todos los Pokémon aliados tienen +1 en sus tiradas de ataque."
+      }
+    },
+    {
+      "id": "vital-spirit",
+      "deprecated": false,
+      "name": {
+        "en": "Vital Spirit",
+        "es": "Espíritu Vital"
+      },
+      "description": {
+        "en": "This Pokémon cannot be put to sleep.",
+        "es": "Este Pokémon no puede quedarse dormido."
+      }
+    },
+    {
+      "id": "volt-absorb",
+      "deprecated": false,
+      "name": {
+        "en": "Volt Absorb",
+        "es": "Absorbe Electricidad"
+      },
+      "description": {
+        "en": "This Pokémon takes no damage from electricity or electric-type attacks. Instead, half of any electric damage done is absorbed, restoring the Pokémon's HP.",
+        "es": "Este Pokémon no recibe daño de electricidad ni de ataques de tipo Eléctrico. En su lugar, la mitad del daño es absorbido, restaurando puntos de golpe del Pokémon."
+      }
+    },
+    {
+      "id": "wandering-spirit",
+      "deprecated": false,
+      "name": {
+        "en": "Wandering Spirit",
+        "es": "Alma Errante"
+      },
+      "description": {
+        "en": "When this Pokémon is hit by a melee attack, one random ability of its attacker changes to Wandering Spirit for the remainder of the encounter, and the replaced ability replaces this Pokémon's Wandering Spirit ability.",
+        "es": "Cuando este Pokémon es golpeado por un ataque cuerpo a cuerpo, una habilidad aleatoria de su atacante cambia a Alma Errante durante el resto del combate. La habilidad reemplazada pasa a ocupar el lugar de Espíritu Errante en este Pokémon."
+      }
+    },
+    {
+      "id": "water-absorb",
+      "deprecated": false,
+      "name": {
+        "en": "Water Absorb",
+        "es": "Absorbe Agua"
+      },
+      "description": {
+        "en": "This Pokémon takes no damage from water or water-type attacks. Instead, half of any water damage done is absorbed, restoring the Pokémon's HP.",
+        "es": "Este Pokémon no recibe daño de agua ni de ataques de tipo Agua. En su lugar, la mitad del daño es absorbido, restaurando puntos de golpe del Pokémon."
+      }
+    },
+    {
+      "id": "water-bubble",
+      "deprecated": false,
+      "name": {
+        "en": "Water Bubble",
+        "es": "Pompa"
+      },
+      "description": {
+        "en": "This Pokémon is resistant to fire-type damage and immune to the burned condition.",
+        "es": "Este Pokémon es resistente a los ataques de tipo Fuego y es inmune a estar quemado."
+      }
+    },
+    {
+      "id": "water-compaction",
+      "deprecated": false,
+      "name": {
+        "en": "Water Compaction",
+        "es": "Hidrorrefuerzo"
+      },
+      "description": {
+        "en": "After being damaged by a water-type move, any other damage dealt to this Pokémon until the beginning of its next turn is halved.",
+        "es": "Después de ser dañado por un ataque de tipo Agua, todo el daño infligido a este Pokémon hasta el principio de su siguiente turno es reducido a la mitad."
+      }
+    },
+    {
+      "id": "water-veil",
+      "deprecated": false,
+      "name": {
+        "en": "Water Veil",
+        "es": "Velo Agua"
+      },
+      "description": {
+        "en": "This Pokémon is immune to burning.",
+        "es": "Este Pokémon es inmune a estar quemado."
+      }
+    },
+    {
+      "id": "weak-armor",
+      "deprecated": false,
+      "name": {
+        "en": "Weak Armor",
+        "es": "Armadura Frágil"
+      },
+      "description": {
+        "en": "When an attack hits this Pokémon, its speed increases by 5 feet, but its AC is temporarily reduced by 1 until the end of battle (for a maximum reduction of -5).",
+        "es": "Cuando este Pokémon es golpeado por un ataque, su velocidad de movimiento aumenta en 5 pies, pero su CA se reduce temporalmente en 1 hasta el final del combate (hasta una reducción máxima de -5)."
+      }
+    },
+    {
+      "id": "well-baked-body",
+      "deprecated": false,
+      "name": {
+        "en": "Well-Baked Body",
+        "es": "Cuerpo Horneado"
+      },
+      "description": {
+        "en": "This Pokémon takes no damage from fire or fire-type attacks. Instead, its AC increases by 2 until it takes damage or after 1 minute, whichever happens first. This effect does not stack with itself.",
+        "es": "Este Pokémon no recibe daño de fuego o ataques de tipo Fuego. En su lugar, su CA aumenta en 2 hasta que recibe daño o hasta que pase 1 minuto, lo que ocurra primero."
+      }
+    },
+    {
+      "id": "white-smoke",
+      "deprecated": false,
+      "name": {
+        "en": "White Smoke",
+        "es": "Humo Blanco"
+      },
+      "description": {
+        "en": "Other Pokémon's moves or abilities cannot lower this Pokémon stats.",
+        "es": "Los movimientos y habilidades de otros Pokémon no pueden reducir las estadísticas de este Pokémon."
+      }
+    },
+    {
+      "id": "wimp-out",
+      "deprecated": false,
+      "name": {
+        "en": "Wimp Out",
+        "es": "Huida"
+      },
+      "description": {
+        "en": "When a damaging move causes this Pokémon to fall below 50% of its maximum HP, it MUST disengage and move up to its speed in a straight line towards its trainer as a free action. If this would put the Pokémon in range of switching out, it must do so as another free action if another Pokémon is available to replace it.",
+        "es": "Cuando este Pokémon recibe daño que haga que sus puntos de golpe se reduzcan por debajo del 50 % de su salud máxima, DEBE retirarse y moverse a su velocidad de movimiento en línea recta hacia su entrenador como acción gratuita. Si esto situara al Pokémon en posición de ser sustituido, debe hacerlo como otra acción gratuita si hay otro Pokémon disponible para reemplazarlo."
+      }
+    },
+    {
+      "id": "wind-power",
+      "deprecated": false,
+      "name": {
+        "en": "Wind Power",
+        "es": "Energía Eólica"
+      },
+      "description": {
+        "en": "After a wind move is activated that affects this pokemon, the number of damage dice used for its next electric-type attack doubles. Wind moves include Aeroblast, Air Cutter, Bleakwind Storm, Blizzard, Fairy Wind, Gust, Heat Wave, Hurricane, Icy Wind, Petal Blizzard, Sandsear Storm, Sandstorm, Springtide Storm, Tailwind, Twister, Whirlwind, and Wildbolt Storm.",
+        "es": "Cuando este Pokémon recibe daño de un movimiento basado en viento, la cantidad de dados de daño usados ​​para su siguiente ataque de tipo Eléctrico se duplica. Los movimientos de viento incluyen Aire Afilado, Vendaval Gélido, Ventisca, Viento Feérico, Tornado, Onda ígnea, Vendaval, Viento Hielo, Tormenta Floral, Simún de Arena, Tormenta de Arena, Ciclón Primavera, Viento Afín, Ciclón, Remolino, y Electormenta."
+      }
+    },
+    {
+      "id": "wind-rider",
+      "deprecated": false,
+      "name": {
+        "en": "Wind Rider",
+        "es": "Surcavientos"
+      },
+      "description": {
+        "en": "This Pokémon is immune to damage dealt by wind moves. Additionally, this Pokémon's movement speed is double when moving with the wind's current direction, and halved when moving against the wind.",
+        "es": "Este Pokémon es inmune al daño de los movimientos basados en viento. Además, su velocidad de movimiento se duplica al moverse en la dirección del viento y se reduce a la mitad al moverse contra él."
+      }
+    },
+    {
+      "id": "wonder-guard",
+      "deprecated": false,
+      "name": {
+        "en": "Wonder Guard",
+        "es": "Superguarda"
+      },
+      "description": {
+        "en": "This Pokémon is immune to damaging moves from types that are not in its vulnerabilities list. (Shedinja only. Cannot be passed or swapped)",
+        "es": "Este Pokémon es inmune a ataques que causen daño de tipos que no están en su lista de vulnerabilidades. (Solo Shedinja. No se puede transferir ni intercambiar)"
+      }
+    },
+    {
+      "id": "wonder-skin",
+      "deprecated": false,
+      "name": {
+        "en": "Wonder Skin",
+        "es": "Piel Milagro"
+      },
+      "description": {
+        "en": "This Pokémon has advantage on all saving throws against being burned, frozen, poisoned, or paralyzed.",
+        "es": "Este Pokémon tiene ventaja en todas las tiradas de salvación contra quemaduras, congelamiento, envenenamiento o parálisis."
+      }
+    },
+    {
+      "id": "zen-mode",
+      "deprecated": false,
+      "name": {
+        "en": "Zen Mode",
+        "es": "Modo Daruma"
+      },
+      "description": {
+        "en": "When Darmanitan is below 50% of its HP, it enters Zen Mode. In Zen Mode, Darmanitan changes into the form of a solid statue. Its type changes to Fire/Psychic, it gains +4 to its AC, and its STR and WIS ability scores are swapped.",
+        "es": "Cuando Darmanitan tiene menos del 50% de su salud máxima, entra en Modo Daruma. En este modo, Darmanitan se transforma en una estatua sólida. Su tipo cambia a Fuego/Psíquico, obtiene +4 a su CA y sus puntuaciones de característica de Fuerza y Sabiduría se intercambian."
+      }
+    },
+    {
+      "id": "zen-mode-galarian",
+      "deprecated": false,
+      "name": {
+        "en": "Zen Mode (Galarian)",
+        "es": "Modo Daruma (de Galar)"
+      },
+      "description": {
+        "en": "When Galarian Darmanitan is below 50% of its HP, it enters Zen Mode. In Zen Mode, Galarian Darmanitan changes into the form of a flaming snowman. Its type changes to Ice/Fire, and its STR and DEX each increase by +2.",
+        "es": "Cuando Darmanitan tiene menos del 50% de su salud máxima, entra en Modo Daruma. En este modo, Darmanitan de Galar se transforma en un muñeco de nieve en llamas. Su tipo cambia a Hielo/Fuego, y su Fuerza y Destreza aumentan +2 cada una."
+      }
+    },
+    {
+      "id": "zero-to-hero",
+      "deprecated": false,
+      "name": {
+        "en": "Zero to Hero",
+        "es": "Cambio Heroico"
+      },
+      "description": {
+        "en": "When a non-Pokémon ally of Palafin takes damage from a source outside that ally's control, Palafin may enter its Hero Form. In Hero Form, Palafin's size changes to Medium, its AC increases by 4, its base walking speed becomes 30ft, and each of its STR and DEX scores increase by 4, up to a maximum of 22. It may do this once per long rest. It reverts to normal form at the end of combat.",
+        "es": "Cuando un aliado de Palafin, que no sea Pokémon, recibe daño de una fuente ajena a su control, Palafin puede adoptar su Forma Heroica. En Forma Heroica, su tamaño cambia a Mediano, su CA aumenta en 4 y sus puntuaciones de característica de Fuerza y Destreza aumentan en 4, hasta un máximo de 22. Puede hacer esto una vez por cada descanso largo. Regresa a su Forma Ingenua al final del combate."
+      }
+    }
+  ]
+}

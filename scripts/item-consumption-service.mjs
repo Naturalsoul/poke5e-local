@@ -1,0 +1,1321 @@
+const MODULE_ID =
+  "poke5e-local";
+
+const CATALOG_ITEM_KIND =
+  "catalog-item";
+
+const CONSUMABLE_ITEM_TYPE =
+  "consumable";
+
+const ITEM_ROLLS_FLAG =
+  "rolls";
+
+const CHAT_ITEM_ROLLS_FLAG =
+  "itemRolls";
+
+const CHAT_ITEM_NAME_FLAG =
+  "itemRollName";
+
+const ITEM_ROLL_ACTIONS_CLASS =
+  "poke5e-item-roll-actions";
+
+const pendingConsumableUses =
+  new Set();
+
+const bypassConsumableCards =
+  new Set();
+
+let registered =
+  false;
+
+
+/* ============================================================
+ * LANGUAGE
+ * ============================================================ */
+
+function currentLanguage() {
+
+  try {
+
+    return game.settings.get(
+      MODULE_ID,
+      "language"
+    ) === "en"
+      ? "en"
+      : "es";
+
+  } catch {
+
+    return "es";
+  }
+}
+
+
+function labels() {
+
+  if (
+    currentLanguage() ===
+      "en"
+  ) {
+
+    return {
+      title:
+        "Use consumable",
+
+      question:
+        name =>
+          `Use ${name}?`,
+
+      quantity:
+        "Available quantity",
+
+      use:
+        "Use",
+
+      cancel:
+        "Cancel",
+
+      empty:
+        name =>
+          `You have no ${name} remaining.`,
+
+      permission:
+        "You do not have permission to use this item.",
+
+      unavailable:
+        "The item is no longer available.",
+
+      failed:
+        name =>
+          `${name} could not be used.`
+    };
+  }
+
+
+  return {
+    title:
+      "Usar consumible",
+
+    question:
+      name =>
+        `¿Usar ${name}?`,
+
+    quantity:
+      "Cantidad disponible",
+
+    use:
+      "Usar",
+
+    cancel:
+      "Cancelar",
+
+    empty:
+      name =>
+        `No quedan unidades de ${name}.`,
+
+    permission:
+      "No tienes permisos para usar este objeto.",
+
+    unavailable:
+      "El objeto ya no está disponible.",
+
+    failed:
+      name =>
+        `No se pudo usar ${name}.`
+  };
+}
+
+
+/* ============================================================
+ * ITEM STATE
+ * ============================================================ */
+
+function itemKey(
+  item
+) {
+
+  return String(
+    item?.uuid ??
+    item?.id ??
+    ""
+  );
+}
+
+
+function isPoke5eCatalogItem(
+  item
+) {
+
+  return Boolean(
+    item?.documentName ===
+      "Item" &&
+
+    item.getFlag(
+      MODULE_ID,
+      "kind"
+    ) ===
+      CATALOG_ITEM_KIND
+  );
+}
+
+
+function isPoke5eConsumable(
+  item
+) {
+
+  return Boolean(
+    isPoke5eCatalogItem(
+      item
+    ) &&
+
+    item.parent
+      ?.documentName ===
+      "Actor" &&
+
+    item.type ===
+      CONSUMABLE_ITEM_TYPE
+  );
+}
+
+
+function itemQuantity(
+  item
+) {
+
+  const quantity =
+    Number(
+      item?.system
+        ?.quantity ??
+      0
+    );
+
+
+  if (
+    !Number.isFinite(
+      quantity
+    )
+  ) {
+
+    return 0;
+  }
+
+
+  return Math.max(
+    0,
+    Math.trunc(
+      quantity
+    )
+  );
+}
+
+
+function canCurrentUserUseItem(
+  item
+) {
+
+  const actor =
+    item?.parent;
+
+
+  if (
+    actor?.documentName !==
+      "Actor"
+  ) {
+
+    return false;
+  }
+
+
+  if (
+    game.user.isGM
+  ) {
+
+    return true;
+  }
+
+
+  return Boolean(
+    actor.testUserPermission?.(
+      game.user,
+      "OWNER"
+    )
+  );
+}
+
+
+function currentEmbeddedItem(
+  item
+) {
+
+  const actor =
+    item?.parent;
+
+
+  if (
+    actor?.documentName !==
+      "Actor"
+  ) {
+
+    return null;
+  }
+
+
+  return (
+    actor.items.get(
+      item.id
+    ) ??
+    null
+  );
+}
+
+function itemRollDefinitions(
+  item
+) {
+
+  const stored =
+    item?.getFlag?.(
+      MODULE_ID,
+      ITEM_ROLLS_FLAG
+    );
+
+
+  if (
+    !Array.isArray(
+      stored
+    )
+  ) {
+
+    return [];
+  }
+
+
+  return stored
+    .map(
+      roll => {
+
+        const id =
+          String(
+            roll?.id ??
+            ""
+          ).trim();
+
+
+        const formula =
+          String(
+            roll?.formula ??
+            ""
+          ).trim();
+
+
+        if (
+          !id ||
+          !formula
+        ) {
+
+          return null;
+        }
+
+
+        return {
+          id,
+
+          kind:
+            String(
+              roll?.kind ??
+              "utility"
+            ),
+
+          formula,
+
+          label:
+            foundry.utils.deepClone(
+              roll?.label ??
+              {
+                en:
+                  id,
+
+                es:
+                  id
+              }
+            )
+        };
+      }
+    )
+    .filter(Boolean);
+}
+
+
+function localizedRollLabel(
+  roll
+) {
+
+  const value =
+    roll?.label;
+
+
+  if (
+    typeof value ===
+      "string"
+  ) {
+
+    return value;
+  }
+
+
+  if (
+    value &&
+    typeof value ===
+      "object"
+  ) {
+
+    const language =
+      currentLanguage();
+
+
+    return String(
+      value[
+        language
+      ] ??
+      value.en ??
+      value.es ??
+      roll.id
+    );
+  }
+
+
+  return String(
+    roll?.id ??
+    ""
+  );
+}
+
+/* ============================================================
+ * CONFIRMATION
+ * ============================================================ */
+
+function escapeHtml(
+  value
+) {
+
+  return foundry.utils.escapeHTML(
+    String(
+      value ??
+      ""
+    )
+  );
+}
+
+
+function confirmationContent(
+  item,
+  quantity
+) {
+
+  const text =
+    labels();
+
+
+  const image =
+    escapeHtml(
+      item.img ||
+      "icons/svg/item-bag.svg"
+    );
+
+
+  return `
+    <div class="poke5e-consumable-confirmation">
+
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        "
+      >
+
+        <img
+          src="${image}"
+          alt="${escapeHtml(item.name)}"
+          width="48"
+          height="48"
+          style="
+            object-fit: contain;
+            border: 0;
+          "
+        >
+
+        <div>
+
+          <p
+            style="
+              margin: 0 0 6px;
+              font-weight: 600;
+            "
+          >
+            ${escapeHtml(
+              text.question(
+                item.name
+              )
+            )}
+          </p>
+
+          <small>
+            ${escapeHtml(text.quantity)}:
+            <strong>
+              ${escapeHtml(quantity)}
+            </strong>
+          </small>
+
+        </div>
+
+      </div>
+
+    </div>
+  `;
+}
+
+
+async function confirmConsumableUse(
+  item,
+  quantity
+) {
+
+  const text =
+    labels();
+
+
+  const confirmed =
+    await foundry.applications.api
+      .DialogV2.confirm({
+
+        window: {
+          title:
+            text.title
+        },
+
+        content:
+          confirmationContent(
+            item,
+            quantity
+          ),
+
+        modal:
+          true,
+
+        rejectClose:
+          false,
+
+        yes: {
+          label:
+            text.use
+        },
+
+        no: {
+          label:
+            text.cancel
+        }
+      });
+
+
+  return confirmed ===
+    true;
+}
+
+
+/* ============================================================
+ * CHAT
+ * ============================================================ */
+
+async function displayConsumableCard(
+  item
+) {
+
+  const key =
+    itemKey(
+      item
+    );
+
+
+  if (!key) {
+
+    throw new Error(
+      "El consumible no posee UUID."
+    );
+  }
+
+
+  bypassConsumableCards.add(
+    key
+  );
+
+
+  try {
+
+    const card =
+      await item.displayCard();
+
+
+    if (!card) {
+
+      throw new Error(
+        `No se pudo publicar ${item.name} en el chat.`
+      );
+    }
+
+
+    return card;
+
+  } finally {
+
+    bypassConsumableCards.delete(
+      key
+    );
+  }
+}
+
+
+/* ============================================================
+ * CONSUMPTION
+ * ============================================================ */
+
+async function consumeAndDisplay(
+  item
+) {
+
+  const text =
+    labels();
+
+
+  /*
+   * Volvemos a resolver el Item después del diálogo.
+   *
+   * Durante el tiempo que el usuario estuvo decidiendo
+   * su inventario podría haber cambiado.
+   */
+
+  const currentItem =
+    currentEmbeddedItem(
+      item
+    );
+
+
+  if (
+    !currentItem ||
+    !isPoke5eConsumable(
+      currentItem
+    )
+  ) {
+
+    throw new Error(
+      text.unavailable
+    );
+  }
+
+
+  if (
+    !canCurrentUserUseItem(
+      currentItem
+    )
+  ) {
+
+    throw new Error(
+      text.permission
+    );
+  }
+
+
+  const quantity =
+    itemQuantity(
+      currentItem
+    );
+
+
+  if (
+    quantity <= 0
+  ) {
+
+    ui.notifications.warn(
+      text.empty(
+        currentItem.name
+      )
+    );
+
+
+    return null;
+  }
+
+
+  const nextQuantity =
+    quantity - 1;
+
+
+  /*
+   * Primero consumimos.
+   *
+   * Si la creación de la tarjeta falla,
+   * restauramos la cantidad.
+   */
+
+  await currentItem.update({
+    "system.quantity":
+      nextQuantity
+  });
+
+
+  try {
+
+    return await displayConsumableCard(
+      currentItem
+    );
+
+  } catch (error) {
+
+    /*
+     * Rollback.
+     *
+     * Solo restauramos si el Item sigue existiendo
+     * y continúa exactamente en la cantidad que
+     * acabamos de escribir.
+     *
+     * Esto reduce el riesgo de pisar otro cambio
+     * realizado mientras se publicaba la tarjeta.
+     */
+
+    const rollbackItem =
+      currentEmbeddedItem(
+        currentItem
+      );
+
+
+    if (
+      rollbackItem &&
+      itemQuantity(
+        rollbackItem
+      ) ===
+        nextQuantity
+    ) {
+
+      await rollbackItem.update({
+        "system.quantity":
+          quantity
+      });
+    }
+
+
+    throw error;
+  }
+}
+
+
+async function requestConsumableUse(
+  item
+) {
+
+  const key =
+    itemKey(
+      item
+    );
+
+
+  if (
+    !key ||
+    pendingConsumableUses.has(
+      key
+    )
+  ) {
+
+    return;
+  }
+
+
+  pendingConsumableUses.add(
+    key
+  );
+
+
+  try {
+
+    const currentItem =
+      currentEmbeddedItem(
+        item
+      );
+
+
+    if (
+      !currentItem ||
+      !isPoke5eConsumable(
+        currentItem
+      )
+    ) {
+
+      return;
+    }
+
+
+    const text =
+      labels();
+
+
+    if (
+      !canCurrentUserUseItem(
+        currentItem
+      )
+    ) {
+
+      ui.notifications.error(
+        text.permission
+      );
+
+
+      return;
+    }
+
+
+    const quantity =
+      itemQuantity(
+        currentItem
+      );
+
+
+    if (
+      quantity <= 0
+    ) {
+
+      ui.notifications.warn(
+        text.empty(
+          currentItem.name
+        )
+      );
+
+
+      return;
+    }
+
+
+    const confirmed =
+      await confirmConsumableUse(
+        currentItem,
+        quantity
+      );
+
+
+    if (!confirmed) {
+
+      return;
+    }
+
+
+    await consumeAndDisplay(
+      currentItem
+    );
+
+  } catch (error) {
+
+    console.error(
+      `[${MODULE_ID}] Error usando consumible`,
+      error
+    );
+
+
+    ui.notifications.error(
+      error?.message ??
+      labels().failed(
+        item?.name ??
+        "Item"
+      )
+    );
+
+  } finally {
+
+    pendingConsumableUses.delete(
+      key
+    );
+  }
+}
+
+function attachItemRollsToMessage(
+  item,
+  message
+) {
+
+  if (
+    !isPoke5eCatalogItem(
+      item
+    )
+  ) {
+
+    return;
+  }
+
+
+  const rolls =
+    itemRollDefinitions(
+      item
+    );
+
+
+  if (
+    !rolls.length ||
+    !message?.data
+  ) {
+
+    return;
+  }
+
+
+  message.data.flags ??=
+    {};
+
+
+  message.data.flags[
+    MODULE_ID
+  ] ??=
+    {};
+
+
+  message.data.flags[
+    MODULE_ID
+  ][
+    CHAT_ITEM_ROLLS_FLAG
+  ] =
+    foundry.utils.deepClone(
+      rolls
+    );
+
+
+  message.data.flags[
+    MODULE_ID
+  ][
+    CHAT_ITEM_NAME_FLAG
+  ] =
+    String(
+      item.name ??
+      ""
+    );
+}
+
+/* ============================================================
+ * D&D5E ADAPTER
+ * ============================================================ */
+
+function onPreDisplayCard(
+  item,
+  message
+) {
+
+  /*
+   * Metadata para cualquier Item Poke5e
+   * que posea tiradas declaradas.
+   */
+
+  attachItemRollsToMessage(
+    item,
+    message
+  );
+
+
+  /*
+   * El resto del flujo solo aplica
+   * a consumibles.
+   */
+
+  if (
+    !isPoke5eConsumable(
+      item
+    )
+  ) {
+
+    return;
+  }
+
+
+  const key =
+    itemKey(
+      item
+    );
+
+
+  /*
+   * Esta tarjeta está siendo publicada por
+   * nuestro propio flujo después de confirmar.
+   */
+
+  if (
+    key &&
+    bypassConsumableCards.has(
+      key
+    )
+  ) {
+
+    return;
+  }
+
+
+  /*
+   * Bloqueamos la publicación original.
+   *
+   * La tarjeta se crea únicamente si el usuario
+   * confirma el consumo.
+   */
+
+  void requestConsumableUse(
+    item
+  );
+
+
+  return false;
+}
+
+function chatMessageRolls(
+  message
+) {
+
+  const stored =
+    message.getFlag(
+      MODULE_ID,
+      CHAT_ITEM_ROLLS_FLAG
+    );
+
+
+  if (
+    !Array.isArray(
+      stored
+    )
+  ) {
+
+    return [];
+  }
+
+
+  return stored
+    .map(
+      roll => {
+
+        const id =
+          String(
+            roll?.id ??
+            ""
+          ).trim();
+
+
+        const formula =
+          String(
+            roll?.formula ??
+            ""
+          ).trim();
+
+
+        if (
+          !id ||
+          !formula
+        ) {
+
+          return null;
+        }
+
+
+        return {
+          id,
+
+          formula,
+
+          label:
+            roll?.label ??
+            id
+        };
+      }
+    )
+    .filter(Boolean);
+}
+
+
+function canCurrentUserRollMessage(
+  message
+) {
+
+  if (
+    game.user.isGM
+  ) {
+
+    return true;
+  }
+
+
+  const authorId =
+    typeof message.user ===
+      "string"
+      ? message.user
+      : message.user?.id;
+
+
+  return authorId ===
+    game.user.id;
+}
+
+
+async function rollItemFormula(
+  message,
+  rollDefinition
+) {
+
+  const formula =
+    String(
+      rollDefinition
+        .formula
+    );
+
+
+  const label =
+    localizedRollLabel(
+      rollDefinition
+    );
+
+
+  const itemName =
+    String(
+      message.getFlag(
+        MODULE_ID,
+        CHAT_ITEM_NAME_FLAG
+      ) ??
+      ""
+    );
+
+
+  try {
+
+    const roll =
+      await new Roll(
+        formula
+      ).evaluate();
+
+
+    await roll.toMessage({
+      speaker:
+        message.speaker,
+
+      flavor:
+        `<strong>${escapeHtml(itemName)}</strong>` +
+        ` — ${escapeHtml(label)}`
+    });
+
+  } catch (error) {
+
+    console.error(
+      `[${MODULE_ID}] Error realizando tirada de Item`,
+      error
+    );
+
+
+    ui.notifications.error(
+      currentLanguage() ===
+        "en"
+        ? `Could not roll ${formula}.`
+        : `No se pudo tirar ${formula}.`
+    );
+  }
+}
+
+
+function createRollButton(
+  message,
+  rollDefinition
+) {
+
+  const button =
+    document.createElement(
+      "button"
+    );
+
+
+  button.type =
+    "button";
+
+
+  button.classList.add(
+    "poke5e-item-roll-button"
+  );
+
+
+  const allowed =
+    canCurrentUserRollMessage(
+      message
+    );
+
+
+  button.disabled =
+    !allowed;
+
+
+  if (!allowed) {
+
+    button.title =
+      currentLanguage() ===
+        "en"
+        ? "Only the message author or the GM can make this roll."
+        : "Solo el autor del mensaje o el GM puede realizar esta tirada.";
+  }
+
+
+  const icon =
+    document.createElement(
+      "i"
+    );
+
+
+  icon.className =
+    "fa-solid fa-dice";
+
+
+  icon.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+
+  const text =
+    document.createElement(
+      "span"
+    );
+
+
+  text.textContent =
+    `${localizedRollLabel(
+      rollDefinition
+    )} · ${rollDefinition.formula}`;
+
+
+  button.append(
+    icon,
+    text
+  );
+
+
+  button.addEventListener(
+    "click",
+    () => {
+
+      if (
+        !canCurrentUserRollMessage(
+          message
+        )
+      ) {
+
+        return;
+      }
+
+
+      void rollItemFormula(
+        message,
+        rollDefinition
+      );
+    }
+  );
+
+
+  return button;
+}
+
+
+function onRenderChatMessage(
+  message,
+  html
+) {
+
+  if (
+    !(html instanceof
+      HTMLElement)
+  ) {
+
+    return;
+  }
+
+
+  const rolls =
+    chatMessageRolls(
+      message
+    );
+
+
+  if (
+    !rolls.length ||
+    html.querySelector(
+      `.${ITEM_ROLL_ACTIONS_CLASS}`
+    )
+  ) {
+
+    return;
+  }
+
+
+  const actions =
+    document.createElement(
+      "div"
+    );
+
+
+  actions.classList.add(
+    ITEM_ROLL_ACTIONS_CLASS
+  );
+
+
+  actions.style.display =
+    "flex";
+
+  actions.style.flexDirection =
+    "column";
+
+  actions.style.gap =
+    "6px";
+
+  actions.style.marginTop =
+    "8px";
+
+
+  for (
+    const rollDefinition
+    of rolls
+  ) {
+
+    actions.append(
+      createRollButton(
+        message,
+        rollDefinition
+      )
+    );
+  }
+
+
+  html.append(
+    actions
+  );
+}
+
+/* ============================================================
+ * REGISTRATION
+ * ============================================================ */
+
+export function registerPoke5eItemConsumptionService() {
+
+  if (
+    registered
+  ) {
+
+    return;
+  }
+
+
+  registered =
+    true;
+
+
+  Hooks.on(
+    "dnd5e.preDisplayCardV2",
+    onPreDisplayCard
+  );
+
+
+  Hooks.on(
+    "renderChatMessageHTML",
+    onRenderChatMessage
+  );
+}
