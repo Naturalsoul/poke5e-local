@@ -20,7 +20,7 @@
   - Verify: modifier and coverage tests.
   - Files: `scripts/modifier-automation.mjs`, `scripts/modifier-effects.mjs`, `scripts/move-coverage.mjs`, tests
 
-- [ ] 4. `hit-and-failed-save` trigger (acid-spray)
+- [x] 4. `hit-and-failed-save` trigger (acid-spray)
   - Acceptance: applies only when the same usage hits and the target fails the save, in either message order; stacks to 3.
   - Verify: modifier and coverage tests.
   - Files: `scripts/modifier-automation.mjs`, `scripts/modifier-effects.mjs`, `scripts/move-coverage.mjs`, tests

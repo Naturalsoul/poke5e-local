@@ -9,6 +9,7 @@ const NATURAL_AT_LEAST_TRIGGER = /^natural-attack-(\d+)\+$/;
 const live = new Set();
 const pending = new Map();
 const actorsPending = new Map();
+const combinedParts = new Map();
 let registered = false;
 
 function authority() {
@@ -20,6 +21,31 @@ function actorFromUuid(uuid) {
   return doc?.actor ?? doc;
 }
 
+function attackApplication(message, roll, item, trigger) {
+  const natural = String(trigger ?? "").match(NATURAL_AT_LEAST_TRIGGER);
+  if (!(trigger === "hit" || trigger === "hit-and-failed-save" || natural)) {return null;}
+  const activity = message.getAssociatedActivity?.();
+  if (!activity || activity.item?.uuid !== item.uuid) {return null;}
+  const outcome = buildAttackOutcome(roll, activity);
+  // Same contract as status riders (Scald): natural N+ applies regardless of hit/miss.
+  const applies = natural ? isNaturalAttackAtLeast(outcome, Number(natural[1])) : outcome.hit === true;
+  const actor = applies ? actorFromUuid(outcome.targetActorUuid) : null;
+  if (!actor) {return null;}
+  return trigger === "hit-and-failed-save"
+    ? { item, actor, part: "hit", usageId: message.getFlag("dnd5e", "originatingMessage") } : { item, actor };
+}
+
+function saveApplication(roll, save, item, trigger) {
+  if (!["failed-save", "hit-and-failed-save"].includes(trigger) || !save?.usageMessageId) {return null;}
+  const dc = Number(roll.options?.target ?? save.dc);
+  if (!Number.isFinite(dc) || !Number.isFinite(Number(roll.total))) {return null;}
+  const success = typeof roll.isSuccess === "boolean" ? roll.isSuccess : Number(roll.total) >= dc;
+  if (success) {return null;}
+  const actor = actorFromUuid(save.actorUuid);
+  return trigger === "hit-and-failed-save"
+    ? { item, actor, part: "failed-save", usageId: save.usageMessageId } : { item, actor };
+}
+
 function eligibleApplication(message, roll) {
   const save = roll.options?.[MODULE_ID]?.modifierUsage;
   const type = message.getFlag("dnd5e", "roll.type");
@@ -28,21 +54,24 @@ function eligibleApplication(message, roll) {
   if (item?.getFlag(MODULE_ID, "kind") !== "move" || !AUTOMATED_MODIFIER_MOVES.has(sourceId)) {return null;}
   const trigger = item.effects.find(effect => effect.getFlag(MODULE_ID, "kind") === "pokemon-modifier")
     ?.getFlag(MODULE_ID, "trigger");
-  const natural = String(trigger ?? "").match(NATURAL_AT_LEAST_TRIGGER);
-  if (trigger === "hit" || natural) {
-    if (type !== "attack") {return null;}
-    const activity = message.getAssociatedActivity?.();
-    if (!activity || activity.item?.uuid !== item.uuid) {return null;}
-    const outcome = buildAttackOutcome(roll, activity);
-    // Same contract as status riders (Scald): natural N+ applies regardless of hit/miss.
-    const applies = natural ? isNaturalAttackAtLeast(outcome, Number(natural[1])) : outcome.hit === true;
-    return applies ? { item, actor: actorFromUuid(outcome.targetActorUuid) } : null;
+  if (type === "attack") {return attackApplication(message, roll, item, trigger);}
+  return type === "save" ? saveApplication(roll, save, item, trigger) : null;
+}
+
+// Hit and failed save arrive as separate messages of the same usage, in either order.
+// shortcut: kept in memory, so a GM reload between the attack and the save loses the pair; persist on the usage message if that matters.
+function completesCombined({ actor, part, usageId }) {
+  if (!part) {return true;}
+  if (!usageId || !actor) {return false;}
+  const key = `${usageId}:${actor.uuid}`;
+  const parts = combinedParts.get(key) ?? new Set();
+  parts.add(part);
+  if (parts.size < 2) {
+    combinedParts.set(key, parts);
+    return false;
   }
-  if (trigger !== "failed-save" || type !== "save" || !save?.usageMessageId) {return null;}
-  const dc = Number(roll.options?.target ?? save.dc);
-  if (!Number.isFinite(dc) || !Number.isFinite(Number(roll.total))) {return null;}
-  const success = typeof roll.isSuccess === "boolean" ? roll.isSuccess : Number(roll.total) >= dc;
-  return success ? null : { item, actor: actorFromUuid(save.actorUuid) };
+  combinedParts.delete(key);
+  return true;
 }
 
 // Serialize applications from different roll messages to avoid losing stacks.
@@ -69,7 +98,9 @@ async function applyDisplayedModifiers(message, record) {
     const application = eligibleApplication(message, roll);
     if (application?.actor) {applications.set(`${application.actor.uuid}:${application.item.uuid}`, application);}
   }
-  for (const application of applications.values()) {await applyApplication(application);}
+  for (const application of applications.values()) {
+    if (completesCombined(application)) {await applyApplication(application);}
+  }
 }
 
 export function onRenderedMoveModifier(message, html) {

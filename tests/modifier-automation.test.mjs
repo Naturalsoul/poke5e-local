@@ -359,3 +359,51 @@ test("natural triggers follow the Scald contract (hit or miss), ignore saves and
   assert.equal(target.effects.length, 1);
   assert.equal(target.effects[0].getFlag(MODULE_ID, "nextTurnStarted"), false);
 });
+
+function sprayHit(item, target, usageId, { hit = true } = {}) {
+  const result = message(item, target, { type: "attack", success: hit });
+  result._flags.dnd5e = { ...result._flags.dnd5e, originatingMessage: usageId };
+  return result;
+}
+
+function spraySave(item, target, usageId, { success = false } = {}) {
+  const result = message(item, target, { type: "save", success });
+  result.rolls[0].options[MODULE_ID].modifierUsage.usageMessageId = usageId;
+  return result;
+}
+
+test("Acid Spray needs a hit and a failed save from the same usage, in either order, stacking to -3 AC", async () => {
+  const item = move("acid-spray");
+  const target = actor();
+  await show(sprayHit(item, target, "Usage.a"));
+  assert.equal(target.effects.length, 0, "a hit alone must not apply");
+  await show(spraySave(item, target, "Usage.a"));
+  assert.equal(target.effects.length, 1);
+  assert.equal(target.effects[0].changes[0].value, "-1");
+  await show(spraySave(item, target, "Usage.b"));
+  await show(sprayHit(item, target, "Usage.b"));
+  assert.equal(target.effects[0].getFlag(MODULE_ID, "stackCount"), 2);
+  for (const usageId of ["Usage.c", "Usage.d"]) {
+    await show(sprayHit(item, target, usageId));
+    await show(spraySave(item, target, usageId));
+  }
+  assert.equal(target.effects.length, 1);
+  assert.equal(target.effects[0].getFlag(MODULE_ID, "stackCount"), 3);
+  assert.equal(target.effects[0].changes[0].value, "-3");
+});
+
+test("Acid Spray ignores misses, successful saves, mismatched usages and other targets", async () => {
+  const item = move("acid-spray");
+  const target = actor();
+  const other = actor();
+  await show(sprayHit(item, target, "Usage.miss", { hit: false }));
+  await show(spraySave(item, target, "Usage.miss"));
+  await show(sprayHit(item, target, "Usage.saved"));
+  await show(spraySave(item, target, "Usage.saved", { success: true }));
+  await show(sprayHit(item, target, "Usage.one"));
+  await show(spraySave(item, target, "Usage.two"));
+  await show(sprayHit(item, target, "Usage.split"));
+  await show(spraySave(item, other, "Usage.split"));
+  assert.equal(target.effects.length, 0);
+  assert.equal(other.effects.length, 0);
+});

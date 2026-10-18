@@ -6,7 +6,7 @@ export const MOVE_COVERAGE = Object.freeze({
   accelerock: { status: "pending", module: "stat-modifiers" },
   acid: { status: "pending", module: "status-riders" },
   "acid-armor": { status: "automated", engines: ["modifier-effects"], note: "Melee attackers making a CON save or taking 1d6 poison is not automated." },
-  "acid-spray": { status: "pending", module: "stat-modifiers", also: ["status-riders"] },
+  "acid-spray": { status: "automated", engines: ["modifier-effects"] },
   acrobatics: { status: "pending", module: "attack-riders" },
   acupressure: { status: "pending", module: "stat-modifiers", note: "Random d6 ability boost; recast ends the previous one." },
   "aerial-ace": { status: "pending", module: "attack-riders" },
