@@ -410,7 +410,7 @@
             "type": "table",
             "headers": [
               "d6",
-              "Effecto"
+              "Efecto"
             ],
             "rows": [
               [
@@ -5070,7 +5070,7 @@
           {
             "type": "table",
             "headers": [
-              "Enviroment",
+              "Environment",
               "Types"
             ],
             "rows": [
@@ -5122,7 +5122,24 @@
           }
         ],
         "es": [
-          "Te camuflas con tu entorno, adoptando un nuevo tipo para tus resistencias, vulnerabilidades e inmunidades. El tipo depende del terreno y queda a discreción del DM (por ejemplo: Bosque = Planta, Playa = Agua, Desierto = Tierra/Fuego, Montaña = Roca, etc.)."
+          "Te camuflas con tu entorno y sustituyes tu tipo actual por uno nuevo. El tipo depende del entorno y queda a discreción del DM. A continuación se incluyen algunos ejemplos.",
+          {
+            "type": "table",
+            "headers": ["Entorno", "Tipos"],
+            "rows": [
+              ["Ciudades, caminos, edificios", "Normal, Acero"],
+              ["Cuevas", "Roca"],
+              ["Arena, tierra, roca", "Tierra"],
+              ["Océanos, ríos, lagos", "Agua"],
+              ["Nieve, hielo", "Hielo"],
+              ["Volcanes", "Fuego"],
+              ["Bosques, campos, Campo de Hierba", "Planta"],
+              ["Cielo, nubes", "Volador"],
+              ["Campo de Niebla", "Hada"],
+              ["Campo Eléctrico", "Eléctrico"],
+              ["Campo Psíquico", "Psíquico"]
+            ]
+          }
         ]
       },
       "higherLevels": {
@@ -25381,7 +25398,7 @@
           {
             "type": "table",
             "headers": [
-              "Enviroment",
+              "Environment",
               "Move"
             ],
             "rows": [
@@ -25443,7 +25460,7 @@
             "rows": [
               [
                 "Ciudades, Caminos, Edificios",
-                "Rápidez"
+                "Rapidez"
               ],
               [
                 "Zonas arenosas",
@@ -31009,32 +31026,8 @@
           "If the user is terastallized with a non-Stellar type, then the type and damage of this move becomes that of the user's Tera Type instead."
         ],
         "es": [
-          "Golpeas a un objetivo con una danza agresiva. Realiza un ataque cuerpo a cuerpo contra un objetivo, infligiendo 2d8 + MOV de daño si impactas. Danza Despertar inflige daño de un tipo diferente dependiendo del estilo de Oricorio:",
-          {
-            "type": "table",
-            "headers": [
-              "Estilo",
-              "Tipo de Daño"
-            ],
-            "rows": [
-              [
-                "Estilo Apasionado",
-                "Fuego"
-              ],
-              [
-                "Estilo Animado",
-                "Eléctrico"
-              ],
-              [
-                "Estilo Plácido",
-                "Psíquico"
-              ],
-              [
-                "Estilo Refinado",
-                "Fantasma"
-              ]
-            ]
-          }
+          "Golpeas a un objetivo con una danza agresiva. Realiza un ataque cuerpo a cuerpo que inflige 2d8 + MOV de daño si impactas. El tipo de este movimiento y de su daño coincide con el tipo primario actual del usuario y recibe STAB según corresponda. Si el usuario pierde su tipo primario (por ejemplo, debido a Llama Final), se usa su tipo secundario, si lo tiene; de lo contrario, el movimiento no tiene tipo ni recibe bonificación por STAB.",
+          "Si el usuario está teracristalizado con un tipo distinto de Astral, el tipo de este movimiento y de su daño pasa a ser su teratipo."
         ]
       },
       "higherLevels": {
@@ -41843,7 +41836,7 @@
           }
         ],
         "es": [
-          "Atacas con una ráfaga simultánea de tres rayos. Cada criatura en un cono de 30 pies, centrado en ti, debe realizar una tirada de salvación de Destreza contra tu CD de Movimiento, recibiendo 2d6 + MOV de daño de tipo Normal si falla, o la mitad si la supera. Aquellos objetivos que fallen la salvación por 5 o más deben lanzar un d4 para determinar el estado alterado que sufren.",
+          "Atacas con una ráfaga simultánea de tres rayos. Cada criatura en un cono de 30 pies, centrado en ti, debe realizar una tirada de salvación de Destreza contra tu CD de Movimiento, recibiendo 2d6 + MOV de daño de tipo Normal si falla, o la mitad si la supera. Aquellos objetivos que fallen la salvación por 5 o más deben lanzar un d6 para determinar el estado alterado que sufren.",
           {
             "type": "table",
             "headers": [

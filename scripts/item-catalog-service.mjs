@@ -9,6 +9,10 @@ import {
   registerPokemonHeldItemService
 } from "./pokemon-held-item-service.mjs";
 
+import {
+  repairPoke5eMoveDescriptions
+} from "./move-description-repair-service.mjs";
+
 const MODULE_ID = "poke5e-local";
 const POKE5E_DATA_PATH =
   `modules/${MODULE_ID}/data/normalized/items.json`;
@@ -50,7 +54,7 @@ const MOVE_CATALOG_SETTING =
   "moveCatalogSignature";
 
 const MOVE_CATALOG_VERSION =
-  "0.1.0";
+  "0.1.1";
 
 const MOVE_TYPES = [
   "normal",
@@ -2499,6 +2503,9 @@ export async function syncPoke5eMoveCompendium({
 
   const language =
     currentLanguage();
+
+  // Las copias del mundo necesitan reparación incluso si el catálogo está al día.
+  await repairPoke5eMoveDescriptions(catalog.moves, language);
 
   const effectiveSignature =
     `${MOVE_CATALOG_VERSION}:${catalog.signature}:${language}`;

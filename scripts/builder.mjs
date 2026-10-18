@@ -26,7 +26,7 @@ import {
 } from "./struggle-rules.mjs";
 
 const MODULE_ID = "poke5e-local";
-const BUILDER_VERSION = "0.18.20";
+const BUILDER_VERSION = "0.18.21";
 const ABILITY_IDS = ["str", "dex", "con", "int", "wis", "cha"];
 const DEFAULT_MOVE_ICON = "icons/svg/sword.svg";
 const MOVE_ICON_ROOT =
@@ -4896,12 +4896,12 @@ function validateActorSource(
   }
 }
 
-function buildMoveDescription(
+export function buildMoveDescription(
   move,
   language
 ) {
   const description =
-    localized(
+    localizedContent(
       move.description,
       language,
       ""
@@ -4944,44 +4944,68 @@ function localized(
   language,
   fallback = ""
 ) {
-  const selected =
-    typeof value ===
-    "string"
-      ? value
-      : Array.isArray(
-          value
-        )
-        ? value
-        : value &&
-          typeof value ===
-            "object"
-          ? value[language] ??
-            value.en ??
-            value.es ??
-            fallback
-          : fallback;
+  return contentText(
+    localizedContent(value, language, fallback)
+  );
+}
 
-  return Array.isArray(
-    selected
-  )
-    ? selected
-        .filter(Boolean)
-        .join("\n\n")
-    : String(
-        selected ??
-        fallback
-      );
+function localizedContent(
+  value,
+  language,
+  fallback = ""
+) {
+  if (typeof value === "string" || Array.isArray(value)) {
+    return value;
+  }
+
+  if (value && typeof value === "object") {
+    return value[language] ?? value.en ?? value.es ?? fallback;
+  }
+
+  return fallback;
+}
+
+function contentText(value) {
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(contentText).filter(Boolean).join("\n\n");
+  }
+
+  if (value?.type === "table") {
+    return [value.headers, ...(value.rows ?? [])]
+      .filter(Array.isArray)
+      .map(row => row.map(contentText).join(" | "))
+      .join("\n");
+  }
+
+  return "";
 }
 
 function toHtml(
   value
 ) {
-  const text =
-    Array.isArray(value)
-      ? value.join("\n\n")
-      : String(
-          value ?? ""
-        );
+  if (Array.isArray(value)) {
+    return value.map(toHtml).join("");
+  }
+
+  if (value?.type === "table") {
+    const cells = (row, tag) =>
+      row.map(cell => `<${tag}>${escapeHtml(contentText(cell))}</${tag}>`).join("");
+    const headers = Array.isArray(value.headers)
+      ? `<thead><tr>${cells(value.headers, 'th')}</tr></thead>`
+      : "";
+    const rows = (value.rows ?? [])
+      .filter(Array.isArray)
+      .map(row => `<tr>${cells(row, 'td')}</tr>`)
+      .join("");
+
+    return `<table>${headers}<tbody>${rows}</tbody></table>`;
+  }
+
+  const text = contentText(value);
 
   if (!text.trim()) {
     return "";
