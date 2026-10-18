@@ -378,6 +378,83 @@ async function removeTokenCombatants(
   }
 }
 
+const COMBATANT_IMAGE_EXTENSIONS =
+  new Set([
+    "avif",
+    "jpg",
+    "jpeg",
+    "png",
+    "svg",
+    "webp"
+  ]);
+
+
+function isValidCombatantImage(
+  source
+) {
+
+  if (
+    typeof source !== "string" ||
+    !source.trim()
+  ) {
+
+    return false;
+  }
+
+
+  const cleanSource =
+    source
+      .split(/[?#]/u)[0]
+      .toLowerCase();
+
+
+  const extension =
+    cleanSource
+      .split(".")
+      .pop();
+
+
+  return COMBATANT_IMAGE_EXTENSIONS.has(
+    extension
+  );
+}
+
+
+function resolveCombatantImage(
+  token,
+  pokemon
+) {
+
+  const tokenImage =
+    token.texture?.src;
+
+
+  if (
+    isValidCombatantImage(
+      tokenImage
+    )
+  ) {
+
+    return tokenImage;
+  }
+
+
+  const actorImage =
+    pokemon.img;
+
+
+  if (
+    isValidCombatantImage(
+      actorImage
+    )
+  ) {
+
+    return actorImage;
+  }
+
+
+  return null;
+}
 
 /* ============================================================
  * TRANSFER COMBATANTS
@@ -452,42 +529,49 @@ export async function transferPokemonTokenCombatants(
     of grouped
   ) {
 
+    const combatantImage =
+      resolveCombatantImage(
+        incomingToken,
+        incomingPokemon
+      );
+
+
     const updates =
       combatants.map(
-        combatant => ({
+        combatant => {
 
-          _id:
-            combatant.id,
+          const update = {
 
-          actorId:
-            incomingPokemon.id,
+            _id:
+              combatant.id,
 
-          tokenId:
-            incomingToken.id,
+            actorId:
+              incomingPokemon.id,
 
-          sceneId:
-            targetScene.id,
+            tokenId:
+              incomingToken.id,
 
-          name:
-            incomingToken.name ??
-            incomingPokemon.name,
+            sceneId:
+              targetScene.id,
 
-          img:
-            incomingToken.texture
-              ?.src ??
-            incomingPokemon.img,
+            name:
+              incomingToken.name ??
+              incomingPokemon.name,
 
-          /*
-           * Importante para futuros
-           * reemplazos por Faint.
-           *
-           * El Pokémon entrante no debe
-           * heredar el estado defeated.
-           */
+            defeated:
+              false
+          };
 
-          defeated:
-            false
-        })
+
+          if (combatantImage) {
+
+            update.img =
+              combatantImage;
+          }
+
+
+          return update;
+        }
       );
 
 

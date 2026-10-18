@@ -19,6 +19,9 @@ const MEDIA_FIELDS = [
     role:
       "portrait",
 
+    previewType:
+      "image",
+
     title:
       "Portrait",
 
@@ -42,6 +45,9 @@ const MEDIA_FIELDS = [
     role:
       "token",
 
+    previewType:
+      "image",
+
     title:
       "Token",
 
@@ -57,6 +63,32 @@ const MEDIA_FIELDS = [
 
   {
     key:
+      "tokenAnimated",
+
+    variant:
+      "normal",
+
+    role:
+      "token-animated",
+
+    previewType:
+      "video",
+
+    title:
+      "Animated Token",
+
+    icon:
+      "fa-solid fa-film",
+
+    placeholder:
+      "unofficial/species/token.webm",
+
+    hint:
+      "WEBM normal. Vacío = utiliza el Token estático."
+  },
+
+  {
+    key:
       "portraitShiny",
 
     variant:
@@ -64,6 +96,9 @@ const MEDIA_FIELDS = [
 
     role:
       "portrait-shiny",
+
+    previewType:
+      "image",
 
     title:
       "Shiny Portrait",
@@ -88,6 +123,9 @@ const MEDIA_FIELDS = [
     role:
       "token-shiny",
 
+    previewType:
+      "image",
+
     title:
       "Shiny Token",
 
@@ -99,6 +137,32 @@ const MEDIA_FIELDS = [
 
     hint:
       "Vacío = utiliza el Shiny Portrait si existe."
+  },
+
+  {
+    key:
+      "tokenShinyAnimated",
+
+    variant:
+      "shiny",
+
+    role:
+      "token-shiny-animated",
+
+    previewType:
+      "video",
+
+    title:
+      "Shiny Animated Token",
+
+    icon:
+      "fa-solid fa-film",
+
+    placeholder:
+      "unofficial/species/token-shiny.webm",
+
+    hint:
+      "WEBM Shiny. Vacío = utiliza el Token Shiny estático."
   }
 ];
 
@@ -181,7 +245,8 @@ export function renderFakemonMediaEditor({
       <p class="fakemon-studio__media-hint">
         Las rutas se resuelven con el mismo Builder que utiliza la importación.
         Usa rutas relativas a <strong>assets/</strong>, por ejemplo
-        <code>unofficial/drakeon/main.png</code>.
+        <code>unofficial/drakeon/main.png</code> y
+        <code>unofficial/drakeon/token.webm</code>.
       </p>
 
     </section>
@@ -234,33 +299,43 @@ export function bindFakemonMediaEditor(
 
   root
     .querySelectorAll(
-      "[data-media-preview-image]"
+      "[data-media-preview-element]"
     )
     .forEach(
-      image => {
+      element => {
 
-        image.addEventListener(
+        const previewKey =
+          element.dataset
+            .mediaPreviewElement;
+
+        const loadEvent =
+          element.dataset
+            .mediaPreviewType ===
+              "video"
+            ? "loadeddata"
+            : "load";
+
+
+        element.addEventListener(
           "error",
           () => {
 
             setPreviewLoadState(
               root,
-              image.dataset
-                .mediaPreviewImage,
+              previewKey,
               false
             );
           }
         );
 
 
-        image.addEventListener(
-          "load",
+        element.addEventListener(
+          loadEvent,
           () => {
 
             setPreviewLoadState(
               root,
-              image.dataset
-                .mediaPreviewImage,
+              previewKey,
               true
             );
           }
@@ -374,22 +449,10 @@ function renderPreviewCard(
 
       <div class="fakemon-studio__media-preview">
 
-        <img
-          data-media-preview-image="${escapeAttribute(
-            preview.key
-          )}"
-          ${
-            hasSource
-              ? `src="${escapeAttribute(
-                  preview.src
-                )}"`
-              : ""
-          }
-          alt="Preview ${escapeAttribute(
-            preview.title
-          )}"
-          ${hasSource ? "" : "hidden"}
-        >
+        ${renderPreviewAsset(
+          preview,
+          hasSource
+        )}
 
 
         <div
@@ -403,7 +466,12 @@ function renderPreviewCard(
           <i class="fa-regular fa-image"></i>
 
           <span>
-            Sin imagen
+            ${
+              preview.previewType ===
+                "video"
+                ? "Sin video"
+                : "Sin imagen"
+            }
           </span>
 
         </div>
@@ -414,58 +482,115 @@ function renderPreviewCard(
       <div class="fakemon-studio__media-path">
 
         <span>
-            Ruta
+          Ruta
         </span>
 
 
         <div class="fakemon-studio__media-path-control">
 
-            <input
+          <input
             type="text"
             name="fakemon-media-${escapeAttribute(
-                preview.role
+              preview.role
             )}"
             data-role="${escapeAttribute(
-                preview.role
+              preview.role
             )}"
             value="${escapeAttribute(
-                preview.rawValue
+              preview.rawValue
             )}"
             placeholder="${escapeAttribute(
-                preview.placeholder
+              preview.placeholder
             )}"
             aria-label="Ruta ${escapeAttribute(
-                preview.title
+              preview.title
             )}"
-            >
+          >
 
 
-            <button
-              type="button"
-              class="fakemon-studio__media-browse"
-              data-action="browse-media"
-              data-media-role="${escapeAttribute(
-                preview.role
-              )}"
-              title="Seleccionar imagen"
-              aria-label="Seleccionar ${escapeAttribute(
-                preview.title
-              )}"
-            >
-              <i class="fa-solid fa-folder-open"></i>
-            </button>
+          <button
+            type="button"
+            class="fakemon-studio__media-browse"
+            data-action="browse-media"
+            data-media-role="${escapeAttribute(
+              preview.role
+            )}"
+            title="Seleccionar archivo"
+            aria-label="Seleccionar ${escapeAttribute(
+              preview.title
+            )}"
+          >
+            <i class="fa-solid fa-folder-open"></i>
+          </button>
 
         </div>
 
 
         <small>
-            ${escapeHtml(
+          ${escapeHtml(
             preview.hint
-            )}
+          )}
         </small>
 
       </div>
     </article>
+  `;
+}
+
+
+function renderPreviewAsset(
+  preview,
+  hasSource
+) {
+
+  const commonAttributes =
+    `
+      data-media-preview-element="${escapeAttribute(
+        preview.key
+      )}"
+      data-media-preview-type="${escapeAttribute(
+        preview.previewType
+      )}"
+      ${
+        hasSource
+          ? `src="${escapeAttribute(
+              preview.src
+            )}"`
+          : ""
+      }
+      ${hasSource ? "" : "hidden"}
+    `;
+
+
+  if (
+    preview.previewType ===
+      "video"
+  ) {
+
+    return `
+      <video
+        ${commonAttributes}
+        autoplay
+        loop
+        muted
+        playsinline
+        preload="metadata"
+        style="width:100%;height:100%;padding:8px;object-fit:contain;box-sizing:border-box;"
+        aria-label="Preview ${escapeAttribute(
+          preview.title
+        )}"
+      ></video>
+    `;
+  }
+
+
+  return `
+    <img
+      ${commonAttributes}
+      alt="Preview ${escapeAttribute(
+        preview.title
+      )}"
+    >
   `;
 }
 
@@ -580,7 +705,10 @@ async function openMediaFilePicker({
   const picker =
     new FilePicker({
       type:
-        "image",
+        definition.previewType ===
+          "video"
+          ? "video"
+          : "image",
 
       activeSource:
         "data",
@@ -599,7 +727,7 @@ async function openMediaFilePicker({
           if (!canonicalPath) {
 
             ui.notifications.warn(
-              "Selecciona una imagen dentro de " +
+              "Selecciona un archivo dentro de " +
               `${MODULE_ASSET_ROOT}.`
             );
 
@@ -639,7 +767,7 @@ async function openMediaFilePicker({
 
 
     ui.notifications.error(
-      "No se pudo abrir el selector de imágenes."
+      "No se pudo abrir el selector de media."
     );
   }
 }
@@ -785,7 +913,12 @@ function mediaPreviewStatus(
         "custom",
 
       status:
-        "Configurado"
+        key ===
+          "tokenAnimated" ||
+        key ===
+          "tokenShinyAnimated"
+          ? "WEBM configurado"
+          : "Configurado"
     };
   }
 
@@ -822,6 +955,21 @@ function mediaPreviewStatus(
 
   if (
     key ===
+      "tokenAnimated"
+  ) {
+
+    return {
+      state:
+        "fallback",
+
+      status:
+        "Usa Token estático"
+    };
+  }
+
+
+  if (
+    key ===
       "tokenShiny" &&
     media.portraitShiny
   ) {
@@ -832,6 +980,21 @@ function mediaPreviewStatus(
 
       status:
         "Usa Shiny Portrait"
+    };
+  }
+
+
+  if (
+    key ===
+      "tokenShinyAnimated"
+  ) {
+
+    return {
+      state:
+        "fallback",
+
+      status:
+        "Usa Shiny estático"
     };
   }
 
@@ -868,9 +1031,9 @@ function updateMediaPreviews(
         `[data-media-preview-card="${preview.key}"]`
       );
 
-    const image =
+    const element =
       root.querySelector(
-        `[data-media-preview-image="${preview.key}"]`
+        `[data-media-preview-element="${preview.key}"]`
       );
 
     const placeholder =
@@ -886,7 +1049,7 @@ function updateMediaPreviews(
 
     if (
       !card ||
-      !image ||
+      !element ||
       !placeholder ||
       !status
     ) {
@@ -909,10 +1072,10 @@ function updateMediaPreviews(
       !preview.src
     ) {
 
-      image.hidden =
+      element.hidden =
         true;
 
-      image.removeAttribute(
+      element.removeAttribute(
         "src"
       );
 
@@ -926,18 +1089,18 @@ function updateMediaPreviews(
     placeholder.hidden =
       true;
 
-    image.hidden =
+    element.hidden =
       false;
 
 
     if (
-      image.getAttribute(
+      element.getAttribute(
         "src"
       ) !==
         preview.src
     ) {
 
-      image.setAttribute(
+      element.setAttribute(
         "src",
         preview.src
       );
@@ -962,9 +1125,9 @@ function setPreviewLoadState(
       `[data-media-preview-card="${previewKey}"]`
     );
 
-  const image =
+  const element =
     root.querySelector(
-      `[data-media-preview-image="${previewKey}"]`
+      `[data-media-preview-element="${previewKey}"]`
     );
 
   const placeholder =
@@ -980,7 +1143,7 @@ function setPreviewLoadState(
 
   if (
     !card ||
-    !image ||
+    !element ||
     !placeholder ||
     !status
   ) {
@@ -996,7 +1159,7 @@ function setPreviewLoadState(
 
   if (loaded) {
 
-    image.hidden =
+    element.hidden =
       false;
 
     placeholder.hidden =
@@ -1006,7 +1169,7 @@ function setPreviewLoadState(
   }
 
 
-  image.hidden =
+  element.hidden =
     true;
 
   placeholder.hidden =
@@ -1042,6 +1205,11 @@ function readMediaDraft(
         "token"
       ),
 
+    tokenAnimated:
+      value(
+        "token-animated"
+      ),
+
     portraitShiny:
       value(
         "portrait-shiny"
@@ -1050,6 +1218,11 @@ function readMediaDraft(
     tokenShiny:
       value(
         "token-shiny"
+      ),
+
+    tokenShinyAnimated:
+      value(
+        "token-shiny-animated"
       )
   });
 }
@@ -1072,6 +1245,12 @@ function normalizeMediaDraft(
         ""
       ).trim(),
 
+    tokenAnimated:
+      String(
+        media?.tokenAnimated ??
+        ""
+      ).trim(),
+
     portraitShiny:
       String(
         media?.portraitShiny ??
@@ -1081,6 +1260,12 @@ function normalizeMediaDraft(
     tokenShiny:
       String(
         media?.tokenShiny ??
+        ""
+      ).trim(),
+
+    tokenShinyAnimated:
+      String(
+        media?.tokenShinyAnimated ??
         ""
       ).trim()
   };

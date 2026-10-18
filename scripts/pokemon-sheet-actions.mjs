@@ -60,6 +60,18 @@ import {
   setPokemonAbilityScore
 } from "./pokemon-ability-score-service.mjs";
 
+import {
+  endPokemonConcentration
+} from "./pokemon-concentration-service.mjs";
+
+import {
+  openPokemonEvolutionDialog
+} from "./pokemon-evolution-dialog.mjs";
+
+import {
+  evolvePokemonOnDemand
+} from "./pokemon-evolution-service.mjs";
+
 const MODULE_ID =
   "poke5e-local";
 
@@ -188,6 +200,18 @@ const LABELS = {
 
     abilityScoreUpdateFailed:
       "No se pudo modificar la característica del Pokémon.",
+
+    concentrationUnavailable:
+      "El Pokémon ya no está manteniendo esa Concentración.",
+
+    concentrationEndFailed:
+      "No se pudo finalizar la Concentración.",
+
+    evolutionFailed:
+      "No se pudo evolucionar al Pokémon.",
+
+    evolutionSucceeded:
+      "El Pokémon evolucionó correctamente.",
   },
 
 
@@ -313,6 +337,18 @@ const LABELS = {
 
     abilityScoreUpdateFailed:
       "The Pokémon Ability Score could not be changed.",
+
+    concentrationUnavailable:
+      "The Pokémon is no longer maintaining that Concentration.",
+
+    concentrationEndFailed:
+      "The Concentration could not be ended.",
+
+    evolutionFailed:
+      "The Pokémon could not evolve.",
+
+    evolutionSucceeded:
+      "The Pokémon evolved successfully.",
   }
 };
 
@@ -1745,6 +1781,41 @@ async function updatePokemonExperience({
 }
 
 /* ============================================================
+ * CONCENTRATION
+ * ============================================================ */
+
+async function endConcentration({
+  pokemon,
+  effectId,
+  labels
+}) {
+
+  if (
+    !game.user.isGM
+  ) {
+
+    throw new Error(
+      labels.gmOnly
+    );
+  }
+
+
+  const ended =
+    await endPokemonConcentration(
+      pokemon,
+      effectId
+    );
+
+
+  if (!ended) {
+
+    throw new Error(
+      labels.concentrationUnavailable
+    );
+  }
+}
+
+/* ============================================================
  * UI STATE
  * ============================================================ */
 
@@ -1769,6 +1840,39 @@ function setBusy(
     button.disabled =
       busy;
   }
+}
+
+
+/* ============================================================
+ * ON-DEMAND EVOLUTION
+ * ============================================================ */
+
+async function evolvePokemonFromSheet({
+  pokemon,
+  labels
+}) {
+  if (!game.user.isGM) {
+    throw new Error(labels.gmOnly);
+  }
+
+  const evolutionLevel =
+    Number(pokemon.getFlag(MODULE_ID, "level"));
+
+  const choice =
+    await openPokemonEvolutionDialog(pokemon, {
+      evolutionLevel,
+      onDemand: true
+    });
+
+  if (!choice?.evolve) {
+    return null;
+  }
+
+  const result =
+    await evolvePokemonOnDemand(pokemon, choice);
+
+  ui.notifications.info(labels.evolutionSucceeded);
+  return result;
 }
 
 
@@ -1814,6 +1918,32 @@ export function activatePokemonSheetActions({
             .pokemonSheetAction ??
           ""
         );
+
+      if (
+        action ===
+        "evolution-on-demand"
+      ) {
+        if (root.classList.contains("is-busy")) {
+          return;
+        }
+
+        setBusy(root, true);
+
+        try {
+          await evolvePokemonFromSheet({ pokemon, labels });
+          await refresh();
+        } catch (error) {
+          console.error(
+            `[${MODULE_ID}] Error ejecutando Evolution on-demand`,
+            error
+          );
+          ui.notifications.error(error?.message ?? labels.evolutionFailed);
+        } finally {
+          setBusy(root, false);
+        }
+
+        return;
+      }
 
       if (
         action ===
@@ -2063,6 +2193,63 @@ export function activatePokemonSheetActions({
           ui.notifications.error(
             error?.message ??
             labels.error
+          );
+        }
+
+
+        return;
+      }
+
+      if (
+        action ===
+        "concentration-end"
+      ) {
+
+        setBusy(
+          root,
+          true
+        );
+
+
+        try {
+
+          await endConcentration({
+            pokemon,
+
+            effectId:
+              button.dataset
+                .effectId,
+
+            labels
+          });
+
+
+          if (
+            typeof refresh ===
+            "function"
+          ) {
+
+            refresh();
+          }
+
+        } catch (error) {
+
+          console.error(
+            `[${MODULE_ID}] Error finalizando Concentración desde Pokémon Sheet`,
+            error
+          );
+
+
+          ui.notifications.error(
+            error?.message ??
+            labels.concentrationEndFailed
+          );
+
+        } finally {
+
+          setBusy(
+            root,
+            false
           );
         }
 

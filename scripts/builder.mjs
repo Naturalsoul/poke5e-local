@@ -367,6 +367,13 @@ export function buildPokemonMedia(
     portrait;
 
 
+  const tokenAnimated =
+    resolveModuleAsset(
+      pokemon?.media
+        ?.tokenAnimated
+    );
+
+
   const portraitShiny =
     resolveModuleAsset(
       pokemon?.media
@@ -382,11 +389,20 @@ export function buildPokemonMedia(
     portraitShiny;
 
 
+  const tokenShinyAnimated =
+    resolveModuleAsset(
+      pokemon?.media
+        ?.tokenShinyAnimated
+    );
+
+
   return {
     portrait,
     token,
+    tokenAnimated,
     portraitShiny,
-    tokenShiny
+    tokenShiny,
+    tokenShinyAnimated
   };
 }
 
@@ -410,6 +426,138 @@ export function buildMoveItem(move, pokemon, level, language = "es") {
   });
 
   return createMoveItem(move, context);
+}
+
+function buildMovePokemonSnapshotFromActor(
+  actor,
+  level
+) {
+  const configuredTypes =
+    normalizeStringArray(
+      actor.getFlag(
+        MODULE_ID,
+        "types"
+      )
+    );
+
+  const primaryType =
+    normalizeType(
+      actor.getFlag(
+        MODULE_ID,
+        "primaryType"
+      )
+    ) ||
+    configuredTypes[0] ||
+    "normal";
+
+  const types =
+    configuredTypes.length
+      ? configuredTypes
+      : [
+          primaryType
+        ];
+
+  const attributes =
+    Object.fromEntries(
+      ABILITY_IDS.map(
+        abilityId => [
+          abilityId,
+          clampInteger(
+            actor.system
+              ?.abilities
+              ?.[abilityId]
+              ?.value,
+            1,
+            30,
+            10
+          )
+        ]
+      )
+    );
+
+  return {
+    id:
+      normalizeCanonicalId(
+        actor.getFlag(
+          MODULE_ID,
+          "sourceId"
+        )
+      ) ||
+      String(
+        actor.id
+      ),
+
+    minimumLevel:
+      level,
+
+    types,
+    primaryType,
+
+    abilities: [],
+
+    combat: {
+      attributes
+    }
+  };
+}
+
+
+/**
+ * Construye una instancia de Move para un Actor Pokémon ya existente.
+ *
+ * El compendio conserva Moves como templates independientes del receptor.
+ * Esta función adapta únicamente el estado necesario del Actor al contrato
+ * canónico que ya consume buildMoveItem().
+ */
+export function buildMoveItemForActor(
+  move,
+  actor,
+  language = "es"
+) {
+  if (
+    !move?.id
+  ) {
+    throw new Error(
+      "buildMoveItemForActor requiere un Move normalizado válido."
+    );
+  }
+
+  if (
+    actor?.documentName !==
+      "Actor" ||
+    actor.getFlag(
+      MODULE_ID,
+      "kind"
+    ) !== "pokemon"
+  ) {
+    throw new Error(
+      "buildMoveItemForActor requiere un Actor Pokémon Poke5e."
+    );
+  }
+
+  const level =
+    clampInteger(
+      actor.getFlag(
+        MODULE_ID,
+        "level"
+      ),
+      1,
+      20,
+      1
+    );
+
+  const pokemon =
+    buildMovePokemonSnapshotFromActor(
+      actor,
+      level
+    );
+
+  return buildMoveItem(
+    move,
+    pokemon,
+    level,
+    language
+  );
 }
 
 export function buildMoveCatalogItem(

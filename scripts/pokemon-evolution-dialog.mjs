@@ -159,6 +159,7 @@ function selectableCandidate(
   return Boolean(
     candidate.standard &&
     candidate.targetSpecies &&
+    candidate.minimumLevelSatisfied &&
     !candidate
       .evaluation
       .unsupported &&
@@ -175,10 +176,60 @@ function selectableCandidate(
 }
 
 
+function onDemandCandidateWarning(
+  candidate,
+  language
+) {
+  if (
+    !candidate.standard ||
+    !candidate.targetSpecies ||
+    candidate.evaluation.unsupported ||
+    !candidate.abilityChoices.length ||
+    !candidate.abilityDefinitionsComplete
+  ) {
+    return language === "en"
+      ? "Unsupported evolution"
+      : "Evolución no compatible";
+  }
+
+  if (!candidate.minimumLevelSatisfied) {
+    return language === "en"
+      ? `Requires Lv. ${candidate.minimumLevel}`
+      : `Requiere Nv. ${candidate.minimumLevel}`;
+  }
+
+  if (!candidate.evaluation.automaticSatisfied) {
+    const unmetLevel =
+      candidate.evaluation.conditions.find(
+        condition =>
+          condition.type === "level" &&
+          condition.satisfied === false
+      );
+
+    if (unmetLevel) {
+      return language === "en"
+        ? `Requires Lv. ${unmetLevel.value}`
+        : `Requiere Nv. ${unmetLevel.value}`;
+    }
+
+    return language === "en"
+      ? "Requirements missing"
+      : "Faltan requisitos";
+  }
+
+  return language === "en"
+    ? "Requirements available"
+    : "Requisitos disponibles";
+}
+
+
 function evolutionChoiceContent(
   pokemon,
   candidates,
-  language
+  language,
+  {
+    onDemand = false
+  } = {}
 ) {
 
   const options =
@@ -199,6 +250,9 @@ function evolutionChoiceContent(
               candidate.evolutionPoints
             )}
             EP
+            ${onDemand
+              ? ` · ${escapeHtml(onDemandCandidateWarning(candidate, language))}`
+              : ""}
           </option>
         `
       )
@@ -230,8 +284,12 @@ function evolutionChoiceContent(
             <p>
               ${
                 language === "en"
-                  ? `${escapeHtml(pokemon.name)} may evolve during this Level Up.`
-                  : `${escapeHtml(pokemon.name)} puede evolucionar durante esta subida de nivel.`
+                  ? (onDemand
+                      ? `Review the evolution requirements for ${escapeHtml(pokemon.name)} at its current level.`
+                      : `${escapeHtml(pokemon.name)} may evolve during this Level Up.`)
+                  : (onDemand
+                      ? `Revisa los requisitos de evolución de ${escapeHtml(pokemon.name)} en su nivel actual.`
+                      : `${escapeHtml(pokemon.name)} puede evolucionar durante esta subida de nivel.`)
               }
             </p>
 
@@ -260,8 +318,8 @@ function evolutionChoiceContent(
             >
               ${
                 language === "en"
-                  ? "Do not evolve at this level"
-                  : "No evolucionar en este nivel"
+                  ? (onDemand ? "Cancel evolution" : "Do not evolve at this level")
+                  : (onDemand ? "Cancelar evolución" : "No evolucionar en este nivel")
               }
             </option>
 
@@ -275,8 +333,12 @@ function evolutionChoiceContent(
         <p class="hint">
           ${
             language === "en"
-              ? "Only evolutions whose automatically verifiable requirements are currently met are shown."
-              : "Solo se muestran evoluciones cuyos requisitos verificables automáticamente se cumplen actualmente."
+              ? (onDemand
+                  ? "Unavailable evolutions remain visible for inspection. Their requirements cannot be bypassed."
+                  : "Only evolutions whose automatically verifiable requirements are currently met are shown.")
+              : (onDemand
+                  ? "Se muestran también las evoluciones pendientes para consultar sus requisitos, pero no se pueden forzar."
+                  : "Solo se muestran evoluciones cuyos requisitos verificables automáticamente se cumplen actualmente.")
           }
         </p>
 
@@ -2241,13 +2303,109 @@ function readManualConditionKeys(
 
 
 /* ============================================================
+ * ON-DEMAND WARNINGS
+ * ============================================================ */
+
+function candidateBlockers(
+  candidate,
+  level,
+  language
+) {
+  const messages = [];
+
+  if (!candidate.standard) {
+    messages.push(language === "en"
+      ? "This evolution requires a special handler."
+      : "Esta evolución requiere un handler especial.");
+  }
+
+  if (!candidate.targetSpecies) {
+    messages.push(language === "en"
+      ? "Target species is not available in the database."
+      : "La especie de destino no está en la base de datos.");
+  }
+
+  if (!candidate.minimumLevelSatisfied) {
+    messages.push(language === "en"
+      ? `Minimum level: ${candidate.minimumLevel}. Current level: ${level}.`
+      : `Nivel mínimo: ${candidate.minimumLevel}. Nivel actual: ${level}.`);
+  }
+
+  for (const condition of candidate.evaluation.conditions) {
+    if (condition.mode === "automatic" && !condition.satisfied) {
+      messages.push(
+        `${conditionTypeLabel(condition, language)}: ${conditionValue(condition)}`
+      );
+    }
+  }
+
+  if (candidate.evaluation.unsupported) {
+    messages.push(language === "en"
+      ? "An evolution condition is not implemented."
+      : "Existe una condición de evolución no implementada.");
+  }
+
+  if (!candidate.abilityChoices.length || !candidate.abilityDefinitionsComplete) {
+    messages.push(language === "en"
+      ? "Target Ability data is incomplete."
+      : "Los datos de Ability del destino están incompletos.");
+  }
+
+  return messages;
+}
+
+
+async function showOnDemandEvolutionWarning(
+  candidate,
+  level,
+  language
+) {
+  const messages =
+    candidateBlockers(candidate, level, language);
+
+  const items = messages.map(
+    message => `<li>${escapeHtml(message)}</li>`
+  ).join("");
+
+  await foundry.applications.api.DialogV2.prompt({
+    classes: [
+      "poke5e-level-up-window",
+      "poke5e-pokemon-level-up-window"
+    ],
+    position: { width: 620 },
+    window: {
+      title: language === "en"
+        ? "Evolution requirements not met"
+        : "Requisitos de evolución pendientes"
+    },
+    content: `
+      <div class="poke5e-level-up-dialog">
+        <section class="poke5e-level-up-dialog__section">
+          <p>${language === "en"
+            ? "This Pokémon cannot evolve yet:"
+            : "Este Pokémon todavía no puede evolucionar:"}</p>
+          <ul>${items}</ul>
+        </section>
+      </div>
+    `,
+    rejectClose: false,
+    ok: {
+      label: language === "en" ? "Close" : "Cerrar",
+      callback: () => null
+    }
+  });
+}
+
+
+/* ============================================================
  * PUBLIC
  * ============================================================ */
 
 export async function openPokemonEvolutionDialog(
   pokemon,
   {
-    evolutionLevel
+    evolutionLevel,
+    onDemand = false
   }
 ) {
 
@@ -2259,22 +2417,29 @@ export async function openPokemonEvolutionDialog(
     await getPokemonEvolutionPreview(
       pokemon,
       {
-        evolutionLevel
+        evolutionLevel,
+        onDemand
       }
     );
 
 
   const candidates =
-    preview.candidates.filter(
-      selectableCandidate
-    );
+    onDemand
+      ? preview.candidates
+      : preview.candidates.filter(selectableCandidate);
 
 
   if (!candidates.length) {
+    if (onDemand) {
+      ui.notifications.warn(
+        language === "en"
+          ? "This Pokémon has no registered evolutions."
+          : "Este Pokémon no tiene evoluciones registradas."
+      );
+    }
 
     return {
-      evolve:
-        false
+      evolve: false
     };
   }
 
@@ -2304,7 +2469,8 @@ export async function openPokemonEvolutionDialog(
           evolutionChoiceContent(
             pokemon,
             candidates,
-            language
+            language,
+            { onDemand }
           ),
 
         rejectClose:
@@ -2370,6 +2536,22 @@ export async function openPokemonEvolutionDialog(
     throw new Error(
       "No se pudo resolver la Evolution seleccionada."
     );
+  }
+
+
+  if (onDemand) {
+    const blockers =
+      candidateBlockers(candidate, preview.currentLevel, language);
+
+    if (blockers.length) {
+      await showOnDemandEvolutionWarning(
+        candidate,
+        preview.currentLevel,
+        language
+      );
+
+      return { evolve: false };
+    }
   }
 
 

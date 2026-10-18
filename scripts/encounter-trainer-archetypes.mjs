@@ -1259,7 +1259,103 @@ const TRAINER_ARCHETYPES =
 
       ace:
         true
+    }),        
+    freezeArchetype({
+      id: "tamer",
+
+      name: {
+        es: "Domador",
+        en: "Tamer"
+      },
+
+      description: {
+        es:
+          "Favorece Pokémon de aspecto feroz o bestial, " +
+          "especialmente Arbok, Tauros, Rhyhorn, Persian y Golduck.",
+
+        en:
+          "Favors fierce or beast-like Pokémon, " +
+          "especially Arbok, Tauros, Rhyhorn, Persian, and Golduck."
+      },
+
+      typeWeights: {
+        normal: 4,
+        ground: 4,
+        poison: 3,
+        water: 2
+      },
+
+      speciesWeights: {
+        arbok: 13,
+        tauros: 13,
+        rhyhorn: 12,
+        persian: 11,
+        golduck: 11,
+        rhydon: 9,
+        sandslash: 8
+      },
+
+      teamSize: {
+        min: 2,
+        max: 4
+      },
+
+      levelBias: "balanced",
+      ace: false
     }),
+
+    freezeArchetype({
+      id: "police-officer",
+
+      name: {
+        es: "Policía",
+        en: "Police Officer"
+      },
+
+      description: {
+        es:
+          "Favorece Pokémon caninos, especialmente " +
+          "Growlithe y Arcanine, con apoyo Fighting y Steel.",
+
+        en:
+          "Favors canine Pokémon, especially " +
+          "Growlithe and Arcanine, with Fighting and Steel support."
+      },
+
+      typeWeights: {
+        fire: 5,
+        fighting: 4,
+        steel: 3,
+        normal: 2
+      },
+
+      speciesWeights: {
+        growlithe: 15,
+        arcanine: 15,
+        houndour: 12,
+        houndoom: 12,
+        poochyena: 12,
+        mightyena: 12,
+        rockruff: 12,
+        herdier: 12,
+        stoutland: 12,
+        yamper: 12,
+        boltund: 12,
+        snubbull: 10,
+        granbull: 10,
+        machop: 8,
+        machoke: 8
+      },
+
+      teamSize: {
+        min: 2,
+        max: 4
+      },
+
+      levelBias: "balanced",
+      ace: false
+    }),
+
 
     freezeArchetype({
       id:
@@ -1458,13 +1554,14 @@ const TRAINER_ARCHETYPE_GROUPS =
         en:
           "Professions & Thematic"
       },
-
       archetypeIds: [
         "scientist",
         "engineer",
         "super-nerd",
         "poke-maniac",
-        "biker"
+        "biker",
+        "tamer",
+        "police-officer"
       ]
     })
   ]);
@@ -1588,6 +1685,7 @@ export function getTrainerArchetypeDescription(
 }
 
 
+
 function freezeArchetype(
   definition
 ) {
@@ -1609,12 +1707,18 @@ function freezeArchetype(
         ...definition.typeWeights
       }),
 
+    speciesWeights:
+      Object.freeze({
+        ...definition.speciesWeights
+      }),
+
     teamSize:
       Object.freeze({
         ...definition.teamSize
       })
   });
 }
+
 
 function freezeArchetypeGroup(
   definition

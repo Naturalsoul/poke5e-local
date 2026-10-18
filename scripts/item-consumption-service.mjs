@@ -19,11 +19,17 @@ const CHAT_ITEM_NAME_FLAG =
 const ITEM_ROLL_ACTIONS_CLASS =
   "poke5e-item-roll-actions";
 
+const ITEM_ROLL_BUTTON_CLASS =
+  "poke5e-item-roll-button";
+
 const pendingConsumableUses =
   new Set();
 
 const bypassConsumableCards =
   new Set();
+
+const rollListenerDocuments =
+  new WeakSet();
 
 let registered =
   false;
@@ -1017,6 +1023,12 @@ function chatMessageRolls(
         return {
           id,
 
+          kind:
+            String(
+              roll?.kind ??
+              "utility"
+            ),
+
           formula,
 
           label:
@@ -1034,22 +1046,40 @@ function canCurrentUserRollMessage(
 ) {
 
   if (
-    game.user.isGM
+    game.user.isGM ||
+    message?.isAuthor
   ) {
 
     return true;
   }
 
 
-  const authorId =
-    typeof message.user ===
-      "string"
-      ? message.user
-      : message.user?.id;
+  const actorId =
+    String(
+      message?.speaker
+        ?.actor ??
+      ""
+    ).trim();
 
 
-  return authorId ===
-    game.user.id;
+  if (!actorId) {
+
+    return false;
+  }
+
+
+  const actor =
+    game.actors.get(
+      actorId
+    );
+
+
+  return Boolean(
+    actor?.testUserPermission?.(
+      game.user,
+      "OWNER"
+    )
+  );
 }
 
 
@@ -1132,7 +1162,7 @@ function createRollButton(
 
 
   button.classList.add(
-    "poke5e-item-roll-button"
+    ITEM_ROLL_BUTTON_CLASS
   );
 
 
@@ -1140,10 +1170,6 @@ function createRollButton(
     canCurrentUserRollMessage(
       message
     );
-
-
-  button.disabled =
-    !allowed;
 
 
   if (!allowed) {
@@ -1192,13 +1218,25 @@ function createRollButton(
 
   button.addEventListener(
     "click",
-    () => {
+    event => {
+
+      event.preventDefault();
+      event.stopPropagation();
+
 
       if (
         !canCurrentUserRollMessage(
           message
         )
       ) {
+
+        ui.notifications.warn(
+          currentLanguage() ===
+            "en"
+            ? "You do not have permission to make this roll."
+            : "No tienes permisos para realizar esta tirada."
+        );
+
 
         return;
       }
@@ -1216,14 +1254,48 @@ function createRollButton(
 }
 
 
+function ensureItemRollClickListener(
+  html
+) {
+
+  const ownerDocument =
+    html?.ownerDocument;
+
+
+  if (
+    !ownerDocument ||
+    rollListenerDocuments.has(
+      ownerDocument
+    )
+  ) {
+
+    return;
+  }
+
+
+  ownerDocument.addEventListener(
+    "click",
+    onItemRollButtonClick,
+    {
+      capture:
+        true
+    }
+  );
+
+
+  rollListenerDocuments.add(
+    ownerDocument
+  );
+}
+
 function onRenderChatMessage(
   message,
   html
 ) {
 
   if (
-    !(html instanceof
-      HTMLElement)
+    !html?.querySelector ||
+    !html?.append
   ) {
 
     return;
@@ -1236,8 +1308,18 @@ function onRenderChatMessage(
     );
 
 
+  if (!rolls.length) {
+
+    return;
+  }
+
+
+  ensureItemRollClickListener(
+    html
+  );
+
+
   if (
-    !rolls.length ||
     html.querySelector(
       `.${ITEM_ROLL_ACTIONS_CLASS}`
     )
@@ -1315,7 +1397,7 @@ export function registerPoke5eItemConsumptionService() {
 
 
   Hooks.on(
-    "renderChatMessageHTML",
+    "dnd5e.renderChatMessage",
     onRenderChatMessage
   );
 }

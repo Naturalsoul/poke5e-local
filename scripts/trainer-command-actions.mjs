@@ -985,20 +985,6 @@ async function completeSwitch({
     );
   }
 
-  const placement =
-    await resolveDeploymentPosition(
-      incoming,
-      labels
-    );
-
-
-  if (
-    placement.cancelled
-  ) {
-
-    return;
-  }
-
 
   const canvasView =
     capturePlayerCanvasView();
@@ -1009,9 +995,6 @@ async function completeSwitch({
     outgoing,
     incoming,
     {
-      position:
-        placement.position,
-
       scene:
         canvas.scene
     }

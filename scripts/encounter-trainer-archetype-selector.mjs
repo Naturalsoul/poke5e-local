@@ -66,50 +66,52 @@ export function selectTrainerArchetypePokemon({
 }
 
 
+
 export function getTrainerArchetypePokemonWeight(
   pokemon,
   archetype
 ) {
-  const weights =
-    archetype?.typeWeights ??
-    {};
+  const typeWeights =
+    archetype?.typeWeights ?? {};
 
+  const speciesWeights =
+    archetype?.speciesWeights ?? {};
 
   const types =
-    normalizeTypes(
-      pokemon?.types
-    );
+    normalizeTypes(pokemon?.types);
 
+  let weight = 1;
 
-  let weight =
-    1;
-
-
-  for (
-    const type
-    of types
-  ) {
+  for (const type of types) {
     const configured =
-      Number(
-        weights[type]
-      );
-
+      Number(typeWeights[type]);
 
     if (
-      Number.isFinite(
-        configured
-      ) &&
-      configured >
-        weight
+      Number.isFinite(configured) &&
+      configured > weight
     ) {
-      weight =
-        configured;
+      weight = configured;
     }
   }
 
+  const speciesId =
+    String(pokemon?.id ?? "")
+      .trim()
+      .toLowerCase();
+
+  const speciesWeight =
+    Number(speciesWeights[speciesId]);
+
+  if (
+    Number.isFinite(speciesWeight) &&
+    speciesWeight > weight
+  ) {
+    return speciesWeight;
+  }
 
   return weight;
 }
+
 
 
 function pickWeightedIndex(

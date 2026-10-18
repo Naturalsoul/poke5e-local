@@ -7,6 +7,7 @@ import {
 import {
   deletePokemonTokens,
   deployPokemonToken,
+  findPokemonTokenDocuments,
   recallPokemonTokens,
   transferPokemonTokenCombatants
 } from "./trainer-token-service.mjs";
@@ -126,6 +127,133 @@ export async function recallTrainerPokemon(
   return state;
 }
 
+/* ============================================================
+ * SWITCH TOKEN PLACEMENT
+ * ============================================================ */
+
+function resolveSwitchPosition(
+  outgoing,
+  scene
+) {
+
+  const outgoingToken =
+    findPokemonTokenDocuments(
+      outgoing,
+      scene
+    )[0] ??
+    null;
+
+
+  if (!outgoingToken) {
+
+    throw new Error(
+      `No se encontró el Token activo de ${outgoing.name} en la Scene.`
+    );
+  }
+
+
+  return {
+    x:
+      outgoingToken.x,
+
+    y:
+      outgoingToken.y
+  };
+}
+
+
+async function deployIncomingSwitchToken(
+  incoming,
+  position,
+  scene
+) {
+
+  const existingToken =
+    findPokemonTokenDocuments(
+      incoming,
+      scene
+    )[0] ??
+    null;
+
+
+  if (!existingToken) {
+
+    const tokenResult =
+      await deployPokemonToken(
+        incoming,
+        {
+          position,
+          scene
+        }
+      );
+
+
+    return {
+      ...tokenResult,
+
+      previousPosition:
+        null
+    };
+  }
+
+
+  const previousPosition = {
+    x:
+      existingToken.x,
+
+    y:
+      existingToken.y
+  };
+
+
+  await existingToken.update(
+    position
+  );
+
+
+  return {
+    token:
+      existingToken,
+
+    created:
+      false,
+
+    previousPosition
+  };
+}
+
+
+async function rollbackIncomingSwitchToken(
+  incoming,
+  tokenResult,
+  scene
+) {
+
+  if (
+    tokenResult.created
+  ) {
+
+    await recallPokemonTokens(
+      incoming,
+      {
+        scene
+      }
+    );
+
+    return;
+  }
+
+
+  if (
+    tokenResult.previousPosition
+  ) {
+
+    await tokenResult.token.update(
+      tokenResult.previousPosition
+    );
+  }
+}
+
 
 /* ============================================================
  * SWITCH
@@ -136,23 +264,22 @@ export async function switchTrainerPokemon(
   outgoing,
   incoming,
   {
-    position,
     scene = canvas.scene
   } = {}
 ) {
 
-  /*
-   * Primero desplegamos físicamente
-   * al Pokémon entrante.
-   */
+  const position =
+    resolveSwitchPosition(
+      outgoing,
+      scene
+    );
+
 
   const incomingToken =
-    await deployPokemonToken(
+    await deployIncomingSwitchToken(
       incoming,
-      {
-        position,
-        scene
-      }
+      position,
+      scene
     );
 
 
@@ -179,22 +306,16 @@ export async function switchTrainerPokemon(
   } catch (error) {
 
     /*
-     * Si el Switch lógico no ocurrió,
-     * retiramos únicamente el Token que
-     * este flujo haya creado.
+     * Si el Switch lógico no ocurrió:
+     * - retiramos el Token creado por este flujo, o
+     * - restauramos la posición previa de un Token existente.
      */
 
-    if (
-      incomingToken.created
-    ) {
-
-      await recallPokemonTokens(
-        incoming,
-        {
-          scene
-        }
-      );
-    }
+    await rollbackIncomingSwitchToken(
+      incoming,
+      incomingToken,
+      scene
+    );
 
 
     throw error;

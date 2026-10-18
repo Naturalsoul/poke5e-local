@@ -147,7 +147,10 @@ function pokemonLevel(
 
 function resolveEvolutionLevel(
   pokemon,
-  value
+  value,
+  {
+    onDemand = false
+  } = {}
 ) {
 
   const currentLevel =
@@ -158,7 +161,7 @@ function resolveEvolutionLevel(
 
   const expectedLevel =
     currentLevel +
-    1;
+    (onDemand ? 0 : 1);
 
 
   const requestedLevel =
@@ -178,7 +181,9 @@ function resolveEvolutionLevel(
   ) {
 
     throw new Error(
-      `Evolution debe resolverse durante el Level Up a Nv. ${expectedLevel}.`
+      onDemand
+        ? `Evolution manual debe realizarse al nivel actual: Nv. ${currentLevel}.`
+        : `Evolution debe resolverse durante el Level Up a Nv. ${expectedLevel}.`
     );
   }
 
@@ -1180,6 +1185,25 @@ function candidatePreview({
     );
 
 
+  const rawMinimumLevel =
+    targetSpecies?.minimumLevel;
+
+  const parsedMinimumLevel =
+    rawMinimumLevel == null
+      ? null
+      : Number(rawMinimumLevel);
+
+  const minimumLevel =
+    Number.isInteger(parsedMinimumLevel) &&
+    parsedMinimumLevel >= 1
+      ? parsedMinimumLevel
+      : null;
+
+  const minimumLevelSatisfied =
+    minimumLevel == null ||
+    conditionContext.level >= minimumLevel;
+
+
   const abilityState =
     targetSpecies
       ? targetAbilityState(
@@ -1243,6 +1267,9 @@ function candidatePreview({
         evolution
       ),
 
+    minimumLevel,
+    minimumLevelSatisfied,
+
     abilityScoreMode:
       evolutionAbilityScoreMode(
         evolution
@@ -1284,6 +1311,7 @@ function candidatePreview({
         standard &&
         targetSpecies &&
         evaluation.satisfied &&
+        minimumLevelSatisfied &&
         abilityState
           .choices
           .length >
@@ -1299,7 +1327,8 @@ export async function getPokemonEvolutionPreview(
   pokemon,
   {
     evolutionLevel = null,
-    manualConditionKeys = []
+    manualConditionKeys = [],
+    onDemand = false
   } = {}
 ) {
 
@@ -1316,7 +1345,8 @@ export async function getPokemonEvolutionPreview(
   const level =
     resolveEvolutionLevel(
       pokemon,
-      evolutionLevel
+      evolutionLevel,
+      { onDemand }
     );
 
 
@@ -1461,6 +1491,9 @@ export async function resolvePokemonEvolutionForLevelUp(
     evolutionLevel =
       null,
 
+    onDemand =
+      false,
+
     abilityScoreIncreases =
       {},
 
@@ -1488,7 +1521,8 @@ export async function resolvePokemonEvolutionForLevelUp(
       pokemon,
       {
         evolutionLevel,
-        manualConditionKeys
+        manualConditionKeys,
+        onDemand
       }
     );
 
@@ -1532,6 +1566,16 @@ export async function resolvePokemonEvolutionForLevelUp(
 
     throw new Error(
       `No se encontraron datos canónicos para ${candidate.to}.`
+    );
+  }
+
+
+  if (
+    !candidate.minimumLevelSatisfied
+  ) {
+    throw new Error(
+      `La evolución a ${candidate.to} requiere nivel ` +
+      `${candidate.minimumLevel}; el Pokémon está en Nv. ${preview.evolutionLevel}.`
     );
   }
 
@@ -2566,6 +2610,9 @@ export async function evolvePokemonForLevelUp(
     evolutionLevel =
       null,
 
+    onDemand =
+      false,
+
     abilityScoreIncreases =
       {},
 
@@ -2589,6 +2636,8 @@ export async function evolvePokemonForLevelUp(
           requestedEvolutionKey,
 
         evolutionLevel,
+
+        onDemand,
 
         abilityScoreIncreases,
 
@@ -2631,8 +2680,10 @@ export async function evolvePokemonForLevelUp(
     /*
      * IMPORTANTE:
      *
-     * Evolution ocurre durante el Level Up.
-     * Reconstruimos ya en el nivel objetivo para:
+     * Evolution reconstruye el Actor al nivel solicitado.
+     * En Level Up es el siguiente nivel; bajo demanda es
+     * el nivel actual, sin aplicar beneficios de Level Up.
+     * Reconstruimos al nivel objetivo para:
      *
      * - usar datos válidos de la nueva especie;
      * - obtener PB/valores derivados del nuevo nivel;
@@ -2871,6 +2922,58 @@ export async function evolvePokemonForLevelUp(
       );
     }
 
+
+    throw error;
+  }
+}
+
+/* ============================================================
+ * ON-DEMAND EVOLUTION (GM ONLY)
+ * ============================================================ */
+
+/**
+ * Applies the existing permanent evolution transaction without
+ * increasing Pokémon level or running the Level Up service.
+ * @param {Actor} pokemon - Trainer-owned Pokémon Actor.
+ * @param {object} choices - Values returned by the evolution dialog.
+ * @returns {Promise<object>} Evolution result with consumed items.
+ */
+export async function evolvePokemonOnDemand(
+  pokemon,
+  choices = {}
+) {
+  assertEvolutionAuthority();
+
+  const currentLevel =
+    pokemonLevel(pokemon);
+
+  const transaction =
+    await evolvePokemonForLevelUp(
+      pokemon,
+      {
+        ...choices,
+        evolutionLevel: currentLevel,
+        onDemand: true
+      }
+    );
+
+  try {
+    const consumedItems =
+      await transaction.consumeRequiredItems();
+
+    return {
+      ...transaction,
+      consumedItems
+    };
+  } catch (error) {
+    try {
+      await transaction.rollback();
+    } catch (rollbackError) {
+      throw new AggregateError(
+        [error, rollbackError],
+        `${pokemon.name}: la evolución manual y su rollback fallaron.`
+      );
+    }
 
     throw error;
   }

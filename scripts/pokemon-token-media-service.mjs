@@ -235,7 +235,8 @@ export async function resolvePokemonTokenSource(
   actor,
   staticToken,
   {
-    variant = "normal"
+    variant = "normal",
+    animatedToken = null
   } = {}
 ) {
 
@@ -245,6 +246,27 @@ export async function resolvePokemonTokenSource(
   ) {
 
     return staticToken;
+  }
+
+
+  const explicitAnimatedToken =
+    moduleAssetPath(
+      animatedToken
+    );
+
+
+  if (
+    explicitAnimatedToken &&
+    normalizeAssetPath(
+      explicitAnimatedToken
+    )
+      .toLowerCase()
+      .endsWith(
+        ".webm"
+      )
+  ) {
+
+    return explicitAnimatedToken;
   }
 
 

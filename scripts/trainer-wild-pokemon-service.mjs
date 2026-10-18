@@ -1330,7 +1330,6 @@ export async function acquireWildPokemonToken(
 
 
   try {
-
     await restoreWildPokemonSnapshot(
       pokemon,
       snapshot
@@ -1355,15 +1354,25 @@ export async function acquireWildPokemonToken(
         trainer,
         pokemon
       );
-      
-      await deletePokemonTokenDocument(
-        tokenDocument,
-        {
-          removeCombatants:
-            true
-        }
-      );
     }
+
+
+    /*
+    * La adquisición consume siempre
+    * la instancia salvaje seleccionada,
+    * independientemente de si el destino
+    * final es Party o PC.
+    *
+    * Eliminamos exactamente el Token
+    * seleccionado y sus Combatants.
+    */
+    await deletePokemonTokenDocument(
+      tokenDocument,
+      {
+        removeCombatants:
+          true
+      }
+    );
 
   } catch (error) {
 

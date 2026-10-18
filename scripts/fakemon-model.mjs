@@ -1,6 +1,6 @@
 import { POKEMON_TYPE_IDS } from "./types.mjs";
 
-export const FAKEMON_SCHEMA_VERSION = 2;
+export const FAKEMON_SCHEMA_VERSION = 3;
 
 export const FAKEMON_EVOLUTION_CONDITION_TYPES = Object.freeze([
   "level",
@@ -193,7 +193,8 @@ export function normalizeFakemonSpecies(
 
     media:
       normalizeMedia(
-        source.media
+        source.media,
+        id
       ),
 
     habitat:
@@ -744,7 +745,8 @@ function normalizeTm(
 }
 
 function normalizeMedia(
-  value
+  value,
+  speciesId
 ) {
   const source =
     isObject(value)
@@ -762,6 +764,12 @@ function normalizeMedia(
         source.token
       ),
 
+    tokenAnimated:
+      optionalWebmPath(
+        source.tokenAnimated,
+        `${speciesId}: media.tokenAnimated`
+      ),
+
     portraitShiny:
       optionalText(
         source.portraitShiny
@@ -770,6 +778,12 @@ function normalizeMedia(
     tokenShiny:
       optionalText(
         source.tokenShiny
+      ),
+
+    tokenShinyAnimated:
+      optionalWebmPath(
+        source.tokenShinyAnimated,
+        `${speciesId}: media.tokenShinyAnimated`
       )
   };
 }
@@ -1172,6 +1186,41 @@ function optionalText(
 
   return text ||
     null;
+}
+
+
+function optionalWebmPath(
+  value,
+  label
+) {
+  const path =
+    optionalText(
+      value
+    );
+
+  if (!path) {
+    return null;
+  }
+
+  const cleanPath =
+    path.replace(
+      /[?#].*$/,
+      ""
+    );
+
+  if (
+    !cleanPath
+      .toLowerCase()
+      .endsWith(
+        ".webm"
+      )
+  ) {
+    throw new Error(
+      `${label} debe apuntar a un archivo .webm.`
+    );
+  }
+
+  return path;
 }
 
 function requireObject(

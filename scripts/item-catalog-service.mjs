@@ -2201,14 +2201,11 @@ async function clearDeletedAbilityState(
 
 
 function registerAbilityTemplateDropAdapter() {
-  if (
-    abilityTemplateDropAdapterRegistered
-  ) {
+  if (abilityTemplateDropAdapterRegistered) {
     return;
   }
 
-  abilityTemplateDropAdapterRegistered =
-    true;
+  abilityTemplateDropAdapterRegistered = true;
 
   Hooks.on(
     "preCreateItem",
@@ -2217,19 +2214,33 @@ function registerAbilityTemplateDropAdapter() {
 
   Hooks.on(
     "createItem",
-    item => {
-      void activateCreatedAbility(
-        item
-      );
+    (...hookArguments) => {
+      const [item, , userId] = hookArguments;
+
+      if (
+        userId !== game.user.id ||
+        !item?.parent?.isOwner
+      ) {
+        return;
+      }
+
+      void activateCreatedAbility(item);
     }
   );
 
   Hooks.on(
     "deleteItem",
-    item => {
-      void clearDeletedAbilityState(
-        item
-      );
+    (...hookArguments) => {
+      const [item, , userId] = hookArguments;
+
+      if (
+        userId !== game.user.id ||
+        !item?.parent?.isOwner
+      ) {
+        return;
+      }
+
+      void clearDeletedAbilityState(item);
     }
   );
 }
@@ -2306,11 +2317,6 @@ export async function syncPoke5eAbilityCompendium({
   const catalog =
     await loadAbilityCatalog();
 
-  const embeddedRollsUpdated =
-    await synchronizeEmbeddedCatalogItemRolls(
-      catalog.items
-    );
-
   const language =
     currentLanguage();
 
@@ -2361,8 +2367,6 @@ export async function syncPoke5eAbilityCompendium({
 
       updated:
         0,
-
-      embeddedRollsUpdated,
 
       pack
     };
@@ -2474,8 +2478,7 @@ export async function syncPoke5eAbilityCompendium({
     updated:
       updates.length,
 
-    pack,
-    embeddedRollsUpdated
+    pack
   };
 }
 
@@ -2700,6 +2703,11 @@ export async function syncPoke5eItemCompendium({
   const catalog =
     await loadItemCatalog();
 
+  const embeddedRollsUpdated =
+    await synchronizeEmbeddedCatalogItemRolls(
+      catalog.items
+    );
+
   const language =
     currentLanguage();
 
@@ -2752,6 +2760,7 @@ export async function syncPoke5eItemCompendium({
       status: "current",
       created: 0,
       updated: 0,
+      embeddedRollsUpdated,
       pack
     };
   }
@@ -2917,6 +2926,7 @@ export async function syncPoke5eItemCompendium({
     status: "synced",
     created: creates.length,
     updated: updates.length,
+    embeddedRollsUpdated,
     pack
   };
 }

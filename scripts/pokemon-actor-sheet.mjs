@@ -2,6 +2,15 @@ import {
   isPokemonActor
 } from "./trainer-party-service.mjs";
 
+import {
+  buildMoveItemForActor
+} from "./builder.mjs";
+
+import {
+  getPokemonKnownMoveIds,
+  getPokemonMoveLimit,
+  setPokemonKnownMoveIds
+} from "./pokemon-move-service.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -15,6 +24,90 @@ const POKEMON_SHEET_CLASS_ID =
 const POKEMON_SHEET_TEMPLATE =
   `modules/${MODULE_ID}/templates/actors/pokemon-summary-tab.hbs`;
 
+function normalizeCanonicalId(
+  value
+) {
+  return String(
+    value ??
+    ""
+  )
+    .trim()
+    .toLowerCase();
+}
+
+
+function getModuleLanguage() {
+  return game.settings.get(
+    MODULE_ID,
+    "language"
+  ) === "en"
+    ? "en"
+    : "es";
+}
+
+
+function getItemSourceId(
+  item
+) {
+  return normalizeCanonicalId(
+    item?.getFlag(
+      MODULE_ID,
+      "sourceId"
+    )
+  );
+}
+
+
+function findOwnedMove(
+  pokemon,
+  sourceId
+) {
+  return (
+    pokemon.items.find(
+      item =>
+        item.getFlag(
+          MODULE_ID,
+          "kind"
+        ) === "move" &&
+        getItemSourceId(
+          item
+        ) === sourceId
+    ) ??
+    null
+  );
+}
+
+
+function findOwnedMoveTemplate(
+  pokemon,
+  sourceId
+) {
+  return (
+    pokemon.items.find(
+      item =>
+        item.getFlag(
+          MODULE_ID,
+          "kind"
+        ) ===
+          "move-template" &&
+        getItemSourceId(
+          item
+        ) === sourceId
+    ) ??
+    null
+  );
+}
+
+
+function warnMoveLimit(
+  pokemon,
+  limit
+) {
+  ui.notifications.warn(
+    `${pokemon.name} ya tiene ${limit}/${limit} Moves conocidos. ` +
+    "Elimina o reemplaza un Move antes de aprender otro."
+  );
+}
 
 /* ============================================================
  * BASE SHEET
@@ -76,6 +169,162 @@ export class PokemonActorSheet
         POKEMON_SHEET_TEMPLATE
     }
   };
+
+
+  async _onDropItem(
+    event,
+    item
+  ) {
+    const pokemon =
+      this.actor;
+
+    if (
+      !isPokemonActor(
+        pokemon
+      ) ||
+      item.getFlag(
+        MODULE_ID,
+        "kind"
+      ) !==
+        "move-template"
+    ) {
+      return super._onDropItem(
+        event,
+        item
+      );
+    }
+
+    const moveDefinition =
+      item.getFlag(
+        MODULE_ID,
+        "moveDefinition"
+      );
+
+    const sourceId =
+      normalizeCanonicalId(
+        moveDefinition?.id ??
+        getItemSourceId(
+          item
+        )
+      );
+
+    if (
+      !moveDefinition?.id ||
+      !sourceId
+    ) {
+      ui.notifications.error(
+        "El Move arrastrado no contiene una definición Poke5e válida."
+      );
+
+      return null;
+    }
+
+    const knownMoveIds =
+      getPokemonKnownMoveIds(
+        pokemon
+      );
+
+    const existingMove =
+      findOwnedMove(
+        pokemon,
+        sourceId
+      );
+
+    if (
+      existingMove &&
+      knownMoveIds.includes(
+        sourceId
+      )
+    ) {
+      ui.notifications.warn(
+        `${pokemon.name} ya conoce ${existingMove.name}.`
+      );
+
+      return existingMove;
+    }
+
+    const moveLimit =
+      getPokemonMoveLimit(
+        pokemon
+      );
+
+    if (
+      knownMoveIds.length >=
+      moveLimit
+    ) {
+      warnMoveLimit(
+        pokemon,
+        moveLimit
+      );
+
+      return null;
+    }
+
+    if (existingMove) {
+      await setPokemonKnownMoveIds(
+        pokemon,
+        [
+          ...knownMoveIds,
+          sourceId
+        ]
+      );
+
+      return existingMove;
+    }
+
+    const source =
+      buildMoveItemForActor(
+        moveDefinition,
+        pokemon,
+        getModuleLanguage()
+      );
+
+    const createdDocuments =
+      await pokemon
+        .createEmbeddedDocuments(
+          "Item",
+          [
+            source
+          ]
+        );
+
+    const createdMove =
+      createdDocuments[0] ??
+      null;
+
+    if (!createdMove) {
+      return null;
+    }
+
+    try {
+      await setPokemonKnownMoveIds(
+        pokemon,
+        [
+          ...knownMoveIds,
+          sourceId
+        ]
+      );
+    } catch (error) {
+      await createdMove.delete();
+      throw error;
+    }
+
+    const staleTemplate =
+      findOwnedMoveTemplate(
+        pokemon,
+        sourceId
+      );
+
+    if (
+      staleTemplate &&
+      staleTemplate.id !==
+        createdMove.id
+    ) {
+      await staleTemplate.delete();
+    }
+
+    return createdMove;
+  }
 }
 
 

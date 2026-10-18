@@ -200,7 +200,11 @@ async function desiredArtwork(
           normalToken,
           {
             variant:
-              "normal"
+              "normal",
+
+            animatedToken:
+              media.tokenAnimated ??
+              null
           }
         )
     };
@@ -228,7 +232,11 @@ async function desiredArtwork(
         shinyToken,
         {
           variant:
-            "shiny"
+            "shiny",
+
+          animatedToken:
+            media.tokenShinyAnimated ??
+            null
         }
       )
   };

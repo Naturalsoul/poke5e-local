@@ -3943,6 +3943,13 @@ export class FakemonStudio
               )
             ),
 
+          tokenAnimated:
+            emptyToNull(
+              value(
+                "token-animated"
+              )
+            ),
+
           portraitShiny:
             emptyToNull(
               value(
@@ -3954,6 +3961,13 @@ export class FakemonStudio
             emptyToNull(
               value(
                 "token-shiny"
+              )
+            ),
+
+          tokenShinyAnimated:
+            emptyToNull(
+              value(
+                "token-shiny-animated"
               )
             )
         },
@@ -4339,10 +4353,16 @@ function createDefaultDraft(
       token:
         null,
 
+      tokenAnimated:
+        null,
+
       portraitShiny:
         null,
 
       tokenShiny:
+        null,
+
+      tokenShinyAnimated:
         null
     },
 

@@ -68,6 +68,10 @@ import {
   getPokemonPermanentAbilityScores
 } from "./pokemon-ability-score-service.mjs";
 
+import {
+  getPokemonConcentrations
+} from "./pokemon-concentration-service.mjs";
+
 const MODULE_ID =
   "poke5e-local";
 
@@ -440,6 +444,9 @@ const LABELS = {
     technicalDetails:
       "Detalles",
 
+    evolvePokemon:
+      "Evolucionar",
+
     technicalData:
       "Datos técnicos",
 
@@ -616,6 +623,15 @@ const LABELS = {
 
     editGender:
       "Cambiar género del Pokémon",
+    
+    concentration:
+      "Concentración",
+
+    concentrationMaintaining:
+      "Manteniendo",
+
+    endConcentration:
+      "Finalizar concentración",
   },
 
   en: {
@@ -735,6 +751,9 @@ const LABELS = {
 
     technicalDetails:
       "Details",
+
+    evolvePokemon:
+      "Evolve",
 
     technicalData:
       "Technical Data",
@@ -912,6 +931,15 @@ const LABELS = {
 
     editGender:
       "Change Pokémon gender",
+
+    concentration:
+      "Concentration",
+
+    concentrationMaintaining:
+      "Maintaining",
+
+    endConcentration:
+      "End concentration",
   }
 };
 
@@ -3517,6 +3545,134 @@ function skillsPanelMarkup(
 }
 
 /* ============================================================
+ * CONCENTRATION
+ * ============================================================ */
+
+function pokemonConcentrationMarkup(
+  concentrations,
+  labels
+) {
+
+  if (
+    !concentrations.length
+  ) {
+
+    return "";
+  }
+
+
+  return `
+    <section
+      class="
+        poke5e-pokemon-panel
+        poke5e-pokemon-panel--concentration
+      "
+    >
+
+      <header>
+
+        <i
+          class="fa-solid fa-brain"
+          aria-hidden="true"
+        ></i>
+
+        <h3>
+          ${escapeHtml(labels.concentration)}
+        </h3>
+
+      </header>
+
+
+      <div class="poke5e-pokemon-concentrations">
+
+        ${
+          concentrations
+            .map(
+              concentration => `
+                <article
+                  class="poke5e-pokemon-concentration"
+                  data-effect-id="${escapeHtml(
+                    concentration.effectId
+                  )}"
+                >
+
+                  <div class="poke5e-pokemon-concentration__icon">
+
+                    <img
+                      src="${escapeHtml(
+                        concentration.img ||
+                        DEFAULT_IMAGE
+                      )}"
+                      alt=""
+                    >
+
+                  </div>
+
+
+                  <div class="poke5e-pokemon-concentration__body">
+
+                    <small>
+                      ${escapeHtml(
+                        labels.concentrationMaintaining
+                      )}
+                    </small>
+
+                    <strong>
+                      ${escapeHtml(
+                        concentration.name
+                      )}
+                    </strong>
+
+                  </div>
+
+
+                  ${
+                    game.user.isGM
+                      ? `
+                        <button
+                          type="button"
+                          class="poke5e-pokemon-concentration__end"
+                          data-pokemon-sheet-action="concentration-end"
+                          data-effect-id="${escapeHtml(
+                            concentration.effectId
+                          )}"
+                          title="${escapeHtml(
+                            labels.endConcentration
+                          )}"
+                          aria-label="${escapeHtml(
+                            labels.endConcentration
+                          )}"
+                        >
+
+                          <i
+                            class="fa-solid fa-xmark"
+                            aria-hidden="true"
+                          ></i>
+
+                          <span>
+                            ${escapeHtml(
+                              labels.endConcentration
+                            )}
+                          </span>
+
+                        </button>
+                      `
+                      : ""
+                  }
+
+                </article>
+              `
+            )
+            .join("")
+        }
+
+      </div>
+
+    </section>
+  `;
+}
+
+/* ============================================================
  * STATUSES
  * ============================================================ */
 
@@ -4838,6 +4994,11 @@ function buildPokemonSummary(
       pokemon
     );
 
+  const concentrations =
+    getPokemonConcentrations(
+      pokemon
+    );
+
   const movement =
     pokemonMovement(
       pokemon,
@@ -5005,6 +5166,26 @@ function buildPokemonSummary(
                   ${escapeHtml(labels.trainer)}
                 </span>
 
+              </button>
+            `
+            : ""
+        }
+
+
+        ${
+          game.user.isGM && trainer
+            ? `
+              <button
+                type="button"
+                data-pokemon-sheet-action="evolution-on-demand"
+                title="${escapeHtml(labels.evolvePokemon)}"
+                aria-label="${escapeHtml(labels.evolvePokemon)}"
+              >
+                <i
+                  class="fa-solid fa-dna"
+                  aria-hidden="true"
+                ></i>
+                <span>${escapeHtml(labels.evolvePokemon)}</span>
               </button>
             `
             : ""
@@ -5196,6 +5377,11 @@ function buildPokemonSummary(
     })}
 
     <div class="poke5e-pokemon-summary__dashboard">
+
+      ${pokemonConcentrationMarkup(
+        concentrations,
+        labels
+      )}
 
       ${pokemonStatusesMarkup({
         statuses,
