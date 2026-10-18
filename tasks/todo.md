@@ -27,7 +27,7 @@
 
 - [x] 5a. Batch: AC modifiers
 - [x] 5b. Batch: attack-roll modifiers
-- [ ] 5c. Batch: saving-throw modifiers
+- [x] 5c. Batch: saving-throw modifiers
 - [ ] 5d. Batch: speed modifiers
 - [ ] 5e. Batch: leftovers
 - [ ] 5f. Batch: roll modes (advantage/disadvantage on the next attack, +5 against the target); needs a new "next attack" mechanism, notes say "5f roll modes"

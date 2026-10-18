@@ -12,7 +12,9 @@ export const AUTOMATED_MODIFIER_MOVES = new Set(["growl", "leer", "screech", "ta
   "shadow-bone", "grav-apple", "clanging-scales",
   // Batch 5b: attack modifiers.
   "octazooka", "play-rough", "sand-attack", "shadow-ball", "feather-dance", "meditate", "sharpen", "work-up",
-  "ancient-power", "silver-wind", "ominous-wind"]);
+  "ancient-power", "silver-wind", "ominous-wind",
+  // Batch 5c: saving-throw modifiers.
+  "apple-acid", "aromatic-mist", "cosmic-power", "hammer-arm", "ice-hammer", "lumina-crash", "tearful-look"]);
 
 
 /* ============================================================
@@ -249,7 +251,11 @@ const ac = value => add("system.attributes.ac.bonus", value);
 const damageChanges = value => ["mwak", "rwak", "msak", "rsak"].map(key => add(`system.bonuses.${key}.damage`, value));
 const saveBonus = value => add("system.bonuses.abilities.save", value);
 const speedBonus = value => add("system.attributes.movement.bonus", value);
-const abilityScores = value => ["str", "dex", "con", "int", "wis", "cha"].map(key => add(`system.abilities.${key}.value`, value));
+const ABILITIES = ["str", "dex", "con", "int", "wis", "cha"];
+const abilityScores = value => ABILITIES.map(key => add(`system.abilities.${key}.value`, value));
+const abilitySaves = (keys, value) => keys.map(key => add(`system.abilities.${key}.bonuses.save`, value));
+// dnd5e counts each ADD of 1 / -1 on roll.mode as a source of advantage / disadvantage.
+const saveModes = (keys, mode) => keys.map(key => add(`system.abilities.${key}.save.roll.mode`, mode));
 const levelTier = (level, tiers) => tiers.filter(([minimum]) => level >= minimum).at(-1)[1];
 
 const selfBuff = (name, changes, extra = {}) =>
@@ -333,7 +339,25 @@ const COMPACT_DEFINITIONS = Object.freeze({
     abilityScores(1), { duration: {}, removeOnCombatEnd: true, stack: { max: 5 } }), trigger: "natural-attack-19+" }),
   // Not described as stackable, unlike Ancient Power and Silver Wind.
   "ominous-wind": en => ({ ...selfBuff(en ? "Ominous Wind — Ability scores +1" : "Viento Aciago — Características +1",
-    abilityScores(1), { duration: {}, removeOnCombatEnd: true }), trigger: "natural-attack-19+" })
+    abilityScores(1), { duration: {}, removeOnCombatEnd: true }), trigger: "natural-attack-19+" }),
+
+  // Batch 5c: saving-throw modifiers.
+  "apple-acid": en => combatDebuff(en ? "Apple Acid — DEX and CON saves -2" : "Ácido Málico — Salvaciones DES y CON -2",
+    "failed-save", 3, abilitySaves(["dex", "con"], -2)),
+  "aromatic-mist": (en, level) => {
+    const die = level >= 10 ? "1d6" : "1d4";
+    return selfBuff(en ? `Aromatic Mist — Saves +${die}` : `Niebla Aromática — Salvaciones +${die}`, [saveBonus(die)]);
+  },
+  "cosmic-power": en => concentrationBuff(en ? "Cosmic Power — Advantage on saves" : "Masa Cósmica — Ventaja en salvaciones",
+    saveModes(ABILITIES, 1)),
+  "hammer-arm": en => selfBuff(en ? "Hammer Arm — DEX saves at disadvantage, speed halved" : "Machada — Salvaciones DES con desventaja, velocidad a la mitad",
+    [...saveModes(["dex"], -1), ...movementChanges(0.5)], untilTurnStart),
+  "ice-hammer": en => selfBuff(en ? "Ice Hammer — DEX saves at disadvantage, speed halved" : "Martillo Hielo — Salvaciones DES con desventaja, velocidad a la mitad",
+    [...saveModes(["dex"], -1), ...movementChanges(0.5)], untilTurnStart),
+  "lumina-crash": en => ({ name: en ? "Lumina Crash — WIS saves -2" : "Fotocolisión — Salvaciones SAB -2",
+    target: "target", trigger: "failed-save", ...untilNextTurn, changes: abilitySaves(["wis"], -2) }),
+  "tearful-look": en => ({ name: en ? "Tearful Look — Attacks -1" : "Ojos Llorosos — Ataques -1",
+    target: "target", trigger: "failed-save", duration: { seconds: 60 }, stack: { max: 5 }, changes: attackChanges(-1) })
 });
 
 

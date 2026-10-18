@@ -579,3 +579,45 @@ test("Feather Dance removes proficiency from attacks and ends with the user's co
     assert.equal(target.effects[0].getFlag("dnd5e", "dependentOn"), focus.uuid);
   } finally {delete game.messages;}
 });
+
+const changeValue = (applied, key) => applied.changes.find(change => change.key === key)?.value;
+
+test("batch 5c self save buffs apply on use with advantage modes, dice and expiry", async () => {
+  for (const [id, key, value, concentrates] of [
+    ["aromatic-mist", "system.bonuses.abilities.save", "1d4", false],
+    ["cosmic-power", "system.abilities.wis.save.roll.mode", "1", true],
+    ["hammer-arm", "system.abilities.dex.save.roll.mode", "-1", false],
+    ["ice-hammer", "system.abilities.dex.save.roll.mode", "-1", false]
+  ]) {
+    const item = move(id);
+    const focus = concentrates ? concentration(item.actor) : null;
+    usage(item, focus ? { concentration: focus.id } : {});
+    await paints();
+    const applied = item.actor.effects.find(entry => entry.getFlag(MODULE_ID, "sourceMove") === id);
+    assert.equal(changeValue(applied, key), value, id);
+    assert.equal(applied.getFlag("dnd5e", "dependentOn"), focus?.uuid, id);
+  }
+  const built = (id, level = 1) => buildMoveModifierEffects({ id }, "en", { level }).effects[0];
+  assert.equal(changeValue(built("aromatic-mist", 10), "system.bonuses.abilities.save"), "1d6");
+  assert.equal(built("cosmic-power").changes.length, 6);
+  assert.equal(built("hammer-arm").flags[MODULE_ID].expireAtStartTurn, true);
+  assert.equal(changeValue(built("hammer-arm"), "system.attributes.movement.walk"), "0.5");
+});
+
+test("batch 5c save debuffs apply on a failed save with their caps and durations", async () => {
+  for (const [id, key, times, value] of [
+    ["apple-acid", "system.abilities.con.bonuses.save", 4, "-6"],
+    ["lumina-crash", "system.abilities.wis.bonuses.save", 2, "-2"],
+    ["tearful-look", "system.bonuses.mwak.attack", 6, "-5"]
+  ]) {
+    const item = move(id);
+    const target = actor();
+    for (let index = 0; index < times; index++) {await show(message(item, target));}
+    assert.equal(target.effects.length, 1, id);
+    assert.equal(changeValue(target.effects[0], key), value, id);
+  }
+  const built = id => buildMoveModifierEffects({ id }, "en", { level: 1 }).effects[0];
+  assert.equal(built("apple-acid").flags[MODULE_ID].removeOnCombatEnd, true);
+  assert.equal(built("lumina-crash").flags[MODULE_ID].expireAtEndOfNextTurn, true);
+  assert.deepEqual(built("tearful-look").duration, { seconds: 60 });
+});
