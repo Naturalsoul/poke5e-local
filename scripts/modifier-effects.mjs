@@ -1,6 +1,8 @@
 const MODULE_ID =
   "poke5e-local";
 
+export const AUTOMATED_MODIFIER_MOVES = new Set(["growl", "leer", "screech", "mud-slap"]);
+
 
 /* ============================================================
  * LABELS
@@ -241,6 +243,14 @@ function definitionFor(
   switch (
     move.id
   ) {
+
+    case "mud-slap":
+      return {
+        name: language === "en" ? "Mud-Slap — Attacks -1" : "Bofetón Lodo — Ataques -1",
+        target: "target", trigger: "hit", duration: {},
+        stack: { key: "mud-slap", max: 5 }, changes: attackChanges(-1),
+        removeOnCombatEnd: true
+      };
 
 
     /* ========================================================
@@ -961,6 +971,8 @@ function buildEffect(
 
             sourceMove:
             move.id,
+
+            removeOnCombatEnd: Boolean(definition.removeOnCombatEnd),
 
             trigger:
             definition.trigger,

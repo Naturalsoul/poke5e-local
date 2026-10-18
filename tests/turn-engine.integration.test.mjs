@@ -142,6 +142,7 @@ function pokemonActor({
     name: id,
     flags: {
       "poke5e-local": {
+        kind: "pokemon",
         sourceId: id,
         level,
         types,

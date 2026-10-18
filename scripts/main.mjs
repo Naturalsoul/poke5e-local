@@ -84,6 +84,7 @@ import {
 import {
   registerPokemonModifierEngine
 } from "./modifier-engine.mjs";
+import { registerMoveModifierAutomation } from "./modifier-automation.mjs";
 
 import {
   registerPokemonTargetedModifierEngine
@@ -387,6 +388,7 @@ Hooks.once(
     registerPokemonOffensiveHitAbilityEngine();
     registerHeldItemEngine();
     registerPokemonModifierEngine();
+    registerMoveModifierAutomation();
     registerPokemonTargetedModifierEngine();
     registerPokemonPeriodicEngine();
     registerMultiTargetEngine();

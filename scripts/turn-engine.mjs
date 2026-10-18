@@ -28,6 +28,10 @@ import {
 
 import { processHeldItemEndTurn } from "./held-item-engine.mjs";
 
+import {
+  isPokemonActor
+} from "./trainer-party-service.mjs";
+
 const MODULE_ID =
   "poke5e-local";
 
@@ -267,19 +271,6 @@ function label(
 /* ============================================================
  * POKEMON ACTOR
  * ============================================================ */
-
-function isPokemonActor(
-  actor
-) {
-
-  return Boolean(
-    actor?.getFlag(
-      MODULE_ID,
-      "sourceId"
-    )
-  );
-}
-
 
 /* ============================================================
  * PB

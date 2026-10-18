@@ -17,6 +17,10 @@ import { adaptedItemSource, itemDescriptionFingerprint, stripAdaptedItemNotice }
 import { registerAdaptedItemSourceUi } from "./item-source-ui.mjs";
 import { heldItemConfiguration } from "./held-item-config.mjs";
 
+import {
+  isPokemonActor
+} from "./trainer-party-service.mjs";
+
 const MODULE_ID = "poke5e-local";
 const POKE5E_DATA_PATH =
   `modules/${MODULE_ID}/data/normalized/items.json`;
@@ -1554,20 +1558,6 @@ function getModuleScope(
     document?.flags
       ?.[MODULE_ID] ??
     {}
-  );
-}
-
-
-function isPokemonActor(
-  actor
-) {
-  return (
-    actor?.documentName ===
-      "Actor" &&
-    actor.getFlag(
-      MODULE_ID,
-      "kind"
-    ) === "pokemon"
   );
 }
 

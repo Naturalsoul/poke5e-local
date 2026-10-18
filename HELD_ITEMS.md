@@ -80,6 +80,25 @@ nativo para modificar sus datos, pausarlos/reactivarlos o eliminarlos.
 Los jugadores ven el efecto y su estado, sin estos controles. El panel muestra
 los efectos ya aplicados; aplicar el efecto desde la tarjeta sigue siendo necesario.
 
+Growl, Leer, Screech y Mud-Slap aplican sus modificadores automáticamente, con un
+GM conectado, después de la animación de Dice So Nice y de mostrar el resultado:
+
+- Growl: al fallar la salvación, −1 a ataques por acumulación, hasta −5.
+- Leer / Screech: al fallar la salvación, +1 por acumulación a los ataques de los
+  aliados contra ese objetivo, excluyendo al usuario original; máximos +5 / +3.
+- Mud-Slap: al acertar, −1 a ataques por acumulación, hasta −5, durante el encuentro.
+  El GM puede usar **Limpiar lodo (Acción)** en el panel de efectos para quitar
+  todas sus acumulaciones cuando el Pokémon dedica su acción a limpiarse.
+  También se elimina al terminar o borrar el combate.
+
+Para los tres movimientos con salvación, usa el botón de salvación de su tarjeta
+de chat para vincular cada resultado al movimiento y objetivo correctos. Para
+Mud-Slap, selecciona un único objetivo antes de tirar el ataque; sin una CA y un
+objetivo identificados no se presupone el impacto. Estos cuatro movimientos ya
+no requieren pulsar **Aplicar / acumular efecto**. Las tarjetas antiguas no vuelven
+a aplicar efectos al abrir el chat. Recarga como GM para añadir las plantillas
+que falten en movimientos existentes, sin sustituir sus descripciones o PP.
+
 Las tiradas de daño periódico, como Leech Seed, Fire Spin e Infestation, esperan
 a que termine Dice So Nice y el resultado sea visible en el chat antes de aplicar
 el daño. Leech Seed resuelve después la curación por drenaje. La misma espera se

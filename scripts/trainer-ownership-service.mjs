@@ -2,12 +2,13 @@ import {
   isTrainerActor
 } from "./trainer-service.mjs";
 
+import {
+  isPokemonActor
+} from "./trainer-party-service.mjs";
+
 
 const MODULE_ID =
   "poke5e-local";
-
-const POKEMON_KIND =
-  "pokemon";
 
 const TRAINER_OWNERSHIP_SYNCHRONIZATIONS =
   new Set();
@@ -15,22 +16,6 @@ const TRAINER_OWNERSHIP_SYNCHRONIZATIONS =
 /* ============================================================
  * ACTOR IDENTIFICATION
  * ============================================================ */
-
-function isPokemonActor(
-  actor
-) {
-
-  return (
-    actor?.documentName ===
-      "Actor"
-    &&
-    actor.getFlag(
-      MODULE_ID,
-      "kind"
-    ) === POKEMON_KIND
-  );
-}
-
 
 function pokemonTrainerUuid(
   pokemon

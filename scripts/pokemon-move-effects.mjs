@@ -1,10 +1,10 @@
 const MODULE_ID = "poke5e-local";
 const LABELS = {
   es: { title: "Efectos de movimientos", active: "Activo", paused: "Pausado", edit: "Editar efecto",
-    pause: "Pausar efecto", resume: "Reactivar efecto", remove: "Eliminar efecto",
+    pause: "Pausar efecto", resume: "Reactivar efecto", remove: "Eliminar efecto", clean: "Limpiar lodo (Acción)",
     gmOnly: "Solo el GM puede administrar estos efectos.", unavailable: "El efecto ya no está disponible." },
   en: { title: "Move effects", active: "Active", paused: "Paused", edit: "Edit effect",
-    pause: "Pause effect", resume: "Resume effect", remove: "Remove effect",
+    pause: "Pause effect", resume: "Resume effect", remove: "Remove effect", clean: "Wipe off mud (Action)",
     gmOnly: "Only the GM can manage these effects.", unavailable: "This effect is no longer available." }
 };
 
@@ -40,7 +40,7 @@ export function pokemonMoveEffectsMarkup(pokemon, language = "es") {
         ${game.user.isGM ? `<div class="poke5e-pokemon-move-effect__controls">
           ${button(effect, "edit", "fa-pen-to-square", labels.edit)}
           ${button(effect, "toggle", effect.disabled ? "fa-play" : "fa-pause", effect.disabled ? labels.resume : labels.pause)}
-          ${button(effect, "remove", "fa-xmark", labels.remove)}
+          ${button(effect, "remove", "fa-xmark", effect.getFlag("poke5e-local", "sourceMove") === "mud-slap" ? labels.clean : labels.remove)}
         </div>` : ""}
       </article>`).join("")}</div></section>`;
 }

@@ -1,11 +1,12 @@
+import {
+  isPokemonActor
+} from "./trainer-party-service.mjs";
+
 const MODULE_ID =
   "poke5e-local";
 
 const TRAINER_KIND =
   "trainer";
-
-const POKEMON_KIND =
-  "pokemon";
 
 const TRAINER_FOLDER_KIND =
   "trainer-container";
@@ -39,22 +40,6 @@ function assertTrainer(
       `${trainer?.name ?? "Actor"} no es un Trainer Poke5e.`
     );
   }
-}
-
-
-function isPokemonActor(
-  actor
-) {
-
-  return (
-    actor?.documentName ===
-      "Actor"
-    &&
-    actor.getFlag(
-      MODULE_ID,
-      "kind"
-    ) === POKEMON_KIND
-  );
 }
 
 

@@ -18,6 +18,10 @@ import {
   clearEndOfNextTurnEffects
 } from "./turn-duration-runtime.mjs";
 
+import {
+  isPokemonActor
+} from "./trainer-party-service.mjs";
+
 
 const MODULE_ID =
   "poke5e-local";
@@ -42,21 +46,6 @@ const RECOVERABLE_NATIVE_STATUS_IDS =
 /* ============================================================
  * VALIDATION
  * ============================================================ */
-
-function isPokemonActor(
-  actor
-) {
-
-  return (
-    actor?.documentName ===
-      "Actor" &&
-    actor.getFlag?.(
-      MODULE_ID,
-      "kind"
-    ) === "pokemon"
-  );
-}
-
 
 function assertPokemonActor(
   pokemon

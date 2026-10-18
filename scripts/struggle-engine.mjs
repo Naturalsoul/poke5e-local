@@ -4,6 +4,10 @@ import {
   STRUGGLE_RULE
 } from "./struggle-rules.mjs";
 
+import {
+  isPokemonActor
+} from "./trainer-party-service.mjs";
+
 
 const MODULE_ID =
   "poke5e-local";
@@ -106,19 +110,6 @@ async function chat(
     content:
       `<div class="poke5e-turn-message">${content}</div>`
   });
-}
-
-
-function isPokemonActor(
-  actor
-) {
-
-  return Boolean(
-    actor?.getFlag(
-      MODULE_ID,
-      "sourceId"
-    )
-  );
 }
 
 

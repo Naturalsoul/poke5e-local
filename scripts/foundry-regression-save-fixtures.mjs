@@ -11,6 +11,10 @@ import {
   cleanupFoundryRegressionFixtures
 } from "./foundry-regression-fixtures.mjs";
 
+import {
+  isPokemonActor
+} from "./trainer-party-service.mjs";
+
 const MODULE_ID =
   "poke5e-local";
 
@@ -248,19 +252,6 @@ function preconditionChecks() {
 /* ============================================================
  * ACTOR / MOVE CANDIDATE
  * ============================================================ */
-
-function isPokemonActor(
-  actor
-) {
-
-  return Boolean(
-    actor?.getFlag?.(
-      MODULE_ID,
-      "sourceId"
-    )
-  );
-}
-
 
 function isRegressionFixture(
   actor

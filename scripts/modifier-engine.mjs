@@ -1,3 +1,5 @@
+import { AUTOMATED_MODIFIER_MOVES } from "./modifier-effects.mjs";
+
 const MODULE_ID =
   "poke5e-local";
 
@@ -555,7 +557,7 @@ async function increaseStack(
  * APLICAR / ACUMULAR
  * ============================================================ */
 
-async function applyOrStack(
+export async function applyPokemonMoveModifier(
   actor,
   item
 ) {
@@ -877,6 +879,8 @@ function onPreCreateUsageMessage(
 
     return;
   }
+
+  if (AUTOMATED_MODIFIER_MOVES.has(item.getFlag(MODULE_ID, "sourceId"))) {return;}
 
 
   /* ==========================================================
@@ -1258,6 +1262,11 @@ async function onDocumentClick(
     return;
   }
 
+  if (AUTOMATED_MODIFIER_MOVES.has(item.getFlag(MODULE_ID, "sourceId"))) {
+    ui.notifications.info("Este modificador se aplica automáticamente al mostrar el resultado de la tirada.");
+    return;
+  }
+
 
   const targets =
     buttonTargets(
@@ -1289,7 +1298,7 @@ async function onDocumentClick(
       of targets
     ) {
 
-      await applyOrStack(
+      await applyPokemonMoveModifier(
         actor,
         item
       );

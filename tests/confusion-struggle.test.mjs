@@ -170,6 +170,7 @@ function confusionActor() {
     name: "Confusedmon",
     flags: {
       "poke5e-local": {
+        kind: "pokemon",
         sourceId: "confusedmon"
       }
     },

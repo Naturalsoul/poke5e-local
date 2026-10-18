@@ -2,6 +2,10 @@ import {
   calculatePokemonDefenses
 } from "./types.mjs";
 
+import {
+  isPokemonActor
+} from "./trainer-party-service.mjs";
+
 const MODULE_ID =
   "poke5e-local";
 
@@ -178,19 +182,6 @@ function isRegressionFixture(
       document
     )?.kind ===
       FIXTURE_KIND
-  );
-}
-
-
-function isPokemonActor(
-  actor
-) {
-
-  return Boolean(
-    actor?.getFlag?.(
-      MODULE_ID,
-      "sourceId"
-    )
   );
 }
 

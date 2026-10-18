@@ -25,6 +25,10 @@ import {
   STRUGGLE_RULE
 } from "./struggle-rules.mjs";
 
+import {
+  isPokemonActor
+} from "./trainer-party-service.mjs";
+
 const MODULE_ID =
   "poke5e-local";
 
@@ -212,19 +216,6 @@ function validateDataModel(
 /* ============================================================
  * ACTOR SELECTION
  * ============================================================ */
-
-function isPokemonActor(
-  actor
-) {
-
-  return Boolean(
-    actor?.getFlag?.(
-      MODULE_ID,
-      "sourceId"
-    )
-  );
-}
-
 
 function actorFromUuid(
   uuid

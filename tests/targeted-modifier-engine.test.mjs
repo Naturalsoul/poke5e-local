@@ -94,7 +94,7 @@ globalThis.canvas = {
 
 const {
   registerPokemonTargetedModifierEngine
-} = await import("../targeted-modifier-engine.mjs");
+} = await import("../scripts/targeted-modifier-engine.mjs");
 
 registerPokemonTargetedModifierEngine();
 

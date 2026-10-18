@@ -750,6 +750,17 @@ function onPreRollSavingThrow(
       targetDc
     );
 
+  if (context) {
+    rollConfig.options ??= {};
+    rollConfig.options[MODULE_ID] ??= {};
+    rollConfig.options[MODULE_ID].modifierUsage = {
+      usageMessageId: context.usageMessageId,
+      itemUuid: saveUsages.get(context.usageMessageId)?.itemUuid,
+      actorUuid: actor.uuid,
+      dc: context.dc
+    };
+  }
+
 
   const sources =
     normalizeTargetSaveAdvantageSources(

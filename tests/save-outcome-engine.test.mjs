@@ -209,8 +209,26 @@ function damageMessage(item, origin, onSave) {
   };
 }
 
-const saveOutcome = await import("../save-outcome-engine.mjs");
+const saveOutcome = await import("../scripts/save-outcome-engine.mjs");
 saveOutcome.registerSaveOutcomeEngine();
+
+test("native saving throws carry the exact move and target context without requiring save advantage", () => {
+  const item = moveItem({ sourceId: "growl" });
+  const activity = saveActivity(item, { ability: "wis", dc: 13 });
+  const message = usageMessage({ id: "Message.growl-context", item, activity });
+  const target = createFlagDocument({ uuid: "Actor.growl-context" });
+  beginSaveBatch(message, [target], { ability: "wis", dc: 13 });
+  const rollConfig = { options: { ability: "wis", target: 13 } };
+  hooks.handler("dnd5e.preRollSavingThrow")({ subject: target, ability: "wis", rolls: [rollConfig] });
+  assert.deepEqual(rollConfig.options["poke5e-local"].modifierUsage, {
+    usageMessageId: message.id, itemUuid: item.uuid, actorUuid: target.uuid, dc: 13
+  });
+  assert.equal(rollConfig.options.advantage, undefined);
+  rollSavingThrow(target, { ability: "wis", target: 13 });
+  const unrelated = { options: { ability: "wis", target: 13 } };
+  hooks.handler("dnd5e.preRollSavingThrow")({ subject: target, ability: "wis", rolls: [unrelated] });
+  assert.equal(unrelated.options["poke5e-local"], undefined);
+});
 
 test("SaveOutcome tracks a multi-target batch until every expected save resolves", () => {
   const item = moveItem();

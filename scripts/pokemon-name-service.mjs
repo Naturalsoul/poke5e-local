@@ -2,6 +2,10 @@ import {
   canCurrentUserOperateTrainerPokemon
 } from "./trainer-ownership-service.mjs";
 
+import {
+  isPokemonActor
+} from "./trainer-party-service.mjs";
+
 
 const MODULE_ID =
   "poke5e-local";
@@ -13,21 +17,6 @@ const NICKNAME_FLAG =
 /* ============================================================
  * VALIDATION
  * ============================================================ */
-
-function isPokemonActor(
-  actor
-) {
-
-  return (
-    actor?.documentName ===
-      "Actor" &&
-    actor.getFlag?.(
-      MODULE_ID,
-      "kind"
-    ) === "pokemon"
-  );
-}
-
 
 function assertPokemonActor(
   pokemon

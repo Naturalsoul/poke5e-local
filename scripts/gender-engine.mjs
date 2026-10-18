@@ -4,6 +4,10 @@ import {
   rollPokemonGender
 } from "./gender-runtime.mjs";
 
+import {
+  isPokemonActor
+} from "./trainer-party-service.mjs";
+
 
 const MODULE_ID =
   "poke5e-local";
@@ -23,22 +27,6 @@ function isAuthority() {
 
 
   return game.user.isGM;
-}
-
-
-function isPokemonActor(
-  actor
-) {
-
-  return Boolean(
-    actor?.documentName ===
-      "Actor" &&
-    actor.getFlag?.(
-      MODULE_ID,
-      "kind"
-    ) ===
-      "pokemon"
-  );
 }
 
 
