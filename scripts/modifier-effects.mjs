@@ -14,7 +14,9 @@ export const AUTOMATED_MODIFIER_MOVES = new Set(["growl", "leer", "screech", "ta
   "octazooka", "play-rough", "sand-attack", "shadow-ball", "feather-dance", "meditate", "sharpen", "work-up",
   "ancient-power", "silver-wind", "ominous-wind",
   // Batch 5c: saving-throw modifiers.
-  "apple-acid", "aromatic-mist", "cosmic-power", "hammer-arm", "ice-hammer", "lumina-crash", "tearful-look"]);
+  "apple-acid", "aromatic-mist", "cosmic-power", "hammer-arm", "ice-hammer", "lumina-crash", "tearful-look",
+  // Batch 5d: speed modifiers.
+  "aqua-step", "autotomize", "esper-wing", "flame-charge", "trailblaze", "shift-gear", "tar-shot"]);
 
 
 /* ============================================================
@@ -256,6 +258,9 @@ const abilityScores = value => ABILITIES.map(key => add(`system.abilities.${key}
 const abilitySaves = (keys, value) => keys.map(key => add(`system.abilities.${key}.bonuses.save`, value));
 // dnd5e counts each ADD of 1 / -1 on roll.mode as a source of advantage / disadvantage.
 const saveModes = (keys, mode) => keys.map(key => add(`system.abilities.${key}.save.roll.mode`, mode));
+// "+5 speed with each hit, until switched out or the combat ends, max +30".
+const speedOnHit = name => ({ name, target: "self", trigger: "hit", duration: {}, removeOnCombatEnd: true,
+  stack: { max: 6 }, changes: [speedBonus(5)] });
 const levelTier = (level, tiers) => tiers.filter(([minimum]) => level >= minimum).at(-1)[1];
 
 const selfBuff = (name, changes, extra = {}) =>
@@ -357,7 +362,19 @@ const COMPACT_DEFINITIONS = Object.freeze({
   "lumina-crash": en => ({ name: en ? "Lumina Crash — WIS saves -2" : "Fotocolisión — Salvaciones SAB -2",
     target: "target", trigger: "failed-save", ...untilNextTurn, changes: abilitySaves(["wis"], -2) }),
   "tearful-look": en => ({ name: en ? "Tearful Look — Attacks -1" : "Ojos Llorosos — Ataques -1",
-    target: "target", trigger: "failed-save", duration: { seconds: 60 }, stack: { max: 5 }, changes: attackChanges(-1) })
+    target: "target", trigger: "failed-save", duration: { seconds: 60 }, stack: { max: 5 }, changes: attackChanges(-1) }),
+
+  // Batch 5d: speed modifiers.
+  "aqua-step": en => selfBuff(en ? "Aqua Step — Speed +10" : "Danza Acuática — Velocidad +10", [speedBonus(10)], untilNextTurn),
+  autotomize: en => selfBuff(en ? "Autotomize — Speed +10" : "Aligerar — Velocidad +10", [speedBonus(10)], { stack: { max: 3 } }),
+  "esper-wing": en => speedOnHit(en ? "Esper Wing — Speed +5" : "Ala Aural — Velocidad +5"),
+  "flame-charge": en => speedOnHit(en ? "Flame Charge — Speed +5" : "Nitrocarga — Velocidad +5"),
+  trailblaze: en => speedOnHit(en ? "Trailblaze — Speed +5" : "Abrecaminos — Velocidad +5"),
+  "shift-gear": en => concentrationBuff(en ? "Shift Gear — Attacks and damage +1, speed +10" : "Cambio de Marcha — Ataques y daño +1, velocidad +10",
+    [...attackChanges(1), ...damageChanges(1), speedBonus(10)]),
+  // dnd5e clamps speed at 0, so the cap only bounds the stack; the non-numeric "fire" isn't scaled by stacking.
+  "tar-shot": en => combatDebuff(en ? "Tar Shot — Speed -10, fire vulnerability" : "Alquitranazo — Velocidad -10, vulnerable al fuego",
+    "hit", 12, [speedBonus(-10), add("system.traits.dv.value", "fire")])
 });
 
 

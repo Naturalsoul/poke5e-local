@@ -621,3 +621,46 @@ test("batch 5c save debuffs apply on a failed save with their caps and durations
   assert.equal(built("lumina-crash").flags[MODULE_ID].expireAtEndOfNextTurn, true);
   assert.deepEqual(built("tearful-look").duration, { seconds: 60 });
 });
+
+const speedValue = applied => changeValue(applied, "system.attributes.movement.bonus");
+
+test("batch 5d self speed buffs apply on use, stack and expire as written", async () => {
+  for (const [id, uses, value, concentrates] of [["aqua-step", 1, "10", false], ["autotomize", 4, "30", false],
+    ["shift-gear", 1, "10", true]]) {
+    const item = move(id);
+    const focus = concentrates ? concentration(item.actor) : null;
+    for (let index = 0; index < uses; index++) {
+      usage(item, focus ? { concentration: focus.id } : {});
+      await paints();
+    }
+    const applied = item.actor.effects.find(entry => entry.getFlag(MODULE_ID, "sourceMove") === id);
+    assert.equal(speedValue(applied), value, id);
+    assert.equal(applied.getFlag("dnd5e", "dependentOn"), focus?.uuid, id);
+  }
+  const built = id => buildMoveModifierEffects({ id }, "en", { level: 1 }).effects[0];
+  assert.equal(built("aqua-step").flags[MODULE_ID].expireAtEndOfNextTurn, true);
+  assert.equal(changeValue(built("shift-gear"), "system.bonuses.mwak.damage"), "1");
+});
+
+test("Flame Charge, Esper Wing and Trailblaze speed up their user on each hit, up to +30", async () => {
+  for (const id of ["flame-charge", "esper-wing", "trailblaze"]) {
+    const item = move(id);
+    const target = actor();
+    await show(attack(item, target, 5, { hit: false }));
+    assert.equal(item.actor.effects.length, 0, id);
+    for (let index = 0; index < 7; index++) {await show(attack(item, target, 5, { hit: true }));}
+    assert.equal(target.effects.length, 0, id);
+    assert.equal(speedValue(item.actor.effects[0]), "30", id);
+    assert.equal(item.actor.effects[0].getFlag(MODULE_ID, "removeOnCombatEnd"), true, id);
+  }
+});
+
+test("Tar Shot slows the target by 10 per hit and adds fire vulnerability once", async () => {
+  const item = move("tar-shot");
+  const target = actor();
+  await show(attack(item, target, 5, { hit: true }));
+  await show(attack(item, target, 5, { hit: true }));
+  assert.equal(speedValue(target.effects[0]), "-20");
+  assert.equal(changeValue(target.effects[0], "system.traits.dv.value"), "fire");
+  assert.equal(target.effects[0].getFlag(MODULE_ID, "removeOnCombatEnd"), true);
+});
