@@ -26,10 +26,11 @@
   - Files: `scripts/modifier-automation.mjs`, `scripts/modifier-effects.mjs`, `scripts/move-coverage.mjs`, tests
 
 - [x] 5a. Batch: AC modifiers
-- [ ] 5b. Batch: attack-roll modifiers
+- [x] 5b. Batch: attack-roll modifiers
 - [ ] 5c. Batch: saving-throw modifiers
 - [ ] 5d. Batch: speed modifiers
 - [ ] 5e. Batch: leftovers
+- [ ] 5f. Batch: roll modes (advantage/disadvantage on the next attack, +5 against the target); needs a new "next attack" mechanism, notes say "5f roll modes"
   - Acceptance (each): every move in the batch is read; it's either defined and automated (with a test for each
     new shape of change) or reclassified with a module or reason; partial automation gets a `note`.
   - Verify: modifier and coverage tests; the `pending:stat-modifiers` count goes down.

@@ -511,3 +511,71 @@ test("natural-roll AC breaks wait for Dice So Nice before applying", async () =>
     assert.equal(target.effects.length, 1);
   } finally {delete game.dice3d;}
 });
+
+const attackValue = applied => applied.changes.find(change => change.key === "system.bonuses.mwak.attack")?.value;
+
+test("batch 5b self attack buffs apply on use and scale with level", async () => {
+  for (const [id, value] of [["meditate", "1"], ["sharpen", "1d4"], ["work-up", "2"]]) {
+    const item = move(id);
+    usage(item, id === "work-up" ? {} : { concentration: concentration(item.actor).id });
+    await paints();
+    assert.equal(attackValue(item.actor.effects.find(entry => entry.getFlag(MODULE_ID, "sourceMove") === id)), value, id);
+  }
+  const built = (id, level) => buildMoveModifierEffects({ id }, "en", { level }).effects[0];
+  assert.deepEqual([4, 5, 10, 17].map(level => attackValue(built("meditate", level))), ["1", "2", "3", "4"]);
+  assert.equal(attackValue(built("sharpen", 10)), "1d6");
+});
+
+test("batch 5b attack debuffs use their triggers, caps and durations", async () => {
+  for (const [id, roll, max, value] of [["octazooka", 18, 1, "-1"], ["play-rough", 19, 5, "-5"]]) {
+    const item = move(id);
+    const target = actor();
+    await show(attack(item, target, roll - 1));
+    for (let index = 0; index < max + 1; index++) {await show(attack(item, target, roll));}
+    assert.equal(target.effects.length, 1, id);
+    assert.equal(attackValue(target.effects[0]), value, id);
+    assert.equal(target.effects[0].getFlag(MODULE_ID, "removeOnCombatEnd"), true, id);
+  }
+  const sand = move("sand-attack");
+  const blinded = actor();
+  for (let index = 0; index < 6; index++) {await show(message(sand, blinded));}
+  assert.equal(attackValue(blinded.effects[0]), "-5");
+  const ball = move("shadow-ball");
+  const covered = actor();
+  await show(message(ball, covered, { type: "attack", success: false }));
+  assert.equal(covered.effects.length, 0);
+  await show(message(ball, covered, { type: "attack", success: true }));
+  assert.equal(attackValue(covered.effects[0]), "-2");
+  assert.equal(covered.effects[0].getFlag(MODULE_ID, "expireAtEndOfNextTurn"), true);
+});
+
+test("Ancient Power, Silver Wind and Ominous Wind raise the user's ability scores on a natural 19+", async () => {
+  for (const [id, max] of [["ancient-power", 5], ["silver-wind", 5], ["ominous-wind", 1]]) {
+    const item = move(id);
+    const target = actor();
+    await show(attack(item, target, 18));
+    assert.equal(item.actor.effects.length, 0, id);
+    for (let index = 0; index < max + 1; index++) {await show(attack(item, target, 19));}
+    const applied = item.actor.effects[0];
+    assert.equal(target.effects.length, 0, id);
+    assert.equal(applied.getFlag(MODULE_ID, "stackCount"), max, id);
+    assert.equal(applied.changes.length, 6, id);
+    assert.ok(applied.changes.every(change => change.key.startsWith("system.abilities.") && change.value === String(max)), id);
+  }
+});
+
+test("Feather Dance removes proficiency from attacks and ends with the user's concentration", async () => {
+  const item = move("feather-dance");
+  const focus = concentration(item.actor);
+  const card = createFlagDocument({ uuid: "ChatMessage.feather-card", documentName: "ChatMessage",
+    system: { concentration: focus.id } });
+  game.messages = new Map([[card.id, card]]);
+  try {
+    const target = actor();
+    const save = message(item, target);
+    save.rolls[0].options[MODULE_ID].modifierUsage.usageMessageId = card.id;
+    await show(save);
+    assert.equal(attackValue(target.effects[0]), "-@prof");
+    assert.equal(target.effects[0].getFlag("dnd5e", "dependentOn"), focus.uuid);
+  } finally {delete game.messages;}
+});

@@ -9,7 +9,10 @@ export const AUTOMATED_MODIFIER_MOVES = new Set(["growl", "leer", "screech", "ta
   "cotton-guard", "minimize", "coil", "quiver-dance", "victory-dance", "swords-dance", "charge", "iron-defense",
   "psyshield-bash", "rock-polish", "whirlwind", "shell-smash", "stuff-cheeks", "stockpile", "clangorous-soul",
   "scale-shot", "shelter", "steel-wing", "crunch", "iron-tail", "liquidation", "razor-shell", "rock-smash",
-  "shadow-bone", "grav-apple", "clanging-scales"]);
+  "shadow-bone", "grav-apple", "clanging-scales",
+  // Batch 5b: attack modifiers.
+  "octazooka", "play-rough", "sand-attack", "shadow-ball", "feather-dance", "meditate", "sharpen", "work-up",
+  "ancient-power", "silver-wind", "ominous-wind"]);
 
 
 /* ============================================================
@@ -246,15 +249,17 @@ const ac = value => add("system.attributes.ac.bonus", value);
 const damageChanges = value => ["mwak", "rwak", "msak", "rsak"].map(key => add(`system.bonuses.${key}.damage`, value));
 const saveBonus = value => add("system.bonuses.abilities.save", value);
 const speedBonus = value => add("system.attributes.movement.bonus", value);
+const abilityScores = value => ["str", "dex", "con", "int", "wis", "cha"].map(key => add(`system.abilities.${key}.value`, value));
+const levelTier = (level, tiers) => tiers.filter(([minimum]) => level >= minimum).at(-1)[1];
 
 const selfBuff = (name, changes, extra = {}) =>
   ({ name, target: "self", trigger: "self", duration: { seconds: 60 }, changes, ...extra });
 const concentrationBuff = (name, changes) => selfBuff(name, changes, { concentration: true });
 const untilNextTurn = { duration: {}, expireAtEndOfNextTurn: true };
 const untilTurnStart = { duration: {}, expireAtStartTurn: true };
-// AC debuffs that last "for the rest of combat" / "while it remains in battle".
-const armorBreak = (name, trigger, max = 1) =>
-  ({ name, target: "target", trigger, duration: {}, removeOnCombatEnd: true, stack: { max }, changes: [ac(-1)] });
+// Debuffs that last "for the rest of combat" / "while it remains in battle".
+const combatDebuff = (name, trigger, max = 1, changes = [ac(-1)]) =>
+  ({ name, target: "target", trigger, duration: {}, removeOnCombatEnd: true, stack: { max }, changes });
 
 const COMPACT_DEFINITIONS = Object.freeze({
   "cotton-guard": en => concentrationBuff(en ? "Cotton Guard — AC +2" : "Rizo Algodón — CA +2", [ac(2)]),
@@ -291,18 +296,44 @@ const COMPACT_DEFINITIONS = Object.freeze({
   shelter: en => selfBuff(en ? "Shelter — AC +5" : "Retracción — CA +5", [ac(5)], untilTurnStart),
   "steel-wing": en => ({ ...selfBuff(en ? "Steel Wing — AC +1" : "Ala de Acero — CA +1", [ac(1)], untilNextTurn),
     trigger: "natural-attack-19+" }),
-  crunch: en => armorBreak(en ? "Crunch — AC -1" : "Triturar — CA -1", "natural-attack-18+", 5),
-  "iron-tail": en => armorBreak(en ? "Iron Tail — AC -1" : "Cola Férrea — CA -1", "natural-attack-19+"),
-  liquidation: en => armorBreak(en ? "Liquidation — AC -1" : "Hidroariete — CA -1", "natural-attack-18+", 5),
-  "razor-shell": en => armorBreak(en ? "Razor Shell — AC -1" : "Concha Filo — CA -1", "natural-attack-18+", 5),
-  "rock-smash": en => armorBreak(en ? "Rock Smash — AC -1" : "Golpe Roca — CA -1", "natural-attack-19+"),
-  "shadow-bone": en => armorBreak(en ? "Shadow Bone — AC -1" : "Hueso Sombrío — CA -1", "natural-attack-18+", 5),
-  "grav-apple": en => armorBreak(en ? "Grav Apple — AC -1" : "Fuerza G — CA -1", "hit-and-failed-save", 3),
-  "clanging-scales": en => armorBreak(en ? "Clanging Scales — AC -1" : "Fragor Escamas — CA -1", "failed-save-by-5"),
+  crunch: en => combatDebuff(en ? "Crunch — AC -1" : "Triturar — CA -1", "natural-attack-18+", 5),
+  "iron-tail": en => combatDebuff(en ? "Iron Tail — AC -1" : "Cola Férrea — CA -1", "natural-attack-19+"),
+  liquidation: en => combatDebuff(en ? "Liquidation — AC -1" : "Hidroariete — CA -1", "natural-attack-18+", 5),
+  "razor-shell": en => combatDebuff(en ? "Razor Shell — AC -1" : "Concha Filo — CA -1", "natural-attack-18+", 5),
+  "rock-smash": en => combatDebuff(en ? "Rock Smash — AC -1" : "Golpe Roca — CA -1", "natural-attack-19+"),
+  "shadow-bone": en => combatDebuff(en ? "Shadow Bone — AC -1" : "Hueso Sombrío — CA -1", "natural-attack-18+", 5),
+  "grav-apple": en => combatDebuff(en ? "Grav Apple — AC -1" : "Fuerza G — CA -1", "hit-and-failed-save", 3),
+  "clanging-scales": en => combatDebuff(en ? "Clanging Scales — AC -1" : "Fragor Escamas — CA -1", "failed-save-by-5"),
   "bubble-beam": en => ({ name: en ? "Bubble Beam — Speed halved" : "Rayo Burbuja — Velocidad a la mitad",
     target: "target", trigger: "natural-attack-19+", ...untilNextTurn, changes: movementChanges(0.5) }),
   "mud-shot": en => ({ name: en ? "Mud Shot — Speed 0" : "Disparo Lodo — Velocidad 0",
-    target: "target", trigger: "natural-attack-16+", ...untilNextTurn, changes: movementChanges(0) })
+    target: "target", trigger: "natural-attack-16+", ...untilNextTurn, changes: movementChanges(0) }),
+
+  // Batch 5b: attack modifiers.
+  octazooka: en => combatDebuff(en ? "Octazooka — Attacks -1" : "Pulpocañón — Ataques -1", "natural-attack-18+", 1, attackChanges(-1)),
+  "play-rough": en => combatDebuff(en ? "Play Rough — Attacks -1" : "Carantoña — Ataques -1", "natural-attack-19+", 5, attackChanges(-1)),
+  "sand-attack": en => combatDebuff(en ? "Sand Attack — Attacks -1" : "Ataque Arena — Ataques -1", "failed-save", 5, attackChanges(-1)),
+  "shadow-ball": en => ({ name: en ? "Shadow Ball — Attacks -2" : "Bola Sombra — Ataques -2",
+    target: "target", trigger: "hit", ...untilNextTurn, changes: attackChanges(-2) }),
+  "feather-dance": en => ({ name: en ? "Feather Dance — No proficiency on attacks" : "Danza Pluma — Sin competencia en ataques",
+    target: "target", trigger: "failed-save", duration: { seconds: 60 }, concentration: true, changes: attackChanges("-@prof") }),
+  meditate: (en, level) => {
+    const bonus = levelTier(level, [[1, 1], [5, 2], [10, 3], [17, 4]]);
+    return concentrationBuff(en ? `Meditate — Attacks and saves +${bonus}` : `Meditación — Ataques y salvaciones +${bonus}`,
+      [...attackChanges(bonus), saveBonus(bonus)]);
+  },
+  sharpen: (en, level) => {
+    const die = level >= 10 ? "1d6" : "1d4";
+    return concentrationBuff(en ? `Sharpen — Attacks +${die}` : `Afilar — Ataques +${die}`, attackChanges(die));
+  },
+  "work-up": en => selfBuff(en ? "Work Up — Attacks +2" : "Avivar — Ataques +2", attackChanges(2)),
+  "ancient-power": en => ({ ...selfBuff(en ? "Ancient Power — Ability scores +1" : "Poder Pasado — Características +1",
+    abilityScores(1), { duration: {}, removeOnCombatEnd: true, stack: { max: 5 } }), trigger: "natural-attack-19+" }),
+  "silver-wind": en => ({ ...selfBuff(en ? "Silver Wind — Ability scores +1" : "Viento Plata — Características +1",
+    abilityScores(1), { duration: {}, removeOnCombatEnd: true, stack: { max: 5 } }), trigger: "natural-attack-19+" }),
+  // Not described as stackable, unlike Ancient Power and Silver Wind.
+  "ominous-wind": en => ({ ...selfBuff(en ? "Ominous Wind — Ability scores +1" : "Viento Aciago — Características +1",
+    abilityScores(1), { duration: {}, removeOnCombatEnd: true }), trigger: "natural-attack-19+" })
 });
 
 

@@ -33,8 +33,8 @@ function attackApplication(message, roll, item, template) {
   const recipient = template.getFlag(MODULE_ID, "target") === "self" ? item.actor : actorFromUuid(outcome.targetActorUuid);
   const actor = applies ? recipient : null;
   if (!actor) {return null;}
-  return trigger === "hit-and-failed-save"
-    ? { item, actor, part: "hit", usageId: message.getFlag("dnd5e", "originatingMessage") } : { item, actor };
+  const usageId = message.getFlag("dnd5e", "originatingMessage");
+  return trigger === "hit-and-failed-save" ? { item, actor, part: "hit", usageId } : { item, actor, usageId };
 }
 
 function saveApplication(roll, save, item, trigger) {
@@ -44,8 +44,8 @@ function saveApplication(roll, save, item, trigger) {
   const success = typeof roll.isSuccess === "boolean" ? roll.isSuccess : Number(roll.total) >= dc;
   if (success || (trigger === "failed-save-by-5" && dc - Number(roll.total) < 5)) {return null;}
   const actor = actorFromUuid(save.actorUuid);
-  return trigger === "hit-and-failed-save"
-    ? { item, actor, part: "failed-save", usageId: save.usageMessageId } : { item, actor };
+  const usageId = save.usageMessageId;
+  return trigger === "hit-and-failed-save" ? { item, actor, part: "failed-save", usageId } : { item, actor, usageId };
 }
 
 function eligibleApplication(message, roll) {
@@ -76,8 +76,15 @@ function completesCombined({ actor, part, usageId }) {
   return true;
 }
 
+// Debuffs from a concentration move end with the user's concentration, found through its usage card.
+function usageConcentration(item, usageId) {
+  const template = item.effects.find(effect => effect.getFlag(MODULE_ID, "kind") === "pokemon-modifier");
+  const id = template?.getFlag(MODULE_ID, "concentration") ? game.messages?.get(usageId)?.system?.concentration : null;
+  return id ? item.actor?.effects.find(effect => effect.id === id)?.uuid ?? null : null;
+}
+
 // Serialize applications from different roll messages to avoid losing stacks.
-async function applyApplication({ actor, item, dependentOn }) {
+async function applyApplication({ actor, item, usageId, dependentOn = usageConcentration(item, usageId) }) {
   if (!isPokemonActor(actor)) {return;}
   const previous = actorsPending.get(actor.uuid) ?? Promise.resolve();
   const task = previous.then(() => applyPokemonMoveModifier(actor, item, { dependentOn }));
