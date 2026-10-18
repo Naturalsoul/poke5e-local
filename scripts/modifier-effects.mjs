@@ -1,7 +1,7 @@
 const MODULE_ID =
   "poke5e-local";
 
-export const AUTOMATED_MODIFIER_MOVES = new Set(["growl", "leer", "screech", "tail-whip", "mud-slap"]);
+export const AUTOMATED_MODIFIER_MOVES = new Set(["growl", "leer", "screech", "tail-whip", "mud-slap", "defense-curl", "agility"]);
 
 
 /* ============================================================
@@ -1109,8 +1109,10 @@ export function buildMoveModifierEffects(
   );
 
 
+// Automated moves apply themselves; dnd5e's apply button would duplicate them.
 const nativeApplication =
-  maxStacks <= 1;
+  maxStacks <= 1 &&
+  !AUTOMATED_MODIFIER_MOVES.has(move.id);
 
 
     return {

@@ -40,10 +40,10 @@ function eligibleApplication(message, roll) {
 }
 
 // Serialize applications from different roll messages to avoid losing stacks.
-async function applyApplication({ actor, item }) {
+async function applyApplication({ actor, item, dependentOn }) {
   if (!isPokemonActor(actor)) {return;}
   const previous = actorsPending.get(actor.uuid) ?? Promise.resolve();
-  const task = previous.then(() => applyPokemonMoveModifier(actor, item));
+  const task = previous.then(() => applyPokemonMoveModifier(actor, item, { dependentOn }));
   const settled = task.catch(() => {});
   actorsPending.set(actor.uuid, settled);
   try {await task;} finally {
@@ -86,6 +86,26 @@ export function onRenderedMoveModifier(message, html) {
   }).finally(() => pending.delete(message.id));
 }
 
+// Self buffs apply when the usage card is created; dnd5e has already started concentration by then.
+export async function onCreateUsageMessage(message) {
+  if (!authority() || message.type !== "usage") {return;}
+  const item = message.getAssociatedItem?.();
+  if (item?.getFlag(MODULE_ID, "kind") !== "move" || !AUTOMATED_MODIFIER_MOVES.has(item.getFlag(MODULE_ID, "sourceId")) ||
+    !item.effects.some(effect => effect.getFlag(MODULE_ID, "trigger") === "self")) {return;}
+  const concentrationId = message.system?.concentration;
+  const concentration = concentrationId ? item.actor?.effects.find(effect => effect.id === concentrationId) : null;
+  await applyApplication({ actor: item.actor, item, dependentOn: concentration?.uuid ?? null });
+}
+
+// Moves imported before automation still carry dnd5e's apply button; never let it duplicate an active modifier.
+export function onPreCreateModifierEffect(effect) {
+  const actor = effect.parent;
+  const stackKey = effect.getFlag?.(MODULE_ID, "stackKey");
+  if (actor?.documentName !== "Actor" || effect.getFlag?.(MODULE_ID, "kind") !== "pokemon-modifier" ||
+    !AUTOMATED_MODIFIER_MOVES.has(effect.getFlag(MODULE_ID, "sourceMove"))) {return true;}
+  return !actor.effects.some(existing => !existing.disabled && existing.getFlag(MODULE_ID, "stackKey") === stackKey);
+}
+
 export async function synchronizeAutomatedMoveModifiers(actor) {
   if (!isPokemonActor(actor)) {return;}
   for (const item of actor.items ?? []) {
@@ -124,6 +144,8 @@ export function registerMoveModifierAutomation() {
   const run = task => { void task.catch(error => console.error(`[${MODULE_ID}] Error en modificadores de movimientos`, error)); };
   // Historical messages must never reapply effects on opening or refreshing chat.
   Hooks.on("createChatMessage", message => { if (authority() && message.rolls?.length) {live.add(message.id);} });
+  Hooks.on("createChatMessage", message => run(onCreateUsageMessage(message)));
+  Hooks.on("preCreateActiveEffect", onPreCreateModifierEffect);
   Hooks.on("dnd5e.renderChatMessage", onRenderedMoveModifier);
   Hooks.on("deleteChatMessage", message => live.delete(message.id));
   Hooks.once("ready", () => {

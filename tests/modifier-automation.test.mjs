@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createFlagDocument, createHooks, installFoundryUtils } from "./helpers/foundry-mocks.mjs";
 import { buildMoveModifierEffects } from "../scripts/modifier-effects.mjs";
-import { registerMoveModifierAutomation, synchronizeAutomatedMoveModifiers, clearEncounterMoveModifiers } from "../scripts/modifier-automation.mjs";
+import { registerMoveModifierAutomation, synchronizeAutomatedMoveModifiers, clearEncounterMoveModifiers,
+  onPreCreateModifierEffect } from "../scripts/modifier-automation.mjs";
 import { getPokemonMoveEffects, managePokemonMoveEffect, pokemonMoveEffectsMarkup } from "../scripts/pokemon-move-effects.mjs";
 
 installFoundryUtils();
@@ -221,4 +222,81 @@ test("encounter cleanup removes Mud-Slap but preserves other modifiers, includin
   assert.equal(target.effects[0].getFlag(MODULE_ID, "sourceMove"), "growl");
   game.actors = [];
   game.scenes = [];
+});
+
+function usage(item, system = {}) {
+  const result = createFlagDocument({ uuid: `ChatMessage.${++sequence}`, documentName: "ChatMessage", system });
+  result.type = "usage";
+  result.getAssociatedItem = () => item;
+  Hooks.callAll("createChatMessage", result);
+  return result;
+}
+
+function concentration(user) {
+  const result = effect({ name: "Concentrating" });
+  result.parent = user;
+  user.effects.push(result);
+  return result;
+}
+
+test("Defense Curl applies to its user once when the usage card is created", async () => {
+  const item = move("defense-curl");
+  const user = item.actor;
+  usage(item);
+  await paints();
+  assert.equal(user.effects.length, 1);
+  const applied = user.effects[0];
+  assert.equal(applied.getFlag(MODULE_ID, "sourceMove"), "defense-curl");
+  assert.equal(applied.getFlag(MODULE_ID, "expireAtStartTurn"), true);
+  assert.deepEqual(applied.changes.map(change => change.value), ["4", "normal"]);
+  assert.equal(applied.getFlag("dnd5e", "dependentOn"), undefined);
+  usage(item);
+  await paints();
+  assert.equal(user.effects.length, 1, "using it again must not duplicate the buff");
+});
+
+test("the self trigger ignores other messages, other GMs and moves that are not automated", async () => {
+  const curl = move("defense-curl");
+  const chat = createFlagDocument({ uuid: `ChatMessage.${++sequence}`, documentName: "ChatMessage" });
+  chat.type = "base";
+  chat.getAssociatedItem = () => curl;
+  Hooks.callAll("createChatMessage", chat);
+  game.user.id = "other-gm";
+  try {usage(curl);} finally {game.user.id = "gm";}
+  const armor = move("acid-armor");
+  usage(armor);
+  await paints();
+  assert.equal(curl.actor.effects.length, 0);
+  assert.equal(armor.actor.effects.length, 0);
+});
+
+test("Agility depends on its concentration so dnd5e removes it, and recasting relinks it", async () => {
+  const item = move("agility");
+  const user = item.actor;
+  const first = concentration(user);
+  usage(item, { concentration: first.id });
+  await paints();
+  const applied = user.effects.find(entry => entry.getFlag(MODULE_ID, "sourceMove") === "agility");
+  assert.equal(applied.getFlag("dnd5e", "dependentOn"), first.uuid);
+  assert.equal(applied.changes[0].value, "20");
+  const second = concentration(user);
+  usage(item, { concentration: second.id });
+  await paints();
+  assert.equal(user.effects.filter(entry => entry.getFlag(MODULE_ID, "sourceMove") === "agility").length, 1);
+  assert.equal(applied.getFlag("dnd5e", "dependentOn"), second.uuid);
+});
+
+test("automated self buffs drop dnd5e's apply button and cannot be duplicated by old items", async () => {
+  assert.deepEqual(buildMoveModifierEffects({ id: "agility" }).activityEffects, []);
+  assert.equal(buildMoveModifierEffects({ id: "acid-armor" }).activityEffects.length, 1);
+  const item = move("defense-curl");
+  const copy = effect(buildMoveModifierEffects({ id: "defense-curl" }).effects[0]);
+  copy.parent = item.actor;
+  assert.equal(onPreCreateModifierEffect(copy), true);
+  usage(item);
+  await paints();
+  assert.equal(onPreCreateModifierEffect(copy), false);
+  const armor = effect(buildMoveModifierEffects({ id: "acid-armor" }).effects[0]);
+  armor.parent = item.actor;
+  assert.equal(onPreCreateModifierEffect(armor), true);
 });

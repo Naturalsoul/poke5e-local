@@ -356,7 +356,8 @@ function effectDisplayName(
 async function createFirstStack(
   actor,
   template,
-  context
+  context,
+  dependentOn
 ) {
 
   const source =
@@ -432,6 +433,21 @@ async function createFirstStack(
     sourceDisposition:
         context.sourceDisposition,
   };
+
+
+  /*
+   * D&D5e elimina el efecto cuando termina
+   * la concentración de la que depende.
+   */
+  if (dependentOn) {
+    source.flags.dnd5e = {
+      ...(
+        source.flags.dnd5e ??
+        {}
+      ),
+      dependentOn
+    };
+  }
 
 
   const created =
@@ -559,7 +575,10 @@ async function increaseStack(
 
 export async function applyPokemonMoveModifier(
   actor,
-  item
+  item,
+  {
+    dependentOn = null
+  } = {}
 ) {
 
   const template =
@@ -569,14 +588,11 @@ export async function applyPokemonMoveModifier(
 
 
   if (
-    !template ||
-    !isStackable(
-      template
-    )
+    !template
   ) {
 
     throw new Error(
-      `${item?.name ?? "Move"} no tiene modificador acumulable.`
+      `${item?.name ?? "Move"} no tiene modificador.`
     );
   }
 
@@ -617,7 +633,8 @@ export async function applyPokemonMoveModifier(
       await createFirstStack(
         actor,
         template,
-        context
+        context,
+        dependentOn
       );
 
 
@@ -640,6 +657,22 @@ export async function applyPokemonMoveModifier(
   /* ==========================================================
    * ACUMULAR
    * ========================================================== */
+
+  // Reusar el Move inicia una concentración nueva.
+  if (
+    dependentOn &&
+    existing.getFlag(
+      "dnd5e",
+      "dependentOn"
+    ) !==
+      dependentOn
+  ) {
+    await existing.setFlag(
+      "dnd5e",
+      "dependentOn",
+      dependentOn
+    );
+  }
 
   const result =
     await increaseStack(
