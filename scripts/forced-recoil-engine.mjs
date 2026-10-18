@@ -1,3 +1,5 @@
+import { publishRollBeforeDamage } from "./chat-roll-display.mjs";
+
 const MODULE_ID =
   "poke5e-local";
 
@@ -368,7 +370,7 @@ async function rollDirectDamage(
   await roll.evaluate();
 
 
-  await roll.toMessage({
+  await publishRollBeforeDamage(roll, {
 
     speaker:
       ChatMessage.getSpeaker({

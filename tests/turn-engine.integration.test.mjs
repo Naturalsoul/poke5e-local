@@ -5,6 +5,7 @@ import {
   createAbilityItem,
   createFlagDocument,
   createHooks,
+  renderMockRollMessage,
   installFoundryUtils
 } from "./helpers/foundry-mocks.mjs";
 
@@ -24,8 +25,8 @@ class TurnRoll {
     return this;
   }
 
-  async toMessage() {
-    return this;
+  async toMessage(data) {
+    return renderMockRollMessage(data);
   }
 }
 
@@ -76,7 +77,7 @@ globalThis.fromUuidSync = () => null;
 
 const {
   registerPokemonTurnEngine
-} = await import("../turn-engine.mjs");
+} = await import("../scripts/turn-engine.mjs");
 
 registerPokemonTurnEngine();
 

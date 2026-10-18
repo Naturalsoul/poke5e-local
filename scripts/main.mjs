@@ -31,6 +31,8 @@ import {
   registerPokemonDamageEngine
 } from "./damage-engine.mjs";
 
+import { registerHeldItemEngine } from "./held-item-engine.mjs";
+
 import {
   registerPokemonNatureEngine
 } from "./nature-engine.mjs";
@@ -383,6 +385,7 @@ Hooks.once(
     registerPokemonFlinchEngine();
     registerPokemonReactiveHitAbilityEngine();
     registerPokemonOffensiveHitAbilityEngine();
+    registerHeldItemEngine();
     registerPokemonModifierEngine();
     registerPokemonTargetedModifierEngine();
     registerPokemonPeriodicEngine();

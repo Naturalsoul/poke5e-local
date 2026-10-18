@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   createFlagDocument,
   createHooks,
+  renderMockRollMessage,
   installFoundryUtils
 } from "./helpers/foundry-mocks.mjs";
 
@@ -23,8 +24,8 @@ class ConfusionRoll {
     return this;
   }
 
-  async toMessage() {
-    return this;
+  async toMessage(data) {
+    return renderMockRollMessage(data);
   }
 }
 
@@ -87,7 +88,7 @@ const {
   processConfusionEndTurn,
   processConfusionStartTurn,
   registerPokemonConfusionEngine
-} = await import("../confusion-engine.mjs");
+} = await import("../scripts/confusion-engine.mjs");
 
 registerPokemonConfusionEngine();
 

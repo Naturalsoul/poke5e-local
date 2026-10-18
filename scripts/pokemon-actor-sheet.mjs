@@ -1,6 +1,7 @@
 import {
   isPokemonActor
 } from "./trainer-party-service.mjs";
+import { isTrainerInventoryBerry, isTrainerInventoryHeldItem, transferTrainerBerryToPokemon, transferTrainerHeldItemToPokemon } from "./pokemon-held-item-service.mjs";
 
 import {
   buildMoveItemForActor
@@ -177,6 +178,26 @@ export class PokemonActorSheet
   ) {
     const pokemon =
       this.actor;
+
+    if (isPokemonActor(pokemon) && isTrainerInventoryBerry(item)) {
+      try {
+        return await transferTrainerBerryToPokemon(pokemon, item.parent, item.id);
+      } catch (error) {
+        console.error(`[${MODULE_ID}] Error entregando baya desde el Trainer`, error);
+        ui.notifications.error(error.message);
+        return null;
+      }
+    }
+
+    if (isPokemonActor(pokemon) && isTrainerInventoryHeldItem(item)) {
+      try {
+        return await transferTrainerHeldItemToPokemon(pokemon, item.parent, item.id);
+      } catch (error) {
+        console.error(`[${MODULE_ID}] Error prestando objeto desde el Trainer`, error);
+        ui.notifications.error(error.message);
+        return null;
+      }
+    }
 
     if (
       !isPokemonActor(

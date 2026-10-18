@@ -1,3 +1,4 @@
+import { publishRollBeforeDamage } from "./chat-roll-display.mjs";
 import {
   buildConfusedStatusEffect
 } from "./status-effects.mjs";
@@ -452,7 +453,7 @@ async function rollToChat(
   await roll.evaluate();
 
 
-  await roll.toMessage({
+  await publishRollBeforeDamage(roll, {
 
     speaker:
       ChatMessage.getSpeaker({

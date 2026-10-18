@@ -25,6 +25,7 @@ import {
   canCurrentUserTransferPokemonHeldItem,
   getPokemonHeldItem
 } from "./pokemon-held-item-service.mjs";
+import { canUsePokemonHeldItem, heldItemActionButtons } from "./pokemon-held-item-actions.mjs";
 
 import {
   getPokemonNature
@@ -71,6 +72,7 @@ import {
 import {
   getPokemonConcentrations
 } from "./pokemon-concentration-service.mjs";
+import { pokemonMoveEffectsMarkup } from "./pokemon-move-effects.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -1373,8 +1375,9 @@ function heldItemMarkup(
   item,
   labels,
   {
-    canTransfer =
-      false
+    canTransfer = false,
+    canUse = false,
+    language = "es"
   } = {}
 ) {
 
@@ -1404,6 +1407,8 @@ function heldItemMarkup(
         ?.value
     );
 
+  const useButtons = heldItemActionButtons(item, { language, canUse });
+
 
   return `
     <article class="poke5e-pokemon-held-item">
@@ -1424,6 +1429,8 @@ function heldItemMarkup(
 
 
         <div class="poke5e-pokemon-held-item__identity">
+
+          <div class="poke5e-pokemon-held-item__title-row">
 
           <button
             type="button"
@@ -1448,6 +1455,10 @@ function heldItemMarkup(
             ></i>
 
           </button>
+
+          ${useButtons ? `<div class="poke5e-pokemon-held-item__use-controls">${useButtons}</div>` : ""}
+
+          </div>
 
 
           <small class="poke5e-pokemon-held-item__hint">
@@ -1537,8 +1548,9 @@ function heldItemPanelMarkup(
   item,
   labels,
   {
-    canTransfer =
-      false
+    canTransfer = false,
+    canUse = false,
+    language = "es"
   } = {}
 ) {
 
@@ -1568,7 +1580,7 @@ function heldItemPanelMarkup(
         item,
         labels,
         {
-          canTransfer
+          canTransfer, canUse, language
         }
       )}
 
@@ -5383,6 +5395,8 @@ function buildPokemonSummary(
         labels
       )}
 
+      ${pokemonMoveEffectsMarkup(pokemon, language)}
+
       ${pokemonStatusesMarkup({
         statuses,
 
@@ -5504,7 +5518,9 @@ function buildPokemonSummary(
           labels,
           {
             canTransfer:
-              canTransferHeldItem
+              canTransferHeldItem,
+            canUse: canUsePokemonHeldItem(pokemon, trainer),
+            language
           }
         )}
 

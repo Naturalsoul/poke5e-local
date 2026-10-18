@@ -3,12 +3,14 @@ import assert from "node:assert/strict";
 
 import {
   createFlagDocument,
+  createHooks,
+  renderMockRollMessage,
   installFoundryUtils
 } from "./helpers/foundry-mocks.mjs";
 
 import {
   STRUGGLE_ACTIVITY_IDS
-} from "../struggle-rules.mjs";
+} from "../scripts/struggle-rules.mjs";
 
 installFoundryUtils();
 
@@ -27,8 +29,8 @@ class ConfusionRoll {
     return this;
   }
 
-  async toMessage() {
-    return this;
+  async toMessage(data) {
+    return renderMockRollMessage(data);
   }
 }
 
@@ -78,9 +80,7 @@ globalThis.ChatMessage = {
   }
 };
 
-globalThis.Hooks = {
-  on() {}
-};
+createHooks();
 
 globalThis.canvas = {
   tokens: {
@@ -99,7 +99,7 @@ globalThis.fromUuidSync = () => null;
 
 const {
   processConfusionStartTurn
-} = await import("../confusion-engine.mjs");
+} = await import("../scripts/confusion-engine.mjs");
 
 function confusedEffect() {
   const flags = {

@@ -51,6 +51,14 @@ export function createHooks() {
 
     once(name, handler) {
       return this.on(name, handler);
+    },
+
+    off(name, handler) {
+      callbacks.set(name, (callbacks.get(name) ?? []).filter(entry => entry !== handler));
+    },
+
+    callAll(name, ...args) {
+      for (const handler of callbacks.get(name) ?? []) {handler(...args);}
     }
   };
 
@@ -70,6 +78,15 @@ export function createHooks() {
       return callbacks.get(name) ?? [];
     }
   };
+}
+
+let rollMessageSequence = 0;
+export function renderMockRollMessage(data) {
+  globalThis.requestAnimationFrame ??= callback => queueMicrotask(callback);
+  if (!globalThis.Hooks) {createHooks();}
+  const message = createFlagDocument({ uuid: `ChatMessage.roll${++rollMessageSequence}`, flags: data.flags });
+  Hooks.callAll("dnd5e.renderChatMessage", message, { isConnected: true });
+  return message;
 }
 
 export function createFlagDocument({

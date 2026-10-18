@@ -24,6 +24,10 @@ import {
   applyMoveLockUntilEndOfNextTurn
 } from "./move-lock-runtime.mjs";
 
+import { heldItemPreventsContactReactions } from "./held-item-engine.mjs";
+
+const CONTACT_REACTIVE_ABILITIES = new Set(["static", "poison-point", "effect-spore", "flame-body", "gooey"]);
+
 const MODULE_ID =
   "poke5e-local";
 
@@ -1579,6 +1583,11 @@ async function onAttackOutcome(
 
   if (!reactive) {
 
+    return;
+  }
+
+  if (CONTACT_REACTIVE_ABILITIES.has(reactive.abilityId) &&
+    heldItemPreventsContactReactions(attacker, outcome.moveId)) {
     return;
   }
 

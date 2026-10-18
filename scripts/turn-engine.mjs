@@ -1,3 +1,4 @@
+import { publishRollBeforeDamage } from "./chat-roll-display.mjs";
 import {
   processPokemonPeriodicEndTurn
 } from "./periodic-engine.mjs";
@@ -24,6 +25,8 @@ import {
 import {
   isPokemonRecoveryInProgress
 } from "./pokemon-recovery-context.mjs";
+
+import { processHeldItemEndTurn } from "./held-item-engine.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -699,7 +702,7 @@ async function rollToChat(
   await roll.evaluate();
 
 
-  await roll.toMessage({
+  await publishRollBeforeDamage(roll, {
 
     speaker:
       ChatMessage.getSpeaker({
@@ -1492,6 +1495,8 @@ async function processEndTurn(
   await processConfusionEndTurn(
     actor
   );
+
+  await processHeldItemEndTurn(actor);
 
 
   /* ==========================================================

@@ -1,5 +1,40 @@
+import { getPokemonHeldItem } from "./pokemon-held-item-service.mjs";
+import { isPokemonActor } from "./trainer-party-service.mjs";
+import { buildMoveItemForActor } from "./builder.mjs";
+import { bindingDefinition } from "./binding-rules.mjs";
+import { publishRollBeforeDamage } from "./chat-roll-display.mjs";
+
 const MODULE_ID =
   "poke5e-local";
+
+export async function synchronizeBindingMoves(actor) {
+  for (const item of actor.items ?? []) {
+    const move = item.getFlag(MODULE_ID, "moveDefinition");
+    if (item.getFlag(MODULE_ID, "kind") !== "move" || !move ||
+      !bindingDefinition(move) || item.getFlag(MODULE_ID, "bindingVersion") === 1) {continue;}
+    const source = buildMoveItemForActor(move, actor, game.settings.get(MODULE_ID, "language"));
+    const templates = source.effects.filter(effect => effect.flags?.[MODULE_ID]?.periodic?.kind === "binding");
+    if (!periodicTemplate(item)) {await item.createEmbeddedDocuments("ActiveEffect", templates);}
+    const updates = { [`flags.${MODULE_ID}.bindingVersion`]: 1 };
+    for (const [id, activity] of Object.entries(source.system.activities)) {
+      if (activity.flags?.[MODULE_ID]?.bindingContinuation && !item.system.activities?.get(id)) {
+        updates[`system.activities.${id}`] = activity;
+      }
+    }
+    await item.update(updates);
+  }
+}
+
+export function validateBindingContinuation(activity) {
+  if (!activity?.flags?.[MODULE_ID]?.bindingContinuation) {return true;}
+  const targets = Array.from(game.user.targets ?? []).map(token => token.actor).filter(Boolean);
+  if (targets.length === 1 && periodicEffects(targets[0]).some(effect =>
+    effect.getFlag(MODULE_ID, "sourceItemUuid") === activity.item.uuid && !bindingExpired(effect))) {return true;}
+  ui.notifications.warn(game.settings.get(MODULE_ID, "language") === "en"
+    ? "Select the creature still affected by this binding. Remove its binding effect when it escapes."
+    : "Selecciona la criatura que sigue atrapada por este movimiento. Elimina su efecto cuando escape.");
+  return false;
+}
 
 
 /* ============================================================
@@ -505,7 +540,7 @@ function sourceSeedEffects(
  * CREAR EFECTO
  * ============================================================ */
 
-async function applyPeriodicEffect(
+export async function applyPeriodicEffect(
   target,
   item
 ) {
@@ -553,6 +588,12 @@ async function applyPeriodicEffect(
       MODULE_ID,
       "periodic"
     );
+
+  if (periodic?.kind === "binding") {
+    const existing = periodicEffects(target).find(effect =>
+      effect.getFlag(MODULE_ID, "sourceItemUuid") === item.uuid);
+    if (existing) {return existing;}
+  }
 
 
   /* ==========================================================
@@ -672,6 +713,23 @@ async function applyPeriodicEffect(
   };
 
 
+  if (periodic?.kind === "binding") {
+    const held = isPokemonActor(sourceActor) ? getPokemonHeldItem(sourceActor) : null;
+    const active = Number(held?.system?.quantity ?? 1) > 0;
+    const heldId = active ? held?.getFlag(MODULE_ID, "sourceId") : null;
+    const binding = foundry.utils.deepClone(periodic);
+    if (binding.maxDurationSeconds) {binding.expiresAt = Number(game.time?.worldTime ?? 0) + binding.maxDurationSeconds;}
+    binding.bindingBonus = heldId === "binding-band"
+      ? Math.max(0, Number(sourceActor.system?.attributes?.prof ?? sourceActor.getFlag(MODULE_ID, "proficiencyBonus")) || 0) : 0;
+    source.flags[MODULE_ID].periodic = binding;
+    if (binding.concentration) {
+      const concentration = Array.from(sourceActor.concentration?.effects ?? []).find(effect =>
+        !effect.disabled && effect.origin === item.uuid);
+      if (!concentration) {throw new Error(`${item.name}: debes mantener la concentración antes de aplicar el atrapamiento.`);}
+      source.flags.dnd5e = { ...source.flags.dnd5e, dependentOn: concentration.uuid };
+    }
+  }
+
   const created =
     await target.createEmbeddedDocuments(
       "ActiveEffect",
@@ -702,6 +760,8 @@ function onPreCreateUsageMessage(
   activity,
   messageConfig
 ) {
+
+  if (activity?.flags?.[MODULE_ID]?.bindingContinuation) {return;}
 
   const item =
     activity?.item;
@@ -1118,7 +1178,7 @@ async function processLeechSeed(
     ).evaluate();
 
 
-  await roll.toMessage({
+  await publishRollBeforeDamage(roll, {
 
     speaker:
       ChatMessage.getSpeaker({
@@ -1346,6 +1406,100 @@ async function processLeechSeed(
 }
 
 
+const BINDING_DAMAGE_APPLIED = Symbol("binding-damage-applied");
+const bindingClaims = new Map();
+
+function bindingExpired(effect) {
+  const expiresAt = effect.getFlag(MODULE_ID, "periodic")?.expiresAt;
+  return expiresAt != null && Number(game.time?.worldTime ?? 0) >= expiresAt;
+}
+
+function bindingRoundKey(effect) {
+  if (!game.combat?.id || !game.combat.round) {return null;}
+  return `${effect.getFlag(MODULE_ID, "sourceActorUuid")}:${game.combat.id}:${game.combat.round}`;
+}
+
+function availableBindingBonus(actor, effect) {
+  const key = bindingRoundKey(effect);
+  if (!key || bindingClaims.get(actor.uuid)?.includes(key) ||
+    (actor.getFlag(MODULE_ID, "bindingDamageRounds") ?? []).includes(key)) {return 0;}
+  return Number(effect.getFlag(MODULE_ID, "periodic")?.bindingBonus ?? 0);
+}
+
+async function recordBindingRound(actor, key) {
+  if (!key) {return;}
+  const history = actor.getFlag(MODULE_ID, "bindingDamageRounds") ?? [];
+  if (!history.includes(key)) {await actor.setFlag(MODULE_ID, "bindingDamageRounds", [...history.slice(-31), key]);}
+}
+
+export function applyBindingDamageBonus(actor, damages, options) {
+  if (damages[BINDING_DAMAGE_APPLIED]) {return;}
+  if (options?.[MODULE_ID]) {delete options[MODULE_ID].bindingRound;}
+  const message = options?.originatingMessage;
+  const activity = message?.getAssociatedActivity?.();
+  if (!activity?.flags?.[MODULE_ID]?.bindingContinuation || !(damages.amount > 0)) {return;}
+  const item = message.getAssociatedItem?.();
+  const effect = periodicEffects(actor).find(entry =>
+    entry.getFlag(MODULE_ID, "sourceItemUuid") === item?.uuid &&
+    entry.getFlag(MODULE_ID, "periodic")?.kind === "binding" && !bindingExpired(entry));
+  if (!effect) {return;}
+  const bonus = Math.max(0, Math.trunc(availableBindingBonus(actor, effect) * Number(options.multiplier ?? 1)));
+  const part = damages.find(entry => entry.value > 0 && !["healing", "temphp", "maximum"].includes(entry.type));
+  if (!bonus || !part) {return;}
+  part.value += bonus;
+  damages.amount += bonus;
+  damages[BINDING_DAMAGE_APPLIED] = true;
+  options[MODULE_ID] ??= {};
+  options[MODULE_ID].bindingRound = bindingRoundKey(effect);
+}
+
+export function captureBindingDamage(actor, options) {
+  const key = options?.[MODULE_ID]?.bindingRound;
+  if (key && options[MODULE_ID].heldItemDamageApplied > 0) {
+    const prior = bindingClaims.get(actor.uuid) ?? [];
+    bindingClaims.set(actor.uuid, [...prior.slice(-31), key]);
+  }
+}
+
+export async function recordBindingDamage(actor, amount, options) {
+  if (amount > 0 && options?.[MODULE_ID]?.heldItemDamageApplied !== 0) {
+    await recordBindingRound(actor, options?.[MODULE_ID]?.bindingRound);
+  }
+}
+
+async function processBindingEndTurn(actor, effect, periodic) {
+  if (!(actor.system?.attributes?.hp?.value > 0) || !(periodic.remainingTurns > 0)) {
+    await effect.delete();
+    return;
+  }
+  const source = sourceActorForEffect(effect);
+  const concentration = effect.getFlag("dnd5e", "dependentOn");
+  if (!source || !(source.system?.attributes?.hp?.value > 0) ||
+    (periodic.concentration && !actorFromConcentrationUuid(concentration))) {
+    await effect.delete();
+    return;
+  }
+  const turn = `${game.combat?.id}:${game.combat?.round}:${game.combat?.turn}`;
+  if (periodic.lastTurn === turn) {return;}
+  const bonus = availableBindingBonus(actor, effect);
+  const roll = await new Roll(`(${periodic.damage.formula}) + ${bonus}`).evaluate();
+  await effect.setFlag(MODULE_ID, "periodic", {
+    ...periodic, lastTurn: turn, remainingTurns: periodic.remainingTurns - 1
+  });
+  if (bonus) {await recordBindingRound(actor, bindingRoundKey(effect));}
+  await publishRollBeforeDamage(roll, { speaker: ChatMessage.getSpeaker({ actor }), flavor: effect.name });
+  await actor.applyDamage([{ value: roll.total, type: periodic.damage.type }]);
+  if (periodic.remainingTurns <= 1 || actor.system.attributes.hp.value <= 0) {await effect.delete();}
+}
+
+function actorFromConcentrationUuid(uuid) {
+  if (!uuid) {return null;}
+  try {
+    const effect = fromUuidSync(uuid, { strict: false });
+    return effect && !effect.disabled ? effect : null;
+  } catch { return null; }
+}
+
 /* ============================================================
  * PUBLIC: END TURN
  * ============================================================ */
@@ -1372,6 +1526,13 @@ export async function processPokemonPeriodicEndTurn(
       );
 
 
+    if (periodic?.kind === "binding" && (bindingExpired(effect) ||
+      !(actor.system?.attributes?.hp?.value > 0) ||
+      !(sourceActorForEffect(effect)?.system?.attributes?.hp?.value > 0))) {
+      await effect.delete();
+      continue;
+    }
+
     if (
       !periodic ||
       periodic.timing !==
@@ -1385,6 +1546,10 @@ export async function processPokemonPeriodicEndTurn(
     switch (
       periodic.kind
     ) {
+
+      case "binding":
+        await processBindingEndTurn(actor, effect, periodic);
+        break;
 
       case "leech-seed":
 
@@ -1723,6 +1888,8 @@ export function registerPokemonPeriodicEngine() {
 
   registered =
     true;
+
+  Hooks.on("dnd5e.preUseActivity", validateBindingContinuation);
 
 
   Hooks.on(

@@ -35,13 +35,27 @@
       "sourceType": "medicine",
       "cost": 20,
       "description": {
-        "en": null,
-        "es": null
+        "en": "A Pokémon may consume this patch during a long rest to replace its active standard ability with a Hidden Ability available to its species and form, or to replace its active Hidden Ability with an available standard ability.",
+        "es": "Un Pokémon puede consumir este parche durante un descanso largo para sustituir su habilidad normal activa por una habilidad oculta disponible para su especie y forma, o para sustituir su habilidad oculta activa por una habilidad normal disponible."
       },
-      "referenceEffect": null,
+      "referenceEffect": "Changes an eligible Pokémon's standard Ability to its Hidden Ability; Scarlet and Violet also allow changing back to a standard Ability.",
       "rolls": [],
       "media": {
         "sprite": null
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Ability_Patch"
+        ],
+        "previousDescriptionHashes": [
+          "186f570707fa0746",
+          "afe424779f539203"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -56,13 +70,27 @@
       "sourceType": "held item",
       "cost": 20000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "While holding this shield, the Pokémon's active ability cannot be changed, suppressed or ignored by moves or abilities, including its own. An ability copied through Transform or Imposter gains this protection. The shield does not restore an ability suppressed before it was equipped.",
+        "es": "Mientras lleve este escudo, la habilidad activa del Pokémon no puede ser cambiada, anulada ni ignorada por movimientos o habilidades, incluidos los propios. Una habilidad copiada mediante Transformación o Impostor obtiene esta protección. El escudo no restaura una habilidad anulada antes de equiparlo."
       },
-      "referenceEffect": null,
+      "referenceEffect": "Protects the holder's Ability against changes, suppression and effects that ignore Abilities, with specific exceptions such as Transform.",
       "rolls": [],
       "media": {
         "sprite": null
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Ability_Shield"
+        ],
+        "previousDescriptionHashes": [
+          "d8f0258ef4f22964",
+          "f15c04398de9b423"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -77,13 +105,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When the holder takes Water-type damage from a move, this bulb is consumed after the move resolves. The holder gains +2 to its Move DC for 1 minute or until it leaves battle, whichever comes first. This benefit does not stack with another use of this item.",
+        "es": "Cuando el portador reciba daño de tipo Agua de un movimiento, este objeto se consume después de resolverlo. El portador obtiene +2 a su CD de Movimiento durante 1 minuto o hasta abandonar el combate, lo que ocurra primero. Esta mejora no se acumula con otro uso del mismo objeto."
       },
       "referenceEffect": "Held\n:   When the holder takes water-type damage from a move, its Special Attack rises by one stage and this item is consumed.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/absorb-bulb/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "21d0c04d8cf422f7",
+          "c38e18aab6133f92"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -98,13 +138,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When Intimidate imposes disadvantage on the holder's attack roll, this orb is consumed after that attack resolves. The holder's movement speed increases by 10 feet for 1 minute or until it leaves battle, whichever comes first. This benefit does not stack with another use of this item.",
+        "es": "Cuando Intimidación imponga desventaja en una tirada de ataque del portador, esta esfera se consume después de resolver el ataque. La velocidad de movimiento del portador aumenta en 10 pies durante 1 minuto o hasta abandonar el combate, lo que ocurra primero. Esta mejora no se acumula con otro uso del mismo objeto."
       },
       "referenceEffect": "Makes wild Pokémon more likely to summon allies.  Held: increases the holder's Speed by one stage when affected by Intimidate.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/adrenaline-orb/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "e3ae4e2d3a600933",
+          "6c0ded8241c2d453"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -381,13 +433,27 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When the holder uses a binding move, such as Bind, Wrap or Fire Spin, add its proficiency bonus to the effect's recurring damage, once per affected creature per round. Use the holder's proficiency bonus when the effect is created. The initial hit is unchanged.",
+        "es": "Cuando el portador use un movimiento de atrapamiento, como Atadura, Constricción o Giro Fuego, añade su bonificador de competencia al daño periódico del efecto, una vez por criatura afectada y ronda. Usa el bonificador de competencia del portador al crear el efecto. El impacto inicial no cambia."
       },
-      "referenceEffect": "Held\n:   Moves used by the holder that trap and damage a target for multiple turns (e.g. bind, fire spin) inflict twice their usual per-turn damage.",
+      "referenceEffect": "In modern games, binding damage caused by the holder is increased from 1/8 to 1/6 of the target's maximum HP per turn.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/binding-band/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "automatic",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Binding_Band"
+        ],
+        "previousDescriptionHashes": [
+          "d68cf1303198785d",
+          "e5caac420b58cdd4"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -538,13 +604,27 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When the holder misses a creature's AC with a move attack roll, this policy is consumed. The holder's movement speed increases by 20 feet for 1 minute or until it leaves battle, whichever comes first. This benefit does not stack with another use of this item.",
+        "es": "Cuando el portador falle contra la CA de una criatura con una tirada de ataque de un movimiento, esta póliza se consume. Su velocidad de movimiento aumenta en 20 pies durante 1 minuto o hasta abandonar el combate, lo que ocurra primero. Esta mejora no se acumula con otro uso del mismo objeto."
       },
-      "referenceEffect": null,
+      "referenceEffect": "Consumed when the holder's move misses due to accuracy or evasion, raising its Speed by two stages.",
       "rolls": [],
       "media": {
         "sprite": null
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Blunder_Policy"
+        ],
+        "previousDescriptionHashes": [
+          "8138c1a7cce65f89",
+          "54bf97ea9d047f9b"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -559,13 +639,27 @@
       "sourceType": "held item",
       "cost": 0,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When a Pokémon with Protosynthesis or Quark Drive enters battle, it may consume this energy to activate that ability's environmental benefits for 1 minute or until it leaves battle, whichever comes first. Only the holder benefits; no weather or terrain is created. This benefit does not stack with the ability's normal environmental activation.",
+        "es": "Cuando un Pokémon con Paleosíntesis o Carga Cuark entre en combate, puede consumir esta energía para activar los beneficios ambientales de su habilidad durante 1 minuto o hasta abandonar el combate, lo que ocurra primero. Solo se beneficia el portador; no se crea clima ni campo. Esta mejora no se acumula con la activación ambiental normal de la habilidad."
       },
-      "referenceEffect": null,
+      "referenceEffect": "Consumed to activate Protosynthesis without harsh sunlight or Quark Drive without Electric Terrain.",
       "rolls": [],
       "media": {
         "sprite": null
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Booster_Energy"
+        ],
+        "previousDescriptionHashes": [
+          "facd602c478d1111",
+          "2b4622b81467c635"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -580,13 +674,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "The holder gains a +1 bonus to AC against move attack rolls. This bonus does not stack with Lax Incense.",
+        "es": "El portador obtiene un bonificador de +1 a la CA contra tiradas de ataque de movimientos. Este bonificador no se acumula con Incienso Suave."
       },
       "referenceEffect": "Held in battle\n:   Moves targeting the holder have 0.9× chance to hit.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/bright-powder/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "a4792ef4d45603e4",
+          "adc2df7fdc13079b"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -832,13 +938,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When the holder takes Electric-type damage from a move, this battery is consumed after the move resolves. The holder gains +2 to move attack rolls for 1 minute or until it leaves battle, whichever comes first. This benefit does not stack with another use of this item.",
+        "es": "Cuando el portador reciba daño de tipo Eléctrico de un movimiento, este objeto se consume después de resolverlo. El portador obtiene +2 a las tiradas de ataque de movimientos durante 1 minuto o hasta abandonar el combate, lo que ocurra primero. Esta mejora no se acumula con otro uso del mismo objeto."
       },
       "referenceEffect": "Held\n:   When the holder takes electric-type damage from a move, its Attack rises by one stage and this item is consumed.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/cell-battery/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "8dd5b15d5aae0c87",
+          "6d1e5dbaa236319a"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -1084,13 +1202,27 @@
       "sourceType": "held item",
       "cost": 30000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "Other Pokémon's moves and abilities cannot reduce the holder's ability scores, move attack bonuses, Move DC, AC, saving throw bonuses or movement speeds. This amulet does not prevent self-inflicted reductions or effects, such as Haze, that reset modifiers.",
+        "es": "Los movimientos y habilidades de otros Pokémon no pueden reducir las puntuaciones de característica, los bonos de ataque de movimientos, la CD de Movimiento, la CA, los bonos de salvación ni las velocidades del portador. Este amuleto no evita reducciones propias ni efectos, como Niebla, que restablezcan los modificadores."
       },
-      "referenceEffect": null,
+      "referenceEffect": "Prevents stat reductions caused by other Pokémon's moves and Abilities, but not effects that reset stat changes.",
       "rolls": [],
       "media": {
         "sprite": null
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Clear_Amulet"
+        ],
+        "previousDescriptionHashes": [
+          "7d854fe25aeea699",
+          "bbe9800f9e87b9db"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -1105,13 +1237,25 @@
       "sourceType": "medicine",
       "cost": 300,
       "description": {
-        "en": null,
-        "es": null
+        "en": "A Pokémon may consume ten of these feathers during a long rest to increase its WIS score by 1, to a maximum of 20. The ten feathers count as one vitamin. A Pokémon may benefit from only three vitamins in its lifetime, including all feathers and other vitamins.",
+        "es": "Un Pokémon puede consumir diez de estas plumas durante un descanso largo para aumentar su Sabiduría en 1, hasta un máximo de 20. Las diez plumas cuentan como una vitamina. Un Pokémon solo puede beneficiarse de tres vitaminas durante su vida, contando todas las plumas y las demás vitaminas."
       },
       "referenceEffect": "Used on a party Pokémon\n:   Increases the target's Special Defense effort by 1.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/clever-wing/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "5c8cca546675ff01",
+          "13b21f5f78316ce5"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -1231,13 +1375,27 @@
       "sourceType": "held item",
       "cost": 20000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "The holder is immune to additional effects inflicted on it by other Pokémon's damaging moves, such as secondary status conditions, flinching and statistic reductions. The move still deals damage. Non-damaging moves and benefits granted to the attacker are unaffected.",
+        "es": "El portador es inmune a los efectos adicionales que le impongan los movimientos dañinos de otros Pokémon, como estados secundarios, Retroceso y reducciones de estadísticas. El movimiento sigue causando daño. Los movimientos sin daño y las mejoras concedidas al atacante no se ven afectados."
       },
-      "referenceEffect": null,
+      "referenceEffect": "Blocks additional effects of other Pokémon's damaging moves, not the damage itself or status moves.",
       "rolls": [],
       "media": {
         "sprite": null
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Covert_Cloak"
+        ],
+        "previousDescriptionHashes": [
+          "56399d7c4f19e86e",
+          "7ba15cd1bbae3f30"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -1399,13 +1557,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When another Pokémon charms the holder with a move or ability, that Pokémon must succeed on a Wisdom saving throw against the holder's Move DC or be charmed by the holder for the original effect's remaining duration. The original charm remains. A charm caused by this item cannot activate another Destiny Knot.",
+        "es": "Cuando otro Pokémon hechice al portador mediante un movimiento o habilidad, ese Pokémon debe superar una tirada de salvación de Sabiduría contra la CD de Movimiento del portador o quedar hechizado por él durante el tiempo restante del efecto original. El hechizo original continúa. Un hechizo causado por este objeto no puede activar otro Lazo Destino."
       },
       "referenceEffect": "Held: When the holder becomes Attracted, the Pokémon it is Attracted to becomes Attracted back.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/destiny-knot/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "68d0b4b37ba7b741",
+          "3dbf6b9a8d98cef7"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -1912,13 +2082,27 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When a move or ability reduces one of the holder's statistics, including through its own move, its trainer may consume this pack after the move resolves to switch the holder with an eligible conscious Pokémon in their party as a free action. This switch grants no additional turn and follows the normal switching restrictions. The pack is consumed only if the switch can occur.",
+        "es": "Cuando un movimiento o habilidad reduzca una estadística del portador, incluso mediante un movimiento propio, su entrenador puede consumir esta mochila tras resolver el movimiento para cambiarlo por un Pokémon consciente y válido de su equipo como acción gratuita. Este cambio no concede otro turno y respeta las restricciones normales al cambio. La mochila solo se consume si el cambio es posible."
       },
-      "referenceEffect": null,
+      "referenceEffect": "Consumed to switch the holder out when one of its stats is lowered, including by its own moves.",
       "rolls": [],
       "media": {
         "sprite": null
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Eject_Pack"
+        ],
+        "previousDescriptionHashes": [
+          "55f408eddf39c855",
+          "ed485a3de12b6bc5"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -1975,13 +2159,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When the holder becomes subject to Electric Terrain, this seed is consumed and grants a +1 bonus to AC for 1 minute or until the holder leaves battle, whichever comes first. The benefit remains if the terrain ends early and does not stack with another use of this seed.",
+        "es": "Cuando el portador quede bajo los efectos de Campo Eléctrico, esta semilla se consume y le concede un bonificador de +1 a la CA durante 1 minuto o hasta abandonar el combate, lo que ocurra primero. La mejora continúa si el campo termina antes y no se acumula con otro uso de esta semilla."
       },
       "referenceEffect": "Held: If the holder enters battle during Electric Terrain, or if Electric Terrain is activated while the holder is in battle, this item is consumed and the holder's Defense raises by one stage.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/electric-seed/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "7e820cae1256b740",
+          "906083a6a8314d0e"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -2205,13 +2401,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "Once per move, the holder adds its proficiency bonus to damage dealt to a creature vulnerable to that move's damage type. Apply this bonus after resolving vulnerability; the bonus itself is not doubled.",
+        "es": "Una vez por movimiento, el portador añade su bonificador de competencia al daño que inflija a una criatura vulnerable al tipo de daño del movimiento. Aplica este bonificador después de resolver la vulnerabilidad; el propio bonificador no se duplica."
       },
       "referenceEffect": "Held: When the holder hits with a super-effective move, its power is raised by 20%.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/expert-belt/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "automatic",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "2e733e01db382811",
+          "23a7d08e0f0addc2"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -2562,13 +2770,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "While holding this stone, the Pokémon's weight is halved for carrying, lifting and effects that depend on weight, such as Low Kick, Grass Knot, Heavy Slam and Heat Crash. Its size and movement speeds are unchanged.",
+        "es": "Mientras lleve esta piedra, el peso del Pokémon se reduce a la mitad a efectos de transporte, levantamiento y efectos que dependan del peso, como Patada Baja, Hierba Lazo, Cuerpo Pesado y Golpe Calor. Su tamaño y sus velocidades no cambian."
       },
       "referenceEffect": "Held\n:   Holder has 0.5× weight.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/float-stone/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "337a4bedcf5c416c",
+          "21d477b62ddf2d86"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -2740,13 +2960,25 @@
       "sourceType": "held item",
       "cost": 5000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "The holder takes its turn after all other combatants each round, even when initiative order is reversed. If several Pokémon share this effect, the one with the lower original initiative acts first. Equipping or removing this item changes the order from the following round and never grants or removes a turn.",
+        "es": "El portador realiza su turno después de todos los demás combatientes de cada ronda, incluso si se invierte el orden de iniciativa. Si varios Pokémon comparten este efecto, actúa primero quien tuviera la iniciativa original más baja. Equipar o retirar este objeto cambia el orden desde la ronda siguiente y nunca concede ni elimina un turno."
       },
       "referenceEffect": "Held: The holder will go last within its move's priority bracket, regardless of Speed.  If multiple Pokémon within the same priority bracket are subject to this effect, the slower Pokémon will go first.  The holder will move after Pokémon with Stall.  If the holder has Stall, Stall is ignored.  This item ignores Trick Room.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/full-incense/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "4de4614cf2623974",
+          "6495b0b6e89827d2"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -2824,13 +3056,25 @@
       "sourceType": "medicine",
       "cost": 300,
       "description": {
-        "en": null,
-        "es": null
+        "en": "A Pokémon may consume ten of these feathers during a long rest to increase its CON score by 1, to a maximum of 20. The ten feathers count as one vitamin. A Pokémon may benefit from only three vitamins in its lifetime, including all feathers and other vitamins.",
+        "es": "Un Pokémon puede consumir diez de estas plumas durante un descanso largo para aumentar su Constitución en 1, hasta un máximo de 20. Las diez plumas cuentan como una vitamina. Un Pokémon solo puede beneficiarse de tres vitaminas durante su vida, contando todas las plumas y las demás vitaminas."
       },
       "referenceEffect": "Used on a party Pokémon\n:   Increases the target's Special Attack effort by 1.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/genius-wing/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "8e389d17e8cf998c",
+          "60bf5a780722c40b"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -3011,13 +3255,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When the holder becomes subject to Grassy Terrain, this seed is consumed and grants a +1 bonus to AC for 1 minute or until the holder leaves battle, whichever comes first. The benefit remains if the terrain ends early and does not stack with another use of this seed.",
+        "es": "Cuando el portador quede bajo los efectos de Campo de Hierba, esta semilla se consume y le concede un bonificador de +1 a la CA durante 1 minuto o hasta abandonar el combate, lo que ocurra primero. La mejora continúa si el campo termina antes y no se acumula con otro uso de esta semilla."
       },
       "referenceEffect": "Held: If the holder enters battle during Grassy Terrain, or if Grassy Terrain is activated while the holder is in battle, this item is consumed and the holder's Defense raises by one stage.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/grassy-seed/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "05e911235a2711b6",
+          "46cd30950a7f951a"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -3053,13 +3309,27 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "Binding effects created by the holder's moves, such as Bind, Wrap and Fire Spin, last 1 additional round, to a maximum of 1 minute. Concentration and the target's normal means of escape still apply.",
+        "es": "Los efectos de atrapamiento creados por los movimientos del portador, como Atadura, Constricción y Giro Fuego, duran 1 ronda adicional, hasta un máximo de 1 minuto. Se mantienen la concentración y las formas normales de escapar del objetivo."
       },
-      "referenceEffect": "Held: Increases the duration of the holder's multiturn (2-5 turn) moves by three turns.",
+      "referenceEffect": "In modern games, binding moves used by the holder last seven turns. This is not an extension to every multi-turn move.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/grip-claw/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Grip_Claw"
+        ],
+        "previousDescriptionHashes": [
+          "4a1a1bcec6a4f399",
+          "ece14cbd18e868e4"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -3263,13 +3533,25 @@
       "sourceType": "medicine",
       "cost": 300,
       "description": {
-        "en": null,
-        "es": null
+        "en": "A Pokémon may consume ten of these feathers during a long rest to increase its maximum HP by the maximum result of one of its species' hit dice. This does not restore current HP. The ten feathers count as one vitamin toward the lifetime limit of three vitamins, including all feathers and other vitamins.",
+        "es": "Un Pokémon puede consumir diez de estas plumas durante un descanso largo para aumentar sus PG máximos en el resultado máximo de un dado de golpe de su especie. Esto no restaura PG actuales. Las diez plumas cuentan como una vitamina para el límite de tres vitaminas durante su vida, contando todas las plumas y las demás vitaminas."
       },
       "referenceEffect": "Used on a party Pokémon\n:   Increases the target's HP effort by 1.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/health-wing/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "661ea287c2d9b28d",
+          "914f7b5c50a26a39"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -3326,13 +3608,27 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "The holder is immune to the damage, status conditions and movement penalties of entry hazards, such as Spikes, Toxic Spikes, Stealth Rock and Sticky Web, when entering or returning to battle. The boots do not remove these hazards or protect against ordinary terrain effects.",
+        "es": "El portador es inmune al daño, los estados y las penalizaciones de movimiento de las trampas de entrada, como Púas, Púas Tóxicas, Trampa Rocas y Red Viscosa, al entrar o regresar al combate. Las botas no eliminan estas trampas ni protegen frente a los efectos normales de los campos."
       },
-      "referenceEffect": null,
+      "referenceEffect": "Protects the holder from entry-hazard effects.",
       "rolls": [],
       "media": {
         "sprite": null
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Heavy-Duty_Boots"
+        ],
+        "previousDescriptionHashes": [
+          "e9ab8a90042f240a",
+          "86ae459d974b5ad2"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -3588,13 +3884,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "The holder's movement speeds are halved, and it is considered grounded. It cannot fly or benefit from Ground immunity granted by Flying typing or Levitate. Its typing and other defenses are unchanged.",
+        "es": "Las velocidades del portador se reducen a la mitad y se lo considera en contacto con el suelo. No puede volar ni beneficiarse de la inmunidad a Tierra concedida por el tipo Volador o Levitación. Sus tipos y sus demás defensas no cambian."
       },
       "referenceEffect": "Held: Decreases the holder's Speed by 50%.  If the holder is Flying or has Levitate, it takes regular damage from Ground attacks and is suspectible to Spikes and Toxic Spikes.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/iron-ball/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "8949655260008286",
+          "d7d333493c7bdf86"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -3714,13 +4022,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "The holder takes its turn after all other combatants each round, even when initiative order is reversed. If several Pokémon share this effect, the one with the lower original initiative acts first. Equipping or removing this item changes the order from the following round and never grants or removes a turn.",
+        "es": "El portador realiza su turno después de todos los demás combatientes de cada ronda, incluso si se invierte el orden de iniciativa. Si varios Pokémon comparten este efecto, actúa primero quien tuviera la iniciativa original más baja. Equipar o retirar este objeto cambia el orden desde la ronda siguiente y nunca concede ni elimina un turno."
       },
       "referenceEffect": "Held: The holder will go last within its move's priority bracket, regardless of Speed.  If multiple Pokémon within the same priority bracket are subject to this effect, the slower Pokémon will go first.  The holder will move after Pokémon with Stall.  If the holder has Stall, Stall is ignored.  This item ignores Trick Room.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/lagging-tail/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "4de4614cf2623974",
+          "6495b0b6e89827d2"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -3777,13 +4097,25 @@
       "sourceType": "held item",
       "cost": 5000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "The holder gains a +1 bonus to AC against move attack rolls. This bonus does not stack with Bright Powder.",
+        "es": "El portador obtiene un bonificador de +1 a la CA contra tiradas de ataque de movimientos. Este bonificador no se acumula con Polvo Brillo."
       },
       "referenceEffect": "Held: Increases the holder's Evasion by 5%.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/lax-incense/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "2b47e484542a2af0",
+          "ca40326227bc0a4e"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -3966,13 +4298,27 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "Barriers created by the holder with Reflect, Light Screen or Aurora Veil last 1 additional round, to a maximum of 1 minute. A barrier that would end at the beginning of its next turn instead ends at the beginning of its following turn. Concentration and other ending conditions still apply.",
+        "es": "Las barreras creadas por el portador con Reflejo, Pantalla Luz o Velo Aurora duran 1 ronda adicional, hasta un máximo de 1 minuto. Una barrera que terminara al inicio de su siguiente turno termina al inicio del turno posterior. Se mantienen la concentración y las demás condiciones de finalización."
       },
-      "referenceEffect": "Held: The holder's Reflect and Light Screen will create effects lasting for eight turns rather than five.  As this item affects the move rather than the barrier itself, the effect is not lost if the holder leaves battle or drops this item.",
+      "referenceEffect": "Extends Reflect, Light Screen and Aurora Veil from five to eight turns in the games.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/light-clay/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Light_Clay"
+        ],
+        "previousDescriptionHashes": [
+          "1933eba99493c7b2",
+          "eed09f24312ae412"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -3987,13 +4333,27 @@
       "sourceType": "held item",
       "cost": 20000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When the holder hits with a combo move that rolls a die to determine additional hits, it may roll the first continuation check twice and use either result. Further checks and the maximum number of hits are unchanged. Moves that make a separate attack roll for each hit, such as Population Bomb, gain no benefit.",
+        "es": "Cuando el portador impacte con un movimiento de combo que tire un dado para determinar impactos adicionales, puede tirar dos veces la primera comprobación de continuación y elegir un resultado. Las comprobaciones posteriores y el máximo de impactos no cambian. Los movimientos que realicen un ataque independiente por impacto, como Proliferación, no reciben esta mejora."
       },
-      "referenceEffect": null,
+      "referenceEffect": "Makes multi-strike moves hit more times, usually guaranteeing at least four hits when the move allows it.",
       "rolls": [],
       "media": {
         "sprite": null
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Loaded_Dice"
+        ],
+        "previousDescriptionHashes": [
+          "14417cc61174d0de",
+          "ebc3d8fd221a5433"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -4071,13 +4431,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When the holder takes Water-type damage from a move, this moss is consumed after the move resolves. The holder gains +1 to saving throws for 1 minute or until it leaves battle, whichever comes first. This benefit does not stack with another use of this item.",
+        "es": "Cuando el portador reciba daño de tipo Agua de un movimiento, este objeto se consume después de resolverlo. El portador obtiene +1 a las tiradas de salvación durante 1 minuto o hasta abandonar el combate, lo que ocurra primero. Esta mejora no se acumula con otro uso del mismo objeto."
       },
       "referenceEffect": "Held: If the holder is hit by a damaging Water move, it consumes this item and raises its Special Defense by one stage.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/luminous-moss/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "1fa688c17153ec16",
+          "8fb644ffd1e19c2d"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -4281,13 +4653,37 @@
       "sourceType": "medicine",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "A trainer may use an action to administer this honey to an adjacent fainted Pokémon, restoring 4d12 + 10 HP, up to its maximum. Consumed on use.\n\nAlternatively, one portion may be added to a Max Soup made with three portions of Max Mushrooms for Urshifu. This use requires the campaign's Gigantamax rules and consumes the honey without restoring HP.",
+        "es": "Un entrenador puede usar una acción para administrar esta miel a un Pokémon adyacente debilitado y restaurar 4d12 + 10 PG, sin superar su máximo. Se consume al usarla.\n\nComo alternativa, puede añadirse una porción a una Maxisopa preparada con tres porciones de Maxisetas para Urshifu. Este uso requiere las reglas de Gigamax de la campaña y consume la miel sin restaurar PG."
       },
-      "referenceEffect": null,
-      "rolls": [],
+      "referenceEffect": "Revives a fainted Pokémon with full HP in the games; also an extra Max Soup ingredient required for Urshifu.",
+      "rolls": [
+        {
+          "id": "healing",
+          "kind": "healing",
+          "formula": "4d12 + 10",
+          "label": {
+            "en": "Roll recovery",
+            "es": "Tirar recuperación"
+          }
+        }
+      ],
       "media": {
         "sprite": null
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Max_Honey"
+        ],
+        "previousDescriptionHashes": [
+          "2acd2372572e50ed",
+          "165faa82a929a711"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -4302,13 +4698,27 @@
       "sourceType": "medicine",
       "cost": 6000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "A trainer may use an action to feed one portion to an adjacent Pokémon. For 1 minute or until it leaves battle, whichever comes first, the Pokémon gains +1 to move attack rolls, Move DC, AC and saving throws, adds +1 to move damage once per move, and gains 5 feet of movement speed. Multiple portions do not stack. Consumed on use.\n\nAlternatively, three portions may be prepared as Max Soup during a long rest for a Gigantamax-compatible species, using the campaign's Gigantamax rules.",
+        "es": "Un entrenador puede usar una acción para dar una porción a un Pokémon adyacente. Durante 1 minuto o hasta abandonar el combate, lo que ocurra primero, el Pokémon obtiene +1 a ataques de movimientos, CD de Movimiento, CA y salvaciones, añade +1 al daño de movimientos una vez por movimiento y obtiene 5 pies de velocidad de movimiento. Varias porciones no se acumulan. Se consume al usarla.\n\nComo alternativa, pueden prepararse tres porciones como Maxisopa durante un descanso largo para una especie compatible con Gigamax, usando las reglas de Gigamax de la campaña."
       },
-      "referenceEffect": null,
+      "referenceEffect": "In battle, raises Attack, Defense, Special Attack, Special Defense and Speed by one stage. Three portions can make Max Soup for compatible Pokémon.",
       "rolls": [],
       "media": {
         "sprite": null
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Max_Mushrooms"
+        ],
+        "previousDescriptionHashes": [
+          "3101a6ac98e2814b",
+          "d73440f3a8509611"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -4417,13 +4827,27 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When the holder becomes affected by Attract or another charm, Taunt, Encore, Torment, Disable or Heal Block, it may consume this herb to end all such effects on itself. Consuming the herb requires no action or reaction.",
+        "es": "Cuando el portador sufra Atracción u otro hechizo, Mofa, Otra Vez, Tormento, Anulación o Anticura, puede consumir esta hierba para terminar todos esos efectos sobre sí mismo. Consumirla no requiere acción ni reacción."
       },
-      "referenceEffect": "Held in battle\n:   When the holder is attracted, it consumes this item to cure the attraction.",
+      "referenceEffect": "In modern games, consumed to remove infatuation, Taunt, Encore, Torment, Disable and Heal Block.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/mental-herb/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Mental_Herb"
+        ],
+        "previousDescriptionHashes": [
+          "99364eebaadd9308",
+          "17f31196192329ae"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -4501,13 +4925,27 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "Each consecutive turn after the first on which the holder uses the same damaging move and deals damage grants a cumulative +1 bonus to that move's damage, to a maximum of +3, once per move. This bonus resets when the holder uses another move, deals no damage, spends a turn without using the move, or leaves battle. Additional hits in the same activation do not increase the bonus.",
+        "es": "Cada turno consecutivo después del primero en que el portador use el mismo movimiento dañino e inflija daño concede un bonificador acumulativo de +1 al daño de ese movimiento, hasta un máximo de +3, una vez por movimiento. El bonificador se reinicia si usa otro movimiento, no inflige daño, pasa un turno sin usarlo o abandona el combate. Los impactos adicionales de la misma activación no aumentan el bonificador."
       },
-      "referenceEffect": "Held: Each time the holder uses the same move consecutively, its power is increased by another 10% of its original, to a maximum of 100%.",
+      "referenceEffect": "From Generation V onward, consecutive successful uses of the same move gain 20% power per prior use, up to 100%; changing moves, switching or an unsuccessful use resets the bonus.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/metronome/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Metronome_(item)"
+        ],
+        "previousDescriptionHashes": [
+          "c8015c442c2f8eff",
+          "2f2a81327e2ccd8f"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -4606,13 +5044,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When the holder becomes subject to Misty Terrain, this seed is consumed and grants a +1 bonus to saving throws for 1 minute or until the holder leaves battle, whichever comes first. The benefit remains if the terrain ends early and does not stack with another use of this seed.",
+        "es": "Cuando el portador quede bajo los efectos de Campo de Niebla, esta semilla se consume y le concede un bonificador de +1 a las tiradas de salvación durante 1 minuto o hasta abandonar el combate, lo que ocurra primero. La mejora continúa si el campo termina antes y no se acumula con otro uso de esta semilla."
       },
       "referenceEffect": "Held: If the holder enters battle during Misty Terrain, or if Misty Terrain is activated while the holder is in battle, this item is consumed and the holder's Special Defense raises by one stage.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/misty-seed/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "6b04d604f27047e2",
+          "bbcdfee69bfe6c97"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -4732,13 +5182,25 @@
       "sourceType": "medicine",
       "cost": 300,
       "description": {
-        "en": null,
-        "es": null
+        "en": "A Pokémon may consume ten of these feathers during a long rest to increase its STR score by 1, to a maximum of 20. The ten feathers count as one vitamin. A Pokémon may benefit from only three vitamins in its lifetime, including all feathers and other vitamins.",
+        "es": "Un Pokémon puede consumir diez de estas plumas durante un descanso largo para aumentar su Fuerza en 1, hasta un máximo de 20. Las diez plumas cuentan como una vitamina. Un Pokémon solo puede beneficiarse de tres vitaminas durante su vida, contando todas las plumas y las demás vitaminas."
       },
       "referenceEffect": "Used on a party Pokémon\n:   Increases the target's Attack effort by 1.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/muscle-wing/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "022363d8de9b47f4",
+          "f63215e9aebc4575"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -4921,13 +5383,25 @@
       "sourceType": "held item",
       "cost": 2000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "The holder adds its proficiency bonus to psychic-type damage it deals, once per move.",
+        "es": "El portador añade su bonificador de competencia al daño de tipo Psíquico que inflige, una vez por movimiento."
       },
       "referenceEffect": "Held: Increases the power of the holder's Psychic moves by 20%.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/odd-incense/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "automatic",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "7145669bad002419",
+          "7e8a25b0f2fff896"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -5141,13 +5615,27 @@
       "sourceType": "medicine",
       "cost": 250,
       "description": {
-        "en": null,
-        "es": null
+        "en": "A trainer may use an action to feed this snack to an adjacent Pokémon. A conscious Pokémon may instead use its own action to eat it. The Pokémon is cured of Poisoned, Badly Poisoned, Paralyzed, Asleep, Burned, Frozen and Confused. Consumed on use.",
+        "es": "Un entrenador puede usar una acción para dar este aperitivo a un Pokémon adyacente. Un Pokémon consciente puede usar su propia acción para comerlo. El Pokémon se cura de Envenenado, Gravemente envenenado, Parálisis, Dormido, Quemado, Congelado y Confundido. Se consume al usarlo."
       },
-      "referenceEffect": null,
+      "referenceEffect": "Cures non-volatile status conditions and confusion in the games.",
       "rolls": [],
       "media": {
         "sprite": null
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Pewter_Crunchies"
+        ],
+        "previousDescriptionHashes": [
+          "a51d8103a9bcfa5e",
+          "6e8e21348c2aa159"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -5361,13 +5849,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When the holder uses a move that requires a charging turn, it may consume this herb to skip that turn and resolve the attack as part of the same activation, retaining any benefits granted by charging. The move's action cost, PP cost, concentration and recharge turns are unchanged.",
+        "es": "Cuando el portador use un movimiento que requiera un turno de carga, puede consumir esta hierba para omitir ese turno y resolver el ataque como parte de la misma activación, conservando las mejoras concedidas por la carga. No cambian el coste de acciones o PP, la concentración ni los turnos de recarga del movimiento."
       },
       "referenceEffect": "Held: Whenever the holder uses a move that requires a turn to charge first (Bounce, Dig, Dive, Fly, Razor Wind, Skull Bash, Sky Attack, or Solarbeam), this item is consumed and the charge is skipped.  Skull Bash still provides a Defense boost.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/power-herb/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "d081a8a31e8de1c9",
+          "a931a2ab4e5d4ca9"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -5466,13 +5966,27 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "The holder is protected from harmful effects triggered by its contact moves touching another Pokémon, such as Rough Skin, Iron Barbs, Rocky Helmet and Static. Its attacks still make contact and deal normal damage. This protection does not prevent ordinary recoil or effects of incoming attacks.",
+        "es": "El portador queda protegido de los efectos perjudiciales que se activen cuando sus movimientos de contacto toquen a otro Pokémon, como Piel Tosca, Punta Acero, Casco Dentado y Electricidad Estática. Sus ataques siguen haciendo contacto y causan daño normal. Esta protección no evita el retroceso normal ni los efectos de ataques recibidos."
       },
-      "referenceEffect": "Held: Prevents side effects of contact moves used on the holder.",
+      "referenceEffect": "Protects the holder from harmful effects triggered by its own moves making contact with another Pokémon.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/protective-pads/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Protective_Pads"
+        ],
+        "previousDescriptionHashes": [
+          "97020e9d89458904",
+          "4ac6c1f86510c621"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -5550,13 +6064,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When the holder becomes subject to Psychic Terrain, this seed is consumed and grants a +1 bonus to saving throws for 1 minute or until the holder leaves battle, whichever comes first. The benefit remains if the terrain ends early and does not stack with another use of this seed.",
+        "es": "Cuando el portador quede bajo los efectos de Campo Psíquico, esta semilla se consume y le concede un bonificador de +1 a las tiradas de salvación durante 1 minuto o hasta abandonar el combate, lo que ocurra primero. La mejora continúa si el campo termina antes y no se acumula con otro uso de esta semilla."
       },
       "referenceEffect": "Held: If the holder enters battle during Psychic Terrain, or if Psychic Terrain is activated while the holder is in battle, this item is consumed and the holder's Special Defense raises by one stage.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/psychic-seed/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "85b6ad8d83923151",
+          "7304588b21c6a504"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -5592,13 +6118,27 @@
       "sourceType": "held item",
       "cost": 15000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "The holder adds its proficiency bonus to damage from punch-based moves, once per move. Those moves do not make contact while the glove is held. This benefit may be used alongside Iron Fist.",
+        "es": "El portador añade su bonificador de competencia al daño de movimientos basados en puñetazos, una vez por movimiento. Esos movimientos no hacen contacto mientras lleve el guante. Esta mejora puede combinarse con Puño Férreo."
       },
-      "referenceEffect": null,
+      "referenceEffect": "Boosts punching-move power and makes those moves non-contact; stacks with Iron Fist.",
       "rolls": [],
       "media": {
         "sprite": null
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "automatic",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Punching_Glove"
+        ],
+        "previousDescriptionHashes": [
+          "6a7fc3809a0c75f1",
+          "984d777ed7288b16"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -5823,13 +6363,27 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When the holder takes damage from another Pokémon's move and remains conscious, it may consume this card after the move resolves to force the attacker to switch with a random eligible conscious Pokémon from the attacker's party. Normal switching restrictions apply. The card is consumed only if a legal switch is possible.",
+        "es": "Cuando el portador reciba daño de un movimiento de otro Pokémon y siga consciente, puede consumir esta tarjeta tras resolver el movimiento para obligar al atacante a cambiarse por un Pokémon consciente y válido elegido al azar de su propio equipo. Se aplican las restricciones normales al cambio. La tarjeta solo se consume si hay un cambio válido."
       },
-      "referenceEffect": "Held\n:   When the holder takes damage directly from a move and does not faint, it switches out for another random, non-fainted Pokémon in its party.\nThis effect does not activate if another effect prevents the holder from switching out.",
+      "referenceEffect": "If the holder survives a damaging move, consumes the card and forces the attacker to switch to a random eligible party Pokémon.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/red-card/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Red_Card"
+        ],
+        "previousDescriptionHashes": [
+          "aceb5e9d4fd6ecb4",
+          "c42dfe031b638078"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -5907,13 +6461,25 @@
       "sourceType": "medicine",
       "cost": 300,
       "description": {
-        "en": null,
-        "es": null
+        "en": "A Pokémon may consume ten of these feathers during a long rest to increase its DEX score by 1, to a maximum of 20. The ten feathers count as one vitamin. A Pokémon may benefit from only three vitamins in its lifetime, including all feathers and other vitamins.",
+        "es": "Un Pokémon puede consumir diez de estas plumas durante un descanso largo para aumentar su Destreza en 1, hasta un máximo de 20. Las diez plumas cuentan como una vitamina. Un Pokémon solo puede beneficiarse de tres vitaminas durante su vida, contando todas las plumas y las demás vitaminas."
       },
       "referenceEffect": "Used on a party Pokémon\n:   Increases the target's Defense effort by 1.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/resist-wing/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "d687c379df64a295",
+          "7c24d86445492115"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -6032,13 +6598,27 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "The holder loses damage immunities granted by its typing. Treat each type immunity as neutral before applying its other type's resistance or vulnerability. Immunities granted by abilities and immunities to status conditions remain. The holder's typing is unchanged, and a Flying-type holder is not considered grounded.",
+        "es": "El portador pierde las inmunidades al daño concedidas por sus tipos. Considera neutral cada inmunidad de tipo antes de aplicar la resistencia o vulnerabilidad de su otro tipo. Se mantienen las inmunidades por habilidades y a estados. Sus tipos no cambian y un portador de tipo Volador no se considera en contacto con el suelo."
       },
       "referenceEffect": "Held\n:   When one of the user's types would render it immune to damage, that type is ignored for damage calculation.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/ring-target/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Ring_Target"
+        ],
+        "previousDescriptionHashes": [
+          "37f0f705fa9860d5",
+          "1dbb5075173cc1c4"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -6053,13 +6633,25 @@
       "sourceType": "held item",
       "cost": 2000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "The holder adds its proficiency bonus to rock-type damage it deals, once per move.",
+        "es": "El portador añade su bonificador de competencia al daño de tipo Roca que inflige, una vez por movimiento."
       },
       "referenceEffect": "Held: Increases the power of the holder's Rock moves by 20%.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/rock-incense/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "automatic",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "27b56807d4e0d1c9",
+          "5635bf79f99fcd66"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -6116,13 +6708,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When the holder takes damage from a contact move, the attacker takes typeless damage equal to the holder's proficiency bonus, once per activation of the move. Protective Pads and effects that prevent contact protect against this damage.",
+        "es": "Cuando el portador reciba daño de un movimiento de contacto, el atacante recibe daño sin tipo igual al bonificador de competencia del portador, una vez por activación del movimiento. Paracontacto y los efectos que impidan el contacto protegen frente a este daño."
       },
       "referenceEffect": "Held\n:   When the holder is hit by a contact move, the attacking Pokémon takes 1/6 its max HP in damage.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/rocky-helmet/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "automatic",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "41f19b102e252e16",
+          "fb53a06e3bc69763"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -6137,13 +6741,27 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When Trick Room reverses initiative while the holder is in battle, this item is consumed. For 1 minute or until the holder leaves battle, whichever comes first, its movement speeds are reduced by 10 feet, to a minimum of 5 feet, and its initiative score is reduced by 3. Apply the new score in reversed order from the following round, granting no additional turn. This effect does not stack with itself.",
+        "es": "Cuando Espacio Raro invierta la iniciativa mientras el portador esté en combate, este objeto se consume. Durante 1 minuto o hasta abandonar el combate, lo que ocurra primero, sus velocidades se reducen en 10 pies, hasta un mínimo de 5 pies, y su puntuación de iniciativa se reduce en 3. Aplica la nueva puntuación en el orden invertido desde la ronda siguiente, sin conceder otro turno. Este efecto no se acumula consigo mismo."
       },
-      "referenceEffect": null,
+      "referenceEffect": "Consumed to lower the holder's Speed when Trick Room starts or the holder enters battle while it is active.",
       "rolls": [],
       "media": {
         "sprite": null
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Room_Service"
+        ],
+        "previousDescriptionHashes": [
+          "5c7043ec391a8d48",
+          "c90f4a24a7a2d000"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -6158,13 +6776,25 @@
       "sourceType": "held item",
       "cost": 2000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "The holder adds its proficiency bonus to grass-type damage it deals, once per move.",
+        "es": "El portador añade su bonificador de competencia al daño de tipo Planta que inflige, una vez por movimiento."
       },
       "referenceEffect": "Held: Increases the power of the holder's Grass moves by 20%.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/rose-incense/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "automatic",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "48c63c693e1d66aa",
+          "69298966b9c964fb"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -6263,13 +6893,27 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "The holder is immune to powder and spore moves, Effect Spore, and environmental damage from Hail and Sandstorm. Other weather effects and ordinary attacks are unaffected.",
+        "es": "El portador es inmune a los movimientos de polvos y esporas, a Efecto Espora y al daño ambiental de Granizo y Tormenta de Arena. Los demás efectos del clima y los ataques normales no se ven afectados."
       },
-      "referenceEffect": "Held: Prevents damage from powder moves and the damage from Hail and Sandstorm.",
+      "referenceEffect": "Protects against powder and spore move effects, Effect Spore, and weather damage from hail and sandstorm.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/safety-goggles/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Safety_Goggles"
+        ],
+        "previousDescriptionHashes": [
+          "9a6facbe3150ca43",
+          "0642b5ed668acc4d"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -6305,13 +6949,25 @@
       "sourceType": "held item",
       "cost": 2000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "The holder adds its proficiency bonus to water-type damage it deals, once per move.",
+        "es": "El portador añade su bonificador de competencia al daño de tipo Agua que inflige, una vez por movimiento."
       },
       "referenceEffect": "Held: Increases the power of the holder's Water moves by 20%.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/sea-incense/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "automatic",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "b8d2dadf0625a045",
+          "f3d8ef0686df8321"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -6347,13 +7003,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "The holder may be recalled or switched out despite moves or abilities that prevent leaving battle, such as Mean Look, Arena Trap and Shadow Tag. The usual action cost still applies. This shell grants no additional turn and does not remove restraint for other purposes.",
+        "es": "El portador puede ser retirado o cambiado a pesar de movimientos o habilidades que impidan abandonar el combate, como Mal de Ojo, Trampa Arena y Sombra Trampa. Se mantiene el coste normal de acciones. Esta muda no concede otro turno ni elimina restricciones para otros fines."
       },
       "referenceEffect": "Held: The holder is unaffected by any moves or abilities that would prevent it from actively leaving battle.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/shed-shell/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "854eaaf872b548fb",
+          "52472ef4abae8b6d"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -6641,13 +7309,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When the holder takes Ice-type damage from a move, this snowball is consumed after the move resolves. The holder gains +2 to move attack rolls for 1 minute or until it leaves battle, whichever comes first. This benefit does not stack with another use of this item.",
+        "es": "Cuando el portador reciba daño de tipo Hielo de un movimiento, este objeto se consume después de resolverlo. El portador obtiene +2 a las tiradas de ataque de movimientos durante 1 minuto o hasta abandonar el combate, lo que ocurra primero. Esta mejora no se acumula con otro uso del mismo objeto."
       },
       "referenceEffect": "Held: If the holder is hit by a damaging Ice move, raises its Attack by one stage.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/snowball/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "56594d964ded92c8",
+          "3ed7835da69142fe"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -6893,13 +7573,27 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "At the end of each of its turns, the holder takes typeless damage equal to its proficiency bonus. When a Pokémon with no held item damages the holder with a contact move, transfer this barb to that attacker after the move resolves. Protective Pads and effects that prevent contact prevent the transfer, which deals no additional damage.",
+        "es": "Al final de cada uno de sus turnos, el portador recibe daño sin tipo igual a su bonificador de competencia. Cuando un Pokémon sin objeto equipado dañe al portador con un movimiento de contacto, transfiere esta esfera al atacante tras resolver el movimiento. Paracontacto y los efectos que impidan el contacto evitan la transferencia, que no causa daño adicional."
       },
-      "referenceEffect": "Held: Damaged the holder for 1/8 its max HP.  When the holder is struck by a contact move, damages the attacker for 1/8 its max HP; if the attacker is not holding an item, it will take this item.",
+      "referenceEffect": "Damages its holder at the end of the turn and transfers to an itemless attacker on contact; transfer itself does not deal additional damage.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/sticky-barb/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "automatic",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Sticky_Barb"
+        ],
+        "previousDescriptionHashes": [
+          "d9558a1cae217127",
+          "bbc940a01fbbc6dd"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -7029,13 +7723,25 @@
       "sourceType": "medicine",
       "cost": 300,
       "description": {
-        "en": null,
-        "es": null
+        "en": "A Pokémon may consume ten of these feathers during a long rest to increase its CHA score by 1, to a maximum of 20. The ten feathers count as one vitamin. A Pokémon may benefit from only three vitamins in its lifetime, including all feathers and other vitamins.",
+        "es": "Un Pokémon puede consumir diez de estas plumas durante un descanso largo para aumentar su Carisma en 1, hasta un máximo de 20. Las diez plumas cuentan como una vitamina. Un Pokémon solo puede beneficiarse de tres vitaminas durante su vida, contando todas las plumas y las demás vitaminas."
       },
       "referenceEffect": "Used on a party Pokémon\n:   Increases the target's Speed effort by 1.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/swift-wing/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "2122124894a81eb8",
+          "2f14d232be1d3e43"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -7092,13 +7798,25 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "Terrain created by the holder's moves or abilities lasts 3 additional rounds, to a maximum of 1 minute. Concentration and other ending conditions still apply. Determine the duration when the terrain is created; removing this item does not shorten an existing effect.",
+        "es": "Los campos creados por movimientos o habilidades del portador duran 3 rondas adicionales, hasta un máximo de 1 minuto. Se mantienen la concentración y las demás condiciones de finalización. Determina la duración al crear el campo; retirar este objeto no acorta un efecto existente."
       },
       "referenceEffect": "Held: When the holder changes the Terrain (whether by move or ability), it will last  8 turns instead of 5.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/terrain-extender/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "b24ccf9551d82211",
+          "92bc02e9d5288cc0"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -7155,13 +7873,27 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "After the holder successfully uses a sound-based move, such as Hyper Voice, Round or Boomburst, this spray is consumed. The holder gains +2 to its Move DC for 1 minute or until it leaves battle, whichever comes first. The triggering move does not benefit. Multiple uses do not stack.",
+        "es": "Después de que el portador use con éxito un movimiento sonoro, como Vozarrón, Canon o Estruendo, este aerosol se consume. El portador obtiene +2 a su CD de Movimiento durante 1 minuto o hasta abandonar el combate, lo que ocurra primero. El movimiento desencadenante no recibe la mejora. Varios usos no se acumulan."
       },
-      "referenceEffect": null,
+      "referenceEffect": "Consumed after successfully using a sound-based move, raising the holder's Special Attack by one stage.",
       "rolls": [],
       "media": {
         "sprite": null
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Throat_Spray"
+        ],
+        "previousDescriptionHashes": [
+          "d9839275e5ef738e",
+          "0ee04cf9bc0a9de0"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -7386,13 +8118,27 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "Rain and Harsh Sunlight are treated as absent when resolving weather-dependent effects on the holder, including healing, abilities and the accuracy of moves targeting it. The weather remains active for other creatures. Sandstorm, Hail and Snow are unaffected.",
+        "es": "Considera ausentes la Lluvia y el Sol Abrasador al resolver efectos climáticos sobre el portador, incluidas la curación, las habilidades y la precisión de movimientos dirigidos contra él. El clima sigue activo para las demás criaturas. Tormenta de Arena, Granizo y Nieve no se ven afectados."
       },
-      "referenceEffect": null,
+      "referenceEffect": "Prevents most Rain and Harsh Sunlight effects on the holder; other weather remains effective.",
       "rolls": [],
       "media": {
         "sprite": null
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Utility_Umbrella"
+        ],
+        "previousDescriptionHashes": [
+          "50393783c52ff1ae",
+          "0a7c71ea534eed11"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -7491,13 +8237,25 @@
       "sourceType": "held item",
       "cost": 2000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "The holder adds its proficiency bonus to water-type damage it deals, once per move.",
+        "es": "El portador añade su bonificador de competencia al daño de tipo Agua que inflige, una vez por movimiento."
       },
       "referenceEffect": "Held: Increases the power of the holder's Water moves by 20%.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/wave-incense/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "automatic",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "b8d2dadf0625a045",
+          "f3d8ef0686df8321"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -7512,13 +8270,25 @@
       "sourceType": "held item",
       "cost": 1000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When the holder takes damage from a move to whose damage type it is vulnerable, this policy is consumed after the move resolves. The holder gains +2 to move attack rolls and +2 to its Move DC for 1 minute or until it leaves battle, whichever comes first. Multiple uses do not stack.",
+        "es": "Cuando el portador reciba daño de un movimiento a cuyo tipo de daño sea vulnerable, esta póliza se consume tras resolver el movimiento. El portador obtiene +2 a las tiradas de ataque de movimientos y +2 a su CD de Movimiento durante 1 minuto o hasta abandonar el combate, lo que ocurra primero. Varios usos no se acumulan."
       },
       "referenceEffect": "Held: When the holder is hit by a super effective move, its Attack and Special Attack raise by two stages.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/weakness-policy/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "catalog-reference",
+        "sources": [],
+        "previousDescriptionHashes": [
+          "fb2db1e068471e18",
+          "e032c073f4f4dce5"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -7554,13 +8324,27 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "When a move or ability reduces the holder's statistics, it may consume this herb after the move resolves to remove all temporary penalties to its ability scores, move attack rolls, Move DC, AC, saving throws and movement speeds, including self-inflicted penalties. Bonuses and unrelated conditions remain. Permanent changes and the loss of a bonus cannot be reversed by this herb.",
+        "es": "Cuando un movimiento o habilidad reduzca las estadísticas del portador, puede consumir esta hierba tras resolver el movimiento para eliminar todas las penalizaciones temporales a características, ataques de movimientos, CD de Movimiento, CA, salvaciones y velocidades, incluidas las propias. Se mantienen las mejoras y los estados no relacionados. Esta hierba no revierte cambios permanentes ni la pérdida de una mejora."
       },
-      "referenceEffect": "Held in battle\n:   At the end of each turn, if any of the holder's stats have a negative stat modifier, the holder consumes this item to remove the modifiers from those stats.",
+      "referenceEffect": "Consumed when the holder has negative stat stages, resetting those lowered stages to neutral after the triggering move resolves.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/white-herb/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/White_Herb"
+        ],
+        "previousDescriptionHashes": [
+          "07e455fb7747cfe5",
+          "f038d4a7be44629f"
+        ],
+        "descriptionRevision": 2
       }
     },
     {
@@ -7848,13 +8632,27 @@
       "sourceType": "held item",
       "cost": 4000,
       "description": {
-        "en": null,
-        "es": null
+        "en": "The holder gains +2 to move attack rolls against creatures that have already completed their normal turn in the current round. Determine this benefit from the actual turn order, including any reversal of initiative.",
+        "es": "El portador obtiene +2 a las tiradas de ataque de movimientos contra criaturas que ya hayan terminado su turno normal en la ronda actual. Determina esta mejora según el orden real de los turnos, incluida cualquier inversión de iniciativa."
       },
-      "referenceEffect": "Held: Raises the holder's Accuracy by 20% when it goes last.\nIngame description is incorrect.",
+      "referenceEffect": "Boosts accuracy against targets that have already acted that turn; it does not require the holder to act last among all Pokémon.",
       "rolls": [],
       "media": {
         "sprite": "assets/items/zoom-lens/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-10-17",
+        "automation": "manual",
+        "basis": "web-research",
+        "sources": [
+          "https://bulbapedia.bulbagarden.net/wiki/Zoom_Lens"
+        ],
+        "previousDescriptionHashes": [
+          "4079274876e726d0",
+          "5b34589f5b73dd33"
+        ],
+        "descriptionRevision": 2
       }
     }
   ]

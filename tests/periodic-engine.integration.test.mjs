@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   createFlagDocument,
   createHooks,
+  renderMockRollMessage,
   installFoundryUtils
 } from "./helpers/foundry-mocks.mjs";
 
@@ -23,8 +24,8 @@ class PeriodicRoll {
     return this;
   }
 
-  async toMessage() {
-    return this;
+  async toMessage(data) {
+    return renderMockRollMessage(data);
   }
 }
 
@@ -85,7 +86,7 @@ globalThis.fromUuidSync = uuid => uuidDocuments.get(uuid) ?? null;
 const {
   processPokemonPeriodicEndTurn,
   registerPokemonPeriodicEngine
-} = await import("../periodic-engine.mjs");
+} = await import("../scripts/periodic-engine.mjs");
 
 function periodicEffect({
   sourceActorUuid,
@@ -121,7 +122,9 @@ function periodicEffect({
     parent: target,
     deleted: false,
     getFlag(moduleId, key) {
-      if (moduleId !== "poke5e-local") return undefined;
+      if (moduleId !== "poke5e-local") {
+        return undefined;
+      }
       return flags[key];
     },
     async delete() {
@@ -264,6 +267,32 @@ test("Leech Seed does not damage or heal when target has a configured immunity t
 
   assert.deepEqual(target.damageCalls, []);
   assert.deepEqual(source.damageCalls, []);
+});
+
+test("Leech Seed waits for Dice So Nice before damaging its target or healing its source", async () => {
+  const source = pokemonActor({ uuid: "Actor.animated-source", name: "Seeder", hp: 5, max: 20 });
+  const target = pokemonActor({ uuid: "Actor.animated-target", name: "Target", hp: 10, max: 20 });
+  target.effects = [periodicEffect({ sourceActorUuid: source.uuid, target })];
+  let finishAnimation;
+  let beganAnimation;
+  const started = new Promise(resolve => { beganAnimation = resolve; });
+  game.dice3d = { waitFor3DAnimationByMessageID: () => {
+    beganAnimation();
+    return new Promise(resolve => { finishAnimation = resolve; });
+  } };
+  try {
+    const pending = processPokemonPeriodicEndTurn(target);
+    await started;
+    assert.equal(target.system.attributes.hp.value, 10);
+    assert.equal(source.system.attributes.hp.value, 5);
+    assert.deepEqual(target.damageCalls, []);
+    finishAnimation();
+    await pending;
+    assert.equal(target.system.attributes.hp.value, 2);
+    assert.equal(source.system.attributes.hp.value, 9);
+  } finally {
+    delete game.dice3d;
+  }
 });
 
 test("Leech Seed removes itself immediately from a fainted target when configured", async () => {

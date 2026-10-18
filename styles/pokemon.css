@@ -3412,6 +3412,21 @@ i {
     7px;
 }
 
+.poke5e-pokemon-move-effect__controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.poke5e-pokemon-move-effect__controls .poke5e-pokemon-concentration__end {
+  width: auto;
+}
+
+.poke5e-pokemon-panel--move-effects .poke5e-pokemon-concentration.is-paused {
+  border-left-style: dashed;
+}
+
 
 .poke5e-pokemon-concentration {
   display:
@@ -5571,6 +5586,8 @@ i {
  * ============================================================ */
 
 .poke5e-pokemon-held-item__actions {
+  flex-direction: column;
+  gap: 6px;
   position:
     relative;
 
@@ -5585,6 +5602,76 @@ i {
 
   justify-content:
     flex-end;
+}
+
+.poke5e-pokemon-held-item__title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  width: 100%;
+}
+
+.poke5e-pokemon-held-item__title-row > .poke5e-pokemon-held-item__details {
+  flex: 1;
+  align-self: center;
+}
+
+.poke5e-pokemon-held-item__use-controls,
+.poke5e-pokemon-held-item__use-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.poke5e-pokemon-held-item__use-controls {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.poke5e-pokemon-held-item__use {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 24px;
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  min-height: 24px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid rgba(199, 175, 115, 0.4);
+  border-radius: 5px;
+  background: var(--poke5e-held-item-soft);
+  color: var(--poke5e-fr-cream);
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.poke5e-pokemon-held-item__use > i {
+  font-size: 10px;
+  color: var(--poke5e-held-item-accent);
+}
+
+.poke5e-pokemon-held-item__charges {
+  color: var(--poke5e-fr-muted);
+  font-size: 10px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.poke5e-pokemon-held-item__use:hover:not(:disabled),
+.poke5e-pokemon-held-item__use:focus-visible {
+  background: rgba(199, 175, 115, 0.18);
+  box-shadow: 0 0 0 1px var(--poke5e-held-item-accent);
+}
+
+.poke5e-pokemon-held-item__use:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 
@@ -7907,6 +7994,10 @@ select:focus {
 
     width:
       100%;
+  }
+
+  .poke5e-pokemon-move-effect__controls {
+    grid-column: 1 / -1;
   }
 
   .poke5e-pokemon-type-controls {

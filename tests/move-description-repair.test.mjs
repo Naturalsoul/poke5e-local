@@ -127,7 +127,7 @@ test("startup rebuilds the previous compendium version and repairs copies even w
   try {
     await syncPoke5eMoveCompendium();
     const signature = settings.get("moveCatalogSignature");
-    settings.set("moveCatalogSignature", signature.replace(/^0\.1\.1:/, "0.1.0:"));
+    settings.set("moveCatalogSignature", signature.replace(/^[^:]+:/, "0.1.1:"));
     writes.length = 0;
     assert.equal((await syncPoke5eMoveCompendium()).status, "synced");
     assert.equal(writes.length, 1);

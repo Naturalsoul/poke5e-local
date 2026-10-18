@@ -2,6 +2,7 @@ import { calculatePokemonDefenses, hasStab } from "./types.mjs";
 import { buildMoveStatusEffects } from "./status-effects.mjs";
 import { buildMoveModifierEffects } from "./modifier-effects.mjs";
 import { buildMovePeriodicEffects } from "./periodic-effects.mjs";
+import { BINDING_CONTINUATIONS } from "./binding-rules.mjs";
 import { buildMoveDrainData } from "./drain-effects.mjs";
 import { buildMoveRecoilData } from "./recoil-effects.mjs";
 import {
@@ -26,7 +27,7 @@ import {
 } from "./struggle-rules.mjs";
 
 const MODULE_ID = "poke5e-local";
-const BUILDER_VERSION = "0.18.21";
+const BUILDER_VERSION = "0.18.22";
 const ABILITY_IDS = ["str", "dex", "con", "int", "wis", "cha"];
 const DEFAULT_MOVE_ICON = "icons/svg/sword.svg";
 const MOVE_ICON_ROOT =
@@ -2894,6 +2895,19 @@ function buildActivities(
       ...sanitizedSecondary
         .rejectedFormulas
     );
+  }
+
+  const continuation = BINDING_CONTINUATIONS[move.id];
+  if (continuation) {
+    const recurringMove = foundry.utils.deepClone(move);
+    recurringMove.damage.modifier = continuation.modifier;
+    recurringMove.duration = "instantaneous";
+    recurringMove.activation = { type: continuation.activation, cost: 1 };
+    const recurring = createActivity("damage", recurringMove, context, mechanics, [], false, {
+      includeDamage: true, nameSuffix: context.language === "en" ? "Continue binding" : "Continuar atrapamiento"
+    });
+    recurring.flags = { [MODULE_ID]: { bindingContinuation: true } };
+    activities[recurring._id] = recurring;
   }
 
   return {

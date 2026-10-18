@@ -1,3 +1,5 @@
+import { bindingDefinition } from "./binding-rules.mjs";
+
 const MODULE_ID =
   "poke5e-local";
 
@@ -104,6 +106,19 @@ function definitionFor(
   language,
   context
 ) {
+
+  const binding = bindingDefinition(move, context.level);
+  if (binding) {
+    const statuses = [];
+    if (binding.timing === "continuation") {
+      statuses.push(["bind", "wrap", "clamp"].includes(move.id) ? "grappled" : "restrained");
+    }
+    return {
+      name: move.name?.[language] ?? move.name?.en ?? move.id,
+      target: "target", trigger: "hit", duration: {}, customApplication: true,
+      periodic: binding, statuses
+    };
+  }
 
   switch (
     move.id
@@ -270,6 +285,8 @@ function buildEffect(
     changes:
       [],
 
+    statuses: definition.statuses ?? [],
+
 
     flags: {
 
@@ -369,7 +386,7 @@ export function buildMovePeriodicEffects(
      */
 
     delayedDamage:
-      Boolean(
+      definition.periodic.kind === "leech-seed" && Boolean(
         definition.periodic
           ?.damage
       )

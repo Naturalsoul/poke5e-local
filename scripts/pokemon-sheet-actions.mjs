@@ -20,6 +20,7 @@ import {
   getPokemonHeldItem,
   transferPokemonHeldItemToTrainer
 } from "./pokemon-held-item-service.mjs";
+import { usePokemonHeldItem } from "./pokemon-held-item-actions.mjs";
 
 import {
   getPokemonNature,
@@ -63,6 +64,7 @@ import {
 import {
   endPokemonConcentration
 } from "./pokemon-concentration-service.mjs";
+import { managePokemonMoveEffect } from "./pokemon-move-effects.mjs";
 
 import {
   openPokemonEvolutionDialog
@@ -1819,6 +1821,8 @@ async function endConcentration({
  * UI STATE
  * ============================================================ */
 
+const disabledBeforeBusy = new WeakMap();
+
 function setBusy(
   root,
   busy
@@ -1837,8 +1841,15 @@ function setBusy(
     )
   ) {
 
-    button.disabled =
-      busy;
+    if (busy) {
+      if (!disabledBeforeBusy.has(button)) {
+        disabledBeforeBusy.set(button, button.disabled);
+      }
+      button.disabled = true;
+    } else if (disabledBeforeBusy.has(button)) {
+      button.disabled = disabledBeforeBusy.get(button);
+      disabledBeforeBusy.delete(button);
+    }
   }
 }
 
@@ -1918,6 +1929,22 @@ export function activatePokemonSheetActions({
             .pokemonSheetAction ??
           ""
         );
+
+      if (["move-effect-edit", "move-effect-toggle", "move-effect-remove"].includes(action)) {
+        if (root.classList.contains("is-busy")) {return;}
+        setBusy(root, true);
+        try {
+          await managePokemonMoveEffect(pokemon, button.dataset.effectId, action.slice("move-effect-".length),
+            game.settings.get(MODULE_ID, "language"));
+          if (typeof refresh === "function") {await refresh();}
+        } catch (error) {
+          console.error(`[${MODULE_ID}] Error administrando efecto de movimiento`, error);
+          ui.notifications.error(error.message);
+        } finally {
+          setBusy(root, false);
+        }
+        return;
+      }
 
       if (
         action ===
@@ -2342,6 +2369,26 @@ export function activatePokemonSheetActions({
         }
 
 
+        return;
+      }
+
+      if (action === "held-item-use") {
+        if (button.disabled || root.classList.contains("is-busy")) {
+          return;
+        }
+        setBusy(root, true);
+        try {
+          await usePokemonHeldItem({
+            pokemon, trainer, itemId: button.dataset.itemId, activityId: button.dataset.activityId,
+            language: game.settings.get(MODULE_ID, "language") === "en" ? "en" : "es"
+          });
+        } catch (error) {
+          console.error(`[${MODULE_ID}] Error usando objeto desde Pokémon Sheet`, error);
+          ui.notifications.error(error.message ?? labels.error);
+        } finally {
+          setBusy(root, false);
+          await refresh?.();
+        }
         return;
       }
 

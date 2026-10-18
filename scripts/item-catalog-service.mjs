@@ -13,6 +13,10 @@ import {
   repairPoke5eMoveDescriptions
 } from "./move-description-repair-service.mjs";
 
+import { adaptedItemSource, itemDescriptionFingerprint, stripAdaptedItemNotice } from "./item-description-format.mjs";
+import { registerAdaptedItemSourceUi } from "./item-source-ui.mjs";
+import { heldItemConfiguration } from "./held-item-config.mjs";
+
 const MODULE_ID = "poke5e-local";
 const POKE5E_DATA_PATH =
   `modules/${MODULE_ID}/data/normalized/items.json`;
@@ -54,7 +58,7 @@ const MOVE_CATALOG_SETTING =
   "moveCatalogSignature";
 
 const MOVE_CATALOG_VERSION =
-  "0.1.1";
+  "0.2.0";
 
 const MOVE_TYPES = [
   "normal",
@@ -143,7 +147,7 @@ const PACK_NAME = "poke5e-items";
 const PACK_ID = `world.${PACK_NAME}`;
 const PACK_LABEL = "Poke5e Items";
 const CATALOG_SETTING = "itemCatalogSignature";
-const ITEM_CATALOG_VERSION = "0.3.0";
+const ITEM_CATALOG_VERSION = "0.4.1";
 
 const FOUNDRY_ITEM_TYPES = {
   pokeball: "consumable",
@@ -243,6 +247,7 @@ export function registerPoke5eItemCatalogSettings() {
   registerMoveTemplateDropAdapter();
   registerAbilityTemplateDropAdapter();
   registerPokemonHeldItemService();
+  registerAdaptedItemSourceUi();
 }
 
 async function loadCatalogFile(
@@ -1157,6 +1162,11 @@ function buildItemSource(
       null,
 
     system: {
+      ...(heldItemConfiguration(sourceId, language, item.type) ?? {}),
+      ...(item.rulesOrigin?.kind === "homebrew-adaptation" ? {
+        source: { custom: adaptedItemSource(language) }
+      } : {}),
+
       description: {
         value:
           buildItemDescription(
@@ -1228,6 +1238,10 @@ function buildItemSource(
           item.referenceEffect ??
           null,
 
+        ...(item.rulesOrigin ? {
+          rulesOrigin: foundry.utils.deepClone(item.rulesOrigin)
+        } : {}),
+
         rolls:
           catalogItemRolls(
             item
@@ -1283,6 +1297,79 @@ export function buildPoke5eCatalogItem(
 
 
   return source;
+}
+
+function missingCatalogDescriptionUpdates(items, definitions, language) {
+  const updates = [];
+  for (const item of items ?? []) {
+    if (item.getFlag(MODULE_ID, "kind") !== "catalog-item") {
+      continue;
+    }
+    const definition = definitions.get(item.getFlag(MODULE_ID, "sourceId"));
+    if (!definition) {
+      continue;
+    }
+    const current = item.system?.description?.value ?? "";
+    if (typeof current !== "string") {
+      continue;
+    }
+    const body = stripAdaptedItemNotice(current);
+    const text = body.replace(/<[^>]*>/g, "").trim();
+    const empty = !text || ["Sin descripción Poke5e disponible.", "No Poke5e description available."].includes(text);
+    const previous = definition.rulesOrigin.previousDescriptionHashes?.includes(itemDescriptionFingerprint(body));
+    const generated = ["en", "es"].some(locale => body === buildItemDescription(definition, locale));
+    const nextDescription = empty || previous || generated ? buildItemDescription(definition, language) : body;
+    const update = { _id: item.id };
+    if (nextDescription !== current) {
+      update["system.description.value"] = nextDescription;
+    }
+    const currentSource = item.system?.source?.custom ?? "";
+    const nextSource = adaptedItemSource(language);
+    if (currentSource !== nextSource && ["", adaptedItemSource("en"), adaptedItemSource("es")].includes(currentSource)) {
+      update["system.source.custom"] = nextSource;
+    }
+    const storedOrigin = item.getFlag(MODULE_ID, "rulesOrigin");
+    if (storedOrigin && storedOrigin.automation !== definition.rulesOrigin.automation) {
+      update[`flags.${MODULE_ID}.rulesOrigin`] = foundry.utils.deepClone(definition.rulesOrigin);
+    }
+    if (Object.keys(update).length > 1) {
+      update[`flags.${MODULE_ID}.rulesOrigin`] = foundry.utils.deepClone(definition.rulesOrigin);
+      update[`flags.${MODULE_ID}.referenceEffect`] = definition.referenceEffect;
+      updates.push(update);
+    }
+  }
+  return updates;
+}
+
+export async function synchronizeMissingCatalogDescriptions(catalogItems, language = "es") {
+  if (!game.user.isGM) {
+    return 0;
+  }
+  const definitions = new Map(catalogItems
+    .filter(item => item.rulesOrigin?.kind === "homebrew-adaptation")
+    .map(item => [item.id, item]));
+  const actors = new Set(game.actors ?? []);
+  for (const scene of game.scenes ?? []) {
+    for (const token of scene.tokens ?? []) {
+      if (!token.actorLink && token.actor) {
+        actors.add(token.actor);
+      }
+    }
+  }
+  let updated = 0;
+  for (const actor of actors) {
+    const updates = missingCatalogDescriptionUpdates(actor.items, definitions, language);
+    if (updates.length) {
+      await actor.updateEmbeddedDocuments("Item", updates);
+      updated += updates.length;
+    }
+  }
+  const updates = missingCatalogDescriptionUpdates(game.items, definitions, language);
+  if (updates.length) {
+    await Item.implementation.updateDocuments(updates);
+    updated += updates.length;
+  }
+  return updated;
 }
 
 function sameCatalogRolls(
@@ -2718,6 +2805,8 @@ export async function syncPoke5eItemCompendium({
   const language =
     currentLanguage();
 
+  const descriptionsUpdated = await synchronizeMissingCatalogDescriptions(catalog.items, language);
+
   const effectiveSignature =
     `${ITEM_CATALOG_VERSION}:${catalog.signature}:${language}`;
 
@@ -2768,6 +2857,7 @@ export async function syncPoke5eItemCompendium({
       created: 0,
       updated: 0,
       embeddedRollsUpdated,
+      descriptionsUpdated,
       pack
     };
   }
@@ -2934,6 +3024,7 @@ export async function syncPoke5eItemCompendium({
     created: creates.length,
     updated: updates.length,
     embeddedRollsUpdated,
+    descriptionsUpdated,
     pack
   };
 }
