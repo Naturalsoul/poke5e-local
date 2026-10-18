@@ -1,28 +1,39 @@
-# Tasks: move-coverage
+# Tasks: stat-modifiers
 
-- [x] 1. Seed the registry and write the coverage test
-  - Acceptance: `scripts/move-coverage.mjs` has all 830 ids; builder-derived moves are `automated`, after confirming each builder's output is actually applied; `plain-damage`/`manual` suggestions carry `reviewed: false`; the test checks completeness, valid values and the builder cross-check, and prints the counts.
-  - Verify: `node --test tests/move-coverage.test.mjs` passes (the reviewed check is skipped until task 7); deleting one entry makes it fail.
-  - Files: `scripts/move-coverage.mjs`, `tests/move-coverage.test.mjs`
+- [x] 1. `self` trigger and concentration link (defense-curl, agility)
+  - Acceptance: using either move applies its modifier to the user once; re-rendering chat doesn't reapply it;
+    the agility effect carries `flags.dnd5e.dependentOn` and disappears when its concentration is deleted;
+    no duplicate from dnd5e's "apply effect" button; both moves are `automated` in the registry.
+  - Verify: `node --test tests/modifier-automation.test.mjs tests/move-coverage.test.mjs`
+  - Files: `scripts/modifier-automation.mjs`, `scripts/modifier-effects.mjs`, `scripts/move-coverage.mjs`,
+    `tests/modifier-automation.test.mjs` (+ `scripts/builder.mjs` only if `activityEffects` must be dropped)
 
-- [x] 2. Mark engine-internal automation by hand
-  - Acceptance: outrage, magnitude, rollout, dream-eater, struggle and confusion are checked against their engines and marked; false positives (fly, psychic, round, punch list) are left out.
-  - Verify: test green; `engines` names match the real files.
-  - Files: `scripts/move-coverage.mjs`
+- [ ] 2. Remaining defined self buffs (amnesia, acid-armor, aqua-ring, defend-order) + Growth reason
+  - Acceptance: all 4 automated, with a `note` for the partial pieces (meleeRetaliation, disableSelectedMove);
+    aqua-ring still heals at end of turn; growth keeps its button, with the reason in the registry.
+  - Verify: modifier and coverage tests; existing turn-engine and modifier tests still pass.
+  - Files: `scripts/modifier-effects.mjs`, `scripts/move-coverage.mjs`, `tests/modifier-automation.test.mjs`
 
-- [x] 3. Review `plain-damage` suggestions a–f
-- [x] 4. Review `plain-damage` suggestions g–o
-- [x] 5. Review `plain-damage` suggestions p–s
-- [x] 6. Review `plain-damage` suggestions t–z
-  - Acceptance (each): every entry in the range is read against its English description; riders move to `pending` with a module; `reviewed: false` removed.
-  - Verify: test green.
-  - Files: `scripts/move-coverage.mjs`
+- [ ] 3. `natural-attack-N+` trigger (bubble-beam, mud-shot)
+  - Acceptance: applies on a hit at or above N, not below N and not on a miss; speed halved / speed 0
+    until end of the target's next turn.
+  - Verify: modifier and coverage tests.
+  - Files: `scripts/modifier-automation.mjs`, `scripts/modifier-effects.mjs`, `scripts/move-coverage.mjs`, tests
 
-- [x] 7. Review `manual` and `other` suggestions, then make the reviewed check strict
-  - Acceptance: each is `manual` with a reason or `pending` with a module; the test now fails on any `reviewed: false`.
-  - Verify: test green with the strict check on.
-  - Files: `scripts/move-coverage.mjs`, `tests/move-coverage.test.mjs`
+- [ ] 4. `hit-and-failed-save` trigger (acid-spray)
+  - Acceptance: applies only when the same usage hits and the target fails the save, in either message order; stacks to 3.
+  - Verify: modifier and coverage tests.
+  - Files: `scripts/modifier-automation.mjs`, `scripts/modifier-effects.mjs`, `scripts/move-coverage.mjs`, tests
 
-- [ ] 8. Final check and commit
-  - Verify: `npm test` and `npm run lint` pass; the counts summary is pasted into the commit message.
-  - Files: none new; the commit includes the spec, map, plan and todo
+- [ ] 5a. Batch: AC modifiers
+- [ ] 5b. Batch: attack-roll modifiers
+- [ ] 5c. Batch: saving-throw modifiers
+- [ ] 5d. Batch: speed modifiers
+- [ ] 5e. Batch: leftovers
+  - Acceptance (each): every move in the batch is read; it's either defined and automated (with a test for each
+    new shape of change) or reclassified with a module or reason; partial automation gets a `note`.
+  - Verify: modifier and coverage tests; the `pending:stat-modifiers` count goes down.
+  - Files: `scripts/modifier-effects.mjs`, `scripts/move-coverage.mjs`, `tests/modifier-automation.test.mjs`
+
+- [ ] 6. Final check and commit
+  - Verify: zero `pending:stat-modifiers` without a note; `node --test tests/*.test.mjs` shows only the 29 old failures; lint on the touched files.
