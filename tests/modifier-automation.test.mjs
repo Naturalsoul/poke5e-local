@@ -664,3 +664,38 @@ test("Tar Shot slows the target by 10 per hit and adds fire vulnerability once",
   assert.equal(changeValue(target.effects[0], "system.traits.dv.value"), "fire");
   assert.equal(target.effects[0].getFlag(MODULE_ID, "removeOnCombatEnd"), true);
 });
+
+test("batch 5e self buffs apply on use with their changes, caps and expiry", async () => {
+  for (const [id, key, uses, value, concentrates] of [
+    ["belly-drum", "system.abilities.str.value", 1, "10", false],
+    ["dragon-dance", "system.bonuses.mwak.attack", 1, "@prof", true],
+    ["hone-claws", "system.bonuses.mwak.damage", 4, "3", false],
+    ["rage", "system.traits.dr.value", 1, "normal", true],
+    ["superpower", "system.abilities.dex.value", 1, "-10", false]
+  ]) {
+    const item = move(id);
+    const focus = concentrates ? concentration(item.actor) : null;
+    for (let index = 0; index < uses; index++) {
+      usage(item, focus ? { concentration: focus.id } : {});
+      await paints();
+    }
+    const applied = item.actor.effects.find(entry => entry.getFlag(MODULE_ID, "sourceMove") === id);
+    assert.equal(changeValue(applied, key), value, id);
+    assert.equal(applied.getFlag("dnd5e", "dependentOn"), focus?.uuid, id);
+  }
+  const built = (id, level = 1) => buildMoveModifierEffects({ id }, "en", { level }).effects[0];
+  assert.deepEqual([4, 5, 10, 17].map(level => changeValue(built("rage", level), "system.bonuses.mwak.damage")), ["1", "2", "4", "6"]);
+  assert.equal(changeValue(built("rage"), "system.abilities.str.check.roll.mode"), "1");
+  assert.equal(built("belly-drum").flags[MODULE_ID].removeOnCombatEnd, true);
+  assert.equal(built("superpower").flags[MODULE_ID].expireAtEndOfNextTurn, true);
+});
+
+test("Trop Kick lowers the target's attacks on a natural 16+, up to -3 for the combat", async () => {
+  const item = move("trop-kick");
+  const target = actor();
+  await show(attack(item, target, 15));
+  assert.equal(target.effects.length, 0);
+  for (let index = 0; index < 4; index++) {await show(attack(item, target, 16));}
+  assert.equal(changeValue(target.effects[0], "system.bonuses.mwak.attack"), "-3");
+  assert.equal(target.effects[0].getFlag(MODULE_ID, "removeOnCombatEnd"), true);
+});

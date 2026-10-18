@@ -16,7 +16,9 @@ export const AUTOMATED_MODIFIER_MOVES = new Set(["growl", "leer", "screech", "ta
   // Batch 5c: saving-throw modifiers.
   "apple-acid", "aromatic-mist", "cosmic-power", "hammer-arm", "ice-hammer", "lumina-crash", "tearful-look",
   // Batch 5d: speed modifiers.
-  "aqua-step", "autotomize", "esper-wing", "flame-charge", "trailblaze", "shift-gear", "tar-shot"]);
+  "aqua-step", "autotomize", "esper-wing", "flame-charge", "trailblaze", "shift-gear", "tar-shot",
+  // Batch 5e: leftovers.
+  "belly-drum", "dragon-dance", "hone-claws", "rage", "superpower", "trop-kick"]);
 
 
 /* ============================================================
@@ -374,7 +376,23 @@ const COMPACT_DEFINITIONS = Object.freeze({
     [...attackChanges(1), ...damageChanges(1), speedBonus(10)]),
   // dnd5e clamps speed at 0, so the cap only bounds the stack; the non-numeric "fire" isn't scaled by stacking.
   "tar-shot": en => combatDebuff(en ? "Tar Shot — Speed -10, fire vulnerability" : "Alquitranazo — Velocidad -10, vulnerable al fuego",
-    "hit", 12, [speedBonus(-10), add("system.traits.dv.value", "fire")])
+    "hit", 12, [speedBonus(-10), add("system.traits.dv.value", "fire")]),
+
+  // Batch 5e: leftovers.
+  "belly-drum": en => selfBuff(en ? "Belly Drum — STR +10" : "Tambor — FUE +10", [add("system.abilities.str.value", 10)],
+    { duration: {}, removeOnCombatEnd: true }),
+  "dragon-dance": en => concentrationBuff(en ? "Dragon Dance — Proficiency doubled on attacks" : "Danza Dragón — Competencia doble en ataques",
+    attackChanges("@prof")),
+  "hone-claws": en => selfBuff(en ? "Hone Claws — Attacks and damage +1" : "Afilagarras — Ataques y daño +1",
+    [...attackChanges(1), ...damageChanges(1)], { stack: { max: 3 } }),
+  rage: (en, level) => {
+    const bonus = levelTier(level, [[1, 1], [5, 2], [10, 4], [17, 6]]);
+    return concentrationBuff(en ? `Rage — Damage +${bonus}, normal resistance` : `Furia — Daño +${bonus}, resistencia a normal`,
+      [...damageChanges(bonus), add("system.traits.dr.value", "normal"), add("system.abilities.str.check.roll.mode", 1)]);
+  },
+  superpower: en => selfBuff(en ? "Superpower — STR and DEX -10" : "Fuerza Bruta — FUE y DES -10",
+    [add("system.abilities.str.value", -10), add("system.abilities.dex.value", -10)], untilNextTurn),
+  "trop-kick": en => combatDebuff(en ? "Trop Kick — Attacks -1" : "Patada Tropical — Ataques -1", "natural-attack-16+", 3, attackChanges(-1))
 });
 
 
