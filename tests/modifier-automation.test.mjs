@@ -103,8 +103,8 @@ test("Growl applies after a failed save is displayed, stacks to -5, and ignores 
   assert.equal(getPokemonMoveEffects(target).length, 1);
 });
 
-test("Leer and Screech keep their ally-only attack bonuses and respect their separate stack caps", async () => {
-  for (const [id, cap] of [["leer", 5], ["screech", 3]]) {
+test("Leer, Screech and Tail Whip keep their ally-only attack bonuses and respect their separate stack caps", async () => {
+  for (const [id, cap] of [["leer", 5], ["screech", 3], ["tail-whip", 5]]) {
     const item = move(id);
     const target = actor();
     for (let index = 0; index < cap + 1; index++) {await show(message(item, target));}
