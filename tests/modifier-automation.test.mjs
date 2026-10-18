@@ -263,11 +263,11 @@ test("the self trigger ignores other messages, other GMs and moves that are not 
   Hooks.callAll("createChatMessage", chat);
   game.user.id = "other-gm";
   try {usage(curl);} finally {game.user.id = "gm";}
-  const armor = move("acid-armor");
-  usage(armor);
+  const growth = move("growth");
+  usage(growth);
   await paints();
   assert.equal(curl.actor.effects.length, 0);
-  assert.equal(armor.actor.effects.length, 0);
+  assert.equal(growth.actor.effects.length, 0);
 });
 
 test("Agility depends on its concentration so dnd5e removes it, and recasting relinks it", async () => {
@@ -288,7 +288,7 @@ test("Agility depends on its concentration so dnd5e removes it, and recasting re
 
 test("automated self buffs drop dnd5e's apply button and cannot be duplicated by old items", async () => {
   assert.deepEqual(buildMoveModifierEffects({ id: "agility" }).activityEffects, []);
-  assert.equal(buildMoveModifierEffects({ id: "acid-armor" }).activityEffects.length, 1);
+  assert.equal(buildMoveModifierEffects({ id: "growth" }).activityEffects.length, 1);
   const item = move("defense-curl");
   const copy = effect(buildMoveModifierEffects({ id: "defense-curl" }).effects[0]);
   copy.parent = item.actor;
@@ -296,7 +296,32 @@ test("automated self buffs drop dnd5e's apply button and cannot be duplicated by
   usage(item);
   await paints();
   assert.equal(onPreCreateModifierEffect(copy), false);
-  const armor = effect(buildMoveModifierEffects({ id: "acid-armor" }).effects[0]);
-  armor.parent = item.actor;
-  assert.equal(onPreCreateModifierEffect(armor), true);
+  const growth = effect(buildMoveModifierEffects({ id: "growth" }).effects[0]);
+  growth.parent = item.actor;
+  assert.equal(onPreCreateModifierEffect(growth), true);
+});
+
+test("Amnesia, Acid Armor, Aqua Ring and Defend Order apply on use with the right changes and concentration", async () => {
+  for (const [id, values, concentrates] of [
+    ["amnesia", ["2"], false], ["acid-armor", ["2"], true], ["aqua-ring", [], true], ["defend-order", ["1"], true]
+  ]) {
+    const item = move(id);
+    const user = item.actor;
+    const focus = concentrates ? concentration(user) : null;
+    usage(item, focus ? { concentration: focus.id } : {});
+    await paints();
+    const applied = user.effects.find(entry => entry.getFlag(MODULE_ID, "sourceMove") === id);
+    assert.ok(applied, id);
+    assert.deepEqual(applied.changes.map(change => change.value), values, id);
+    assert.equal(applied.getFlag("dnd5e", "dependentOn"), focus?.uuid, id);
+    assert.deepEqual(buildMoveModifierEffects({ id }).activityEffects, [], id);
+  }
+});
+
+test("Aqua Ring keeps its end-of-turn healing flag on the applied effect", async () => {
+  const item = move("aqua-ring");
+  usage(item, { concentration: concentration(item.actor).id });
+  await paints();
+  const applied = item.actor.effects.find(entry => entry.getFlag(MODULE_ID, "sourceMove") === "aqua-ring");
+  assert.deepEqual(applied.getFlag(MODULE_ID, "endTurnHealing"), { formula: "@prof", source: "aqua-ring" });
 });

@@ -8,7 +8,7 @@
   - Files: `scripts/modifier-automation.mjs`, `scripts/modifier-effects.mjs`, `scripts/move-coverage.mjs`,
     `tests/modifier-automation.test.mjs` (+ `scripts/builder.mjs` only if `activityEffects` must be dropped)
 
-- [ ] 2. Remaining defined self buffs (amnesia, acid-armor, aqua-ring, defend-order) + Growth reason
+- [x] 2. Remaining defined self buffs (amnesia, acid-armor, aqua-ring, defend-order) + Growth reason
   - Acceptance: all 4 automated, with a `note` for the partial pieces (meleeRetaliation, disableSelectedMove);
     aqua-ring still heals at end of turn; growth keeps its button, with the reason in the registry.
   - Verify: modifier and coverage tests; existing turn-engine and modifier tests still pass.

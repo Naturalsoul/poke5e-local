@@ -1,7 +1,8 @@
 const MODULE_ID =
   "poke5e-local";
 
-export const AUTOMATED_MODIFIER_MOVES = new Set(["growl", "leer", "screech", "tail-whip", "mud-slap", "defense-curl", "agility"]);
+export const AUTOMATED_MODIFIER_MOVES = new Set(["growl", "leer", "screech", "tail-whip", "mud-slap", "defense-curl", "agility", "amnesia",
+  "acid-armor", "aqua-ring", "defend-order"]);
 
 
 /* ============================================================
