@@ -4,7 +4,12 @@ const MODULE_ID =
   "poke5e-local";
 
 export const AUTOMATED_MODIFIER_MOVES = new Set(["growl", "leer", "screech", "tail-whip", "mud-slap", "defense-curl", "agility", "amnesia",
-  "acid-armor", "aqua-ring", "defend-order", "bubble-beam", "mud-shot", "acid-spray"]);
+  "acid-armor", "aqua-ring", "defend-order", "bubble-beam", "mud-shot", "acid-spray",
+  // Batch 5a: AC modifiers (COMPACT_DEFINITIONS).
+  "cotton-guard", "minimize", "coil", "quiver-dance", "victory-dance", "swords-dance", "charge", "iron-defense",
+  "psyshield-bash", "rock-polish", "whirlwind", "shell-smash", "stuff-cheeks", "stockpile", "clangorous-soul",
+  "scale-shot", "shelter", "steel-wing", "crunch", "iron-tail", "liquidation", "razor-shell", "rock-smash",
+  "shadow-bone", "grav-apple", "clanging-scales"]);
 
 
 /* ============================================================
@@ -234,6 +239,74 @@ function defendOrderBonus(
 
 
 /* ============================================================
+ * DEFINICIONES COMPACTAS (stat-modifiers por lotes)
+ * ============================================================ */
+
+const ac = value => add("system.attributes.ac.bonus", value);
+const damageChanges = value => ["mwak", "rwak", "msak", "rsak"].map(key => add(`system.bonuses.${key}.damage`, value));
+const saveBonus = value => add("system.bonuses.abilities.save", value);
+const speedBonus = value => add("system.attributes.movement.bonus", value);
+
+const selfBuff = (name, changes, extra = {}) =>
+  ({ name, target: "self", trigger: "self", duration: { seconds: 60 }, changes, ...extra });
+const concentrationBuff = (name, changes) => selfBuff(name, changes, { concentration: true });
+const untilNextTurn = { duration: {}, expireAtEndOfNextTurn: true };
+const untilTurnStart = { duration: {}, expireAtStartTurn: true };
+// AC debuffs that last "for the rest of combat" / "while it remains in battle".
+const armorBreak = (name, trigger, max = 1) =>
+  ({ name, target: "target", trigger, duration: {}, removeOnCombatEnd: true, stack: { max }, changes: [ac(-1)] });
+
+const COMPACT_DEFINITIONS = Object.freeze({
+  "cotton-guard": en => concentrationBuff(en ? "Cotton Guard — AC +2" : "Rizo Algodón — CA +2", [ac(2)]),
+  minimize: en => concentrationBuff(en ? "Minimize — AC +2" : "Reducción — CA +2", [ac(2)]),
+  coil: en => concentrationBuff(en ? "Coil — Attacks, damage and AC +1" : "Enrosque — Ataques, daño y CA +1",
+    [...attackChanges(1), ...damageChanges(1), ac(1)]),
+  "quiver-dance": (en, level) => concentrationBuff(
+    en ? "Quiver Dance — AC, attacks and damage up" : "Danza Aleteo — CA, ataques y daño",
+    [ac(level >= 10 ? 2 : 1), ...attackChanges(1), ...damageChanges(1)]),
+  "victory-dance": (en, level) => {
+    const bonus = level >= 10 ? 2 : 1;
+    return concentrationBuff(en ? `Victory Dance — AC, attacks and saves +${bonus}` : `Danza Triunfal — CA, ataques y salvaciones +${bonus}`,
+      [ac(bonus), ...attackChanges(bonus), saveBonus(bonus)]);
+  },
+  "swords-dance": (en, level) => {
+    const bonus = level >= 10 ? 2 : 1;
+    return concentrationBuff(en ? `Swords Dance — AC +${bonus}` : `Danza Espada — CA +${bonus}`, [ac(bonus)]);
+  },
+  charge: en => selfBuff(en ? "Charge — AC +2" : "Carga — CA +2", [ac(2)], { ...untilTurnStart, concentration: true }),
+  "iron-defense": en => selfBuff(en ? "Iron Defense — AC +6" : "Defensa Férrea — CA +6", [ac(6)], untilNextTurn),
+  "psyshield-bash": en => selfBuff(en ? "Psyshield Bash — AC +1" : "Asalto Barrera — CA +1", [ac(1)], untilNextTurn),
+  "rock-polish": en => selfBuff(en ? "Rock Polish — AC +2, speed +20 ft" : "Pulimento — CA +2, velocidad +20 ft",
+    [ac(2), speedBonus(20)], { duration: { rounds: 3 } }),
+  whirlwind: en => selfBuff(en ? "Whirlwind — AC +2" : "Remolino — CA +2", [ac(2)], untilTurnStart),
+  "shell-smash": en => selfBuff(en ? "Shell Smash — AC -1, damage +PB" : "Rompecoraza — CA -1, daño +BC",
+    [ac(-1), ...damageChanges("@prof")]),
+  "stuff-cheeks": en => selfBuff(en ? "Stuff Cheeks — AC +2" : "Atiborramiento — CA +2", [ac(2)],
+    { duration: { seconds: 600 }, stack: { max: 2 } }),
+  stockpile: en => selfBuff(en ? "Stockpile — AC +1" : "Reserva — CA +1", [ac(1)], { duration: {}, stack: { max: 3 } }),
+  "clangorous-soul": en => selfBuff(en ? "Clangorous Soul — Attacks, AC and damage +1" : "Clangorous Soul — Ataques, CA y daño +1",
+    [...attackChanges(1), ac(1), ...damageChanges(1)], { duration: {}, removeOnCombatEnd: true, stack: { max: 5 } }),
+  "scale-shot": en => selfBuff(en ? "Scale Shot — Speed +10 ft, AC -2" : "Ráfaga Escamas — Velocidad +10 ft, CA -2",
+    [speedBonus(10), ac(-2)], untilNextTurn),
+  shelter: en => selfBuff(en ? "Shelter — AC +5" : "Retracción — CA +5", [ac(5)], untilTurnStart),
+  "steel-wing": en => ({ ...selfBuff(en ? "Steel Wing — AC +1" : "Ala de Acero — CA +1", [ac(1)], untilNextTurn),
+    trigger: "natural-attack-19+" }),
+  crunch: en => armorBreak(en ? "Crunch — AC -1" : "Triturar — CA -1", "natural-attack-18+", 5),
+  "iron-tail": en => armorBreak(en ? "Iron Tail — AC -1" : "Cola Férrea — CA -1", "natural-attack-19+"),
+  liquidation: en => armorBreak(en ? "Liquidation — AC -1" : "Hidroariete — CA -1", "natural-attack-18+", 5),
+  "razor-shell": en => armorBreak(en ? "Razor Shell — AC -1" : "Concha Filo — CA -1", "natural-attack-18+", 5),
+  "rock-smash": en => armorBreak(en ? "Rock Smash — AC -1" : "Golpe Roca — CA -1", "natural-attack-19+"),
+  "shadow-bone": en => armorBreak(en ? "Shadow Bone — AC -1" : "Hueso Sombrío — CA -1", "natural-attack-18+", 5),
+  "grav-apple": en => armorBreak(en ? "Grav Apple — AC -1" : "Fuerza G — CA -1", "hit-and-failed-save", 3),
+  "clanging-scales": en => armorBreak(en ? "Clanging Scales — AC -1" : "Fragor Escamas — CA -1", "failed-save-by-5"),
+  "bubble-beam": en => ({ name: en ? "Bubble Beam — Speed halved" : "Rayo Burbuja — Velocidad a la mitad",
+    target: "target", trigger: "natural-attack-19+", ...untilNextTurn, changes: movementChanges(0.5) }),
+  "mud-shot": en => ({ name: en ? "Mud Shot — Speed 0" : "Disparo Lodo — Velocidad 0",
+    target: "target", trigger: "natural-attack-16+", ...untilNextTurn, changes: movementChanges(0) })
+});
+
+
+/* ============================================================
  * DEFINICIONES
  *
  * target:
@@ -253,20 +326,6 @@ function definitionFor(
   switch (
     move.id
   ) {
-
-    case "bubble-beam":
-      return {
-        name: language === "en" ? "Bubble Beam — Speed halved" : "Rayo Burbuja — Velocidad a la mitad",
-        target: "target", trigger: "natural-attack-19+", duration: {}, expireAtEndOfNextTurn: true,
-        stack: { key: "bubble-beam", max: 1 }, changes: movementChanges(0.5)
-      };
-
-    case "mud-shot":
-      return {
-        name: language === "en" ? "Mud Shot — Speed 0" : "Disparo Lodo — Velocidad 0",
-        target: "target", trigger: "natural-attack-16+", duration: {}, expireAtEndOfNextTurn: true,
-        stack: { key: "mud-shot", max: 1 }, changes: movementChanges(0)
-      };
 
     case "mud-slap":
       return {
@@ -940,7 +999,7 @@ function definitionFor(
 
     default:
 
-      return null;
+      return COMPACT_DEFINITIONS[move.id]?.(language === "en", Number(context.level ?? 1)) ?? null;
   }
 }
 

@@ -25,7 +25,7 @@
   - Verify: modifier and coverage tests.
   - Files: `scripts/modifier-automation.mjs`, `scripts/modifier-effects.mjs`, `scripts/move-coverage.mjs`, tests
 
-- [ ] 5a. Batch: AC modifiers
+- [x] 5a. Batch: AC modifiers
 - [ ] 5b. Batch: attack-roll modifiers
 - [ ] 5c. Batch: saving-throw modifiers
 - [ ] 5d. Batch: speed modifiers

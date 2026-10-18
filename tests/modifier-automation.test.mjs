@@ -407,3 +407,107 @@ test("Acid Spray ignores misses, successful saves, mismatched usages and other t
   assert.equal(target.effects.length, 0);
   assert.equal(other.effects.length, 0);
 });
+
+const acValue = applied => applied.changes.find(change => change.key === "system.attributes.ac.bonus")?.value;
+
+test("batch 5a self buffs apply on use with their AC change and concentration link", async () => {
+  for (const [id, ac, concentrates] of [
+    ["cotton-guard", "2", true], ["minimize", "2", true], ["coil", "1", true], ["quiver-dance", "1", true],
+    ["victory-dance", "1", true], ["swords-dance", "1", true], ["charge", "2", true], ["iron-defense", "6", false],
+    ["psyshield-bash", "1", false], ["rock-polish", "2", false], ["whirlwind", "2", false], ["shell-smash", "-1", false],
+    ["stuff-cheeks", "2", false], ["stockpile", "1", false], ["clangorous-soul", "1", false], ["scale-shot", "-2", false],
+    ["shelter", "5", false]
+  ]) {
+    const item = move(id);
+    const focus = concentrates ? concentration(item.actor) : null;
+    usage(item, focus ? { concentration: focus.id } : {});
+    await paints();
+    const applied = item.actor.effects.find(entry => entry.getFlag(MODULE_ID, "sourceMove") === id);
+    assert.ok(applied, id);
+    assert.equal(acValue(applied), ac, id);
+    assert.equal(applied.getFlag("dnd5e", "dependentOn"), focus?.uuid, id);
+  }
+});
+
+test("batch 5a buffs scale with level and keep their extra changes and expiry", () => {
+  const built = (id, level = 1) => buildMoveModifierEffects({ id }, "en", { level }).effects[0];
+  assert.ok(built("victory-dance", 10).changes.every(change => change.value === "2"));
+  assert.deepEqual([acValue(built("quiver-dance", 10)), acValue(built("quiver-dance", 9))], ["2", "1"]);
+  assert.equal(acValue(built("swords-dance", 10)), "2");
+  assert.ok(built("shell-smash").changes.some(change => change.key.endsWith(".damage") && change.value === "@prof"));
+  assert.ok(built("rock-polish").changes.some(change => change.key === "system.attributes.movement.bonus" && change.value === "20"));
+  for (const id of ["iron-defense", "psyshield-bash", "scale-shot", "steel-wing"]) {
+    assert.equal(built(id).flags[MODULE_ID].expireAtEndOfNextTurn, true, id);
+  }
+  for (const id of ["charge", "whirlwind", "shelter"]) {assert.equal(built(id).flags[MODULE_ID].expireAtStartTurn, true, id);}
+  assert.deepEqual(built("rock-polish").duration, { rounds: 3 });
+});
+
+test("Clangorous Soul and Stockpile stack on repeated use up to their caps", async () => {
+  for (const [id, max] of [["clangorous-soul", 5], ["stockpile", 3], ["stuff-cheeks", 2]]) {
+    const item = move(id);
+    for (let index = 0; index < max + 1; index++) {
+      usage(item);
+      await paints();
+    }
+    const applied = item.actor.effects.filter(entry => entry.getFlag(MODULE_ID, "sourceMove") === id);
+    assert.equal(applied.length, 1, id);
+    assert.equal(applied[0].getFlag(MODULE_ID, "stackCount"), max, id);
+  }
+});
+
+test("natural-roll AC breaks apply at their threshold, last for the combat and respect their stack caps", async () => {
+  for (const [id, threshold, max] of [["crunch", 18, 5], ["iron-tail", 19, 1], ["liquidation", 18, 5],
+    ["razor-shell", 18, 5], ["rock-smash", 19, 1], ["shadow-bone", 18, 5]]) {
+    const item = move(id);
+    const target = actor();
+    await show(attack(item, target, threshold - 1));
+    assert.equal(target.effects.length, 0, id);
+    for (let index = 0; index < max + 1; index++) {await show(attack(item, target, threshold));}
+    assert.equal(target.effects.length, 1, id);
+    assert.equal(target.effects[0].getFlag(MODULE_ID, "stackCount"), max, id);
+    assert.equal(target.effects[0].getFlag(MODULE_ID, "removeOnCombatEnd"), true, id);
+    assert.equal(acValue(target.effects[0]), String(-max), id);
+  }
+});
+
+test("Steel Wing raises its user's AC on a natural 19+, not the target's", async () => {
+  const item = move("steel-wing");
+  const target = actor();
+  await show(attack(item, target, 18));
+  assert.equal(item.actor.effects.length, 0);
+  await show(attack(item, target, 19));
+  assert.equal(target.effects.length, 0);
+  assert.equal(acValue(item.actor.effects[0]), "1");
+});
+
+test("Grav Apple needs hit plus failed save; Clanging Scales needs a save failed by 5 or more", async () => {
+  const apple = move("grav-apple");
+  const target = actor();
+  await show(sprayHit(apple, target, "Usage.apple"));
+  await show(spraySave(apple, target, "Usage.apple"));
+  assert.equal(acValue(target.effects[0]), "-1");
+  const scales = move("clanging-scales");
+  const close = actor();
+  const failedByFour = spraySave(scales, close, "Usage.scales");
+  failedByFour.rolls[0].total = 8;
+  await show(failedByFour);
+  assert.equal(close.effects.length, 0);
+  await show(spraySave(scales, close, "Usage.scales2"));
+  assert.equal(acValue(close.effects[0]), "-1");
+  assert.equal(close.effects[0].getFlag(MODULE_ID, "removeOnCombatEnd"), true);
+});
+
+test("natural-roll AC breaks wait for Dice So Nice before applying", async () => {
+  const item = move("crunch");
+  const target = actor();
+  let finish;
+  game.dice3d = { waitFor3DAnimationByMessageID: () => new Promise(resolve => { finish = resolve; }) };
+  try {
+    await show(attack(item, target, 20));
+    assert.equal(target.effects.length, 0, "must not apply while the dice are still rolling");
+    finish();
+    await paints();
+    assert.equal(target.effects.length, 1);
+  } finally {delete game.dice3d;}
+});

@@ -21,7 +21,8 @@ function actorFromUuid(uuid) {
   return doc?.actor ?? doc;
 }
 
-function attackApplication(message, roll, item, trigger) {
+function attackApplication(message, roll, item, template) {
+  const trigger = template?.getFlag(MODULE_ID, "trigger");
   const natural = String(trigger ?? "").match(NATURAL_AT_LEAST_TRIGGER);
   if (!(trigger === "hit" || trigger === "hit-and-failed-save" || natural)) {return null;}
   const activity = message.getAssociatedActivity?.();
@@ -29,18 +30,19 @@ function attackApplication(message, roll, item, trigger) {
   const outcome = buildAttackOutcome(roll, activity);
   // Same contract as status riders (Scald): natural N+ applies regardless of hit/miss.
   const applies = natural ? isNaturalAttackAtLeast(outcome, Number(natural[1])) : outcome.hit === true;
-  const actor = applies ? actorFromUuid(outcome.targetActorUuid) : null;
+  const recipient = template.getFlag(MODULE_ID, "target") === "self" ? item.actor : actorFromUuid(outcome.targetActorUuid);
+  const actor = applies ? recipient : null;
   if (!actor) {return null;}
   return trigger === "hit-and-failed-save"
     ? { item, actor, part: "hit", usageId: message.getFlag("dnd5e", "originatingMessage") } : { item, actor };
 }
 
 function saveApplication(roll, save, item, trigger) {
-  if (!["failed-save", "hit-and-failed-save"].includes(trigger) || !save?.usageMessageId) {return null;}
+  if (!["failed-save", "failed-save-by-5", "hit-and-failed-save"].includes(trigger) || !save?.usageMessageId) {return null;}
   const dc = Number(roll.options?.target ?? save.dc);
   if (!Number.isFinite(dc) || !Number.isFinite(Number(roll.total))) {return null;}
   const success = typeof roll.isSuccess === "boolean" ? roll.isSuccess : Number(roll.total) >= dc;
-  if (success) {return null;}
+  if (success || (trigger === "failed-save-by-5" && dc - Number(roll.total) < 5)) {return null;}
   const actor = actorFromUuid(save.actorUuid);
   return trigger === "hit-and-failed-save"
     ? { item, actor, part: "failed-save", usageId: save.usageMessageId } : { item, actor };
@@ -52,9 +54,9 @@ function eligibleApplication(message, roll) {
   const item = save ? fromUuidSync(save.itemUuid, { strict: false }) : message.getAssociatedItem?.();
   const sourceId = item?.getFlag(MODULE_ID, "sourceId");
   if (item?.getFlag(MODULE_ID, "kind") !== "move" || !AUTOMATED_MODIFIER_MOVES.has(sourceId)) {return null;}
-  const trigger = item.effects.find(effect => effect.getFlag(MODULE_ID, "kind") === "pokemon-modifier")
-    ?.getFlag(MODULE_ID, "trigger");
-  if (type === "attack") {return attackApplication(message, roll, item, trigger);}
+  const template = item.effects.find(effect => effect.getFlag(MODULE_ID, "kind") === "pokemon-modifier");
+  const trigger = template?.getFlag(MODULE_ID, "trigger");
+  if (type === "attack") {return attackApplication(message, roll, item, template);}
   return type === "save" ? saveApplication(roll, save, item, trigger) : null;
 }
 
