@@ -4049,7 +4049,19 @@ function buildDamageFormula(
   const moveModifier =
     resolveDamageModifier(
       move.damage?.modifier,
-      abilityMod
+      {
+        MOVE:
+          abilityMod,
+
+        LEVEL:
+          context.level,
+
+        // "MOVE + STAB" moves always get STAB; avoid adding it twice.
+        STAB:
+          mechanics.stab.eligible
+            ? 0
+            : context.pb
+      }
     );
 
   const stabBonus =
@@ -4117,7 +4129,7 @@ function selectLevelValue(
 
 function resolveDamageModifier(
   modifier,
-  abilityMod
+  tokens
 ) {
   if (
     modifier == null ||
@@ -4133,33 +4145,22 @@ function resolveDamageModifier(
     return modifier;
   }
 
-  const text =
-    String(modifier)
-      .trim();
-
-  if (
-    text.toUpperCase() ===
-    "MOVE"
-  ) {
-    return abilityMod;
-  }
-
   /*
    * También admite expresiones como:
-   * "2 * MOVE".
+   * "2 * MOVE", "LEVEL" o "MOVE + STAB".
    */
-  if (
-    /\bMOVE\b/i.test(
-      text
-    )
-  ) {
-    return text.replace(
-      /\bMOVE\b/gi,
-      String(
-        abilityMod
-      )
-    );
-  }
+  const text =
+    String(modifier)
+      .trim()
+      .replace(
+        /\b(MOVE|LEVEL|STAB)\b/gi,
+        token =>
+          String(
+            tokens[
+              token.toUpperCase()
+            ] ?? 0
+          )
+      );
 
   const numeric =
     Number(text);
