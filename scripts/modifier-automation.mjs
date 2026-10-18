@@ -1,10 +1,11 @@
 import { AUTOMATED_MODIFIER_MOVES, buildMoveModifierEffects } from "./modifier-effects.mjs";
 import { applyPokemonMoveModifier } from "./modifier-engine.mjs";
-import { buildAttackOutcome } from "./attack-outcome-engine.mjs";
+import { buildAttackOutcome, isNaturalAttackAtLeast } from "./attack-outcome-engine.mjs";
 import { afterPaint, waitForVisibleResult } from "./chat-roll-display.mjs";
 import { isPokemonActor } from "./trainer-party-service.mjs";
 
 const MODULE_ID = "poke5e-local";
+const NATURAL_AT_LEAST_TRIGGER = /^natural-attack-(\d+)\+$/;
 const live = new Set();
 const pending = new Map();
 const actorsPending = new Map();
@@ -25,14 +26,19 @@ function eligibleApplication(message, roll) {
   const item = save ? fromUuidSync(save.itemUuid, { strict: false }) : message.getAssociatedItem?.();
   const sourceId = item?.getFlag(MODULE_ID, "sourceId");
   if (item?.getFlag(MODULE_ID, "kind") !== "move" || !AUTOMATED_MODIFIER_MOVES.has(sourceId)) {return null;}
-  if (sourceId === "mud-slap") {
+  const trigger = item.effects.find(effect => effect.getFlag(MODULE_ID, "kind") === "pokemon-modifier")
+    ?.getFlag(MODULE_ID, "trigger");
+  const natural = String(trigger ?? "").match(NATURAL_AT_LEAST_TRIGGER);
+  if (trigger === "hit" || natural) {
     if (type !== "attack") {return null;}
     const activity = message.getAssociatedActivity?.();
     if (!activity || activity.item?.uuid !== item.uuid) {return null;}
     const outcome = buildAttackOutcome(roll, activity);
-    return outcome.hit === true ? { item, actor: actorFromUuid(outcome.targetActorUuid) } : null;
+    // Same contract as status riders (Scald): natural N+ applies regardless of hit/miss.
+    const applies = natural ? isNaturalAttackAtLeast(outcome, Number(natural[1])) : outcome.hit === true;
+    return applies ? { item, actor: actorFromUuid(outcome.targetActorUuid) } : null;
   }
-  if (type !== "save" || !save?.usageMessageId) {return null;}
+  if (trigger !== "failed-save" || type !== "save" || !save?.usageMessageId) {return null;}
   const dc = Number(roll.options?.target ?? save.dc);
   if (!Number.isFinite(dc) || !Number.isFinite(Number(roll.total))) {return null;}
   const success = typeof roll.isSuccess === "boolean" ? roll.isSuccess : Number(roll.total) >= dc;

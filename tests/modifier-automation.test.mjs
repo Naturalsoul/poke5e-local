@@ -13,7 +13,7 @@ const frames = [];
 const notices = [];
 const MODULE_ID = "poke5e-local";
 let sequence = 0;
-globalThis.CONST = { ACTIVE_EFFECT_MODES: { ADD: 2 } };
+globalThis.CONST = { ACTIVE_EFFECT_MODES: { ADD: 2, MULTIPLY: 1 } };
 globalThis.game = { user: { id: "gm", isGM: true }, users: { activeGM: { id: "gm" } },
   actors: [], scenes: [], settings: { get: () => "es" } };
 globalThis.canvas = { tokens: { controlled: [], placeables: [] } };
@@ -324,4 +324,38 @@ test("Aqua Ring keeps its end-of-turn healing flag on the applied effect", async
   await paints();
   const applied = item.actor.effects.find(entry => entry.getFlag(MODULE_ID, "sourceMove") === "aqua-ring");
   assert.deepEqual(applied.getFlag(MODULE_ID, "endTurnHealing"), { formula: "@prof", source: "aqua-ring" });
+});
+
+function attack(item, target, natural, { hit = true } = {}) {
+  const result = message(item, target, { type: "attack", success: hit });
+  result.rolls[0].d20 = { results: [{ active: true, result: natural }] };
+  return result;
+}
+
+test("Bubble Beam halves speed on a natural 19+ and Mud Shot sets it to 0 on a natural 16+", async () => {
+  for (const [id, threshold, factor] of [["bubble-beam", 19, "0.5"], ["mud-shot", 16, "0"]]) {
+    const item = move(id);
+    const target = actor();
+    await show(attack(item, target, threshold - 1));
+    assert.equal(target.effects.length, 0, `${id} below threshold`);
+    await show(attack(item, target, threshold));
+    assert.equal(target.effects.length, 1, id);
+    const applied = target.effects[0];
+    assert.ok(applied.changes.every(change => change.value === factor && change.mode === CONST.ACTIVE_EFFECT_MODES.MULTIPLY), id);
+    assert.equal(applied.getFlag(MODULE_ID, "expireAtEndOfNextTurn"), true, id);
+    assert.equal(applied.getFlag(MODULE_ID, "nextTurnStarted"), false, id);
+  }
+});
+
+test("natural triggers follow the Scald contract (hit or miss), ignore saves and refresh on a new trigger", async () => {
+  const item = move("mud-shot");
+  const target = actor();
+  await show(message(item, target));
+  assert.equal(target.effects.length, 0, "a failed save must not trigger an attack rider");
+  await show(attack(item, target, 17, { hit: false }));
+  assert.equal(target.effects.length, 1);
+  await target.effects[0].setFlag(MODULE_ID, "nextTurnStarted", true);
+  await show(attack(item, target, 20));
+  assert.equal(target.effects.length, 1);
+  assert.equal(target.effects[0].getFlag(MODULE_ID, "nextTurnStarted"), false);
 });

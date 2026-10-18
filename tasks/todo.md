@@ -14,8 +14,8 @@
   - Verify: modifier and coverage tests; existing turn-engine and modifier tests still pass.
   - Files: `scripts/modifier-effects.mjs`, `scripts/move-coverage.mjs`, `tests/modifier-automation.test.mjs`
 
-- [ ] 3. `natural-attack-N+` trigger (bubble-beam, mud-shot)
-  - Acceptance: applies on a hit at or above N, not below N and not on a miss; speed halved / speed 0
+- [x] 3. `natural-attack-N+` trigger (bubble-beam, mud-shot)
+  - Acceptance: applies at or above N (hit or miss, like Scald), not below N, not from saves; speed halved / speed 0
     until end of the target's next turn.
   - Verify: modifier and coverage tests.
   - Files: `scripts/modifier-automation.mjs`, `scripts/modifier-effects.mjs`, `scripts/move-coverage.mjs`, tests

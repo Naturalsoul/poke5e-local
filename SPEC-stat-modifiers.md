@@ -18,7 +18,7 @@ Acceptance criteria:
    - `hit` — exists (Mud-Slap).
    - `self` — new: applied to the user when the move's usage message is created.
    - `hit-and-failed-save` — new: applied when the same usage both hits and the target fails the save (Acid Spray).
-   - `natural-attack-N+` — new: applied on a hit whose natural d20 is N or more (Bubble Beam, Mud Shot).
+   - `natural-attack-N+` — new: applied when the natural d20 is N or more, hit or miss, same contract as Scald (Bubble Beam, Mud Shot).
 2. **Concentration.** A modifier from a concentration move ends when that concentration ends
    (Acid Armor, Agility, Aqua Ring, Defend Order, Growth).
 3. **The 8 existing definitions** (acid-spray, acid-armor, agility, amnesia, growth, defense-curl, aqua-ring,

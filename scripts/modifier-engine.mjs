@@ -1,4 +1,5 @@
 import { AUTOMATED_MODIFIER_MOVES } from "./modifier-effects.mjs";
+import { refreshEndOfNextTurnDuration } from "./turn-duration-runtime.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -657,6 +658,18 @@ export async function applyPokemonMoveModifier(
   /* ==========================================================
    * ACUMULAR
    * ========================================================== */
+
+  // Un nuevo impacto reinicia "hasta el final de su próximo turno".
+  if (
+    existing.getFlag(
+      MODULE_ID,
+      "expireAtEndOfNextTurn"
+    )
+  ) {
+    await refreshEndOfNextTurnDuration(
+      existing
+    );
+  }
 
   // Reusar el Move inicia una concentración nueva.
   if (

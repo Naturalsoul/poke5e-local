@@ -1,8 +1,10 @@
+import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
+
 const MODULE_ID =
   "poke5e-local";
 
 export const AUTOMATED_MODIFIER_MOVES = new Set(["growl", "leer", "screech", "tail-whip", "mud-slap", "defense-curl", "agility", "amnesia",
-  "acid-armor", "aqua-ring", "defend-order"]);
+  "acid-armor", "aqua-ring", "defend-order", "bubble-beam", "mud-shot"]);
 
 
 /* ============================================================
@@ -148,6 +150,13 @@ function add(
  * TODOS LOS ATTACK TYPES D&D5e
  * ============================================================ */
 
+function movementChanges(factor) {
+  return ["walk", "fly", "swim", "climb", "burrow"].map(movement => ({
+    key: `system.attributes.movement.${movement}`, mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY,
+    value: String(factor), priority: 20
+  }));
+}
+
 function attackChanges(
   value
 ) {
@@ -244,6 +253,20 @@ function definitionFor(
   switch (
     move.id
   ) {
+
+    case "bubble-beam":
+      return {
+        name: language === "en" ? "Bubble Beam — Speed halved" : "Rayo Burbuja — Velocidad a la mitad",
+        target: "target", trigger: "natural-attack-19+", duration: {}, expireAtEndOfNextTurn: true,
+        stack: { key: "bubble-beam", max: 1 }, changes: movementChanges(0.5)
+      };
+
+    case "mud-shot":
+      return {
+        name: language === "en" ? "Mud Shot — Speed 0" : "Disparo Lodo — Velocidad 0",
+        target: "target", trigger: "natural-attack-16+", duration: {}, expireAtEndOfNextTurn: true,
+        stack: { key: "mud-shot", max: 1 }, changes: movementChanges(0)
+      };
 
     case "mud-slap":
       return {
@@ -1052,6 +1075,11 @@ function buildEffect(
             endTurnHealing:
               definition.endTurnHealing ??
               null,
+            ...(
+              definition.expireAtEndOfNextTurn
+                ? endOfNextTurnFlags()
+                : {}
+            ),
 
             pending:
                 definition.pending ??
