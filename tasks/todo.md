@@ -1,6 +1,6 @@
 # Tasks: Bonds supplement (basic) and Commander
 
-Breeding / Pokémon Breeder stays for later (user, 2026-10-19).
+Breeding / Pokémon Breeder stays for later (user, 2026-10-19): see [backlog.md](backlog.md).
 Bond Levels change by agreement with the DM: the GM sets them on the Pokémon sheet.
 
 - [x] 1. Bonds: world setting (off by default); Bond Level −3..+3 per Pokémon (GM edits on the sheet);
