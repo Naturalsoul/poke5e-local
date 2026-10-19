@@ -29,6 +29,7 @@ import {
 
 import { processHeldItemEndTurn } from "./held-item-engine.mjs";
 import { processBerryAbilitiesEndTurn } from "./berry-ability-engine.mjs";
+import { effectSourceActor, processEventAbilitiesEndTurn, processEventAbilitiesStartTurn } from "./event-ability-engine.mjs";
 
 import {
   isPokemonActor
@@ -330,7 +331,8 @@ function pokemonProficiency(
 
 function isImmuneToStatus(
   actor,
-  status
+  status,
+  effect = null
 ) {
 
   /*
@@ -360,6 +362,23 @@ function isImmuneToStatus(
     STATUS_IMMUNITIES[
       status
     ];
+
+  // Corrosion: its Moves poison Poison and Steel types.
+  const source =
+    effectSourceActor(
+      effect
+    );
+
+  if (
+    status === "poisoned" &&
+    source &&
+    hasPokemonAbility(
+      source,
+      "corrosion"
+    )
+  ) {
+    return false;
+  }
 
 
   if (
@@ -867,6 +886,29 @@ async function processPoisoned(
     pb <= 0
   ) {
 
+    return;
+  }
+
+
+  // Poison Heal: it recovers half of it instead.
+  if (
+    hasPokemonAbility(
+      actor,
+      "poison-heal"
+    )
+  ) {
+    const healed =
+      Math.floor(
+        pb / 2
+      );
+
+    await actor.applyDamage(
+      [{ value: healed, type: "healing" }]
+    );
+    await chat(
+      actor,
+      `<strong>${actor.name}</strong> (Poison Heal): +<strong>${healed}</strong> HP.`
+    );
     return;
   }
 
@@ -1518,6 +1560,7 @@ async function processEndTurn(
 
   await processHeldItemEndTurn(actor);
   await processBerryAbilitiesEndTurn(actor);
+  await processEventAbilitiesEndTurn(actor);
 
 
   /* ==========================================================
@@ -1779,6 +1822,11 @@ async function processStartTurn(
    * ========================================================== */
 
   await markEndOfNextTurnEffectsStarted(
+    actor
+  );
+
+  // Hospitality.
+  await processEventAbilitiesStartTurn(
     actor
   );
 
@@ -2239,7 +2287,8 @@ function onPreCreateActiveEffect(
     !gmManualOverride &&
     isImmuneToStatus(
       actor,
-      status
+      status,
+      effect
     )
   ) {
 

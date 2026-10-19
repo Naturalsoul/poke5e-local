@@ -242,12 +242,16 @@ export async function restoreAbilityUses(pokemon, longRest) {
   await (Object.keys(kept).length ? pokemon.setFlag(MODULE_ID, USES_FLAG, kept) : pokemon.unsetFlag(MODULE_ID, USES_FLAG));
 }
 
-function onRestCompleted(actor, result, config) {
-  const longRest = result?.longRest === true || config?.type === "long";
-  const pokemon = isTrainerActor(actor)
+// A trainer's rest is also its Pokémon's.
+export function restedPokemon(actor) {
+  return isTrainerActor(actor)
     ? game.actors.filter(entry => isPokemonActor(entry) && getPokemonTrainerUuid(entry) === actor.uuid)
     : [actor].filter(isPokemonActor);
-  logged(Promise.all(pokemon.filter(entry => entry.isOwner).map(entry => restoreAbilityUses(entry, longRest))));
+}
+
+function onRestCompleted(actor, result, config) {
+  const longRest = result?.longRest === true || config?.type === "long";
+  logged(Promise.all(restedPokemon(actor).filter(entry => entry.isOwner).map(entry => restoreAbilityUses(entry, longRest))));
 }
 
 /* ============================================================

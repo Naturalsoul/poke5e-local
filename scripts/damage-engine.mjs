@@ -802,6 +802,17 @@ function onPostRollConfiguration(
   );
 
 
+  // Guts: a burn does not reduce its damage.
+  if (
+    hasPokemonAbility(
+      actor,
+      "guts"
+    )
+  ) {
+    return;
+  }
+
+
   /*
    * Solo si está Quemado.
    */

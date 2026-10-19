@@ -14,11 +14,11 @@ import { grantNextAttackAdvantage } from "./attack-ability-engine.mjs";
 
 const MODULE_ID = "poke5e-local";
 
-const SOUND_MOVES = new Set(["growl", "roar", "sing", "supersonic", "screech", "snore", "perish-song", "heal-bell", "uproar",
+export const SOUND_MOVES = new Set(["growl", "roar", "sing", "supersonic", "screech", "snore", "perish-song", "heal-bell", "uproar",
   "hyper-voice", "metal-sound", "grass-whistle", "bug-buzz", "chatter", "round", "echoed-voice", "relic-song", "snarl",
   "noble-roar", "disarming-voice", "parting-shot", "boomburst", "confide", "sparkling-aria", "clanging-scales",
   "clangorous-soul", "overdrive", "eerie-spell", "torch-song", "alluring-voice", "psychic-noise"]);
-const WIND_MOVES = new Set(["aeroblast", "air-cutter", "bleakwind-storm", "blizzard", "fairy-wind", "gust", "heat-wave",
+export const WIND_MOVES = new Set(["aeroblast", "air-cutter", "bleakwind-storm", "blizzard", "fairy-wind", "gust", "heat-wave",
   "hurricane", "icy-wind", "petal-blizzard", "sandsear-storm", "sandstorm", "springtide-storm", "tailwind", "twister",
   "whirlwind", "wildbolt-storm"]);
 const EXPLOSION_MOVES = new Set(["self-destruct", "explosion"]);
@@ -46,11 +46,14 @@ const DEFENSES = {
   justified: { types: ["dark"], effect: "next-attack" },
   rattled: { types: ["dark", "bug", "ghost"], effect: "next-attack" },
   "toxic-boost": { types: ["poison"], effect: "next-attack" },
-  "thermal-exchange": { types: ["fire"], effect: "next-attack" }
+  "thermal-exchange": { types: ["fire"], effect: "next-attack" },
+  "poison-heal": { types: ["poison"], effect: "absorb" }
 };
 
 const CRITICAL_IMMUNE = ["battle-armor", "shell-armor", "solid-rock"];
-const FULL_HP_HALF = ["multiscale", "shadow-shield"];
+// shortcut: Tera Shell halves like Multiscale, even against a type it already resists; split it if that matters.
+const FULL_HP_HALF = ["multiscale", "shadow-shield", "tera-shell"];
+const PULSE_MOVE = /-pulse$|^aura-sphere$/;
 const COMPETITIVE_STATUSES = ["poisoned", "burned", "confused", "paralysis"];
 
 const TEXT = {
@@ -87,7 +90,7 @@ function defend(actor, damage, effect) {
   return effect === "absorb" ? Math.floor(before / 2) : 0;
 }
 
-const isMeleeDamage = options =>
+export const isMeleeDamage = options =>
   options.originatingMessage?.getOriginatingMessage?.()?.getAssociatedActivity?.()?.attack?.type?.value === "melee";
 
 // Fluffy: half damage from melee attacks that are not Fire, double from Fire.
@@ -151,17 +154,21 @@ const targetActors = () => [...game.user?.targets ?? []].map(token => token.acto
 const moveOf = activity => (activity?.item?.getFlag?.(MODULE_ID, "kind") === "move" ? activity.item : null);
 const isMelee = activity => activity?.attack?.type?.value === "melee";
 
+const moveTypeOf = move => move?.getFlag?.(MODULE_ID, "moveType");
+
+// Abilities that add the proficiency bonus to a Move's damage, and when.
+const PROFICIENCY_DAMAGE = {
+  rivalry: (actor, _move, targets) => targets.some(target => pokemonTypes(target).some(type => pokemonTypes(actor).includes(type))),
+  competitive: actor => COMPETITIVE_STATUSES.some(status => hasPokemonStatus(actor, status)),
+  "flare-boost": actor => hasPokemonStatus(actor, "burned"),
+  steelworker: (_actor, move) => moveTypeOf(move) === "steel",
+  "mega-launcher": (_actor, move) => PULSE_MOVE.test(move?.getFlag?.(MODULE_ID, "sourceId") ?? "")
+};
+
 // Flat damage bonus from the attacker's Ability, 0 when none applies.
 export function damageAbilityBonus(actor, move, targets) {
-  const prof = Number(actor.system?.attributes?.prof ?? 0);
-  const moveType = move?.getFlag?.(MODULE_ID, "moveType");
-  const ownTypes = pokemonTypes(actor);
-  const applies =
-    (hasPokemonAbility(actor, "rivalry") && targets.some(target => pokemonTypes(target).some(type => ownTypes.includes(type)))) ||
-    (hasPokemonAbility(actor, "competitive") && COMPETITIVE_STATUSES.some(status => hasPokemonStatus(actor, status))) ||
-    (hasPokemonAbility(actor, "flare-boost") && hasPokemonStatus(actor, "burned")) ||
-    (hasPokemonAbility(actor, "steelworker") && moveType === "steel");
-  return applies ? prof : 0;
+  const applies = Object.entries(PROFICIENCY_DAMAGE).some(([abilityId, rule]) => hasPokemonAbility(actor, abilityId) && rule(actor, move, targets));
+  return applies ? Number(actor.system?.attributes?.prof ?? 0) : 0;
 }
 
 function addDamageBonus(rolls, actor, activity) {
@@ -191,15 +198,45 @@ function onPostRollConfiguration(rolls, config) {
   removeCriticalDamage(rolls);
 }
 
+const NEGATIVE_STATUSES = ["poisoned", "burned", "paralysis", "asleep", "frozen", "confused"];
+
+// A stat change from a Move or Ability of someone else that lowers something.
+export function isOpponentDebuff(effect, actor) {
+  const source = effect.getFlag?.(MODULE_ID, "sourceActorUuid");
+  return effect.getFlag?.(MODULE_ID, "kind") === "pokemon-modifier" && Boolean(source) && source !== actor.uuid &&
+    Array.from(effect.changes ?? []).some(change => Number(change.value) < 0);
+}
+
+const tokenSide = actor => actor?.getActiveTokens?.()[0]?.document?.disposition ?? null;
+
+// Supreme Overlord: allies in the combat that are down, at most 5.
+function downedAllies(actor) {
+  const side = tokenSide(actor);
+  const downed = [...game.combat?.combatants ?? []].map(combatant => combatant.actor)
+    .filter(ally => ally && ally !== actor && tokenSide(ally) === side && Number(ally.system?.attributes?.hp?.value) <= 0);
+  return Math.min(5, new Set(downed).size);
+}
+
+function abilityAttackBonus(actor, move) {
+  const has = abilityId => hasPokemonAbility(actor, abilityId);
+  const defiant = has("defiant") && (NEGATIVE_STATUSES.some(status => hasPokemonStatus(actor, status)) ||
+    Array.from(actor.effects ?? []).some(effect => !effect.disabled && isOpponentDebuff(effect, actor)));
+  return (has("compound-eyes") ? 1 : 0) + (has("gale-wings") && move?.getFlag?.(MODULE_ID, "moveType") === "flying" ? 1 : 0) +
+    (defiant ? 2 : 0) + (has("supreme-overlord") ? downedAllies(actor) : 0);
+}
+
 // { bonus, advantage, disadvantage, critical } for an attack by `actor` with `move` against `targets`.
+// Mind's Eye: no disadvantage from these Abilities (other sources stay with the GM).
 export function attackAbilityModifiers(actor, move, targets, { melee = false } = {}) {
   const has = abilityId => hasPokemonAbility(actor, abilityId);
   const anyTarget = predicate => targets.some(predicate);
+  const round = game.combat?.started ? Number(game.combat.round) : 0;
   return {
-    bonus: (has("compound-eyes") ? 1 : 0) + (has("gale-wings") && move?.getFlag?.(MODULE_ID, "moveType") === "flying" ? 1 : 0),
+    bonus: abilityAttackBonus(actor, move),
     advantage: (has("intrepid-sword") && melee) || has("no-guard") || anyTarget(target => hasPokemonAbility(target, "no-guard")),
-    disadvantage: (melee && anyTarget(target => hasPokemonAbility(target, "dauntless-shield"))) ||
-      anyTarget(target => hasPokemonAbility(target, "tangled-feet") && hasPokemonStatus(target, "confused")),
+    disadvantage: !has("minds-eye") && ((melee && anyTarget(target => hasPokemonAbility(target, "dauntless-shield"))) ||
+      anyTarget(target => hasPokemonAbility(target, "tangled-feet") && hasPokemonStatus(target, "confused")) ||
+      (has("slow-start") && round >= 1 && round <= 2)),
     critical: has("super-luck") ? 19 : null
   };
 }
