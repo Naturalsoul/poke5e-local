@@ -47,6 +47,9 @@ const ICONS = {
 
   // Path features, levels 5 / 9 / 15.
   "battle-master": "skills/melee/strike-sword-steel-yellow",
+  "follow-me": "skills/social/diplomacy-unity-alliance",
+  "show-me-what-youve-got": "magic/fire/flame-burning-fist-strike",
+  "were-a-team": "skills/social/intimidation-impressing",
   versatile: "sundries/gaming/dice-pair-white-green",
   retention: "sundries/books/book-notes-ragged-green",
   analyst: "magic/perception/eye-ringed-glow-angry-teal",
