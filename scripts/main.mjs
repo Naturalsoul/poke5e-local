@@ -125,6 +125,10 @@ import {
 } from "./trainer-feature-engine.mjs";
 
 import {
+  registerTrainerPathEffects
+} from "./trainer-path-effects.mjs";
+
+import {
   registerTrainerBattleFeedback
 } from "./trainer-battle-feedback.mjs";
 
@@ -400,6 +404,7 @@ Hooks.once(
     registerFoundryRegressionRunner();
     registerPokemonCrySettings();
     registerTrainerFeatureEngine();
+    registerTrainerPathEffects();
     registerTrainerOwnershipService();
     registerTrainerSwitchAuthorityService();
     registerPokemonActorSheet();

@@ -12,10 +12,12 @@ import {
 } from "./trainer-progression-service.mjs";
 
 import {
+  getTrainerLevelRule,
   getTrainerSpecialization
 } from "./trainer-rules.mjs";
 
 import {
+  getTrainerLevel,
   isTrainerActor
 } from "./trainer-service.mjs";
 
@@ -506,6 +508,30 @@ export function getPokemonTypeMasterStabBonus(
 /* ============================================================
  * RESEARCHER
  * ============================================================ */
+
+/* ============================================================
+ * PATH FEATURES DE NIVEL 5+ (pasivos)
+ * ============================================================ */
+
+function trainerPathAtLevel(trainer, pathId, level) {
+  return getTrainerProgressionState(trainer)?.path?.id === pathId && (getTrainerLevel(trainer) ?? 0) >= level;
+}
+
+// Type Master L5, Drawing Power: +2 to attack rolls of Pokémon of a specialized type.
+export function getPokemonDrawingPowerBonus(pokemon) {
+  const trainer = trainerFromPokemon(pokemon);
+  if (!trainer || !trainerPathAtLevel(trainer, "type-master", 5)) {return 0;}
+  const specialized = getTrainerSpecializationTypes(trainer);
+  return pokemonTypes(pokemon).some(type => specialized.has(type)) ? 2 : 0;
+}
+
+// Hobbyist L9, Generalist: half the trainer's PB (round down) on checks with a skill the roller lacks.
+export function getGeneralistSkillBonus(actor, skillId) {
+  const trainer = isTrainerActor(actor) ? actor : trainerFromPokemon(actor);
+  const skill = actor?.system?.skills?.[skillId];
+  if (!trainer || !skill || Number(skill.value ?? 0) > 0 || !trainerPathAtLevel(trainer, "hobbyist", 9)) {return 0;}
+  return Math.floor(Number(getTrainerLevelRule(getTrainerLevel(trainer))?.proficiencyBonus ?? 0) / 2);
+}
 
 function trainerIntelligenceModifier(
   trainer
@@ -2593,6 +2619,15 @@ function onPreRollSkill(
   message
 ) {
 
+  if (
+    isTrainerActor(
+      config?.subject
+    )
+  ) {
+    appendGeneralistBonus(config);
+    return;
+  }
+
   const pokemon =
     config?.subject;
 
@@ -2696,6 +2731,13 @@ function onPreRollSkill(
       specializationBonus
     );
   }
+
+  appendGeneralistBonus(config);
+}
+
+function appendGeneralistBonus(config) {
+  const bonus = getGeneralistSkillBonus(config?.subject, config?.skill);
+  if (bonus > 0) {appendRollBonus(config, bonus);}
 }
 
 /* ============================================================
@@ -2704,7 +2746,8 @@ function onPreRollSkill(
 
 function appendAttackRollBonus(
   config,
-  bonus
+  bonus,
+  key = "aceTrainerAttack"
 ) {
 
   if (
@@ -2743,8 +2786,9 @@ function appendAttackRollBonus(
      * a reconstruirse.
      */
     if (
-      moduleOptions
-        .aceTrainerAttack
+      moduleOptions[
+        key
+      ]
     ) {
 
       continue;
@@ -2758,10 +2802,11 @@ function appendAttackRollBonus(
     );
 
 
-    moduleOptions
-      .aceTrainerAttack = {
-        bonus
-      };
+    moduleOptions[
+      key
+    ] = {
+      bonus
+    };
   }
 }
 
@@ -2781,6 +2826,9 @@ function onPreRollAttack(
     return;
   }
 
+
+  const drawingPower = getPokemonDrawingPowerBonus(pokemon);
+  if (drawingPower > 0) {appendAttackRollBonus(config, drawingPower, "drawingPowerAttack");}
 
   const bonus =
     getPokemonAceTrainerBonus(
