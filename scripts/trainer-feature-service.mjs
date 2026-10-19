@@ -1,3 +1,4 @@
+import { trainerFeatureIcon } from "./trainer-feature-icons.mjs";
 import {
   TRAINER_SKILLS,
   getTrainerOrigin,
@@ -1875,8 +1876,11 @@ function buildFeatureSource({
 
     type:
       "feat",
-
     img:
+      trainerFeatureIcon(
+        sourceId,
+        key
+      ) ??
       DEFAULT_FEATURE_ICON,
 
     system: {
@@ -2244,12 +2248,15 @@ export async function synchronizeTrainerFeatures(
 
       _id:
         item.id,
-
       name:
         source.name,
-
+      // A custom icon chosen by the user is kept.
       img:
-        source.img,
+        item.img &&
+        item.img !==
+          DEFAULT_FEATURE_ICON
+          ? item.img
+          : source.img,
 
       system:
         source.system,
@@ -2314,4 +2321,14 @@ export async function synchronizeTrainerFeatures(
 
 
   return desired;
+}
+
+
+// Trainers created before feature icons existed swap the default book for their icon.
+export async function refreshTrainerFeatureIcons(trainer) {
+  const updates = trainer.items
+    .filter(item => item.getFlag(MODULE_ID, "kind") === FEATURE_KIND && item.img === DEFAULT_FEATURE_ICON)
+    .map(item => ({ _id: item.id, img: trainerFeatureIcon(item.getFlag(MODULE_ID, "sourceId"), item.getFlag(MODULE_ID, "featureKey")) }))
+    .filter(update => update.img);
+  if (updates.length) {await trainer.updateEmbeddedDocuments("Item", updates);}
 }

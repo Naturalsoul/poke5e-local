@@ -2,6 +2,7 @@ import { getPokemonTrainerUuid, getTrainerOwnedPokemon, getTrainerPartyState, is
 import {
   ensureTrainerPathFeatureResources, getTrainerProgressionResource, getTrainerProgressionState, spendTrainerProgressionResource
 } from "./trainer-progression-service.mjs";
+import { refreshTrainerFeatureIcons } from "./trainer-feature-service.mjs";
 import { getTrainerLevel, isTrainerActor } from "./trainer-service.mjs";
 
 const MODULE_ID = "poke5e-local";
@@ -222,7 +223,10 @@ export function registerTrainerPathActions() {
   Hooks.once("ready", () => {
     if (!authority()) {return;}
     run((async () => {
-      for (const trainer of game.actors.filter(isTrainerActor)) {await ensureTrainerPathFeatureResources(trainer);}
+      for (const trainer of game.actors.filter(isTrainerActor)) {
+        await ensureTrainerPathFeatureResources(trainer);
+        await refreshTrainerFeatureIcons(trainer);
+      }
     })());
   });
   Hooks.on("deleteCombat", combat => {
