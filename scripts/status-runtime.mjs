@@ -66,17 +66,15 @@ const EFFECTIVE_STATUS_ABILITIES = Object.freeze({
  * - pero effective Asleep = true
  * ============================================================ */
 
+// Good as Gold is immune to every status; Purifying Salt to the non-volatile ones.
 const STATUS_IMMUNITY_ABILITIES = Object.freeze({
-
-  asleep:
-    new Set([
-      "comatose"
-    ]),
-
-  flinched:
-    new Set([
-      "inner-focus"
-    ])
+  asleep: new Set(["comatose", "insomnia", "vital-spirit", "good-as-gold", "purifying-salt"]),
+  flinched: new Set(["inner-focus", "good-as-gold"]),
+  paralysis: new Set(["limber", "good-as-gold", "purifying-salt"]),
+  poisoned: new Set(["immunity", "pastel-veil", "good-as-gold", "purifying-salt"]),
+  frozen: new Set(["magma-armor", "good-as-gold", "purifying-salt"]),
+  burned: new Set(["water-veil", "heatproof", "water-bubble", "thermal-exchange", "good-as-gold", "purifying-salt"]),
+  confused: new Set(["own-tempo", "good-as-gold"])
 });
 
 

@@ -26,7 +26,7 @@ import {
 
 import { heldItemPreventsContactReactions } from "./held-item-engine.mjs";
 
-const CONTACT_REACTIVE_ABILITIES = new Set(["static", "poison-point", "effect-spore", "flame-body", "gooey"]);
+const CONTACT_REACTIVE_ABILITIES = new Set(["static", "poison-point", "effect-spore", "flame-body", "gooey", "rough-skin", "iron-barbs"]);
 
 const MODULE_ID =
   "poke5e-local";
@@ -182,6 +182,10 @@ const REACTIVE_HIT_ABILITY_DEFINITIONS =
       })
     ],
 
+    ["rough-skin", Object.freeze({ optional: true, rollFormula: "1d4", triggerTotal: 4,
+      effect: Object.freeze({ kind: "damage", amount: "source-proficiency", damageType: "typeless" }) })],
+    ["iron-barbs", Object.freeze({ optional: true, rollFormula: "1d4", triggerTotal: 4,
+      effect: Object.freeze({ kind: "damage", amount: "source-proficiency", damageType: "steel" }) })],
     [
       "cursed-body",
       Object.freeze({
@@ -287,7 +291,11 @@ function damageTypeLabel(
         "Veneno",
 
       grass:
-        "Planta"
+        "Planta",
+      steel:
+        "Acero",
+      typeless:
+        "sin tipo"
     },
 
     en: {
@@ -298,7 +306,11 @@ function damageTypeLabel(
         "Poison",
 
       grass:
-        "Grass"
+        "Grass",
+      steel:
+        "Steel",
+      typeless:
+        "typeless"
     }
   };
 

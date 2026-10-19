@@ -8,6 +8,7 @@ import {
 } from "./confusion-engine.mjs";
 import {
   findStatusEffect,
+  hasPokemonAbility,
   hasStatusImmunityAbility,
   pokemonStatus,
   pokemonTypes
@@ -112,6 +113,12 @@ const LABELS = {
     remainsAsleep:
       "continúa dormido",
 
+    shedSkinRoll:
+      "Shed Skin",
+
+    shedSkinCured:
+      "muda la piel y se cura de",
+
     fullyParalyzed:
       "queda completamente paralizado este turno",
 
@@ -172,6 +179,12 @@ const LABELS = {
 
     remainsAsleep:
       "remains asleep",
+
+    shedSkinRoll:
+      "Shed Skin",
+
+    shedSkinCured:
+      "sheds its skin and is cured of",
 
     fullyParalyzed:
       "is fully paralyzed this turn",
@@ -1116,7 +1129,8 @@ async function processAsleep(
 
       actor,
 
-      "1d20",
+      // Early Bird: advantage on the roll to wake up.
+      hasPokemonAbility(actor, "early-bird") ? "2d20kh" : "1d20",
 
       `${label("asleepRoll")} — ${actor.name}`
     );
@@ -1152,6 +1166,18 @@ async function processAsleep(
     `
   );
 }
+
+// Shed Skin: at the end of its turn, a d4 of 4 cures the non-volatile status.
+async function processShedSkin(actor) {
+  if (!hasPokemonAbility(actor, "shed-skin")) {return;}
+  const effect = [...NON_VOLATILE_STATUSES].map(status => findStatusEffect(actor, status)).find(Boolean);
+  if (!effect) {return;}
+  const roll = await rollToChat(actor, "1d4", `${label("shedSkinRoll")} — ${actor.name}`);
+  if (roll.total < 4) {return;}
+  await effect.delete();
+  await chat(actor, `<strong>${actor.name}</strong> ${label("shedSkinCured")} ${effect.name}.`);
+}
+
 
 /* ============================================================
  * EFECTOS CON CURACIÓN AL FINAL DEL TURNO
@@ -1464,6 +1490,8 @@ async function processEndTurn(
   await processFrozen(
     actor
   );
+
+  await processShedSkin(actor);
 
   /* ============================================================
   * DAÑOS / EFECTOS PERIÓDICOS DE MOVES
