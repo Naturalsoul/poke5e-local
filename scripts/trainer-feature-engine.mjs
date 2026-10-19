@@ -34,9 +34,6 @@ const RESEARCHER_RESOURCE_ID =
 const RESEARCHER_RESOLVED_KEY =
   "poke5eResearcherResolved";
 
-const VERSATILE_RESOLVED_KEY = "poke5eVersatileResolved";
-const SKILL_DICE_RESOURCE_ID = "skillDice";
-
 const SHADOW_RESOURCE_ID =
   "shadowPoints";
 
@@ -550,74 +547,6 @@ function isWildTarget() {
   const targets = [...(game.user?.targets ?? [])];
   const actor = targets.length === 1 ? targets[0].actor : null;
   return isPokemonActor(actor) && !actor.getFlag(MODULE_ID, "trainerOwnerUuid");
-}
-
-/* ============================================================
- * HOBBYIST L5 — VERSATILE
- *
- * After seeing a Pokémon's skill check or save, its trainer may add a d6 skill die.
- * dnd5e has no async step between evaluating and posting, so the roll is replayed
- * without a message, the die is offered, and the message is created with the final total.
- * ============================================================ */
-
-function getVersatileContext(pokemon) {
-  const trainer = trainerFromPokemon(pokemon);
-  if (!trainer?.isOwner || !trainerPathAtLevel(trainer, "hobbyist", 5)) {return null;}
-  const resource = getTrainerProgressionResource(trainer, SKILL_DICE_RESOURCE_ID);
-  return resource?.value > 0 ? { trainer, resource } : null;
-}
-
-// Appends an evaluated die roll to an evaluated roll, keeping it a real die so the tooltip and Dice So Nice show it.
-export function withVersatileDie(roll, dieRoll) {
-  const data = roll.toJSON();
-  const die = { ...dieRoll.terms[0].toJSON(), options: { flavor: "Versatile" } };
-  data.terms = [...data.terms, { class: "OperatorTerm", options: {}, evaluated: true, operator: "+" }, die];
-  data.formula = `${roll.formula} + ${dieRoll.formula}[Versatile]`;
-  data.total = Number(roll.total) + Number(dieRoll.total);
-  data.options = { ...data.options, [MODULE_ID]: { ...data.options?.[MODULE_ID], versatile: dieRoll.total } };
-  return roll.constructor.fromData(data);
-}
-
-async function rollWithVersatile({ pokemon, method, config, dialog, message, context }) {
-  const replay = { ...config, [VERSATILE_RESOLVED_KEY]: true };
-  delete replay.hookNames;
-  delete replay.rolls;
-  delete replay.subject;
-  const messageConfig = { ...message, create: false };
-  const rolls = await pokemon[method](replay, dialog, messageConfig);
-  if (!rolls?.length) {return;}
-  const english = getLanguage() === "en";
-  const use = await foundry.applications.api.DialogV2.confirm({
-    window: { title: "Versatile" },
-    content: `<p>${foundry.utils.escapeHTML(pokemon.name)}: <strong>${Number(rolls[0].total)}</strong></p><p>${english
-      ? `Add a Skill Die (d6)? Left: ${context.resource.value}/${context.resource.max}.`
-      : `¿Añadir un Skill Die (d6)? Quedan: ${context.resource.value}/${context.resource.max}.`}</p>`,
-    modal: true,
-    rejectClose: false
-  });
-  let finalRolls = rolls;
-  if (use === true && await spendTrainerProgressionResource(context.trainer, SKILL_DICE_RESOURCE_ID, 1)) {
-    finalRolls = [withVersatileDie(rolls[0], await new Roll("1d6").evaluate()), ...rolls.slice(1)];
-  }
-  await ChatMessage.implementation.create({ ...(messageConfig.data ?? {}), rolls: finalRolls.map(roll => roll.toJSON()) },
-    { rollMode: messageConfig.rollMode });
-}
-
-// False cancels this roll: Versatile replays it.
-function interceptVersatile(method, config, dialog, message) {
-  const pokemon = config?.subject;
-  if (config?.[VERSATILE_RESOLVED_KEY] || !isPokemonActor(pokemon)) {return true;}
-  const context = getVersatileContext(pokemon);
-  if (!context) {return true;}
-  void rollWithVersatile({ pokemon, method, config, dialog, message, context }).catch(error => {
-    console.error(`[${MODULE_ID}] Error aplicando Versatile`, error);
-    ui.notifications.error(getLanguage() === "en" ? "Versatile could not be applied." : "No se pudo aplicar Versatile.");
-  });
-  return false;
-}
-
-function onPreRollSavingThrow(config, dialog, message) {
-  return interceptVersatile("rollSavingThrow", config, dialog, message) ? undefined : false;
 }
 
 function trainerIntelligenceModifier(
@@ -2773,9 +2702,6 @@ function onPreRollSkill(
     }
   }
 
-  // Versatile replays the roll, so it runs before any bonus is written into config.
-  if (!interceptVersatile("rollSkill", config, dialog, message)) {return false;}
-
 
   /*
    * Researcher es opcional.
@@ -3392,8 +3318,6 @@ export function registerTrainerFeatureEngine() {
     "dnd5e.preRollSkill",
     onPreRollSkill
   );
-
-  Hooks.on("dnd5e.preRollSavingThrow", onPreRollSavingThrow);
 
 
   Hooks.on(

@@ -18,9 +18,13 @@ function pathAtLevel(trainer, pathId, level) {
   return getTrainerProgressionState(trainer)?.path?.id === pathId && (getTrainerLevel(trainer) ?? 0) >= level;
 }
 
-// Level 9 path features used from the command center.
+// Path features used from the command center; resource → shown by its button instead of a counter.
+export const TRAINER_PATH_ACTION_RESOURCES = { "trainer-skill-dice": "skillDice", "trainer-cheerleader": "cheerleaderUses" };
+export const TRAINER_PATH_ACTION_ICONS = { "trainer-skill-dice": "fa-dice-six", "trainer-partner": "fa-handshake", "trainer-cheerleader": "fa-bullhorn" };
+
 export function availableTrainerPathActions(trainer) {
   return [
+    pathAtLevel(trainer, "hobbyist", 5) ? "trainer-skill-dice" : null,
     pathAtLevel(trainer, "ranger", 9) ? "trainer-partner" : null,
     pathAtLevel(trainer, "poke-mentor", 9) ? "trainer-cheerleader" : null
   ].filter(Boolean);
@@ -31,8 +35,66 @@ export function trainerPathActionLabel(trainer, action) {
     const partner = fromUuidSync(trainer.getFlag(MODULE_ID, RANGER_PARTNER_FLAG) ?? "", { strict: false });
     return `Partner: ${partner?.name ?? "—"}`;
   }
-  const resource = getTrainerProgressionResource(trainer, "cheerleaderUses");
-  return `Cheerleader ${resource?.value ?? 0}/${resource?.max ?? 1}`;
+  const resource = getTrainerProgressionResource(trainer, TRAINER_PATH_ACTION_RESOURCES[action]);
+  return `${action === "trainer-skill-dice" ? "Skill Dice" : "Cheerleader"} ${resource?.value ?? 0}/${resource?.max ?? 1}`;
+}
+
+/* ============================================================
+ * HOBBYIST L5 — VERSATILE
+ *
+ * The Skill Dice button adds a d6 to the latest skill check or save of one of the
+ * trainer's Pokémon, after its result is known, by rewriting that chat message.
+ * ============================================================ */
+
+const VERSATILE_ROLL_TYPES = ["skill", "save"];
+
+export function latestVersatileMessage(trainer, messages) {
+  return [...messages].slice(-20).reverse().find(message => {
+    const actor = ChatMessage.implementation.getSpeakerActor(message.speaker);
+    return VERSATILE_ROLL_TYPES.includes(message.flags?.dnd5e?.roll?.type) && message.rolls?.length
+      && !message.rolls[0].options?.[MODULE_ID]?.versatile && isPokemonActor(actor) && getPokemonTrainerUuid(actor) === trainer.uuid;
+  }) ?? null;
+}
+
+// Appends an evaluated die roll to an evaluated roll, keeping it a real die so the tooltip shows it.
+export function withVersatileDie(roll, dieRoll) {
+  const data = roll.toJSON();
+  const die = { ...dieRoll.terms[0].toJSON(), options: { flavor: "Versatile" } };
+  data.terms = [...data.terms, { class: "OperatorTerm", options: {}, evaluated: true, operator: "+" }, die];
+  data.formula = `${roll.formula} + ${dieRoll.formula}[Versatile]`;
+  data.total = Number(roll.total) + Number(dieRoll.total);
+  data.options = { ...data.options, [MODULE_ID]: { ...data.options?.[MODULE_ID], versatile: dieRoll.total } };
+  return roll.constructor.fromData(data);
+}
+
+async function useSkillDie(trainer) {
+  const resource = getTrainerProgressionResource(trainer, "skillDice");
+  if (!resource?.value) {
+    ui.notifications.warn(en() ? "No Skill Dice left until a long rest." : "No quedan Skill Dice hasta un descanso largo.");
+    return;
+  }
+  const message = latestVersatileMessage(trainer, game.messages.contents);
+  if (!message) {
+    ui.notifications.warn(en() ? "No recent skill check or save from your Pokémon." : "No hay una tirada reciente de habilidad o salvación de tus Pokémon.");
+    return;
+  }
+  // shortcut: only the roll's author or the GM can rewrite it; a socket relay would be needed if others roll for the trainer's Pokémon.
+  if (!message.canUserModify(game.user, "update")) {
+    ui.notifications.warn(en() ? "Only whoever rolled it or the GM can add the die." : "Solo quien hizo la tirada o el GM puede añadir el dado.");
+    return;
+  }
+  const [roll, ...rest] = message.rolls;
+  const actor = ChatMessage.implementation.getSpeakerActor(message.speaker);
+  const use = await foundry.applications.api.DialogV2.confirm({
+    window: { title: "Versatile" },
+    content: `<p><strong>${escape(actor.name)}</strong> — ${escape(message.flavor)}: <strong>${Number(roll.total)}</strong></p>
+      <p>${en() ? `Add a Skill Die (d6)? Left: ${resource.value}/${resource.max}.` : `¿Añadir un Skill Die (d6)? Quedan: ${resource.value}/${resource.max}.`}</p>`,
+    rejectClose: false
+  });
+  if (use !== true || !await spendTrainerProgressionResource(trainer, "skillDice", 1)) {return;}
+  const die = await new Roll("1d6").evaluate();
+  await game.dice3d?.showForRoll(die, game.user, true);
+  await message.update({ rolls: [withVersatileDie(roll, die), ...rest].map(entry => entry.toJSON()) });
 }
 
 /* ============================================================
@@ -107,6 +169,7 @@ async function clearCheerleader(actor) {
 }
 
 export async function runTrainerPathAction(action, trainer) {
+  if (action === "trainer-skill-dice") {return useSkillDie(trainer);}
   if (action === "trainer-partner") {return choosePartner(trainer);}
   return useCheerleader(trainer);
 }

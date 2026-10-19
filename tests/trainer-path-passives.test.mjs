@@ -153,8 +153,8 @@ test("Partners adds the trainer's WIS mod to the partner's skills, and to its at
   game.user.targets = new Set();
 });
 
-test("Versatile replays the save without a message and posts it with the skill die added", async () => {
-  const { withVersatileDie } = await import("../scripts/trainer-feature-engine.mjs");
+test("Versatile picks the latest skill or save of the trainer's Pokémon and adds the die to it", async () => {
+  const { latestVersatileMessage, withVersatileDie } = await import("../scripts/trainer-path-actions.mjs");
   class FakeRoll {
     constructor(data) { Object.assign(this, data); }
     static fromData(data) { return new FakeRoll(data); }
@@ -168,29 +168,14 @@ test("Versatile replays the save without a message and posts it with the skill d
   assert.equal(final.options[MODULE_ID].versatile, 4);
 
   const flinker = trainer("hobbyist", 5);
-  flinker.isOwner = true;
-  flinker.system.abilities = { wis: { value: 10 } };
-  const { ensureTrainerPathFeatureResources } = await import("../scripts/trainer-progression-service.mjs");
-  await ensureTrainerPathFeatureResources(flinker);
   const diggy = pokemon(flinker, ["ground"]);
-  const replays = [];
-  diggy.rollSavingThrow = async (config, _dialog, message) => {
-    replays.push({ config, message });
-    message.data = { speaker: "Diggy" };
-    return [d20];
-  };
-  globalThis.Roll = class { constructor() {} async evaluate() { return die; } };
-  globalThis.foundry.applications = { api: { DialogV2: { confirm: async () => true } } };
-  globalThis.foundry.utils.escapeHTML = value => String(value);
-  const posted = new Promise(resolve => {
-    globalThis.ChatMessage = { implementation: { create: async data => resolve(data) } };
-  });
-  assert.equal(hooks.handler("dnd5e.preRollSavingThrow")({ subject: diggy, ability: "dex" }, {}, {}), false);
-  const message = await posted;
-  assert.equal(replays[0].message.create, false);
-  assert.equal(message.speaker, "Diggy");
-  assert.equal(message.rolls[0].total, 16);
-  assert.equal(flinker.getFlag(MODULE_ID, "trainerProgression").resources.skillDice.value, 0);
+  const stranger = pokemon(trainer("hobbyist", 5), ["fire"]);
+  globalThis.ChatMessage = { implementation: { getSpeakerActor: speaker => speaker.actor } };
+  const roll = (actor, type, rolls = [d20]) => ({ speaker: { actor }, flags: { dnd5e: { roll: { type } } }, rolls });
+  const save = roll(diggy, "save");
+  const messages = [save, roll(diggy, "attack"), roll(stranger, "skill"), roll(diggy, "skill", [final])];
+  assert.equal(latestVersatileMessage(flinker, messages), save, "skips attacks, other trainers and rolls already boosted");
+  assert.equal(latestVersatileMessage(flinker, [roll(diggy, "attack")]), null);
 });
 
 test("Cheerleader bonus targets attacks, damage or AC", async () => {

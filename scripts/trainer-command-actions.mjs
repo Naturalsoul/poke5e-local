@@ -1185,7 +1185,7 @@ export function activateTrainerCommandCenter({
       }
 
 
-      if (["trainer-partner", "trainer-cheerleader"].includes(action)) {
+      if (["trainer-skill-dice", "trainer-partner", "trainer-cheerleader"].includes(action)) {
         try {
           await runTrainerPathAction(action, trainer);
           refresh();
