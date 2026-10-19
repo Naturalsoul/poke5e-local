@@ -1,3 +1,4 @@
+import { registerPokemonBondService } from "./pokemon-bond-service.mjs";
 import { registerTrainerCombatReactions } from "./trainer-combat-reactions.mjs";
 import { registerTrainerReactionService } from "./trainer-reaction-service.mjs";
 import { registerPokemonCaptureService } from "./pokemon-capture-service.mjs";
@@ -413,6 +414,7 @@ Hooks.once(
     registerPokemonCaptureService();
     registerTrainerReactionService();
     registerTrainerCombatReactions();
+    registerPokemonBondService();
     registerTrainerOwnershipService();
     registerTrainerSwitchAuthorityService();
     registerPokemonActorSheet();

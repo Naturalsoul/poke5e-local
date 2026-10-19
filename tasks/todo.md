@@ -1,12 +1,14 @@
-# Tasks: Researcher and Collector features
+# Tasks: Bonds supplement (basic) and Commander
 
-Evolution Expert (Researcher 9) stays manual: the module has no feat system.
+Breeding / Pokémon Breeder stays for later (user, 2026-10-19).
+Bond Levels change by agreement with the DM: the GM sets them on the Pokémon sheet.
 
-- [x] 1. Analyst (Researcher 5) — button: the trainer's Investigation against the targeted Pokémon's Deception
-  (ties go to the Pokémon); on success the trainer's owners and the GM learn its Ability and one random Move.
-  Professor (Researcher 15) reveals one more Ability or Move.
-- [x] 2. Disciplined Strikes (Collector 9) — after a Move's damage roll that would faint a targeted Pokémon
-  (dnd5e's own calculation), the owner may choose to leave it at 1 HP; applied in dnd5e.preApplyDamage.
-- [x] 3. Expert Tracker (Collector 15) — Tracker already has 2 uses; after spending one, a DC 11 Investigation
-  or Nature check says whether a specific Pokémon from the local list can be encountered.
+- [x] 1. Bonds: world setting (off by default); Bond Level −3..+3 per Pokémon (GM edits on the sheet);
+  Bond Points = positive level, back on a long rest (the Pokémon's or its trainer's).
+- [x] 2. Spending a Bond Point (sheet button): advantage on the next check, attack or save; or disadvantage on the
+  next attack against it. Used up when that roll is made.
+- [x] 3. Obedience: at −2 a d20 ≤ 10 when using a Move means the attack has disadvantage; at −3 it disobeys.
+- [x] 4. Commander: +1 Bond Point at positive levels; Follow Me (5) caught Pokémon +1 Bond Level (max +2);
+  Show Me What You've Got (9) spend a point once per long rest per Pokémon; We're a Team (15) give the benefit to
+  the targeted allied Pokémon.
 - Verify: `node --test tests/*.test.mjs` (only the 29 old failures), lint unchanged on touched files.

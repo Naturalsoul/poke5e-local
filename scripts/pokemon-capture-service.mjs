@@ -1,3 +1,4 @@
+import { applyFollowMe } from "./pokemon-bond-service.mjs";
 import { trackRollDisplay } from "./chat-roll-display.mjs";
 import { loadDatabase } from "./importer.mjs";
 import { hasPokemonStatus } from "./status-runtime.mjs";
@@ -206,6 +207,7 @@ export function captureDestination(trainer) {
 async function acquireAsGm(trainer, tokenDocument) {
   const destination = captureDestination(trainer);
   const { pokemon } = await acquireWildPokemonToken(trainer, tokenDocument, { destination });
+  await applyFollowMe(trainer, pokemon);
   return { destination, pokemonUuid: pokemon.uuid };
 }
 
