@@ -1,6 +1,7 @@
 import {
   Poke5eImporter,
   loadDatabase,
+  migrateLegacyPokemonGender,
   migratePokemonHoverMovement
 } from "./importer.mjs";
 
@@ -658,6 +659,13 @@ Hooks.once(
       await migratePokemonHoverMovement({ notify: true });
     } catch (error) {
       console.error(`[${MODULE_ID}] Error migrando velocidades de levitación.`, error);
+    }
+
+    // Without the gender ratio flag, gender-engine never rolls a gender for that Pokémon.
+    try {
+      await migrateLegacyPokemonGender({ notify: true });
+    } catch (error) {
+      console.error(`[${MODULE_ID}] Error migrando género Pokémon legacy.`, error);
     }
 
     try {
