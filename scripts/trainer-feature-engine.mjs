@@ -34,9 +34,6 @@ const RESEARCHER_RESOURCE_ID =
 const RESEARCHER_RESOLVED_KEY =
   "poke5eResearcherResolved";
 
-const SHADOW_RESOURCE_ID =
-  "shadowPoints";
-
 const TACTICAL_RESOURCE_ID =
   "tacticalPoints";
 
@@ -543,6 +540,27 @@ export function getPokemonPartnerBonus(pokemon) {
   return Math.floor((Number(trainer.system?.abilities?.wis?.value ?? 10) - 10) / 2);
 }
 
+// Type Master L15, Releasing Power: a specialized-type Pokémon gets its STAB (PB + Type Master's +1/+2) on damaging Moves without it.
+export function getPokemonReleasingPowerBonus(pokemon, moveItem) {
+  const trainer = trainerFromPokemon(pokemon);
+  const stab = moveItem?.getFlag?.(MODULE_ID, "stab");
+  if (!trainer || !trainerPathAtLevel(trainer, "type-master", 15) || moveItem.getFlag(MODULE_ID, "kind") !== "move"
+    || stab?.eligible === true || moveItem.getFlag(MODULE_ID, "struggle")) {return 0;}
+  const specializedTypes = getTrainerSpecializationTypes(trainer);
+  const matches = pokemonTypes(pokemon).filter(type => specializedTypes.has(type)).length;
+  // shortcut: STAB-doubling Abilities (Adaptability) only double the STAB baked into the formula, not this one.
+  return matches ? Number(pokemon.system?.attributes?.prof ?? 0) + matches : 0;
+}
+
+// Ranger L15, Poké Assist: the trainer's Pokémon attack with advantage using Moves of one of the Partner's types.
+export function hasPokeAssistAdvantage(pokemon, moveItem) {
+  const trainer = trainerFromPokemon(pokemon);
+  if (!trainer || !trainerPathAtLevel(trainer, "ranger", 15)) {return false;}
+  const partner = fromUuidSync(trainer.getFlag(MODULE_ID, RANGER_PARTNER_FLAG) ?? "", { strict: false });
+  const moveType = moveItem?.getFlag?.(MODULE_ID, "moveType");
+  return Boolean(partner && moveType && pokemonTypes(partner).includes(moveType));
+}
+
 function isWildTarget() {
   const targets = [...(game.user?.targets ?? [])];
   const actor = targets.length === 1 ? targets[0].actor : null;
@@ -927,705 +945,6 @@ function requestResearcherSkillDecision({
       );
     }
   );
-}
-
-/* ============================================================
- * GRUNT / SABOTAGE
- * ============================================================ */
-
-function getPokemonGruntContext(
-  pokemon
-) {
-
-  const trainer =
-    trainerFromPokemon(
-      pokemon
-    );
-
-
-  if (
-    !trainer ||
-    trainerPathIdForPokemon(
-      pokemon
-    ) !==
-      "grunt"
-  ) {
-
-    return null;
-  }
-
-
-  const resource =
-    getTrainerProgressionResource(
-      trainer,
-      SHADOW_RESOURCE_ID
-    );
-
-
-  if (
-    !resource ||
-    resource.value <=
-      0
-  ) {
-
-    return null;
-  }
-
-
-  return {
-    trainer,
-    resource
-  };
-}
-
-
-function activeD20Result(
-  roll
-) {
-
-  const results =
-    roll?.d20
-      ?.results ??
-    [];
-
-
-  const active =
-    results.find(
-      result =>
-        result.active ===
-        true
-    );
-
-
-  const value =
-    Number(
-      active?.result ??
-      roll?.d20?.total
-    );
-
-
-  return Number.isFinite(
-    value
-  )
-    ? value
-    : null;
-}
-
-
-function sabotageTargetPokemon(
-  roll
-) {
-
-  /*
-   * D&D5e solo asigna options.target
-   * cuando existe exactamente un target.
-   */
-
-  const targetAc =
-    Number(
-      roll?.options
-        ?.target
-    );
-
-
-  if (
-    !Number.isFinite(
-      targetAc
-    )
-  ) {
-
-    return null;
-  }
-
-
-  const targets =
-    [
-      ...game.user.targets
-    ];
-
-
-  if (
-    targets.length !==
-      1
-  ) {
-
-    return null;
-  }
-
-
-  const pokemon =
-    targets[0]
-      ?.actor;
-
-
-  if (
-    !isPokemonActor(
-      pokemon
-    )
-  ) {
-
-    return null;
-  }
-
-
-  return {
-    pokemon,
-    targetAc
-  };
-}
-
-
-function getSabotageOpportunity(
-  roll
-) {
-
-  if (
-    !roll ||
-    roll.isSuccess !==
-      true
-  ) {
-
-    return null;
-  }
-
-
-  /*
-   * Poke5e:
-   * natural 20 cannot be decreased.
-   */
-
-  if (
-    activeD20Result(
-      roll
-    ) === 20
-  ) {
-
-    return null;
-  }
-
-
-  const target =
-    sabotageTargetPokemon(
-      roll
-    );
-
-
-  if (!target) {
-
-    return null;
-  }
-
-
-  const grunt =
-    getPokemonGruntContext(
-      target.pokemon
-    );
-
-
-  if (!grunt) {
-
-    return null;
-  }
-
-
-  const attackTotal =
-    Number(
-      roll.total
-    );
-
-
-  if (
-    !Number.isFinite(
-      attackTotal
-    )
-  ) {
-
-    return null;
-  }
-
-
-  /*
-   * Hit:
-   *
-   * total >= AC
-   *
-   * Para convertirlo en miss:
-   *
-   * effectiveTotal < AC
-   *
-   * mínimo gasto =
-   * total - AC + 1
-   */
-
-  const minimumSpend =
-    attackTotal -
-    target.targetAc +
-    1;
-
-
-  if (
-    minimumSpend < 1 ||
-    minimumSpend >
-      grunt.resource.value
-  ) {
-
-    return null;
-  }
-
-
-  return {
-    pokemon:
-      target.pokemon,
-
-    trainer:
-      grunt.trainer,
-
-    resource:
-      grunt.resource,
-
-    attackTotal,
-
-    targetAc:
-      target.targetAc,
-
-    minimumSpend
-  };
-}
-
-function sabotageDialogContent(
-  opportunity
-) {
-
-  const language =
-    getLanguage();
-
-
-  const trainerName =
-    foundry.utils.escapeHTML(
-      opportunity
-        .trainer
-        .name
-    );
-
-
-  const pokemonName =
-    foundry.utils.escapeHTML(
-      opportunity
-        .pokemon
-        .name
-    );
-
-
-  if (
-    language ===
-      "en"
-  ) {
-
-    return `
-      <p>
-        <strong>${pokemonName}</strong>
-        was hit with an attack roll of
-        <strong>${opportunity.attackTotal}</strong>
-        against AC
-        <strong>${opportunity.targetAc}</strong>.
-      </p>
-
-      <p>
-        ${trainerName} may use
-        <strong>Sabotage</strong>
-        as a Reaction.
-      </p>
-
-      <div class="form-group">
-        <label>
-          Shadow Points
-        </label>
-
-        <input
-          type="number"
-          name="shadowPoints"
-          min="${opportunity.minimumSpend}"
-          max="${opportunity.resource.value}"
-          value="${opportunity.minimumSpend}"
-        >
-      </div>
-
-      <p class="hint">
-        Minimum required:
-        ${opportunity.minimumSpend}.
-        Available:
-        ${opportunity.resource.value}/${opportunity.resource.max}.
-      </p>
-    `;
-  }
-
-
-  return `
-    <p>
-      <strong>${pokemonName}</strong>
-      recibió un ataque con resultado
-      <strong>${opportunity.attackTotal}</strong>
-      contra CA
-      <strong>${opportunity.targetAc}</strong>.
-    </p>
-
-    <p>
-      ${trainerName} puede usar
-      <strong>Sabotage</strong>
-      como Reacción.
-    </p>
-
-    <div class="form-group">
-      <label>
-        Shadow Points
-      </label>
-
-      <input
-        type="number"
-        name="shadowPoints"
-        min="${opportunity.minimumSpend}"
-        max="${opportunity.resource.value}"
-        value="${opportunity.minimumSpend}"
-      >
-    </div>
-
-    <p class="hint">
-      Mínimo necesario:
-      ${opportunity.minimumSpend}.
-      Disponibles:
-      ${opportunity.resource.value}/${opportunity.resource.max}.
-    </p>
-  `;
-}
-
-
-async function promptSabotage(
-  opportunity
-) {
-
-  const result =
-    await foundry.applications.api
-      .DialogV2.prompt({
-
-        window: {
-          title:
-            "Sabotage"
-        },
-
-        content:
-          sabotageDialogContent(
-            opportunity
-          ),
-
-        rejectClose:
-          false,
-
-        ok: {
-
-          label:
-            getLanguage() ===
-              "en"
-              ? "Use Sabotage"
-              : "Usar Sabotage",
-
-          callback:
-            (
-              event,
-              button
-            ) => {
-
-              const value =
-                Number(
-                  button.form
-                    .elements
-                    .shadowPoints
-                    .value
-                );
-
-
-              return Number.isInteger(
-                value
-              )
-                ? value
-                : null;
-            }
-        }
-      });
-
-
-  if (
-    !Number.isInteger(
-      result
-    )
-  ) {
-
-    return null;
-  }
-
-
-  if (
-    result <
-      opportunity
-        .minimumSpend ||
-    result >
-      opportunity
-        .resource
-        .value
-  ) {
-
-    return null;
-  }
-
-
-  return result;
-}
-
-async function applySabotageToAttackRoll(
-  roll,
-  opportunity,
-  spent
-) {
-
-  const message =
-    roll.parent;
-
-
-  if (
-    message?.documentName !==
-      "ChatMessage"
-  ) {
-
-    throw new Error(
-      "No se encontró el ChatMessage del Attack Roll."
-    );
-  }
-
-
-  const effectiveTotal =
-    opportunity
-      .attackTotal -
-    spent;
-
-
-  const rollData =
-    roll.toJSON();
-
-
-  rollData.options ??=
-    {};
-
-
-  rollData.options[
-    MODULE_ID
-  ] = {
-
-    ...(
-      rollData.options[
-        MODULE_ID
-      ] ??
-      {}
-    ),
-
-    sabotage: {
-
-      trainerUuid:
-        opportunity
-          .trainer
-          .uuid,
-
-      pokemonUuid:
-        opportunity
-          .pokemon
-          .uuid,
-
-      spent,
-
-      originalTotal:
-        opportunity
-          .attackTotal,
-
-      effectiveTotal,
-
-      originalTarget:
-        opportunity
-          .targetAc
-    }
-  };
-
-
-  /*
-   * D&D5e determina isSuccess comparando
-   * roll.total contra options.target.
-   *
-   * No tocamos:
-   *
-   * - d20 natural
-   * - roll.total original
-   *
-   * Solo hacemos que el resultado mecánico
-   * del Roll pase a ser failure.
-   */
-
-  rollData.options.target =
-    opportunity
-      .targetAc +
-    spent;
-
-
-  const ReplacementRoll =
-    roll.constructor
-      .fromData(
-        rollData
-      );
-
-
-  const messageRolls =
-    message.rolls.map(
-      existing =>
-        existing ===
-          roll
-          ? ReplacementRoll
-          : existing
-    );
-
-
-  /*
-   * En algunos casos Foundry reconstruye
-   * las instancias del ChatMessage.
-   * Si la referencia no coincide, usamos
-   * el único Attack Roll del mensaje.
-   */
-
-  const replaced =
-    messageRolls.some(
-      existing =>
-        existing ===
-          ReplacementRoll
-    );
-
-
-  if (
-    !replaced &&
-    messageRolls.length ===
-      1
-  ) {
-
-    messageRolls[0] =
-      ReplacementRoll;
-  }
-
-
-  await message.update({
-
-    rolls:
-      messageRolls.map(
-        existing =>
-          existing.toJSON()
-      ),
-
-    [`flags.${MODULE_ID}.sabotage`]: {
-
-      trainerUuid:
-        opportunity
-          .trainer
-          .uuid,
-
-      pokemonUuid:
-        opportunity
-          .pokemon
-          .uuid,
-
-      spent,
-
-      originalTotal:
-        opportunity
-          .attackTotal,
-
-      effectiveTotal,
-
-      targetAc:
-        opportunity
-          .targetAc
-    }
-  });
-
-
-  return effectiveTotal;
-}
-
-async function createSabotageMessage(
-  opportunity,
-  spent,
-  effectiveTotal
-) {
-
-  const language =
-    getLanguage();
-
-
-  const content =
-    language ===
-      "en"
-      ? `
-        <div class="poke5e-turn-message">
-          <strong>${opportunity.trainer.name}</strong>
-          uses <strong>Sabotage</strong> as a Reaction.
-
-          <br>
-
-          Attack:
-          <strong>${opportunity.attackTotal}</strong>
-          → <strong>${effectiveTotal}</strong>
-
-          against AC
-          <strong>${opportunity.targetAc}</strong>.
-
-          <br>
-
-          <strong>${spent} Shadow Point${spent === 1 ? "" : "s"}</strong>
-          spent.
-
-          <br>
-
-          <strong>Miss.</strong>
-        </div>
-      `
-      : `
-        <div class="poke5e-turn-message">
-          <strong>${opportunity.trainer.name}</strong>
-          usa <strong>Sabotage</strong> como Reacción.
-
-          <br>
-
-          Ataque:
-          <strong>${opportunity.attackTotal}</strong>
-          → <strong>${effectiveTotal}</strong>
-
-          contra CA
-          <strong>${opportunity.targetAc}</strong>.
-
-          <br>
-
-          Gasta
-          <strong>${spent} Shadow Point${spent === 1 ? "" : "s"}</strong>.
-
-          <br>
-
-          <strong>Falla.</strong>
-        </div>
-      `;
-
-
-  await ChatMessage.create({
-
-    speaker:
-      ChatMessage.getSpeaker({
-        actor:
-          opportunity.trainer
-      }),
-
-    content
-  });
 }
 
 /* ============================================================
@@ -2894,6 +2213,10 @@ function onPreRollAttack(
   const partnerAttack = isWildTarget() ? getPokemonPartnerBonus(pokemon) : 0;
   if (partnerAttack !== 0) {appendAttackRollBonus(config, partnerAttack, "rangerPartnerAttack");}
 
+  if (hasPokeAssistAdvantage(pokemon, config?.subject?.item)) {
+    for (const rollConfig of config.rolls ?? []) {(rollConfig.options ??= {}).advantage = true;}
+  }
+
   const bonus =
     getPokemonAceTrainerBonus(
       pokemon
@@ -3162,140 +2485,14 @@ function onPostRollConfiguration(
     {
       bonus:
         typeMasterBonus,
-
       key:
         "typeMasterStab"
     }
   );
-}
 
-/* ============================================================
- * GRUNT — ATTACK RESULT
- * ============================================================ */
-
-async function resolveSabotage(
-  rolls
-) {
-
-  if (
-    !Array.isArray(
-      rolls
-    ) ||
-    rolls.length !==
-      1
-  ) {
-
-    return;
+  if (!rolls.some(isHitPointHealingRoll)) {
+    applyTrainerDamageBonus(rolls, { bonus: getPokemonReleasingPowerBonus(pokemon, moveItem), key: "releasingPowerStab" });
   }
-
-
-  const roll =
-    rolls[0];
-
-
-  const opportunity =
-    getSabotageOpportunity(
-      roll
-    );
-
-
-  if (!opportunity) {
-
-    return;
-  }
-
-
-  const spent =
-    await promptSabotage(
-      opportunity
-    );
-
-
-  if (!spent) {
-
-    return;
-  }
-
-
-  const consumed =
-    await spendTrainerProgressionResource(
-      opportunity.trainer,
-      SHADOW_RESOURCE_ID,
-      spent
-    );
-
-
-  if (!consumed) {
-
-    ui.notifications.warn(
-      getLanguage() ===
-        "en"
-        ? "There are not enough Shadow Points."
-        : "No quedan suficientes Shadow Points."
-    );
-
-    return;
-  }
-
-
-  try {
-
-    const effectiveTotal =
-      await applySabotageToAttackRoll(
-        roll,
-        opportunity,
-        spent
-      );
-
-
-    await createSabotageMessage(
-      opportunity,
-      spent,
-      effectiveTotal
-    );
-
-  } catch (error) {
-
-    /*
-     * Si no logramos aplicar el efecto,
-     * devolvemos los Shadow Points.
-     */
-
-    await restoreTrainerProgressionResource(
-      opportunity.trainer,
-      SHADOW_RESOURCE_ID,
-      spent
-    );
-
-
-    throw error;
-  }
-}
-
-
-function onRollAttack(
-  rolls
-) {
-
-  void resolveSabotage(
-    rolls
-  ).catch(
-    error => {
-
-      console.error(
-        `[${MODULE_ID}] Error aplicando Sabotage`,
-        error
-      );
-
-
-      ui.notifications.error(
-        getLanguage() ===
-          "en"
-          ? "Sabotage could not be applied."
-          : "No se pudo aplicar Sabotage."
-      );
-    }
-  );
 }
 
 /* ============================================================
@@ -3334,6 +2531,17 @@ function onTrainerRestCompleted(
     return;
   }
 
+  // Master Teacher: moves can already be learned and forgotten from the sheet at any time; this is the reminder.
+  if (trainerPathAtLevel(actor, "poke-mentor", 15)) {
+    void ChatMessage.implementation.create({
+      speaker: ChatMessage.implementation.getSpeaker({ actor }),
+      whisper: game.users.filter(user => actor.testUserPermission(user, "OWNER")).map(user => user.id),
+      content: getLanguage() === "en"
+        ? `<p><strong>Master Teacher</strong>: ${foundry.utils.escapeHTML(actor.name)}'s Pokémon may learn and forget Moves now.</p>`
+        : `<p><strong>Master Teacher</strong>: los Pokémon de ${foundry.utils.escapeHTML(actor.name)} pueden aprender y olvidar Moves ahora.</p>`
+    });
+  }
+
   // Partners: a new partner is chosen after each long rest.
   if (actor.getFlag(MODULE_ID, RANGER_PARTNER_FLAG)) {
     void actor.unsetFlag(MODULE_ID, RANGER_PARTNER_FLAG);
@@ -3368,12 +2576,6 @@ export function registerTrainerFeatureEngine() {
   Hooks.on(
     "dnd5e.preRollAttack",
     onPreRollAttack
-  );
-
-
-  Hooks.on(
-    "dnd5e.rollAttack",
-    onRollAttack
   );
 
 

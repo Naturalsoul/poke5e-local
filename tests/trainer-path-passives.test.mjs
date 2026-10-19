@@ -5,7 +5,7 @@ import { createFlagDocument, createHooks, installFoundryUtils } from "./helpers/
 installFoundryUtils();
 const hooks = createHooks();
 const MODULE_ID = "poke5e-local";
-globalThis.CONST = { ACTIVE_EFFECT_MODES: { ADD: 2 } };
+globalThis.CONST = { ACTIVE_EFFECT_MODES: { ADD: 2, UPGRADE: 4 } };
 globalThis.game = { actors: [], user: { isGM: true, targets: new Set() }, users: { activeGM: null }, settings: { get: () => "es" } };
 globalThis.canvas = { tokens: { placeables: [] } };
 const { getGeneralistSkillBonus, getPokemonDrawingPowerBonus, registerTrainerFeatureEngine } = await import("../scripts/trainer-feature-engine.mjs");
@@ -178,6 +178,55 @@ test("Versatile picks the latest skill or save of the trainer's Pokémon and add
   assert.equal(latestVersatileMessage(flinker, [roll(diggy, "attack")]), null);
 });
 
+test("Directed Strike rerolls the latest damage of the trainer's Pokémon once and keeps the higher", async () => {
+  const { availableTrainerPathActions, runTrainerPathAction } = await import("../scripts/trainer-path-actions.mjs");
+  const tess = trainer("tactician", 5);
+  await tess.setFlag(MODULE_ID, "trainerProgression", { ...tess.getFlag(MODULE_ID, "trainerProgression"), resources: { tacticalPoints: { value: 5, max: 5 } } });
+  assert.deepEqual(availableTrainerPathActions(tess), ["trainer-directed-strike"]);
+  assert.deepEqual(availableTrainerPathActions(trainer("ace-trainer", 5)), ["trainer-battle-dice"]);
+  const damage = total => ({ total, formula: "2d6", options: {}, toJSON() { return { ...this }; }, reroll: async () => damage(total + 3) });
+  const message = { speaker: { actor: pokemon(tess, ["normal"]) }, flags: { dnd5e: { roll: { type: "damage" } } }, rolls: [damage(5)],
+    canUserModify: () => true, update: async changes => { message.rolls = changes.rolls; } };
+  const chat = [];
+  game.messages = { contents: [message] };
+  globalThis.ChatMessage = { implementation: { getSpeakerActor: speaker => speaker.actor, getSpeaker: () => ({}), create: async data => chat.push(data.content) } };
+  globalThis.foundry.applications = { api: { DialogV2: { confirm: async () => true } } };
+  globalThis.ui = { notifications: { warn: text => chat.push(text) } };
+  await runTrainerPathAction("trainer-directed-strike", tess);
+  assert.equal(message.rolls[0].total, 8);
+  assert.deepEqual(message.rolls[0].options[MODULE_ID].directedStrike, { first: 5, second: 8 });
+  assert.match(chat.at(-1), /5 \/ 8 → <strong>8<\/strong>/);
+  assert.equal(tess.getFlag(MODULE_ID, "trainerProgression").resources.tacticalPoints.value, 3);
+  await runTrainerPathAction("trainer-directed-strike", tess);
+  assert.match(chat.at(-1), /No hay una tirada de daño/, "the same roll is not redirected twice");
+});
+
+test("Dark Advantage spends 3 Shadow Points and gives advantage to the chosen actor's next roll only", async () => {
+  const { registerTrainerPathActions, runTrainerPathAction } = await import("../scripts/trainer-path-actions.mjs");
+  registerTrainerPathActions();
+  const grunt = trainer("grunt", 5);
+  const zubat = pokemon(grunt, ["poison"]);
+  await grunt.setFlag(MODULE_ID, "trainerProgression", { ...grunt.getFlag(MODULE_ID, "trainerProgression"), resources: { shadowPoints: { value: 5, max: 5 } } });
+  await grunt.setFlag(MODULE_ID, "trainerParty", { pokemonUuids: [zubat.uuid], activePokemonUuids: [zubat.uuid] });
+  globalThis.fromUuidSync = uuid => game.actors.find(actor => actor.uuid === uuid) ?? null;
+  globalThis.foundry.applications = { api: { DialogV2: { prompt: async options => {
+    assert.match(options.content, new RegExp(`value="${zubat.uuid}"`));
+    return zubat.uuid;
+  } } } };
+  globalThis.ChatMessage = { implementation: { getSpeaker: () => ({}), create: async () => {} } };
+  await runTrainerPathAction("trainer-dark-advantage", grunt);
+  assert.equal(grunt.getFlag(MODULE_ID, "trainerProgression").resources.shadowPoints.value, 2);
+  const config = { subject: zubat, rolls: [{}] };
+  hooks.handlers("dnd5e.preRollSavingThrow").forEach(handler => handler(config));
+  assert.equal(config.rolls[0].options.advantage, true);
+  const other = { subject: pokemon(grunt, ["dark"]), rolls: [{}] };
+  hooks.handlers("dnd5e.preRollSkill").forEach(handler => handler(other));
+  assert.equal(other.rolls[0].options?.advantage, undefined, "only the chosen actor");
+  hooks.handlers("dnd5e.rollSavingThrow").forEach(handler => handler([{ options: config.rolls[0].options }], { subject: zubat }));
+  await new Promise(resolve => setTimeout(resolve, 0));
+  assert.equal(zubat.getFlag(MODULE_ID, "darkAdvantage") ?? null, null, "used up by the roll");
+});
+
 test("Cheerleader bonus targets attacks, damage or AC", async () => {
   const { cheerleaderChanges } = await import("../scripts/trainer-path-actions.mjs");
   assert.deepEqual(cheerleaderChanges("ac", 2), [{ key: "system.attributes.ac.bonus", mode: 2, value: "2", priority: 20 }]);
@@ -220,4 +269,49 @@ test("catalog item healing adds Nurse's WIS and offers Tactician's d4s", async (
   await refundItemHealingBonuses(result);
   assert.equal(points(), 3);
   tactician.isOwner = false;
+});
+
+function move(actor, flags) {
+  const item = createFlagDocument({ documentName: "Item", flags: { [MODULE_ID]: { kind: "move", ...flags } } });
+  item.actor = actor;
+  return item;
+}
+
+test("Releasing Power gives specialized-type Pokémon their STAB on damaging Moves without it, from level 15", async () => {
+  const { getPokemonReleasingPowerBonus } = await import("../scripts/trainer-feature-engine.mjs");
+  const syla = trainer("type-master", 15, ["punk", "mystic"]);
+  const gengar = pokemon(syla, ["ghost", "poison"]);
+  gengar.system.attributes = { prof: 4 };
+  // PB 4 + Type Master's +2 for matching both types.
+  assert.equal(getPokemonReleasingPowerBonus(gengar, move(gengar, { moveType: "psychic", stab: { eligible: false } })), 6);
+  assert.equal(getPokemonReleasingPowerBonus(gengar, move(gengar, { moveType: "ghost", stab: { eligible: true } })), 0, "already has STAB");
+  assert.equal(getPokemonReleasingPowerBonus(gengar, move(gengar, { struggle: { noAmplification: true } })), 0);
+  const pikachu = pokemon(syla, ["electric"]);
+  pikachu.system.attributes = { prof: 4 };
+  assert.equal(getPokemonReleasingPowerBonus(pikachu, move(pikachu, { moveType: "normal" })), 0, "not a specialized type");
+  const early = trainer("type-master", 14, ["mystic"]);
+  const ghost = pokemon(early, ["ghost"]);
+  ghost.system.attributes = { prof: 4 };
+  assert.equal(getPokemonReleasingPowerBonus(ghost, move(ghost, { moveType: "normal" })), 0);
+});
+
+test("Poké Assist gives advantage to Moves of the Partner's types from level 15", async () => {
+  const { hasPokeAssistAdvantage } = await import("../scripts/trainer-feature-engine.mjs");
+  const ranger = trainer("ranger", 15);
+  const partner = pokemon(ranger, ["grass", "poison"]);
+  const ally = pokemon(ranger, ["water"]);
+  await ranger.setFlag(MODULE_ID, "rangerPartnerUuid", partner.uuid);
+  assert.equal(hasPokeAssistAdvantage(ally, move(ally, { moveType: "grass" })), true);
+  assert.equal(hasPokeAssistAdvantage(ally, move(ally, { moveType: "water" })), false);
+  const item = move(ally, { moveType: "poison" });
+  const rollConfig = { parts: [], options: {} };
+  hooks.handler("dnd5e.preRollAttack")({ subject: { item }, rolls: [rollConfig] });
+  assert.equal(rollConfig.options.advantage, true);
+});
+
+test("Multitalented adds the chosen skill proficiency from level 15", () => {
+  const base = { pathId: "hobbyist", choices: {}, multitalentedSkill: "ath" };
+  assert.deepEqual(trainerPathEffectChanges({ ...base, level: 15 }), [{ key: "system.skills.ath.value", mode: 4, value: "1", priority: 20 }]);
+  assert.deepEqual(trainerPathEffectChanges({ ...base, level: 14 }), []);
+  assert.deepEqual(trainerPathEffectChanges({ ...base, level: 15, multitalentedSkill: "" }), []);
 });

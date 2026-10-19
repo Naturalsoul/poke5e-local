@@ -467,11 +467,32 @@ export function hasPokemonAbility(
   }
 
 
+  /*
+   * Guru L9, Body: la segunda Ability elegida
+   * también está activa.
+   */
+
   return (
     activePokemonAbilityId(
       actor
     ) ===
-    normalized
+    normalized ||
+
+    (
+      normalizeId(
+        actor?.getFlag?.(
+          MODULE_ID,
+          "bodyAbilityId"
+        )
+      ) ===
+      normalized &&
+
+      pokemonAbilityIds(
+        actor
+      ).includes(
+        normalized
+      )
+    )
   );
 }
 
