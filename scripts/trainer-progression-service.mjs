@@ -923,22 +923,35 @@ function buildTrainerResources(
  * ============================================================ */
 
 // Hobbyist L5 Versatile: 1 + WIS mod skill dice (min 1). Poké Mentor L9 Cheerleader: once per short rest.
+// 1 + the ability modifier, minimum 1.
+const onePlus = ability => ({ abilities }) => Math.max(1, 1 + Math.floor((Number(abilities?.[ability] ?? 10) - 10) / 2));
+
+const PATH_FEATURE_RESOURCES = [
+  // Hobbyist L5, Versatile: Skill Dice.
+  { pathId: "hobbyist", level: 5, id: "skillDice", recovery: "long-rest", max: onePlus("wis") },
+  // Poké Mentor L9, Cheerleader.
+  { pathId: "poke-mentor", level: 9, id: "cheerleaderUses", recovery: "short-rest", max: () => 1 },
+  // Ace Trainer L5, Battle Master: Battle Dice.
+  { pathId: "ace-trainer", level: 5, id: "battleDice", recovery: "long-rest", max: onePlus("dex") },
+  // Pokémon Collector L5, Gotta Catch 'Em All: one advantaged capture.
+  { pathId: "pokemon-collector", level: 5, id: "gottaCatchUses", recovery: "long-rest", max: () => 1 },
+  // Nurse L5, Pokéchef: PB Treats.
+  { pathId: "nurse", level: 5, id: "pokechefUses", recovery: "long-rest", max: ({ level }) => getTrainerLevelRule(level).proficiencyBonus },
+  // Guru L15, Spirit.
+  { pathId: "guru", level: 15, id: "spiritUses", recovery: "long-rest", max: onePlus("wis") },
+  // Every path. Pokémon Tracker (13): once per long rest, twice with Expert Tracker (Collector 15).
+  { level: 13, id: "trackerUses", recovery: "long-rest", max: ({ level, pathId }) => (pathId === "pokemon-collector" && level >= 15 ? 2 : 1) },
+  // Master Trainer (20): turn a failed save into a success twice per long rest.
+  { level: 20, id: "masterTrainerUses", recovery: "long-rest", max: () => 2 }
+];
+
 function pathFeatureResources(pathId, level, abilities, previous = {}) {
   const resources = {};
-  const keep = (id, max, recovery) => {
-    const value = previous?.[id] ? Math.min(Number(previous[id].value ?? max), max) : max;
-    resources[id] = { value, max, recovery };
-  };
-  if (pathId === "hobbyist" && level >= 5) {
-    keep("skillDice", Math.max(1, 1 + Math.floor((Number(abilities?.wis ?? 10) - 10) / 2)), "long-rest");
+  for (const resource of PATH_FEATURE_RESOURCES.filter(entry => (entry.pathId ?? pathId) === pathId && level >= entry.level)) {
+    const max = resource.max({ level, abilities, pathId });
+    const value = previous?.[resource.id] ? Math.min(Number(previous[resource.id].value ?? max), max) : max;
+    resources[resource.id] = { value, max, recovery: resource.recovery };
   }
-  if (pathId === "poke-mentor" && level >= 9) {keep("cheerleaderUses", 1, "short-rest");}
-  // Ace Trainer L5, Battle Master: 1 + DEX modifier Battle Dice (minimum 1) per long rest.
-  if (pathId === "ace-trainer" && level >= 5) {
-    keep("battleDice", Math.max(1, 1 + Math.floor((Number(abilities?.dex ?? 10) - 10) / 2)), "long-rest");
-  }
-  // Pokémon Collector L5, Gotta Catch 'Em All: one advantaged capture per long rest.
-  if (pathId === "pokemon-collector" && level >= 5) {keep("gottaCatchUses", 1, "long-rest");}
   return resources;
 }
 
@@ -950,6 +963,11 @@ export async function ensureTrainerPathFeatureResources(trainer) {
   const wanted = pathFeatureResources(progression.path.id, Number(trainer.getFlag(MODULE_ID, "trainerLevel")) || 1, abilities,
     progression.resources);
   const current = progression.resources ?? {};
+  const immunities = new Set(trainer.system?.traits?.ci?.value ?? []);
+  // Trainer's Resolve (10) for trainers leveled before the immunity was applied.
+  if ((Number(trainer.getFlag(MODULE_ID, "trainerLevel")) || 1) >= 10 && !immunities.has("frightened")) {
+    await trainer.update({ "system.traits.ci.value": [...immunities, "frightened"] });
+  }
   if (Object.entries(wanted).every(([id, resource]) => current[id]?.max === resource.max)) {return;}
   await trainer.setFlag(MODULE_ID, "trainerProgression", { ...progression, resources: { ...current, ...wanted } });
 }
@@ -2061,6 +2079,36 @@ export async function configureTrainerProgression(
     ] =
       1;
   }
+
+
+  /*
+   * Trainer's Resolve (10): inmune a Frightened.
+   * Se conservan las demás inmunidades del actor.
+   */
+
+  const conditionImmunities =
+    new Set(
+      trainer.system?.traits?.ci?.value ??
+      []
+    );
+
+  conditionImmunities.delete(
+    "frightened"
+  );
+
+  if (
+    level >= 10
+  ) {
+    conditionImmunities.add(
+      "frightened"
+    );
+  }
+
+  updates[
+    "system.traits.ci.value"
+  ] = [
+    ...conditionImmunities
+  ];
 
 
   /*
