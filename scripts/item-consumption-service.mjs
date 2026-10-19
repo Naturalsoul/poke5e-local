@@ -1,3 +1,4 @@
+import { refundItemHealingBonuses, resolveItemHealingBonuses } from "./trainer-feature-engine.mjs";
 const MODULE_ID =
   "poke5e-local";
 
@@ -1111,11 +1112,22 @@ async function rollItemFormula(
     );
 
 
+  // Nurse and Tactician only add to healing rolls.
+  const bonuses =
+    rollDefinition.kind ===
+      "healing"
+      ? await resolveItemHealingBonuses(
+          ChatMessage.implementation.getSpeakerActor(
+            message.speaker
+          )
+        )
+      : { parts: [] };
+
   try {
 
     const roll =
       await new Roll(
-        formula
+        [formula, ...bonuses.parts].join(" + ")
       ).evaluate();
 
 
@@ -1129,6 +1141,10 @@ async function rollItemFormula(
     });
 
   } catch (error) {
+
+    await refundItemHealingBonuses(
+      bonuses
+    );
 
     console.error(
       `[${MODULE_ID}] Error realizando tirada de Item`,

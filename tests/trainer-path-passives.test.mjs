@@ -194,3 +194,30 @@ test("Cheerleader ends on the next turn of the trainer's Pokémon, since trainer
   assert.equal(cheerleaderExpiresOnTurn(null, "Actor.b", inCombat), true, "used outside its turns: next Pokémon turn ends it");
   assert.equal(cheerleaderExpiresOnTurn("Actor.gone", "Actor.b", inCombat), true, "A switched out");
 });
+
+test("catalog item healing adds Nurse's WIS and offers Tactician's d4s", async () => {
+  const { getNurseItemHealingBonus, refundItemHealingBonuses, resolveItemHealingBonuses } = await import("../scripts/trainer-feature-engine.mjs");
+  const nurse = trainer("nurse", 2);
+  nurse.system.abilities = { wis: { value: 16 } };
+  const patient = pokemon(nurse, ["normal"]);
+  assert.equal(getNurseItemHealingBonus(nurse), 3);
+  assert.equal(getNurseItemHealingBonus(patient), 3, "a berry eaten by the Nurse's Pokémon");
+  const low = trainer("nurse", 2);
+  low.system.abilities = { wis: { value: 8 } };
+  assert.equal(getNurseItemHealingBonus(low), 1, "minimum 1");
+  assert.equal(getNurseItemHealingBonus(trainer("ranger", 2)), 0);
+
+  const tactician = trainer("tactician", 3);
+  tactician.isOwner = true;
+  await tactician.setFlag(MODULE_ID, "trainerProgression", { ...tactician.getFlag(MODULE_ID, "trainerProgression"),
+    resources: { tacticalPoints: { value: 3, max: 3, recovery: "long-rest" } } });
+  globalThis.foundry.applications = { api: { DialogV2: { prompt: async () => ({ trainerUuid: tactician.uuid, spent: 2 }) } } };
+  globalThis.foundry.utils.escapeHTML = value => String(value);
+  const result = await resolveItemHealingBonuses(nurse);
+  assert.deepEqual(result.parts, ["3[Nurse]", "2d4[Tactician]"]);
+  const points = () => tactician.getFlag(MODULE_ID, "trainerProgression").resources.tacticalPoints.value;
+  assert.equal(points(), 1);
+  await refundItemHealingBonuses(result);
+  assert.equal(points(), 3);
+  tactician.isOwner = false;
+});

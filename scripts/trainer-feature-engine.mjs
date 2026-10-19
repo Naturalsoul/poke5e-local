@@ -2277,6 +2277,51 @@ async function promptTactician(
 }
 
 
+/* ============================================================
+ * CATALOG ITEM HEALING
+ *
+ * Potions, Revives and healing Berries roll their own formula from the chat card,
+ * outside dnd5e's healing roll, so Nurse and Tactician are added here as extra parts.
+ * ============================================================ */
+
+function itemUserTrainer(actor) {
+  if (isTrainerActor(actor)) {return actor;}
+  return isPokemonActor(actor) ? trainerFromPokemon(actor) : null;
+}
+
+// Nurse: an item used by the trainer, or by one of its Pokémon, heals +WIS mod (min 1).
+export function getNurseItemHealingBonus(actor) {
+  const trainer = itemUserTrainer(actor);
+  if (!trainerHasPath(trainer, "nurse")) {return 0;}
+  return Math.max(1, Math.floor((Number(trainer.system?.abilities?.wis?.value ?? 10) - 10) / 2));
+}
+
+function itemHealingPokemon(actor) {
+  const targets = [...game.user.targets].map(token => token.actor).filter(isPokemonActor);
+  if (targets.length === 1) {return targets[0];}
+  return isPokemonActor(actor) ? actor : { name: "Pokémon" };
+}
+
+export async function resolveItemHealingBonuses(actor) {
+  const parts = [];
+  const nurse = getNurseItemHealingBonus(actor);
+  if (nurse > 0) {parts.push(`${nurse}[Nurse]`);}
+  const candidates = tacticianCandidates();
+  if (!candidates.length) {return { parts, tactician: null };}
+  const decision = await promptTactician({ pokemon: itemHealingPokemon(actor), candidates });
+  const trainer = decision ? game.actors.find(entry => entry.uuid === decision.trainerUuid) : null;
+  if (!isTrainerActor(trainer) || !await spendTrainerProgressionResource(trainer, TACTICAL_RESOURCE_ID, decision.spent)) {
+    return { parts, tactician: null };
+  }
+  parts.push(`${decision.spent}d4[Tactician]`);
+  return { parts, tactician: { trainer, spent: decision.spent } };
+}
+
+// The roll failed after Tactical Points were spent.
+export async function refundItemHealingBonuses({ tactician } = {}) {
+  if (tactician) {await restoreTrainerProgressionResource(tactician.trainer, TACTICAL_RESOURCE_ID, tactician.spent);}
+}
+
 function buildDamageReplayConfig(
   config,
   resolution
