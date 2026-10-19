@@ -9782,3 +9782,28 @@ strong {
       1ms;
   }
 }
+/* Battle hotbar: PP or uses left on each battle macro. */
+#hotbar .slot:has(.poke5e-hotbar-slot__count) {
+  position: relative;
+}
+
+#hotbar .poke5e-hotbar-slot__count {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  padding: 0 3px;
+  border-radius: 3px;
+  background: rgb(0 0 0 / 75%);
+  color: #fff;
+  font-size: 0.7rem;
+  line-height: 1.2;
+  pointer-events: none;
+}
+
+#hotbar .slot.poke5e-hotbar-slot--spent .slot-icon {
+  filter: grayscale(1) brightness(0.6);
+}
+
+#hotbar .slot.poke5e-hotbar-slot--spent .poke5e-hotbar-slot__count {
+  background: rgb(150 20 20 / 85%);
+}

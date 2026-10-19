@@ -55,6 +55,10 @@ export function availableTrainerPathActions(trainer) {
   ].filter(Boolean);
 }
 
+export function trainerPathActionName(action) {
+  return ACTION_NAMES[action] ?? "Partner";
+}
+
 export function trainerPathActionLabel(trainer, action) {
   if (action === "trainer-partner") {
     const partner = fromUuidSync(trainer.getFlag(MODULE_ID, RANGER_PARTNER_FLAG) ?? "", { strict: false });
