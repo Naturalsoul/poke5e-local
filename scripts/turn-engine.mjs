@@ -30,6 +30,7 @@ import {
 import { processHeldItemEndTurn } from "./held-item-engine.mjs";
 import { processBerryAbilitiesEndTurn } from "./berry-ability-engine.mjs";
 import { effectSourceActor, processEventAbilitiesEndTurn, processEventAbilitiesStartTurn } from "./event-ability-engine.mjs";
+import { processBattlefieldEndTurn, processBattlefieldStartTurn } from "./battlefield-service.mjs";
 
 import {
   isPokemonActor
@@ -1561,6 +1562,7 @@ async function processEndTurn(
   await processHeldItemEndTurn(actor);
   await processBerryAbilitiesEndTurn(actor);
   await processEventAbilitiesEndTurn(actor);
+  await processBattlefieldEndTurn(actor);
 
 
   /* ==========================================================
@@ -1827,6 +1829,11 @@ async function processStartTurn(
 
   // Hospitality.
   await processEventAbilitiesStartTurn(
+    actor
+  );
+
+  // Sandstorm and Hail.
+  await processBattlefieldStartTurn(
     actor
   );
 

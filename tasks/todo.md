@@ -1,7 +1,7 @@
 # Tasks: Pokémon Abilities (branch feature/pokemon_abilities)
 
 Coverage of every Ability: `scripts/ability-coverage.mjs` (checked by `tests/ability-coverage.test.mjs`).
-Before batch 1: 21 of 311 current Abilities automated. After batch 5: 159 automated, 104 pending, 48 manual.
+Before batch 1: 21 of 311 current Abilities automated. After batch 6: 192 automated, 67 pending, 52 manual.
 Order: the campaign's Pokémon first, then the modules with the most Abilities that are easy to read from tables.
 Pending work outside this branch lives in [backlog.md](backlog.md).
 
@@ -21,5 +21,8 @@ Pending work outside this branch lives in [backlog.md](backlog.md).
   (Unburden, Marvel Scale, Quick Feet). Still pending from these modules: Skill Link, Sheer Force, Gorilla Tactics,
   Stakeout, Magic Guard, Protean, Libero, Color Change (types need the GM), Power of Alchemy, Receiver, Mirror Armor,
   Opportunist, Unaware, Curious Medicine, Toxic Debris, Healer.
-- [ ] 6. Weather and terrain state, then its 37 Abilities. Auras and forms after that.
+- [x] 6. Weather and terrain (agreed with the user): one of each per combat on the Combat's flags, set by the weather and
+  terrain Moves, Drizzle & co. on entering, and the GM from the combat tracker, which also sets the environment
+  (outdoors, indoors, desert, arctic, water). Sandstorm/Hail damage, Grassy Terrain healing and their 37 Abilities.
+- [ ] 7. Auras (26) and forms (21), then the 16 left from batch 5.
 - Verify: `node --test tests/*.test.mjs` (only the 29 old failures), lint clean on new files.

@@ -3,6 +3,7 @@ import { originatingMoveItem } from "./damage-engine.mjs";
 import { doubleDamageDice } from "./active-ability-service.mjs";
 import { SOUND_MOVES } from "./passive-ability-engine.mjs";
 import { messageRollShown } from "./chat-roll-display.mjs";
+import { abilityWeather, activeTerrain, distanceBetween, hasWeather, isGrounded } from "./battlefield-service.mjs";
 
 /* ============================================================
  * ABILITIES THAT CHANGE A MOVE
@@ -12,7 +13,9 @@ import { messageRollShown } from "./chat-roll-display.mjs";
  *   Reckless, Electromorphosis);
  * - the damage a target takes (dnd5e.preCalculateDamage): Tinted Lens, Scrappy, Mind's Eye, Ice Scales,
  *   Water Compaction;
- * - initiative (Quick Draw), using a Move (Truant) and critical hits (Hustle).
+ * - initiative (Quick Draw), using a Move (Truant) and critical hits (Hustle);
+ * - weather and terrain: Weather Ball, Solar Power, Flower Gift, Sand Force, the terrains that double MOVE,
+ *   primal weathers that stop Water or Fire damage, Misty Terrain against Dragon, Protosynthesis, Quark Drive.
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
@@ -58,8 +61,13 @@ function stabBonus(actor, move) {
  * DAMAGE ROLL
  * ============================================================ */
 
+// Weather Ball: its type, and doubled dice, while there is weather.
+const WEATHER_BALL = { sun: "fire", rain: "water", sandstorm: "rock", hail: "ice", snow: "ice" };
+const weatherBallType = move => (moveId(move) === "weather-ball" ? WEATHER_BALL[Object.keys(WEATHER_BALL).find(id => hasWeather(id))] ?? null : null);
+const TERRAIN_TYPE = { electric: "electric", grassy: "grass", psychic: "psychic" };
+
 export function changedMoveType(actor, move) {
-  const type = move?.getFlag?.(MODULE_ID, "moveType");
+  const type = weatherBallType(move) ?? move?.getFlag?.(MODULE_ID, "moveType");
   const abilityId = Object.keys(TYPE_CHANGE).find(id => hasPokemonAbility(actor, id));
   return (abilityId && TYPE_CHANGE[abilityId](moveId(move), type)) || type;
 }
@@ -72,21 +80,34 @@ function stabRiders(actor, move, melee) {
   return toughClaws + reckless;
 }
 
+// Solar Power, Flower Gift (an ally within 30 ft), Sand Force (STAB again), a terrain of the Move's type (MOVE again).
+function weatherFlat(actor, move, type) {
+  const prof = Number(actor.system?.attributes?.prof ?? 0);
+  const sun = abilityWeather("sun");
+  const flowerGift = sun && [...game.combat?.combatants ?? []].some(({ actor: ally }) => ally && hasPokemonAbility(ally, "flower-gift") &&
+    ally.getActiveTokens?.()[0]?.document?.disposition === actor.getActiveTokens?.()[0]?.document?.disposition && distanceBetween(actor, ally) <= 30);
+  return (hasPokemonAbility(actor, "solar-power") && sun ? 2 : 0) + (flowerGift ? prof : 0) +
+    (hasPokemonAbility(actor, "sand-force") && abilityWeather("sandstorm") ? stabBonus(actor, move) : 0) +
+    (TERRAIN_TYPE[activeTerrain()] === type ? moveModifier(actor, move) : 0);
+}
+
+const mercilessApplies = (actor, targets) => hasPokemonAbility(actor, "merciless") && targets.length > 0 &&
+  targets.every(target => hasPokemonStatus(target, "poisoned"));
+
 // What the attacker's Abilities do to this Move's damage roll.
 export function damageRiders(actor, move, targets, { melee = false } = {}) {
   const type = changedMoveType(actor, move);
   const charge = actor.getFlag?.(MODULE_ID, CHARGE_FLAG) ?? {};
   const electric = type === "electric";
-  const merciless = hasPokemonAbility(actor, "merciless") && targets.length > 0 && targets.every(target => hasPokemonStatus(target, "poisoned"));
+  const merciless = mercilessApplies(actor, targets);
   const sharp = hasPokemonAbility(actor, "sharpness") && SHARP_MOVE.test(moveId(move));
-  const consume = electric ? Object.keys(charge) : [];
+  const moveAgain = (sharp ? 1 : 0) + (electric && charge.electromorphosis ? 1 : 0);
   return {
     type,
-    doubleDice: merciless || (electric && Boolean(charge["wind-power"])),
-    flat: (sharp ? moveModifier(actor, move) : 0) + stabRiders(actor, move, melee) +
-      (electric && charge.electromorphosis ? moveModifier(actor, move) : 0),
+    doubleDice: merciless || (electric && Boolean(charge["wind-power"])) || Boolean(weatherBallType(move)),
+    flat: moveAgain * moveModifier(actor, move) + stabRiders(actor, move, melee) + weatherFlat(actor, move, type),
     critical: hasPokemonAbility(actor, "sniper") ? 3 : null,
-    consume
+    consume: electric ? Object.keys(charge) : []
   };
 }
 
@@ -139,17 +160,45 @@ function ignore(options, category, value) {
 
 const resisted = (actor, type) => actor.system?.traits?.dr?.value?.has?.(type) ?? false;
 
-export function applyRiderDefenses(actor, damages, options = {}) {
-  const move = originatingMoveItem(options);
-  const attacker = move?.actor;
+// Extremely harsh sunlight stops Water damage; heavy rain stops Fire damage.
+const nullified = type => (type === "water" && hasWeather("extreme-sun")) || (type === "fire" && hasWeather("heavy-rain"));
+
+const isDamage = entry => entry.value > 0 && !["healing", "temphp"].includes(entry.type);
+const weakTo = (actor, type) => actor.system?.traits?.dv?.value?.has?.(type) ?? false;
+
+// The attacker's Abilities ignore some of the target's resistances or immunities.
+function attackerIgnores(attacker, options) {
   if (hasPokemonAbility(attacker, "tinted-lens")) {ignore(options, "resistance", true);}
   if (["scrappy", "minds-eye"].some(abilityId => hasPokemonAbility(attacker, abilityId))) {ignore(options, "immunity", ["normal", "fighting"]);}
+}
+
+// Which damage types the target takes half of: Ice Scales (mental Moves), Misty Terrain (Dragon), Water Compaction (all).
+function halvedBy(actor, move) {
   const mental = (definition(move).powerAbilities ?? []).some(ability => MENTAL.includes(ability));
-  const iceScales = hasPokemonAbility(actor, "ice-scales") && mental;
+  const misty = activeTerrain() === "misty" && isGrounded(actor);
   const compacted = Array.from(actor.effects ?? []).some(effect => effect.getFlag?.(MODULE_ID, "stackKey") === WATER_COMPACTION);
-  for (const damage of damages.filter(entry => entry.value > 0 && !["healing", "temphp"].includes(entry.type))) {
-    if ((iceScales && !resisted(actor, damage.type)) || compacted) {damage.value = Math.trunc(damage.value / 2);}
+  return type => compacted || (!resisted(actor, type) && ((hasPokemonAbility(actor, "ice-scales") && mental) ||
+    (misty && type === "dragon" && !weakTo(actor, "dragon"))));
+}
+
+export function applyRiderDefenses(actor, damages, options = {}) {
+  const move = originatingMoveItem(options);
+  attackerIgnores(move?.actor, options);
+  // Misty Terrain: a grounded Pokémon weak to Dragon takes regular damage instead.
+  if (activeTerrain() === "misty" && isGrounded(actor) && weakTo(actor, "dragon")) {ignore(options, "vulnerability", ["dragon"]);}
+  const halved = halvedBy(actor, move);
+  for (const damage of damages.filter(isDamage)) {
+    if (nullified(damage.type)) {damage.value = 0;}
+    if (halved(damage.type)) {damage.value = Math.trunc(damage.value / 2);}
   }
+}
+
+// Protosynthesis (sun: STR, CON) and Quark Drive (Electric Terrain: DEX, WIS): advantage on those saves.
+function onPreRollSavingThrow(config) {
+  const actor = config?.subject;
+  const boosted = (hasPokemonAbility(actor, "protosynthesis") && abilityWeather("sun") && ["str", "con"].includes(config.ability)) ||
+    (hasPokemonAbility(actor, "quark-drive") && activeTerrain() === "electric" && ["dex", "wis"].includes(config.ability));
+  if (boosted) {config.advantage = true;}
 }
 
 /* ============================================================
@@ -196,6 +245,7 @@ export function registerRiderAbilityEngine() {
   Hooks.on("dnd5e.postRollConfiguration", onPostRollConfiguration);
   Hooks.on("dnd5e.preCalculateDamage", applyRiderDefenses);
   Hooks.on("dnd5e.preConfigureInitiative", onPreConfigureInitiative);
+  Hooks.on("dnd5e.preRollSavingThrow", onPreRollSavingThrow);
   Hooks.on("dnd5e.preUseActivity", onPreUseActivity);
   Hooks.on("dnd5e.postUseActivity", onPostUseActivity);
   Hooks.on("dnd5e.rollAttack", (rolls, data) => {

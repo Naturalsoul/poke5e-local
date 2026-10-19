@@ -12,6 +12,7 @@ import { publishRollBeforeDamage } from "./chat-roll-display.mjs";
 import { fellBelowHalf } from "./berry-ability-engine.mjs";
 import { registerSaveReaction } from "./save-outcome-engine.mjs";
 import { rewriteRoll } from "./trainer-combat-reactions.mjs";
+import { abilityWeather, activeTerrain, environment, hasWeather, isGrounded, setBattlefield } from "./battlefield-service.mjs";
 
 /* ============================================================
  * ABILITIES THAT REACT TO EVENTS
@@ -21,12 +22,16 @@ import { rewriteRoll } from "./trainer-combat-reactions.mjs";
  * - a Pokémon faints: Moxie and the Neighs (notice), Beast Boost, Soul-Heart, Aftermath, Innards Out;
  * - stat changes and statuses (ActiveEffect hooks): Clear Body, White Smoke, Full Metal Body, Hyper Cutter,
  *   Big Pecks, Contrary, Oblivious, Synchronize, Poison Puppeteer; Wonder Skin rolls a failed save again;
- * - effects that last while a condition holds: Unburden, Marvel Scale, Quick Feet;
+ * - effects that last while a condition holds: Unburden, Marvel Scale, Quick Feet, and the weather and terrain
+ *   ones (Chlorophyll, Swift Swim, Sand Rush, Slush Rush, Sand Veil, Snow Cloak, Grass Pelt, Surge Surfer);
+ * - statuses the weather or terrain prevents (Leaf Guard, Hydration, Electric and Misty Terrain);
+ * - Seed Sower and Sand Spit set the terrain or weather when hit;
  * - turns, switches and rests: Hospitality, Bad Dreams, Natural Cure, Regenerator, Moody.
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
 const REGENERATOR_FLAG = "regeneratorUsed";
+const WEATHER_REACTION_FLAG = "weatherReactionUses";
 const ADD = 2;
 const MULTIPLY = 1;
 const SYNCHRONIZED = ["burned", "paralysis", "poisoned"];
@@ -66,8 +71,8 @@ async function announce(actor, abilityId, html) {
     content: `<div class="poke5e-turn-message"><strong>${actor.name}</strong> (${abilityName(actor, abilityId)}) ${html}.</div>` });
 }
 
-function combatActors() {
-  return [...new Set([...game.combat?.combatants ?? []].map(combatant => combatant.actor).filter(Boolean))];
+function combatActors(combat = game.combat) {
+  return [...new Set([...combat?.combatants ?? []].map(combatant => combatant.actor).filter(Boolean))];
 }
 
 /* ============================================================
@@ -131,6 +136,24 @@ async function onHitByMove(target, move, options) {
   if (hasPokemonAbility(attacker, "toxic-chain") && isMeleeDamage(options)) {await poisonOnFailedSave(target, "con", 16, "Toxic Chain");}
 }
 
+// Ability → [battlefield key, its id, rounds, uses per long rest]. They answer a hit with their reaction.
+const WEATHER_REACTIONS = {
+  "seed-sower": ["terrain", "grassy", 3, () => 3, true],
+  "sand-spit": ["weather", "sandstorm", 5, actor => Number(actor.system?.attributes?.prof ?? 0), false]
+};
+
+async function weatherReactions(actor, move) {
+  for (const [abilityId, [key, id, rounds, uses, needsMove]] of Object.entries(WEATHER_REACTIONS)) {
+    const spent = Number(actor.getFlag(MODULE_ID, WEATHER_REACTION_FLAG)?.[abilityId] ?? 0);
+    const already = key === "terrain" ? activeTerrain() === id : hasWeather(id);
+    if (!hasPokemonAbility(actor, abilityId) || (needsMove && !move) || spent >= uses(actor) || already || !game.combat) {continue;}
+    await actor.setFlag(MODULE_ID, WEATHER_REACTION_FLAG, { ...actor.getFlag(MODULE_ID, WEATHER_REACTION_FLAG), [abilityId]: spent + 1 });
+    const damage = key === "weather" ? Math.ceil(Number(actor.system?.details?.level ?? 0) / 2) : 0;
+    await setBattlefield({ [key]: { id, rounds, damage, source: { actorUuid: actor.uuid } } });
+    await announce(actor, abilityId, `${spent + 1}/${uses(actor)}`);
+  }
+}
+
 async function onHalfHp(actor, before, after) {
   const max = Number(actor.system.attributes.hp.max);
   if (hasPokemonAbility(actor, "wimp-out") && fellBelowHalf(before, after, max)) {await announce(actor, "wimp-out", text("wimp"));}
@@ -179,7 +202,10 @@ async function onApplyDamage(actor, _amount, options) {
   const move = originatingMoveItem(options);
   if (move) {await onHitByMove(actor, move, options);}
   if (before > 0 && after <= 0) {await onFaint(actor, move?.actor ?? null, before - after, options);}
-  else {await onHalfHp(actor, before, after);}
+  else {
+    await onHalfHp(actor, before, after);
+    await weatherReactions(actor, move);
+  }
 }
 
 /* ============================================================
@@ -223,9 +249,23 @@ function adjustStatChange(effect, actor) {
   return true;
 }
 
+// What keeps this status off the Pokémon now, or null.
+export function battlefieldBlocksStatus(actor, status) {
+  if (hasPokemonAbility(actor, "leaf-guard") && abilityWeather("sun")) {return "leaf-guard";}
+  if (hasPokemonAbility(actor, "hydration") && (abilityWeather("rain") || environment() === "water")) {return "hydration";}
+  if (!isGrounded(actor)) {return null;}
+  if (activeTerrain() === "misty") {return "misty-terrain";}
+  return activeTerrain() === "electric" && status === "asleep" ? "electric-terrain" : null;
+}
+
 function onPreCreateEffect(effect) {
   const actor = effect.parent;
   if (actor?.documentName !== "Actor" || !isPokemonActor(actor)) {return true;}
+  const blocker = effect.getFlag(MODULE_ID, "kind") === "pokemon-status" ? battlefieldBlocksStatus(actor, effect.getFlag(MODULE_ID, "status")) : null;
+  if (blocker) {
+    logged(announce(actor, blocker, text("blocked")));
+    return false;
+  }
   if (obliviousBlocks(actor, effect)) {
     logged(announce(actor, "oblivious", text("blocked")));
     return false;
@@ -284,11 +324,23 @@ export function wonderSkinOffer(roll, { actor, dc, move }) {
  * ============================================================ */
 
 const hasNegativeStatus = actor => Array.from(actor.effects ?? []).some(effect => effect.getFlag(MODULE_ID, "kind") === "pokemon-status");
+const doubleWalk = [{ key: "system.attributes.movement.walk", mode: MULTIPLY, value: "2", priority: 30 }];
+const sandy = () => abilityWeather("sandstorm") || environment() === "desert";
+const icy = () => abilityWeather("hail") || abilityWeather("snow") || environment() === "arctic";
 
 const CONDITIONAL = {
   unburden: [actor => !getPokemonHeldItem(actor), [speed(10)]],
   "marvel-scale": [hasNegativeStatus, [ac(2)]],
-  "quick-feet": [hasNegativeStatus, [speed(15)]]
+  "quick-feet": [hasNegativeStatus, [speed(15)]],
+  chlorophyll: [() => abilityWeather("sun"), doubleWalk],
+  "swift-swim": [() => abilityWeather("rain"), doubleWalk],
+  "sand-rush": [sandy, doubleWalk],
+  "slush-rush": [icy, doubleWalk],
+  "sand-veil": [sandy, [ac(2)]],
+  "snow-cloak": [icy, [ac(2)]],
+  "grass-pelt": [() => activeTerrain() === "grassy", [ac(1)]],
+  // shortcut: Surge Surfer doubles its speed for the whole Electric Terrain, not from the start of each turn in it.
+  "surge-surfer": [() => activeTerrain() === "electric", doubleWalk]
 };
 
 const syncing = new Map();
@@ -364,6 +416,7 @@ async function onSwitched({ outgoing }) {
 
 async function onLongRest(pokemon) {
   if (pokemon.getFlag(MODULE_ID, REGENERATOR_FLAG)) {await pokemon.unsetFlag(MODULE_ID, REGENERATOR_FLAG);}
+  if (pokemon.getFlag(MODULE_ID, WEATHER_REACTION_FLAG)) {await pokemon.unsetFlag(MODULE_ID, WEATHER_REACTION_FLAG);}
   if (!hasPokemonAbility(pokemon, "moody")) {return;}
   await rollPokemonNature(pokemon);
   await announce(pokemon, "moody", text("nature"));
@@ -385,6 +438,9 @@ export function registerEventAbilityEngine() {
   });
   Hooks.on("deleteActiveEffect", effect => queueSync(effect.parent));
   Hooks.on("updateActor", actor => queueSync(actor));
+  // The weather, terrain or environment changed.
+  Hooks.on("updateCombat", combat => combatActors(combat).forEach(queueSync));
+  Hooks.on("deleteCombat", combat => combatActors(combat).forEach(queueSync));
   Hooks.on("createItem", item => queueSync(item.parent));
   Hooks.on("deleteItem", item => queueSync(item.parent));
   Hooks.once("ready", () => game.actors?.forEach(queueSync));

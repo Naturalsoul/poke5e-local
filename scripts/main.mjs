@@ -6,6 +6,7 @@ import { registerRerollAbilityEngine } from "./reroll-ability-engine.mjs";
 import { registerBerryAbilityEngine } from "./berry-ability-engine.mjs";
 import { registerRiderAbilityEngine } from "./rider-ability-engine.mjs";
 import { registerEventAbilityEngine } from "./event-ability-engine.mjs";
+import { registerBattlefieldService } from "./battlefield-service.mjs";
 import { registerTrainerCombatReactions } from "./trainer-combat-reactions.mjs";
 import { registerTrainerReactionService } from "./trainer-reaction-service.mjs";
 import { registerPokemonCaptureService } from "./pokemon-capture-service.mjs";
@@ -430,6 +431,7 @@ Hooks.once(
     registerBerryAbilityEngine();
     registerRiderAbilityEngine();
     registerEventAbilityEngine();
+    registerBattlefieldService();
     registerTrainerOwnershipService();
     registerTrainerSwitchAuthorityService();
     registerPokemonActorSheet();

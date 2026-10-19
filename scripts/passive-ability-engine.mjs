@@ -1,6 +1,7 @@
 import { hasPokemonAbility, hasPokemonStatus, pokemonTypes } from "./status-runtime.mjs";
 import { originatingMoveItem } from "./damage-engine.mjs";
 import { grantNextAttackAdvantage } from "./attack-ability-engine.mjs";
+import { abilityWeather, activeTerrain } from "./battlefield-service.mjs";
 
 /* ============================================================
  * PASSIVE ABILITIES
@@ -225,18 +226,37 @@ function abilityAttackBonus(actor, move) {
     (defiant ? 2 : 0) + (has("supreme-overlord") ? downedAllies(actor) : 0);
 }
 
+// The ability the Move is made with: the best of its power abilities.
+function movePower(actor, move) {
+  const powers = move?.getFlag?.(MODULE_ID, "moveDefinition")?.powerAbilities ?? [];
+  const mod = ability => Number(actor.system?.abilities?.[ability]?.mod ?? 0);
+  return powers.reduce((best, ability) => (best === null || mod(ability) > mod(best) ? ability : best), null);
+}
+
+// Orichalcum Pulse (sun: STR or CON Moves) and Hadron Engine (Electric Terrain: DEX or WIS Moves).
+function battlefieldAdvantage(actor, move) {
+  const power = movePower(actor, move);
+  return (hasPokemonAbility(actor, "orichalcum-pulse") && abilityWeather("sun") && ["str", "con"].includes(power)) ||
+    (hasPokemonAbility(actor, "hadron-engine") && activeTerrain() === "electric" && ["dex", "wis"].includes(power));
+}
+
+function abilityDisadvantage(actor, targets, melee) {
+  const anyTarget = predicate => targets.some(predicate);
+  const round = game.combat?.started ? Number(game.combat.round) : 0;
+  return (melee && anyTarget(target => hasPokemonAbility(target, "dauntless-shield"))) ||
+    anyTarget(target => hasPokemonAbility(target, "tangled-feet") && hasPokemonStatus(target, "confused")) ||
+    (hasPokemonAbility(actor, "slow-start") && round >= 1 && round <= 2);
+}
+
 // { bonus, advantage, disadvantage, critical } for an attack by `actor` with `move` against `targets`.
 // Mind's Eye: no disadvantage from these Abilities (other sources stay with the GM).
 export function attackAbilityModifiers(actor, move, targets, { melee = false } = {}) {
   const has = abilityId => hasPokemonAbility(actor, abilityId);
-  const anyTarget = predicate => targets.some(predicate);
-  const round = game.combat?.started ? Number(game.combat.round) : 0;
   return {
     bonus: abilityAttackBonus(actor, move),
-    advantage: (has("intrepid-sword") && melee) || has("no-guard") || anyTarget(target => hasPokemonAbility(target, "no-guard")),
-    disadvantage: !has("minds-eye") && ((melee && anyTarget(target => hasPokemonAbility(target, "dauntless-shield"))) ||
-      anyTarget(target => hasPokemonAbility(target, "tangled-feet") && hasPokemonStatus(target, "confused")) ||
-      (has("slow-start") && round >= 1 && round <= 2)),
+    advantage: (has("intrepid-sword") && melee) || has("no-guard") || targets.some(target => hasPokemonAbility(target, "no-guard")) ||
+      battlefieldAdvantage(actor, move),
+    disadvantage: !has("minds-eye") && abilityDisadvantage(actor, targets, melee),
     critical: has("super-luck") ? 19 : null
   };
 }
