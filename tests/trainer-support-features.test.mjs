@@ -123,3 +123,14 @@ test("the Pokémon Tracker button only spends the use and says so in chat", asyn
   await actions.runTrainerPathAction("trainer-tracker", brock);
   assert.match(chat.at(-1), /gastado hasta un descanso largo/);
 });
+
+test("Analyst reveals the active Ability and a random Move; Professor one more Ability or Move", () => {
+  const item = (kind, id) => ({ name: id, getFlag: (_module, key) => ({ kind, sourceId: id })[key] });
+  const gengar = pokemon(null, [], { activeAbilityId: "cursed-body" });
+  gengar.items = [item("ability", "levitate"), item("ability", "cursed-body"), item("move", "shadow-ball"), item("move", "hypnosis")];
+  const first = entries => entries[0];
+  assert.deepEqual(actions.analystReveal(gengar, { pick: first }).map(entry => entry.name), ["cursed-body", "shadow-ball"]);
+  assert.deepEqual(actions.analystReveal(gengar, { professor: true, pick: first }).map(entry => entry.name), ["cursed-body", "shadow-ball", "levitate"]);
+  assert.ok(actions.availableTrainerPathActions(trainer("researcher", 5)).includes("trainer-analyst"));
+  assert.ok(!actions.availableTrainerPathActions(trainer("researcher", 4)).includes("trainer-analyst"));
+});

@@ -200,3 +200,28 @@ test("Master Trainer: a level 20 trainer or its Pokémon turns a failed save int
   assert.equal(points(red, "masterTrainerUses"), 0);
   assert.equal(combat.masterTrainerOffer(save(9), { actor: pikachu, dc: 15 }), null, "no uses left");
 });
+
+test("Disciplined Strikes asks only when dnd5e's damage would faint the target, then leaves it at 1 HP", () => {
+  const target = pokemon(null);
+  target.system = { attributes: { hp: { value: 10, temp: 2 } } };
+  const seen = [];
+  target.calculateDamage = (damages, options) => {
+    seen.push(options.originatingMessage);
+    return { amount: damages.reduce((sum, damage) => sum + damage.value, 0) / 2 };
+  };
+  const message = { id: "dmg" };
+  assert.equal(combat.wouldFaint(target, [{ total: 22, options: { type: "fire" } }], message), false, "resisted: 11 < 12");
+  assert.equal(combat.wouldFaint(target, [{ total: 24, options: { type: "fire" } }], message), true);
+  assert.equal(seen[0], message, "the calculation sees the damage message, like a real application");
+
+  const flagged = { getFlag: (_module, key) => (key === "disciplinedStrikes" ? [target.uuid] : null) };
+  const fainting = { "system.attributes.hp.value": 0 };
+  combat.applyDisciplinedStrikes(target, 30, fainting, { originatingMessage: flagged });
+  assert.equal(fainting["system.attributes.hp.value"], 1);
+  const survives = { "system.attributes.hp.value": 4 };
+  combat.applyDisciplinedStrikes(target, 6, survives, { originatingMessage: flagged });
+  assert.equal(survives["system.attributes.hp.value"], 4);
+  const other = { "system.attributes.hp.value": 0 };
+  combat.applyDisciplinedStrikes(pokemon(null), 30, other, { originatingMessage: flagged });
+  assert.equal(other["system.attributes.hp.value"], 0);
+});
