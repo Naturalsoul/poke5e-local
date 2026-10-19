@@ -1,8 +1,13 @@
+import { messageRollShown } from "./chat-roll-display.mjs";
+
 const MODULE_ID =
   "poke5e-local";
 
 
 const subscribers =
+  new Set();
+
+const attackReactions =
   new Set();
 
 const TARGET_ACTOR_OPTION =
@@ -581,6 +586,77 @@ export function isNaturalAttackAtMost(
  * No necesitan escuchar directamente dnd5e.rollAttack.
  * ============================================================ */
 
+/* ============================================================
+ * REACTIONS
+ *
+ * Trainer features that change an attack after it is rolled (Battle Die, Sabotage,
+ * Raise Your Defenses). offer(roll, activity) answers synchronously: null when it
+ * cannot change this roll, otherwise an async step resolving to the replacement
+ * roll (null keeps it). Consumers then receive the final hit or miss.
+ * ============================================================ */
+
+export function registerAttackReaction(
+  offer
+) {
+
+  attackReactions.add(
+    offer
+  );
+
+  return () => attackReactions.delete(
+    offer
+  );
+}
+
+
+export async function resolveAttackReactions(
+  roll,
+  activity
+) {
+
+  await messageRollShown(
+    roll.parent
+  );
+
+  let current =
+    roll;
+
+  for (
+    const offer
+    of attackReactions
+  ) {
+
+    const step =
+      offer(
+        current,
+        activity
+      );
+
+    if (!step) {
+
+      continue;
+    }
+
+    try {
+
+      current =
+        await step() ??
+        current;
+    } catch (
+      error
+    ) {
+
+      console.error(
+        `[${MODULE_ID}] Error en reacción de entrenador al ataque:`,
+        error
+      );
+    }
+  }
+
+  return current;
+}
+
+
 export function subscribeAttackOutcome(
   handler
 ) {
@@ -728,19 +804,49 @@ function onRollAttack(
     }
 
 
-    const outcome =
-      buildAttackOutcome(
-        roll,
-        activity
+    const dispatch =
+      final =>
+        dispatchAttackOutcome(
+          buildAttackOutcome(
+            final,
+            activity
+          ),
+          {
+            activity,
+            roll:
+              final
+          }
+        );
+
+
+    /*
+     * Sin reacciones posibles, el resultado
+     * se publica en el acto, como siempre.
+     */
+
+    if (
+      ![...attackReactions].some(
+        offer =>
+          offer(
+            roll,
+            activity
+          )
+      )
+    ) {
+
+      dispatch(
+        roll
       );
 
+      continue;
+    }
 
-    dispatchAttackOutcome(
-      outcome,
-      {
-        activity,
-        roll
-      }
+
+    void resolveAttackReactions(
+      roll,
+      activity
+    ).then(
+      dispatch
     );
   }
 }

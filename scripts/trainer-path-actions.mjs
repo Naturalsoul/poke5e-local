@@ -5,6 +5,7 @@ import {
 import { refreshTrainerFeatureIcons } from "./trainer-feature-service.mjs";
 import { MULTITALENTED_FLAG } from "./trainer-path-effects.mjs";
 import { getTrainerLevel, isTrainerActor } from "./trainer-service.mjs";
+import { battleDieFaces } from "./trainer-combat-reactions.mjs";
 
 const MODULE_ID = "poke5e-local";
 const CHEERLEADER_KIND = "trainer-cheerleader";
@@ -21,27 +22,33 @@ function pathAtLevel(trainer, pathId, level) {
 }
 
 // Path features used from the command center; resource → shown by its button instead of a counter.
-export const TRAINER_PATH_ACTION_RESOURCES = { "trainer-skill-dice": "skillDice", "trainer-cheerleader": "cheerleaderUses" };
+export const TRAINER_PATH_ACTION_RESOURCES = { "trainer-skill-dice": "skillDice", "trainer-cheerleader": "cheerleaderUses", "trainer-battle-dice": "battleDice" };
 export const TRAINER_PATH_ACTION_ICONS = { "trainer-skill-dice": "fa-dice-six", "trainer-multitalented": "fa-graduation-cap", "trainer-partner": "fa-handshake",
-  "trainer-cheerleader": "fa-bullhorn" };
+  "trainer-cheerleader": "fa-bullhorn", "trainer-battle-dice": "fa-dice-d6", "trainer-directed-strike": "fa-crosshairs", "trainer-dark-advantage": "fa-mask" };
+const ACTION_NAMES = { "trainer-skill-dice": "Skill Dice", "trainer-cheerleader": "Cheerleader", "trainer-battle-dice": "Battle Dice" };
 
 export function availableTrainerPathActions(trainer) {
   return [
     pathAtLevel(trainer, "hobbyist", 5) ? "trainer-skill-dice" : null,
     pathAtLevel(trainer, "hobbyist", 15) ? "trainer-multitalented" : null,
     pathAtLevel(trainer, "ranger", 9) ? "trainer-partner" : null,
-    pathAtLevel(trainer, "poke-mentor", 9) ? "trainer-cheerleader" : null
+    pathAtLevel(trainer, "poke-mentor", 9) ? "trainer-cheerleader" : null,
+    pathAtLevel(trainer, "ace-trainer", 5) ? "trainer-battle-dice" : null,
+    pathAtLevel(trainer, "tactician", 5) ? "trainer-directed-strike" : null,
+    pathAtLevel(trainer, "grunt", 5) ? "trainer-dark-advantage" : null
   ].filter(Boolean);
 }
 
 export function trainerPathActionLabel(trainer, action) {
   if (action === "trainer-multitalented") {return "Multitalented";}
+  if (action === "trainer-directed-strike") {return "Directed Strike";}
+  if (action === "trainer-dark-advantage") {return "Dark Advantage";}
   if (action === "trainer-partner") {
     const partner = fromUuidSync(trainer.getFlag(MODULE_ID, RANGER_PARTNER_FLAG) ?? "", { strict: false });
     return `Partner: ${partner?.name ?? "—"}`;
   }
   const resource = getTrainerProgressionResource(trainer, TRAINER_PATH_ACTION_RESOURCES[action]);
-  return `${action === "trainer-skill-dice" ? "Skill Dice" : "Cheerleader"} ${resource?.value ?? 0}/${resource?.max ?? 1}`;
+  return `${ACTION_NAMES[action]} ${resource?.value ?? 0}/${resource?.max ?? 1}`;
 }
 
 /* ============================================================
@@ -53,54 +60,175 @@ export function trainerPathActionLabel(trainer, action) {
 
 const VERSATILE_ROLL_TYPES = ["skill", "save"];
 
-export function latestVersatileMessage(trainer, messages) {
+// The latest roll of these types by one of the trainer's Pokémon that `key` has not changed yet.
+export function latestVersatileMessage(trainer, messages, { types = VERSATILE_ROLL_TYPES, key = "versatile" } = {}) {
   return [...messages].slice(-20).reverse().find(message => {
     const actor = ChatMessage.implementation.getSpeakerActor(message.speaker);
-    return VERSATILE_ROLL_TYPES.includes(message.flags?.dnd5e?.roll?.type) && message.rolls?.length
-      && !message.rolls[0].options?.[MODULE_ID]?.versatile && isPokemonActor(actor) && getPokemonTrainerUuid(actor) === trainer.uuid;
+    return types.includes(message.flags?.dnd5e?.roll?.type) && message.rolls?.length
+      && !message.rolls[0].options?.[MODULE_ID]?.[key] && isPokemonActor(actor) && getPokemonTrainerUuid(actor) === trainer.uuid;
   }) ?? null;
 }
 
 // Appends an evaluated die roll to an evaluated roll, keeping it a real die so the tooltip shows it.
-export function withVersatileDie(roll, dieRoll) {
+// A label that is not a damage type leaves the die with the roll's own damage type.
+export function withVersatileDie(roll, dieRoll, { label = "Versatile", key = "versatile" } = {}) {
   const data = roll.toJSON();
-  const die = { ...dieRoll.terms[0].toJSON(), options: { flavor: "Versatile" } };
+  const die = { ...dieRoll.terms[0].toJSON(), options: { flavor: label } };
   data.terms = [...data.terms, { class: "OperatorTerm", options: {}, evaluated: true, operator: "+" }, die];
-  data.formula = `${roll.formula} + ${dieRoll.formula}[Versatile]`;
+  data.formula = `${roll.formula} + ${dieRoll.formula}[${label}]`;
   data.total = Number(roll.total) + Number(dieRoll.total);
-  data.options = { ...data.options, [MODULE_ID]: { ...data.options?.[MODULE_ID], versatile: dieRoll.total } };
+  data.options = { ...data.options, [MODULE_ID]: { ...data.options?.[MODULE_ID], [key]: dieRoll.total } };
   return roll.constructor.fromData(data);
 }
 
-async function useSkillDie(trainer) {
-  const resource = getTrainerProgressionResource(trainer, "skillDice");
-  if (!resource?.value) {
-    ui.notifications.warn(en() ? "No Skill Dice left until a long rest." : "No quedan Skill Dice hasta un descanso largo.");
-    return;
-  }
-  const message = latestVersatileMessage(trainer, game.messages.contents);
+// The latest matching roll, if this user may rewrite it; warns otherwise.
+function rewritableMessage(trainer, filter, missing) {
+  const message = latestVersatileMessage(trainer, game.messages.contents, filter);
   if (!message) {
-    ui.notifications.warn(en() ? "No recent skill check or save from your Pokémon." : "No hay una tirada reciente de habilidad o salvación de tus Pokémon.");
-    return;
+    ui.notifications.warn(missing);
+    return null;
   }
   // shortcut: only the roll's author or the GM can rewrite it; a socket relay would be needed if others roll for the trainer's Pokémon.
   if (!message.canUserModify(game.user, "update")) {
-    ui.notifications.warn(en() ? "Only whoever rolled it or the GM can add the die." : "Solo quien hizo la tirada o el GM puede añadir el dado.");
+    ui.notifications.warn(en() ? "Only whoever rolled it or the GM can change it." : "Solo quien hizo la tirada o el GM puede cambiarla.");
+    return null;
+  }
+  return message;
+}
+
+const rollLine = message => {
+  const actor = ChatMessage.implementation.getSpeakerActor(message.speaker);
+  const total = message.rolls.reduce((sum, roll) => sum + Number(roll.total), 0);
+  return `<p><strong>${escape(actor?.name)}</strong> — ${escape(message.flavor)}: <strong>${total}</strong></p>`;
+};
+
+async function addDieToLatestRoll(trainer, { resourceId, filter, faces, label, title, missing }) {
+  const resource = getTrainerProgressionResource(trainer, resourceId);
+  if (!resource?.value) {
+    ui.notifications.warn(en() ? `No ${title} left until a long rest.` : `No quedan ${title} hasta un descanso largo.`);
     return;
   }
+  const message = rewritableMessage(trainer, filter, missing);
+  if (!message) {return;}
   const [roll, ...rest] = message.rolls;
-  const actor = ChatMessage.implementation.getSpeakerActor(message.speaker);
   const use = await foundry.applications.api.DialogV2.confirm({
-    window: { title: "Versatile" },
-    content: `<p><strong>${escape(actor.name)}</strong> — ${escape(message.flavor)}: <strong>${Number(roll.total)}</strong></p>
-      <p>${en() ? `Add a Skill Die? Left: ${resource.value}/${resource.max}.` : `¿Añadir un Skill Die? Quedan: ${resource.value}/${resource.max}.`}</p>`,
+    window: { title },
+    content: `${rollLine(message)}
+      <p>${en() ? `Add a d${faces}? Left: ${resource.value}/${resource.max}.` : `¿Añadir un d${faces}? Quedan: ${resource.value}/${resource.max}.`}</p>`,
     rejectClose: false
   });
-  if (use !== true || !await spendTrainerProgressionResource(trainer, "skillDice", 1)) {return;}
-  // Multitalented (L15): Skill Dice become d10.
-  const die = await new Roll(pathAtLevel(trainer, "hobbyist", 15) ? "1d10" : "1d6").evaluate();
+  if (use !== true || !await spendTrainerProgressionResource(trainer, resourceId, 1)) {return;}
+  const die = await new Roll(`1d${faces}`).evaluate();
   await game.dice3d?.showForRoll(die, game.user, true);
-  await message.update({ rolls: [withVersatileDie(roll, die), ...rest].map(entry => entry.toJSON()) });
+  await message.update({ rolls: [withVersatileDie(roll, die, { label, key: filter.key }), ...rest].map(entry => entry.toJSON()) });
+}
+
+function useSkillDie(trainer) {
+  return addDieToLatestRoll(trainer, {
+    resourceId: "skillDice", filter: {}, label: "Versatile", title: "Skill Dice",
+    // Multitalented (L15): Skill Dice become d10.
+    faces: pathAtLevel(trainer, "hobbyist", 15) ? 10 : 6,
+    missing: en() ? "No recent skill check or save from your Pokémon." : "No hay una tirada reciente de habilidad o salvación de tus Pokémon."
+  });
+}
+
+const DAMAGE_MISSING = () => (en() ? "No recent damage roll from your Pokémon." : "No hay una tirada de daño reciente de tus Pokémon.");
+
+// Battle Master (Ace Trainer 5): a Battle Die on a damage roll; attack rolls are offered it when it can turn a miss into a hit.
+function useBattleDie(trainer) {
+  return addDieToLatestRoll(trainer, {
+    resourceId: "battleDice", filter: { types: ["damage"], key: "battleDie" }, faces: battleDieFaces(trainer),
+    label: "Battle Die", title: "Battle Dice", missing: DAMAGE_MISSING()
+  });
+}
+
+/* ============================================================
+ * TACTICIAN L5 — DIRECTED STRIKE
+ *
+ * 2 Tactical Points: the latest damage roll of one of the trainer's Pokémon is rolled
+ * again and the higher result is kept.
+ * ============================================================ */
+
+const DIRECTED_STRIKE_COST = 2;
+
+async function useDirectedStrike(trainer) {
+  const resource = getTrainerProgressionResource(trainer, "tacticalPoints");
+  if ((resource?.value ?? 0) < DIRECTED_STRIKE_COST) {
+    ui.notifications.warn(en() ? "Directed Strike needs 2 Tactical Points." : "Directed Strike necesita 2 Tactical Points.");
+    return;
+  }
+  const message = rewritableMessage(trainer, { types: ["damage"], key: "directedStrike" }, DAMAGE_MISSING());
+  if (!message) {return;}
+  const use = await foundry.applications.api.DialogV2.confirm({
+    window: { title: "Directed Strike" },
+    content: `${rollLine(message)}
+      <p>${en() ? `Roll the damage again and keep the higher? Costs 2 of ${resource.value} Tactical Points.`
+    : `¿Tirar el daño otra vez y quedarse con el mayor? Cuesta 2 de ${resource.value} Tactical Points.`}</p>`,
+    rejectClose: false
+  });
+  if (use !== true || !await spendTrainerProgressionResource(trainer, "tacticalPoints", DIRECTED_STRIKE_COST)) {return;}
+  const rerolls = await Promise.all(message.rolls.map(roll => roll.reroll()));
+  for (const roll of rerolls) {await game.dice3d?.showForRoll(roll, game.user, true);}
+  const sum = rolls => rolls.reduce((total, roll) => total + Number(roll.total), 0);
+  const [before, after] = [sum(message.rolls), sum(rerolls)];
+  const [first, ...rest] = (after > before ? rerolls : message.rolls).map(roll => roll.toJSON());
+  first.options = { ...first.options, [MODULE_ID]: { ...first.options?.[MODULE_ID], directedStrike: { first: before, second: after } } };
+  await message.update({ rolls: [first, ...rest] });
+  await ChatMessage.implementation.create({ speaker: ChatMessage.implementation.getSpeaker({ actor: trainer }),
+    content: `<div class="poke5e-turn-message"><strong>${escape(trainer.name)}</strong> ${en() ? "uses" : "usa"} <strong>Directed Strike</strong>: `
+      + `${before} / ${after} → <strong>${Math.max(before, after)}</strong></div>` });
+}
+
+/* ============================================================
+ * GRUNT L5 — DARK ADVANTAGE
+ *
+ * 3 Shadow Points: advantage on the next skill check, ability check, attack or save
+ * of the trainer or one of its party Pokémon. It is used up when that roll is made,
+ * so cancelling the roll dialog keeps it.
+ * ============================================================ */
+
+const DARK_ADVANTAGE_FLAG = "darkAdvantage";
+const DARK_ADVANTAGE_COST = 3;
+const rollSubject = data => (data?.subject?.documentName === "Actor" ? data.subject : data?.subject?.actor ?? null);
+
+async function useDarkAdvantage(trainer) {
+  const resource = getTrainerProgressionResource(trainer, "shadowPoints");
+  if ((resource?.value ?? 0) < DARK_ADVANTAGE_COST) {
+    ui.notifications.warn(en() ? "Dark Advantage needs 3 Shadow Points." : "Dark Advantage necesita 3 Shadow Points.");
+    return;
+  }
+  const party = getTrainerPartyState(trainer).pokemonUuids.map(uuid => fromUuidSync(uuid, { strict: false })).filter(Boolean);
+  const actors = [trainer, ...party];
+  const uuid = await foundry.applications.api.DialogV2.prompt({
+    window: { title: "Dark Advantage" },
+    content: `<p>${en() ? `Advantage on the next check, attack or save. Costs 3 of ${resource.value} Shadow Points.`
+      : `Ventaja en la próxima prueba, ataque o salvación. Cuesta 3 de ${resource.value} Shadow Points.`}</p>
+      <div class="form-group"><label>${en() ? "Who" : "Quién"}</label>
+        <select name="actor">${actors.map(actor => `<option value="${actor.uuid}">${escape(actor.name)}</option>`).join("")}</select></div>`,
+    ok: { label: en() ? "Use" : "Usar", callback: (_event, button) => button.form.elements.actor.value },
+    rejectClose: false
+  });
+  const actor = actors.find(entry => entry.uuid === uuid);
+  if (!actor || !await spendTrainerProgressionResource(trainer, "shadowPoints", DARK_ADVANTAGE_COST)) {return;}
+  await actor.setFlag(MODULE_ID, DARK_ADVANTAGE_FLAG, trainer.uuid);
+  await ChatMessage.implementation.create({ speaker: ChatMessage.implementation.getSpeaker({ actor: trainer }),
+    content: `<div class="poke5e-turn-message"><strong>${escape(trainer.name)}</strong> ${en() ? "uses" : "usa"} <strong>Dark Advantage</strong>: `
+      + `${en() ? "advantage on the next roll of" : "ventaja en la próxima tirada de"} <strong>${escape(actor.name)}</strong>.</div>` });
+}
+
+export function applyDarkAdvantage(config) {
+  if (!rollSubject(config)?.getFlag?.(MODULE_ID, DARK_ADVANTAGE_FLAG)) {return;}
+  for (const rollConfig of config.rolls ?? []) {
+    rollConfig.options ??= {};
+    rollConfig.options.advantage = true;
+    rollConfig.options[MODULE_ID] = { ...rollConfig.options[MODULE_ID], darkAdvantage: true };
+  }
+}
+
+function consumeDarkAdvantage(rolls, data) {
+  const actor = rollSubject(data);
+  if (!rolls?.[0]?.options?.[MODULE_ID]?.darkAdvantage || !actor?.getFlag?.(MODULE_ID, DARK_ADVANTAGE_FLAG)) {return;}
+  void actor.unsetFlag(MODULE_ID, DARK_ADVANTAGE_FLAG).catch(error => console.error(`[${MODULE_ID}] Error consumiendo Dark Advantage`, error));
 }
 
 /* ============================================================
@@ -204,6 +332,9 @@ export async function runTrainerPathAction(action, trainer) {
   if (action === "trainer-skill-dice") {return useSkillDie(trainer);}
   if (action === "trainer-multitalented") {return chooseMultitalentedSkills(trainer);}
   if (action === "trainer-partner") {return choosePartner(trainer);}
+  if (action === "trainer-battle-dice") {return useBattleDie(trainer);}
+  if (action === "trainer-directed-strike") {return useDirectedStrike(trainer);}
+  if (action === "trainer-dark-advantage") {return useDarkAdvantage(trainer);}
   return useCheerleader(trainer);
 }
 
@@ -245,6 +376,10 @@ export function registerTrainerPathActions() {
   if (registered) {return;}
   registered = true;
   const run = task => { void task.catch(error => console.error(`[${MODULE_ID}] Error en rasgos de camino`, error)); };
+  for (const kind of ["Attack", "Skill", "SavingThrow", "AbilityCheck"]) {
+    Hooks.on(`dnd5e.preRoll${kind}`, applyDarkAdvantage);
+    Hooks.on(`dnd5e.roll${kind}`, consumeDarkAdvantage);
+  }
   Hooks.on("updateCombat", (combat, changes) => {
     const actor = combat.combatant?.actor;
     const trainerUuid = combatTrainerUuid(actor);
