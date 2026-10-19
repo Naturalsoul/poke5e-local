@@ -2,6 +2,7 @@ import { getPokemonHeldItem } from "./pokemon-held-item-service.mjs";
 import { canCurrentUserOperateTrainerPokemon } from "./trainer-ownership-service.mjs";
 import { isPokemonActor } from "./trainer-party-service.mjs";
 import { prepareBerryHealing, publishBerryHealing } from "./berry-healing.mjs";
+import { rememberEatenBerry, unnervedBy } from "./berry-ability-engine.mjs";
 
 const pendingUses = new WeakSet();
 const LABELS = {
@@ -10,6 +11,7 @@ const LABELS = {
     permission: "No tienes permiso para usar los objetos de este Pokémon.",
     invalid: "Este Pokémon ya no lleva ese objeto.", busy: "El objeto ya se está usando.",
     confirmTitle: "Consumir baya", confirm: name => `¿Consumir ${name}?`, consumeNotice: "Se consumirá una unidad del objeto equipado.",
+    unnerved: name => `${name} (Unnerve) no deja comer bayas en este combate.`,
     actions: { action: "Acción", bonus: "Acción adicional", reaction: "Reacción", free: "Acción gratuita",
       minute: "Minuto", hour: "Hora", special: "Especial", legendary: "Acción legendaria", lair: "Acción de guarida" }
   },
@@ -18,6 +20,7 @@ const LABELS = {
     permission: "You do not have permission to use this Pokémon's items.",
     invalid: "This Pokémon is no longer holding that item.", busy: "This item is already being used.",
     confirmTitle: "Consume berry", confirm: name => `Consume ${name}?`, consumeNotice: "One unit of the held item will be consumed.",
+    unnerved: name => `${name} (Unnerve) does not let it eat berries in this combat.`,
     actions: { action: "Action", bonus: "Bonus action", reaction: "Reaction", free: "Free action",
       minute: "Minute", hour: "Hour", special: "Special", legendary: "Legendary action", lair: "Lair action" }
   }
@@ -121,7 +124,13 @@ function resolveHeldAction({ pokemon, trainer, itemId, activityId, language, lab
 
 async function useBerry(context) {
   const { pokemon, labels, language } = context;
-  const confirmed = await foundry.applications.api.DialogV2.confirm({
+  // Unnerve: an opponent in the combat stops it from eating berries.
+  const unnerved = unnervedBy(pokemon);
+  if (unnerved) {
+    throw new Error(labels.unnerved(unnerved.name));
+  }
+  // Gluttony eats it without asking.
+  const confirmed = context.confirm === false || await foundry.applications.api.DialogV2.confirm({
     window: { title: labels.confirmTitle },
     content: `<p>${escapeHtml(labels.confirm(context.item.name))}</p><p>${escapeHtml(labels.consumeNotice)}</p>`,
     rejectClose: false, modal: true
@@ -134,16 +143,20 @@ async function useBerry(context) {
   const roll = await prepareBerryHealing(current.item, pokemon);
   current = resolveHeldAction(context);
   const itemName = current.item.name;
+  const source = current.item.toObject?.();
   const results = await current.activity.use({ consume: { resources: true }, scaling: false }, { configure: false });
   if (results?.message && roll) {
     await publishBerryHealing(roll, { pokemon, itemName, usageMessage: results.message, language });
   }
+  if (results) {
+    await rememberEatenBerry(pokemon, source);
+  }
   return results;
 }
 
-export async function usePokemonHeldItem({ pokemon, trainer, itemId, activityId, language = "es" }) {
+export async function usePokemonHeldItem({ pokemon, trainer, itemId, activityId, language = "es", confirm = true }) {
   const labels = LABELS[language] ?? LABELS.es;
-  const context = { pokemon, trainer, itemId, activityId, language, labels };
+  const context = { pokemon, trainer, itemId, activityId, language, labels, confirm };
   const { item, activity } = resolveHeldAction(context);
   if (pendingUses.has(pokemon)) {
     throw new Error(labels.busy);

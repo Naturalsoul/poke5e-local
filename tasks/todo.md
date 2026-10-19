@@ -1,7 +1,7 @@
 # Tasks: Pokémon Abilities (branch feature/pokemon_abilities)
 
 Coverage of every Ability: `scripts/ability-coverage.mjs` (checked by `tests/ability-coverage.test.mjs`).
-Before batch 1: 21 of 311 current Abilities automated. After batch 3: 91 automated, 173 pending, 47 manual.
+Before batch 1: 21 of 311 current Abilities automated. After batch 4: 97 automated, 167 pending, 47 manual.
 Order: the campaign's Pokémon first, then the modules with the most Abilities that are easy to read from tables.
 Pending work outside this branch lives in [backlog.md](backlog.md).
 
@@ -14,7 +14,8 @@ Pending work outside this branch lives in [backlog.md](backlog.md).
   when it changes a rolled result (Heavy Metal, Steadfast).
 - [x] 3. Roll again once the damage is shown (keeps the higher total: Adaptability, Iron Fist, Strong Jaw,
   Technician...; the lower one: Prism Armor), and the targets' d4 (Sturdy, Filter) stored on the damage message.
-- [ ] 4. berries: Gluttony, Harvest, Ripen, Cheek Pouch, Cud Chew, Unnerve.
+- [x] 4. Berries: Ripen and Cheek Pouch in the berry's healing, Gluttony eats it at half HP, Harvest and Cud Chew
+  at the end of turn, Unnerve blocks opponents' berries. As One stays with on-faint (it is also Chilling/Grim Neigh).
 - [ ] 5. status-riders, battle-flow, damage-riders, on-faint, type-change, stat-protection.
 - [ ] 6. Weather and terrain state, then its 37 Abilities. Auras and forms after that.
 - Verify: `node --test tests/*.test.mjs` (only the 29 old failures), lint clean on new files.

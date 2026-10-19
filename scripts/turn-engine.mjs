@@ -28,6 +28,7 @@ import {
 } from "./pokemon-recovery-context.mjs";
 
 import { processHeldItemEndTurn } from "./held-item-engine.mjs";
+import { processBerryAbilitiesEndTurn } from "./berry-ability-engine.mjs";
 
 import {
   isPokemonActor
@@ -1516,6 +1517,7 @@ async function processEndTurn(
   );
 
   await processHeldItemEndTurn(actor);
+  await processBerryAbilitiesEndTurn(actor);
 
 
   /* ==========================================================

@@ -3,6 +3,7 @@ import { registerBattleHotbar, useBattleHotbarMacro } from "./battle-hotbar.mjs"
 import { registerPassiveAbilityEngine } from "./passive-ability-engine.mjs";
 import { registerActiveAbilityService } from "./active-ability-service.mjs";
 import { registerRerollAbilityEngine } from "./reroll-ability-engine.mjs";
+import { registerBerryAbilityEngine } from "./berry-ability-engine.mjs";
 import { registerTrainerCombatReactions } from "./trainer-combat-reactions.mjs";
 import { registerTrainerReactionService } from "./trainer-reaction-service.mjs";
 import { registerPokemonCaptureService } from "./pokemon-capture-service.mjs";
@@ -424,6 +425,7 @@ Hooks.once(
     registerPassiveAbilityEngine();
     registerActiveAbilityService();
     registerRerollAbilityEngine();
+    registerBerryAbilityEngine();
     registerTrainerOwnershipService();
     registerTrainerSwitchAuthorityService();
     registerPokemonActorSheet();
