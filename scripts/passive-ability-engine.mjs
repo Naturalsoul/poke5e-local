@@ -254,12 +254,19 @@ function abilityDisadvantage(actor, targets, melee) {
 export function attackAbilityModifiers(actor, move, targets, { melee = false } = {}) {
   const has = abilityId => hasPokemonAbility(actor, abilityId);
   return {
-    bonus: abilityAttackBonus(actor, move),
+    bonus: abilityAttackBonus(actor, move) + (has("unaware") ? battleArmor(targets[0]) : 0),
     advantage: (has("intrepid-sword") && melee) || has("no-guard") || targets.some(target => hasPokemonAbility(target, "no-guard")) ||
       battlefieldAdvantage(actor, move) || auraAdvantage(actor),
     disadvantage: !has("minds-eye") && abilityDisadvantage(actor, targets, melee),
     critical: has("super-luck") ? 19 : null
   };
+}
+
+// Unaware ignores the AC its target gained in this battle: the attack adds it back.
+function battleArmor(target) {
+  return Array.from(target?.effects ?? []).filter(effect => !effect.disabled && effect.getFlag?.(MODULE_ID, "kind") === "pokemon-modifier")
+    .flatMap(effect => Array.from(effect.changes ?? [])).filter(change => change.key === "system.attributes.ac.bonus" && Number(change.value) > 0)
+    .reduce((sum, change) => sum + Number(change.value), 0);
 }
 
 function onPreRollAttack(config) {

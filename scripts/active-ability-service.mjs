@@ -6,6 +6,7 @@ import { registerSaveReaction } from "./save-outcome-engine.mjs";
 import { askTrainerReaction } from "./trainer-reaction-service.mjs";
 import { rewriteRoll, rollWith } from "./trainer-combat-reactions.mjs";
 import { inflictsStatus } from "./trainer-path-actions.mjs";
+import { addFlat, moveModifier } from "./rider-ability-engine.mjs";
 
 /* ============================================================
  * ACTIVE ABILITIES
@@ -15,7 +16,10 @@ import { inflictsStatus } from "./trainer-path-actions.mjs";
  * - disadvantage: the next attack against the Pokémon;
  * - halve: the damage of the next attack that hits it;
  * - blockStatus: the next status it would get;
- * - doubleDice: the damage dice of its next damage roll.
+ * - doubleDice: the damage dice of its next damage roll;
+ * - doubleMove: its MOVE modifier, once more, on its next Move damage roll (Simple);
+ * - saveDisadvantage: the next save against a status from its Moves (Mycelium Might).
+ * Magic Bounce blocks the next status like Shield Dust and gives it to whoever caused it.
  * Heavy Metal and Steadfast depend on a result already rolled, so they ask (only when
  * they would change it), like the trainer reactions.
  * ============================================================ */
@@ -36,7 +40,10 @@ export const ACTIVE_ABILITIES = {
   "huge-power": { rest: "short", guard: "doubleDice" },
   "pure-power": { rest: "short", guard: "doubleDice" },
   "heavy-metal": { rest: "long", reaction: true },
-  steadfast: { rest: "long", reaction: true }
+  steadfast: { rest: "long", reaction: true },
+  "magic-bounce": { rest: "long", guard: "blockStatus" },
+  simple: { rest: "short", guard: "doubleMove" },
+  "mycelium-might": { rest: "short", guard: "saveDisadvantage" }
 };
 
 const TEXT = {
@@ -44,6 +51,9 @@ const TEXT = {
   halve: { en: "{target} will take half the damage of the next attack that hits it", es: "{target} recibirá la mitad del daño del próximo ataque que lo golpee" },
   blockStatus: { en: "{target} will ignore the next status it gets", es: "{target} ignorará el próximo estado que reciba" },
   doubleDice: { en: "{target}'s next damage roll doubles its dice", es: "la próxima tirada de daño de {target} duplica sus dados" },
+  doubleMove: { en: "{target}'s next Move damage roll doubles its MOVE modifier", es: "la próxima tirada de daño de un Move de {target} duplica su modificador MOVE" },
+  saveDisadvantage: { en: "the next save against a status from {target}'s Moves has disadvantage",
+    es: "la próxima salvación contra un estado de los Moves de {target} tendrá desventaja" },
   short: { en: "already used until a short rest", es: "ya usada hasta un descanso corto" },
   long: { en: "already used until a long rest", es: "ya usada hasta un descanso largo" },
   ally: { en: "Target the allied Pokémon it protects.", es: "Marca como objetivo al Pokémon aliado que protege." },
@@ -165,7 +175,42 @@ function blockStatus(effect, _data, _options, userId) {
   if (userId !== game.user.id || !guardOf(actor).blockStatus || !pokemonStatus(effect)) {return true;}
   const abilityId = guardOf(actor).blockStatus;
   logged(clearGuard(actor, "blockStatus").then(() => announce(actor, abilityId, en() ? `ignores ${effect.name}` : `ignora ${effect.name}`)));
+  if (abilityId === "magic-bounce") {logged(bounceStatus(effect, actor));}
   return false;
+}
+
+// Magic Bounce: the status goes to whoever caused it (its effect's origin).
+async function bounceStatus(effect, actor) {
+  const origin = effect.origin ? fromUuidSync(effect.origin, { strict: false }) : null;
+  const source = origin?.documentName === "Actor" ? origin : origin?.actor;
+  if (!source || source === actor) {return;}
+  // shortcut: whoever's status bounced must own its source (the GM usually does); otherwise it only is blocked.
+  if (!source.isOwner) {return;}
+  await source.createEmbeddedDocuments("ActiveEffect", [{ ...effect.toObject(), origin: actor.uuid }]);
+}
+
+// Simple: the next Move damage roll adds its MOVE modifier once more.
+function applyGuardDoubleMove(rolls, config) {
+  if (!Array.isArray(rolls) || !Array.from(config?.hookNames ?? []).includes("damage")) {return;}
+  const move = config.subject?.item;
+  const actor = move?.actor;
+  if (!guardOf(actor).doubleMove || move.getFlag?.(MODULE_ID, "kind") !== "move") {return;}
+  const roll = rolls.find(entry => entry && !["healing", "temphp"].includes(entry.options?.type));
+  const bonus = moveModifier(actor, move);
+  if (roll && bonus) {addFlat(roll, bonus);}
+  logged(clearGuard(actor, "doubleMove"));
+}
+
+// Mycelium Might: the next save against a status from its Moves has disadvantage.
+function applyGuardSaveDisadvantage(config) {
+  for (const rollConfig of config?.rolls ?? []) {
+    const itemUuid = rollConfig.options?.[MODULE_ID]?.modifierUsage?.itemUuid;
+    const move = itemUuid ? fromUuidSync(itemUuid, { strict: false }) : null;
+    const user = move?.actor;
+    if (!guardOf(user).saveDisadvantage || !inflictsStatus(move)) {continue;}
+    rollConfig.options.disadvantage = true;
+    if (user.isOwner) {logged(clearGuard(user, "saveDisadvantage"));}
+  }
 }
 
 // Huge Power, Pure Power: the dice of the next damage roll are doubled.
@@ -300,6 +345,8 @@ export function registerActiveAbilityService() {
   Hooks.on("dnd5e.applyDamage", consumeGuardHalving);
   Hooks.on("preCreateActiveEffect", blockStatus);
   Hooks.on("dnd5e.postRollConfiguration", applyGuardDoubleDice);
+  Hooks.on("dnd5e.postRollConfiguration", applyGuardDoubleMove);
+  Hooks.on("dnd5e.preRollSavingThrow", applyGuardSaveDisadvantage);
   Hooks.on("dnd5e.restCompleted", onRestCompleted);
   document.addEventListener("click", onDocumentClick);
 }

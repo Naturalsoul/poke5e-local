@@ -4,6 +4,7 @@ import {
 } from "./berserk-runtime.mjs";
 
 import {
+  hasPokemonAbility,
   hasPokemonStatus
 } from "./status-runtime.mjs";
 
@@ -1205,12 +1206,20 @@ function onPreCalculateDamage(
     return;
   }
 
+  const onSuccess =
+    multiplierOnSuccessfulSave(
+      damageMessage,
+      usage
+    );
+
+  // Magic Guard: a successful save against half damage takes none.
+  const guarded =
+    onSuccess === 0.5 &&
+    hasPokemonAbility(actor, "magic-guard");
+
   const saveMultiplier =
     outcome.success
-      ? multiplierOnSuccessfulSave(
-          damageMessage,
-          usage
-        )
+      ? Number(!guarded) * onSuccess
       : 1;
 
   /*

@@ -135,6 +135,16 @@ async function onHitByMove(target, move, options) {
     await poisonOnFailedSave(attacker, "con", 12, "Liquid Ooze");
   }
   if (hasPokemonAbility(attacker, "toxic-chain") && isMeleeDamage(options)) {await poisonOnFailedSave(target, "con", 16, "Toxic Chain");}
+  if (hasPokemonAbility(target, "toxic-debris")) {await toxicDebris(target);}
+}
+
+// Toxic Debris: everyone within 5 ft makes a DEX save (DC level + 2) or is poisoned.
+async function toxicDebris(actor) {
+  const token = actor.getActiveTokens?.()[0];
+  const dc = Number(actor.system?.details?.level ?? 0) + 2;
+  const near = (globalThis.canvas?.tokens?.placeables ?? []).filter(other => other !== token && other.actor && token && distance(token, other) <= 5);
+  if (near.length) {await announce(actor, "toxic-debris", "");}
+  for (const other of near) {await poisonOnFailedSave(other.actor, "dex", dc, "Toxic Debris");}
 }
 
 // Ability → [battlefield key, its id, rounds, uses per long rest]. They answer a hit with their reaction.
@@ -235,12 +245,40 @@ function guardingAbility(actor) {
 const obliviousBlocks = (actor, effect) => hasPokemonAbility(actor, "oblivious") &&
   (effect.statuses?.has?.("charmed") || CHARM_MOVES.includes(effect.getFlag(MODULE_ID, "sourceMove")));
 
+// Mirror Armor: an opponent's stat drop goes back to whoever caused it.
+async function mirrorArmor(effect, actor) {
+  const source = effectSourceActor(effect);
+  await announce(actor, "mirror-armor", source ? `→ ${source.name}` : text("blocked"));
+  // shortcut: whoever applies the drop must own its source (the GM usually does); otherwise it is only blocked.
+  if (!source?.isOwner) {return;}
+  const data = effect.toObject();
+  // Marked, so two Mirror Armors do not send it back and forth.
+  await source.createEmbeddedDocuments("ActiveEffect", [{ ...data, origin: actor.uuid,
+    flags: { ...data.flags, [MODULE_ID]: { ...data.flags?.[MODULE_ID], mirrored: true } } }]);
+}
+
+// Opportunist: an opponent's stat rise is copied, until the combat ends.
+async function opportunist(effect) {
+  const actor = effect.parent;
+  const raised = Array.from(effect.changes ?? []).filter(change => Number(change.value) > 0);
+  if (!raised.length || effect.getFlag(MODULE_ID, "opportunist") || !combatActors().includes(actor)) {return;}
+  for (const copier of combatActors().filter(other => tokenSide(other) !== tokenSide(actor) && hasPokemonAbility(other, "opportunist"))) {
+    await copier.createEmbeddedDocuments("ActiveEffect", [{ name: `${abilityName(copier, "opportunist")} — ${effect.name}`, img: effect.img,
+      changes: raised, origin: copier.uuid, flags: { [MODULE_ID]: { kind: "pokemon-modifier", opportunist: true, ...untilCombatEnds } } }]);
+    await announce(copier, "opportunist", effect.name);
+  }
+}
+
 // Contrary inverts a Move's stat change; the guards drop what an opponent's would lower. false blocks it.
 function adjustStatChange(effect, actor) {
   const changes = Array.from(effect.changes ?? []).map(change => ({ ...change }));
   if (hasPokemonAbility(actor, "contrary") && effect.getFlag(MODULE_ID, "sourceMove")) {
     effect.updateSource({ changes: negated(changes) });
     return true;
+  }
+  if (hasPokemonAbility(actor, "mirror-armor") && !effect.getFlag(MODULE_ID, "mirrored") && isOpponentDebuff(effect, actor) && changes.some(change => Number(change.value) < 0)) {
+    logged(mirrorArmor(effect, actor));
+    return false;
   }
   const kept = isOpponentDebuff(effect, actor) ? protectedChanges(actor, changes) : null;
   if (!kept || kept.length === changes.length) {return true;}
@@ -437,6 +475,7 @@ export function registerEventAbilityEngine() {
   Hooks.on("preUpdateActiveEffect", onPreUpdateEffect);
   Hooks.on("createActiveEffect", (effect, _options, userId) => {
     if (userId === game.user.id && effect.parent?.documentName === "Actor") {logged(onStatusCreated(effect));}
+    if (gmAuthority() && effect.getFlag(MODULE_ID, "kind") === "pokemon-modifier") {logged(opportunist(effect));}
     queueSync(effect.parent);
   });
   Hooks.on("deleteActiveEffect", effect => queueSync(effect.parent));

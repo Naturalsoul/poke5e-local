@@ -55,3 +55,21 @@ test("Teraform Zero clears the weather and the terrain", () => {
   assert.equal(field.activeTerrain(), null);
   game.combat = null;
 });
+
+test("Protean, Libero and Color Change take the type they were given; Stakeout marks the replacement", async () => {
+  const greninja = pokemon("protean");
+  await greninja.setFlag(MODULE_ID, "shiftedType", "water");
+  assert.deepEqual(forms.formTypes(greninja), ["water"]);
+  const other = pokemon("static");
+  await other.setFlag(MODULE_ID, "shiftedType", "water");
+  assert.equal(forms.formTypes(other), null, "only with the Ability");
+  const { staked } = await import("../scripts/rider-ability-engine.mjs");
+  const gumshoos = pokemon("stakeout");
+  const replacement = pokemon("static");
+  game.combat = { round: 3, combatants: [] };
+  await gumshoos.setFlag(MODULE_ID, "stakeout", { target: replacement.uuid, round: 3 });
+  assert.equal(staked(gumshoos, replacement), true);
+  game.combat.round = 4;
+  assert.equal(staked(gumshoos, replacement), false, "it lasts until the round after the switch");
+  game.combat = null;
+});

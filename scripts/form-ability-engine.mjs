@@ -13,7 +13,8 @@ import { abilityWeather, registerTypeShaper, reshape } from "./battlefield-servi
  * - by HP: Schooling, Zen Mode, Shields Down, Power Construct;
  * - by damage: Ice Face, Disguise; by Moves: Stance Change; by an ally: Zero to Hero;
  * - each turn: Hunger Switch; always: Embody Aspect;
- * - types: Zen Mode, Multitype (Plate), RKS System (Memory), through battlefield-service's type shapers.
+ * - types: Zen Mode, Multitype (Plate), RKS System (Memory), Protean and Libero (the Move it uses), Color Change
+ *   (the damage that hit it), through battlefield-service's type shapers, during the combat.
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
@@ -70,6 +71,8 @@ export function wantedForms(actor) {
     .map(([abilityId, form]) => [abilityId, form(actor)]).filter(([, changes]) => Array.isArray(changes) && changes.length);
 }
 
+const SHIFT_FLAG = "shiftedType";
+const SHIFTERS = ["protean", "libero", "color-change"];
 const ZEN_TYPES = { "zen-mode": ["fire", "psychic"], "zen-mode-galarian": ["ice", "fire"] };
 
 function heldItemId(actor) {
@@ -79,6 +82,8 @@ function heldItemId(actor) {
 
 // Zen Mode, Multitype (its Plate's type) and RKS System (its Memory's type, Normal without one).
 export function formTypes(actor) {
+  const shifted = actor.getFlag?.(MODULE_ID, SHIFT_FLAG);
+  if (shifted && SHIFTERS.some(abilityId => hasPokemonAbility(actor, abilityId))) {return [shifted];}
   const zen = Object.keys(ZEN_TYPES).find(abilityId => hasPokemonAbility(actor, abilityId));
   if (zen && below(actor, 0.5)) {return ZEN_TYPES[zen];}
   if (hasPokemonAbility(actor, "multitype")) {
@@ -148,6 +153,9 @@ async function onHpChanged(actor, before) {
 
 // Ice Face: the first damage in Ice Form is halved (marked on the options, spent once applied).
 function onCalculateDamage(actor, damages, options = {}) {
+  // Color Change: the type of the biggest damage of the hit, taken once it is applied.
+  const hit = damages.filter(entry => entry.value > 0 && !["healing", "temphp"].includes(entry.type)).sort((a, b) => b.value - a.value)[0];
+  if (hit && hasPokemonAbility(actor, "color-change")) {options.poke5eColorChange = hit.type;}
   if (!hasPokemonAbility(actor, "ice-face") || spent(actor, "ice-face")) {return;}
   for (const damage of damages.filter(entry => entry.value > 0 && !["healing", "temphp"].includes(entry.type))) {
     damage.value = Math.trunc(damage.value / 2);
@@ -156,11 +164,16 @@ function onCalculateDamage(actor, damages, options = {}) {
 }
 
 async function onApplyDamage(actor, amount, options = {}) {
+  if (options.poke5eColorChange && amount > 0 && inCombat(actor) && actor.isOwner) {await actor.setFlag(MODULE_ID, SHIFT_FLAG, options.poke5eColorChange);}
   if (options.poke5eIceFace && amount > 0) {
     await markSpent(actor, "ice-face");
     await announce(actor, "rompe su cara de hielo: Forma Deshielo");
   }
-  if (amount <= 0 || isPokemonActor(actor) || !inCombat(actor)) {return;}
+  if (amount > 0 && !isPokemonActor(actor) && inCombat(actor)) {await heroForAlly(actor);}
+}
+
+// Zero to Hero: a non-Pokémon ally of Palafin took damage.
+async function heroForAlly(actor) {
   const side = actor.getActiveTokens?.()[0]?.document?.disposition;
   const palafin = [...game.combat.combatants].map(combatant => combatant.actor).find(other => other && hasPokemonAbility(other, "zero-to-hero") &&
     !spent(other, "zero-to-hero") && other.getActiveTokens?.()[0]?.document?.disposition === side);
@@ -191,6 +204,16 @@ export async function processFormAbilitiesStartTurn(actor) {
     await markSpent(actor, "hunger-switch", hangry);
     await announce(actor, hangry ? "pasa a su Forma Voraz" : "pasa a su Forma Saciada");
   }
+}
+
+// Protean and Libero: the type of the Move, just before it is used.
+function onPreUseActivity(activity) {
+  const actor = activity?.actor;
+  const type = activity?.item?.getFlag?.(MODULE_ID, "moveType");
+  if (!type || !actor?.isOwner || !inCombat(actor) || !["protean", "libero"].some(abilityId => hasPokemonAbility(actor, abilityId)) ||
+    actor.getFlag(MODULE_ID, SHIFT_FLAG) === type) {return true;}
+  logged(actor.setFlag(MODULE_ID, SHIFT_FLAG, type));
+  return true;
 }
 
 // Stance Change: King's Shield → Shield Forme (AC and DEX swapped); a damaging Move → Blade Forme.
@@ -235,6 +258,7 @@ async function onCombatDeleted(combat) {
   for (const actor of new Set([...combat.combatants].map(combatant => combatant.actor).filter(Boolean))) {
     if (Array.isArray(actor.getFlag(MODULE_ID, SPENT_FLAG)?.["zero-to-hero"])) {await markSpent(actor, "zero-to-hero", true);}
     if (actor.getFlag(MODULE_ID, SPENT_FLAG)?.["stance-change"]) {await markSpent(actor, "stance-change", null);}
+    if (actor.getFlag(MODULE_ID, SHIFT_FLAG)) {await actor.unsetFlag(MODULE_ID, SHIFT_FLAG);}
   }
 }
 
@@ -259,6 +283,7 @@ export function registerFormAbilityEngine() {
   Hooks.on("updateItem", item => queueSync(item.parent));
   Hooks.on("dnd5e.calculateDamage", onCalculateDamage);
   Hooks.on("dnd5e.applyDamage", (actor, amount, options) => logged(onApplyDamage(actor, amount, options)));
+  Hooks.on("dnd5e.preUseActivity", onPreUseActivity);
   Hooks.on("dnd5e.postUseActivity", activity => logged(onPostUseActivity(activity)));
   Hooks.on("preCreateActiveEffect", onPreCreateEffect);
   Hooks.on("createCombatant", (combatant, _options, userId) => { if (userId === game.user.id) {logged(onCombatantCreated(combatant));} });

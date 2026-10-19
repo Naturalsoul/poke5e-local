@@ -24,5 +24,6 @@ Pending work outside this branch lives in [backlog.md](backlog.md).
 - [x] 6. Weather and terrain (agreed with the user): one of each per combat on the Combat's flags, set by the weather and
   terrain Moves, Drizzle & co. on entering, and the GM from the combat tracker, which also sets the environment
   (outdoors, indoors, desert, arctic, water). Sandstorm/Hail damage, Grassy Terrain healing and their 37 Abilities.
-- [ ] 7. Auras (26) and forms (21), then the 16 left from batch 5.
+- [x] 7. Auras (24, Lightning Rod and Storm Drain stay with the GM) and forms (19, Transformer and Tera Shift stay with the player), then 12 of the 20 left.
+- [ ] 8. The last 8: Skill Link, Sheer Force, Gorilla Tactics, Download, Curious Medicine, Healer, Receiver, Power of Alchemy.
 - Verify: `node --test tests/*.test.mjs` (only the 29 old failures), lint clean on new files.

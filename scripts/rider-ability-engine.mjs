@@ -17,7 +17,8 @@ import { auraDamage, auraDamageMultiplier, telepathyBlocks } from "./aura-abilit
  * - initiative (Quick Draw), using a Move (Truant) and critical hits (Hustle);
  * - weather and terrain: Weather Ball, Solar Power, Flower Gift, Sand Force, the terrains that double MOVE,
  *   primal weathers that stop Water or Fire damage, Misty Terrain against Dragon, Protosynthesis, Quark Drive;
- * - auras from aura-ability-engine: Battery, Power Spot, Steely Spirit, Plus/Minus, Fairy/Dark Aura, Telepathy.
+ * - auras from aura-ability-engine: Battery, Power Spot, Steely Spirit, Plus/Minus, Fairy/Dark Aura, Telepathy;
+ * - Stakeout: double damage to the Pokémon an opponent switched in, until the end of its next turn's round.
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
@@ -116,7 +117,7 @@ export function damageRiders(actor, move, targets, { melee = false } = {}) {
 }
 
 // A number or a dice formula ("1d6") added to the roll.
-function addFlat(roll, value) {
+export function addFlat(roll, value) {
   const { OperatorTerm, NumericTerm } = foundry.dice.terms;
   const terms = typeof value === "string" ? foundry.dice.Roll.parse(value) : [new NumericTerm({ number: value })];
   roll.terms.push(new OperatorTerm({ operator: "+" }), ...terms);
@@ -195,9 +196,10 @@ export function applyRiderDefenses(actor, damages, options = {}) {
   if (activeTerrain() === "misty" && isGrounded(actor) && weakTo(actor, "dragon")) {ignore(options, "vulnerability", ["dragon"]);}
   const halved = halvedBy(actor, move);
   const ally = telepathyBlocks(actor, move?.actor);
+  const stakeout = staked(move?.actor, actor) ? 2 : 1;
   for (const damage of damages.filter(isDamage)) {
     if (nullified(damage.type) || ally) {damage.value = 0;}
-    if (move) {damage.value = Math.trunc(damage.value * auraDamageMultiplier(damage.type));}
+    if (move) {damage.value = Math.trunc(damage.value * auraDamageMultiplier(damage.type) * stakeout);}
     if (halved(damage.type)) {damage.value = Math.trunc(damage.value / 2);}
   }
 }
@@ -250,7 +252,25 @@ async function onRollAttack(rolls, data) {
     content: `<div class="poke5e-turn-message"><strong>${actor.name}</strong> (Hustle) ${text("hustle")}.</div>` });
 }
 
+// Stakeout: the replacement an opponent switched in, until the round after the switch ends.
+const STAKEOUT_FLAG = "stakeout";
+
+export function staked(attacker, target) {
+  const mark = attacker?.getFlag?.(MODULE_ID, STAKEOUT_FLAG);
+  return Boolean(mark) && hasPokemonAbility(attacker, "stakeout") && mark.target === target?.uuid && Number(game.combat?.round ?? 0) <= mark.round;
+}
+
+async function onSwitched({ incoming }) {
+  const gm = game.user.isGM && (!game.users?.activeGM || game.users.activeGM.id === game.user.id);
+  if (!gm || !incoming || !game.combat) {return;}
+  const side = incoming.getActiveTokens?.()[0]?.document?.disposition;
+  const watchers = [...new Set([...game.combat.combatants].map(combatant => combatant.actor))].filter(actor => actor &&
+    hasPokemonAbility(actor, "stakeout") && actor.getActiveTokens?.()[0]?.document?.disposition !== side);
+  for (const watcher of watchers) {await watcher.setFlag(MODULE_ID, STAKEOUT_FLAG, { target: incoming.uuid, round: game.combat.round + 1 });}
+}
+
 export function registerRiderAbilityEngine() {
+  Hooks.on("poke5ePokemonSwitched", event => { void onSwitched(event).catch(error => console.error(`[${MODULE_ID}] stakeout`, error)); });
   Hooks.on("dnd5e.postRollConfiguration", onPostRollConfiguration);
   Hooks.on("dnd5e.preCalculateDamage", applyRiderDefenses);
   Hooks.on("dnd5e.preConfigureInitiative", onPreConfigureInitiative);

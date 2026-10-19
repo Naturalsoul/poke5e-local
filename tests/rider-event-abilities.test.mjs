@@ -119,3 +119,11 @@ test("Wonder Skin only offers a second roll for a failed save against those stat
   assert.equal(events.wonderSkinOffer({ total: 14 }, { actor: smeargle, dc: 13, move: toxic }), null);
   assert.equal(events.wonderSkinOffer({ total: 9 }, { actor: smeargle, dc: 13, move: growl }), null);
 });
+
+test("Unaware attacks ignore the AC its target gained in battle", () => {
+  const raised = { disabled: false, getFlag: (_module, key) => (key === "kind" ? "pokemon-modifier" : undefined),
+    changes: [{ key: "system.attributes.ac.bonus", value: "2" }] };
+  const target = pokemon("static", { effects: [raised] });
+  assert.equal(passive.attackAbilityModifiers(pokemon("unaware"), null, [target]).bonus, 2);
+  assert.equal(passive.attackAbilityModifiers(pokemon("static"), null, [target]).bonus, 0);
+});
