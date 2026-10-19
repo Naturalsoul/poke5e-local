@@ -1,4 +1,5 @@
 import { calculatePokemonDefenses, hasStab } from "./types.mjs";
+import { pokemonAbilityIcon } from "./pokemon-ability-icons.mjs";
 import { buildMoveStatusEffects } from "./status-effects.mjs";
 import { buildMoveModifierEffects } from "./modifier-effects.mjs";
 import { buildMovePeriodicEffects } from "./periodic-effects.mjs";
@@ -2322,6 +2323,9 @@ function createAbilityItem(
     type: "feat",
 
     img:
+      pokemonAbilityIcon(
+        ability.id
+      ) ??
       DEFAULT_ABILITY_ICON,
 
     system: {
