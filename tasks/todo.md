@@ -22,17 +22,17 @@ used), or to the GM if no owner is connected. Automation waits for the answer. P
     Not This Time (Tactician 15) on an opponent's successful save against the trainer's Pokémon's Move (≤5 to fail).
   - Verify: save outcome + trainer feature tests.
 
-- [ ] 4. Damage features
+- [x] 4. Damage features
   - Acceptance: Battle Dice button adds a die to the latest damage roll of the trainer's Pokémon (applied from the
-    card as usual); Directed Strike (Tactician 5) armed by a button, rolls the next damage twice and keeps the higher;
+    card as usual); Directed Strike (Tactician 5) button rerolls the latest damage roll and keeps the higher;
     Sinister Dodge (Grunt 9) offered on a Move's damage roll against the trainer's Pokémon, stepping its resistance
     one level when the damage is applied.
   - Verify: trainer feature tests.
 
-- [ ] 5. Dark Advantage (Grunt 5)
+- [x] 5. Dark Advantage (Grunt 5)
   - Acceptance: button spends 3 Shadow Points and arms advantage on the next skill check, attack or save of the
     trainer or one of its Pokémon; consumed on that roll.
 
-- [ ] 6. Nefarious Stagger (Grunt 15)
+- [x] 6. Nefarious Stagger (Grunt 15)
   - Acceptance: when one of the trainer's Pokémon inflicts Flinched, the owner may spend 2 Shadow Points to inflict
     Stunned instead.

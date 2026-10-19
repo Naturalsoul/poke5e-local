@@ -4,6 +4,9 @@ import { askTrainerReaction } from "./trainer-reaction-service.mjs";
 import { getPokemonTrainerUuid, isPokemonActor } from "./trainer-party-service.mjs";
 import { getTrainerProgressionResource, getTrainerProgressionState, spendTrainerProgressionResource } from "./trainer-progression-service.mjs";
 import { getTrainerLevel, isTrainerActor } from "./trainer-service.mjs";
+import { pokemonStatus } from "./status-runtime.mjs";
+import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
+import { messageRollShown } from "./chat-roll-display.mjs";
 
 /* ============================================================
  * TRAINER COMBAT REACTIONS
@@ -224,6 +227,111 @@ export function notThisTimeOffer(roll, { actor, dc, moveUser }) {
   };
 }
 
+/* ============================================================
+ * GRUNT L9 — SINISTER DODGE
+ *
+ * After a damaging Move is rolled against the trainer's Pokémon, 4 Shadow Points make
+ * it one step more resistant to that damage: vulnerable → neutral → resistant → immune.
+ * The choice is stored on the damage message and applied whenever that damage is.
+ * ============================================================ */
+
+export const SINISTER_DODGE = { name: "Sinister Dodge", pathId: "grunt", level: 9, resourceId: "shadowPoints" };
+const DODGE_COST = 4;
+const SINISTER_DODGE_FLAG = "sinisterDodge";
+
+const canDodge = pokemon => (featureOwner(pokemon, SINISTER_DODGE)?.resource.value ?? 0) >= DODGE_COST;
+
+export function dodgeCandidates(activity, targets) {
+  if (activity?.item?.getFlag?.(MODULE_ID, "kind") !== "move") {return [];}
+  return targets.filter(actor => actor && actor !== activity.actor && canDodge(actor));
+}
+
+async function offerSinisterDodge(rolls, data) {
+  const message = rolls?.[0]?.parent;
+  const targets = dodgeCandidates(data?.subject, [...game.user.targets].map(token => token.actor));
+  if (!targets.length || message?.documentName !== "ChatMessage") {return;}
+  await messageRollShown(message);
+  const dodged = [];
+  for (const pokemon of targets) {
+    const owner = featureOwner(pokemon, SINISTER_DODGE);
+    if (!canDodge(pokemon)) {continue;}
+    const answer = await askTrainerReaction(owner.trainer, {
+      title: SINISTER_DODGE.name,
+      use: en() ? "Dodge" : "Esquivar",
+      content: en()
+        ? `<p><strong>${escape(pokemon.name)}</strong> is about to take damage from <strong>${escape(data.subject.item.name)}</strong>. Spend 4 of ${owner.resource.value} Shadow Points to resist it one step more?</p>`
+        : `<p><strong>${escape(pokemon.name)}</strong> va a recibir daño de <strong>${escape(data.subject.item.name)}</strong>. ¿Gastar 4 de ${owner.resource.value} Shadow Points para resistirlo un paso más?</p>`
+    });
+    if (!answer || !await spendTrainerProgressionResource(owner.trainer, SINISTER_DODGE.resourceId, DODGE_COST)) {continue;}
+    dodged.push(pokemon.uuid);
+    await announce(owner.trainer, en()
+      ? `<strong>${escape(owner.trainer.name)}</strong> uses <strong>Sinister Dodge</strong>: <strong>${escape(pokemon.name)}</strong> resists this damage one step more.`
+      : `<strong>${escape(owner.trainer.name)}</strong> usa <strong>Sinister Dodge</strong>: <strong>${escape(pokemon.name)}</strong> resiste este daño un paso más.`);
+  }
+  if (dodged.length) {await message.setFlag(MODULE_ID, SINISTER_DODGE_FLAG, dodged);}
+}
+
+// Vulnerable → neutral and neutral → resistant both halve it; resistant → immune removes it.
+export function steppedDamage(damage) {
+  const active = { ...damage.active?.all, ...damage.active?.type };
+  return active.resistance && !active.vulnerability ? 0 : Math.trunc(damage.value / 2);
+}
+
+// dnd5e.calculateDamage runs after resistances: re-step only the damage of the dodging Pokémon.
+export function applySinisterDodge(actor, damages, options) {
+  const dodged = options?.originatingMessage?.getFlag?.(MODULE_ID, SINISTER_DODGE_FLAG);
+  if (!Array.isArray(dodged) || !dodged.includes(actor?.uuid)) {return;}
+  for (const damage of damages) {
+    if (damage.type in CONFIG.DND5E.healingTypes || !(damage.value > 0)) {continue;}
+    const stepped = steppedDamage(damage);
+    damages.amount -= damage.value - stepped;
+    damage.value = stepped;
+  }
+}
+
+/* ============================================================
+ * GRUNT L15 — NEFARIOUS STAGGER
+ *
+ * When the trainer's Pokémon inflicts Flinched, 2 Shadow Points turn it into Stunned,
+ * with Flinched's duration (until the end of the target's next turn).
+ * ============================================================ */
+
+export const NEFARIOUS_STAGGER = { name: "Nefarious Stagger", pathId: "grunt", level: 15, resourceId: "shadowPoints" };
+const STAGGER_COST = 2;
+
+function flinchSource(effect) {
+  const origin = effect.origin ? fromUuidSync(effect.origin, { strict: false }) : null;
+  const actor = origin?.documentName === "Actor" ? origin : origin?.actor;
+  // Moves and abilities inflict Flinched during their user's turn: without an origin, whoever is acting.
+  return isPokemonActor(actor) ? actor : game.combat?.combatant?.actor ?? null;
+}
+
+// Only the client that created the Flinched effect offers it, once.
+export function staggerOffer(effect, userId) {
+  const target = effect?.parent;
+  if (userId !== game.user.id || pokemonStatus(effect) !== "flinched" || target?.documentName !== "Actor") {return null;}
+  const source = flinchSource(effect);
+  const owner = source && source !== target ? featureOwner(source, NEFARIOUS_STAGGER) : null;
+  if (!owner || owner.resource.value < STAGGER_COST || getPokemonTrainerUuid(target) === owner.trainer.uuid) {return null;}
+  return async () => {
+    const answer = await askTrainerReaction(owner.trainer, {
+      title: NEFARIOUS_STAGGER.name,
+      use: en() ? "Stun it" : "Aturdir",
+      content: en()
+        ? `<p><strong>${escape(source.name)}</strong> made <strong>${escape(target.name)}</strong> flinch. Spend 2 of ${owner.resource.value} Shadow Points to stun it instead?</p>`
+        : `<p><strong>${escape(source.name)}</strong> hizo retroceder a <strong>${escape(target.name)}</strong>. ¿Gastar 2 de ${owner.resource.value} Shadow Points para aturdirlo en su lugar?</p>`
+    });
+    if (!answer || !target.effects.get(effect.id) || !await spendTrainerProgressionResource(owner.trainer, NEFARIOUS_STAGGER.resourceId, STAGGER_COST)) {return;}
+    await target.deleteEmbeddedDocuments("ActiveEffect", [effect.id]);
+    const created = await target.toggleStatusEffect("stunned", { active: true });
+    const stunned = typeof created?.update === "function" ? created : target.effects.find(entry => entry.statuses?.has("stunned"));
+    await stunned?.update({ [`flags.${MODULE_ID}`]: { ...endOfNextTurnFlags(), nefariousStagger: owner.trainer.uuid } });
+    await announce(owner.trainer, en()
+      ? `<strong>${escape(owner.trainer.name)}</strong> uses <strong>Nefarious Stagger</strong>: <strong>${escape(target.name)}</strong> is Stunned instead of Flinched.`
+      : `<strong>${escape(owner.trainer.name)}</strong> usa <strong>Nefarious Stagger</strong>: <strong>${escape(target.name)}</strong> queda Aturdido en vez de Retroceso.`);
+  };
+}
+
 export function registerTrainerCombatReactions() {
   if (registered) {return;}
   registered = true;
@@ -232,4 +340,12 @@ export function registerTrainerCombatReactions() {
   for (const feature of DEFENSES) {registerAttackReaction(defenseOffer(feature));}
   registerSaveReaction(saveDefenseOffer);
   registerSaveReaction(notThisTimeOffer);
+  Hooks.on("dnd5e.rollDamage", (rolls, data) => {
+    void offerSinisterDodge(rolls, data).catch(error => console.error(`[${MODULE_ID}] Error en Sinister Dodge`, error));
+  });
+  Hooks.on("dnd5e.calculateDamage", applySinisterDodge);
+  Hooks.on("createActiveEffect", (effect, _options, userId) => {
+    const step = staggerOffer(effect, userId);
+    if (step) {void step().catch(error => console.error(`[${MODULE_ID}] Error en Nefarious Stagger`, error));}
+  });
 }

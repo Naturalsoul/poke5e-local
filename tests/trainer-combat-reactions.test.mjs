@@ -136,3 +136,45 @@ test("saves: Raise Your Defenses passes a failed save of its Pokémon; Not This 
   assert.equal(added.total, 14);
   assert.equal(added.isSuccess, true);
 });
+
+test("Nefarious Stagger turns the Flinched a Grunt 15's Pokémon inflicts into Stunned, keeping its duration", async () => {
+  const grunt = trainer("grunt", 15, { shadowPoints: { value: 3, max: 15 } });
+  const attacker = pokemon(grunt);
+  const target = pokemon(null);
+  const log = [];
+  const effects = new Map();
+  target.effects = { get: id => effects.get(id), find: predicate => [...effects.values()].find(predicate) };
+  target.deleteEmbeddedDocuments = async (_type, ids) => { ids.forEach(id => effects.delete(id)); log.push(["delete", ...ids]); };
+  target.toggleStatusEffect = async id => ({ update: async changes => log.push(["stunned", id, changes[`flags.${MODULE_ID}`]]) });
+  const flinched = { id: "fx", parent: target, origin: attacker.uuid, flags: { [MODULE_ID]: { status: "flinched" } }, statuses: new Set(["poke5e-flinched"]) };
+  effects.set("fx", flinched);
+  assert.equal(combat.staggerOffer(flinched, "someone-else"), null, "only the creating client offers it");
+  assert.equal(combat.staggerOffer({ ...flinched, parent: pokemon(grunt) }, "gm"), null, "not on its own team");
+  prompts.answer = {};
+  await combat.staggerOffer(flinched, "gm")();
+  assert.deepEqual(log, [["delete", "fx"], ["stunned", "stunned", { expireAtEndOfNextTurn: true, nextTurnStarted: false, nefariousStagger: grunt.uuid }]]);
+  assert.equal(points(grunt, "shadowPoints"), 1);
+  assert.equal(combat.staggerOffer({ ...flinched, id: "fx2" }, "gm"), null, "1 Shadow Point is not enough");
+});
+
+test("Sinister Dodge: a Grunt 9's Pokémon with 4 Shadow Points resists the Move's damage one step more", () => {
+  globalThis.CONFIG = { DND5E: { healingTypes: { healing: {}, temphp: {} } } };
+  const grunt = trainer("grunt", 9, { shadowPoints: { value: 4, max: 9 } });
+  const own = pokemon(grunt);
+  const move = { actor: pokemon(null), item: { getFlag: (_module, key) => ({ kind: "move" })[key] } };
+  assert.deepEqual(combat.dodgeCandidates(move, [own, pokemon(null), pokemon(trainer("grunt", 8, { shadowPoints: { value: 8, max: 8 } }))]), [own]);
+  assert.deepEqual(combat.dodgeCandidates({ ...move, item: { getFlag: () => "item" } }, [own]), [], "only Moves");
+
+  const message = { getFlag: (_module, key) => (key === "sinisterDodge" ? [own.uuid] : null) };
+  const damages = Object.assign([
+    { type: "fire", value: 12, active: { type: { vulnerability: true } } },
+    { type: "water", value: 5, active: {} },
+    { type: "grass", value: 3, active: { type: { resistance: true } } },
+    { type: "healing", value: -4, active: {} }
+  ], { amount: 16 });
+  combat.applySinisterDodge(pokemon(null), damages, { originatingMessage: message });
+  assert.equal(damages.amount, 16, "other Pokémon take the damage as rolled");
+  combat.applySinisterDodge(own, damages, { originatingMessage: message });
+  assert.deepEqual(damages.map(damage => damage.value), [6, 2, 0, -4]);
+  assert.equal(damages.amount, 4);
+});

@@ -178,6 +178,55 @@ test("Versatile picks the latest skill or save of the trainer's Pokémon and add
   assert.equal(latestVersatileMessage(flinker, [roll(diggy, "attack")]), null);
 });
 
+test("Directed Strike rerolls the latest damage of the trainer's Pokémon once and keeps the higher", async () => {
+  const { availableTrainerPathActions, runTrainerPathAction } = await import("../scripts/trainer-path-actions.mjs");
+  const tess = trainer("tactician", 5);
+  await tess.setFlag(MODULE_ID, "trainerProgression", { ...tess.getFlag(MODULE_ID, "trainerProgression"), resources: { tacticalPoints: { value: 5, max: 5 } } });
+  assert.deepEqual(availableTrainerPathActions(tess), ["trainer-directed-strike"]);
+  assert.deepEqual(availableTrainerPathActions(trainer("ace-trainer", 5)), ["trainer-battle-dice"]);
+  const damage = total => ({ total, formula: "2d6", options: {}, toJSON() { return { ...this }; }, reroll: async () => damage(total + 3) });
+  const message = { speaker: { actor: pokemon(tess, ["normal"]) }, flags: { dnd5e: { roll: { type: "damage" } } }, rolls: [damage(5)],
+    canUserModify: () => true, update: async changes => { message.rolls = changes.rolls; } };
+  const chat = [];
+  game.messages = { contents: [message] };
+  globalThis.ChatMessage = { implementation: { getSpeakerActor: speaker => speaker.actor, getSpeaker: () => ({}), create: async data => chat.push(data.content) } };
+  globalThis.foundry.applications = { api: { DialogV2: { confirm: async () => true } } };
+  globalThis.ui = { notifications: { warn: text => chat.push(text) } };
+  await runTrainerPathAction("trainer-directed-strike", tess);
+  assert.equal(message.rolls[0].total, 8);
+  assert.deepEqual(message.rolls[0].options[MODULE_ID].directedStrike, { first: 5, second: 8 });
+  assert.match(chat.at(-1), /5 \/ 8 → <strong>8<\/strong>/);
+  assert.equal(tess.getFlag(MODULE_ID, "trainerProgression").resources.tacticalPoints.value, 3);
+  await runTrainerPathAction("trainer-directed-strike", tess);
+  assert.match(chat.at(-1), /No hay una tirada de daño/, "the same roll is not redirected twice");
+});
+
+test("Dark Advantage spends 3 Shadow Points and gives advantage to the chosen actor's next roll only", async () => {
+  const { registerTrainerPathActions, runTrainerPathAction } = await import("../scripts/trainer-path-actions.mjs");
+  registerTrainerPathActions();
+  const grunt = trainer("grunt", 5);
+  const zubat = pokemon(grunt, ["poison"]);
+  await grunt.setFlag(MODULE_ID, "trainerProgression", { ...grunt.getFlag(MODULE_ID, "trainerProgression"), resources: { shadowPoints: { value: 5, max: 5 } } });
+  await grunt.setFlag(MODULE_ID, "trainerParty", { pokemonUuids: [zubat.uuid], activePokemonUuids: [zubat.uuid] });
+  globalThis.fromUuidSync = uuid => game.actors.find(actor => actor.uuid === uuid) ?? null;
+  globalThis.foundry.applications = { api: { DialogV2: { prompt: async options => {
+    assert.match(options.content, new RegExp(`value="${zubat.uuid}"`));
+    return zubat.uuid;
+  } } } };
+  globalThis.ChatMessage = { implementation: { getSpeaker: () => ({}), create: async () => {} } };
+  await runTrainerPathAction("trainer-dark-advantage", grunt);
+  assert.equal(grunt.getFlag(MODULE_ID, "trainerProgression").resources.shadowPoints.value, 2);
+  const config = { subject: zubat, rolls: [{}] };
+  hooks.handlers("dnd5e.preRollSavingThrow").forEach(handler => handler(config));
+  assert.equal(config.rolls[0].options.advantage, true);
+  const other = { subject: pokemon(grunt, ["dark"]), rolls: [{}] };
+  hooks.handlers("dnd5e.preRollSkill").forEach(handler => handler(other));
+  assert.equal(other.rolls[0].options?.advantage, undefined, "only the chosen actor");
+  hooks.handlers("dnd5e.rollSavingThrow").forEach(handler => handler([{ options: config.rolls[0].options }], { subject: zubat }));
+  await new Promise(resolve => setTimeout(resolve, 0));
+  assert.equal(zubat.getFlag(MODULE_ID, "darkAdvantage") ?? null, null, "used up by the roll");
+});
+
 test("Cheerleader bonus targets attacks, damage or AC", async () => {
   const { cheerleaderChanges } = await import("../scripts/trainer-path-actions.mjs");
   assert.deepEqual(cheerleaderChanges("ac", 2), [{ key: "system.attributes.ac.bonus", mode: 2, value: "2", priority: 20 }]);
