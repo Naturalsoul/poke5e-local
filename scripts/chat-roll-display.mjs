@@ -70,3 +70,36 @@ export async function publishRollBeforeDamage(roll, data) {
     globalThis.Hooks?.off?.("dnd5e.renderChatMessage", listener);
   }
 }
+
+// For rolls whose message another API creates (e.g. actor.rollSkill): put `flags` on the message, then
+// `displayed(game.messages)` resolves once Dice So Nice has shown its result in chat.
+export function trackRollDisplay() {
+  const key = `${game.user.id}:${Date.now()}:${++sequence}`;
+  const record = {};
+  let rendered;
+  const firstRender = new Promise(resolve => { rendered = resolve; });
+  const listener = globalThis.Hooks?.on("dnd5e.renderChatMessage", (message, html) => {
+    if (message.getFlag(MODULE_ID, "rollDisplayKey") !== key) {return;}
+    record.html = html;
+    record.message = message;
+    rendered();
+    void afterPaint().then(() => record.refresh?.());
+  });
+  const stop = () => globalThis.Hooks?.off?.("dnd5e.renderChatMessage", listener);
+  return {
+    flags: { rollDisplayKey: key },
+    stop,
+    async displayed() {
+      try {
+        await firstRender;
+        await game.dice3d?.waitFor3DAnimationByMessageID?.(record.message.id);
+        await afterPaint();
+        const visible = await waitForVisibleResult(record);
+        await afterPaint();
+        return visible;
+      } finally {
+        stop();
+      }
+    }
+  };
+}

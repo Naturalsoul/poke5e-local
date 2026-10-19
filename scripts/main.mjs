@@ -1,3 +1,4 @@
+import { registerPokemonCaptureService } from "./pokemon-capture-service.mjs";
 import { registerTrainerPathActions } from "./trainer-path-actions.mjs";
 import {
   Poke5eImporter,
@@ -407,6 +408,7 @@ Hooks.once(
     registerTrainerFeatureEngine();
     registerTrainerPathEffects();
     registerTrainerPathActions();
+    registerPokemonCaptureService();
     registerTrainerOwnershipService();
     registerTrainerSwitchAuthorityService();
     registerPokemonActorSheet();
