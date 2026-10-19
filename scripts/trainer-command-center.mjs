@@ -2108,7 +2108,8 @@ export function buildTrainerCommandCenter(
         ${
           editable
             ? availableTrainerPathActions(trainer).map(action => `
-              <button type="button" class="poke5e-trainer-command-action" data-command-action="${action}">
+              <button type="button" class="poke5e-trainer-command-feature" data-command-action="${action}">
+                <i class="fa-solid ${action === "trainer-partner" ? "fa-handshake" : "fa-bullhorn"}" aria-hidden="true"></i>
                 ${escapeHtml(trainerPathActionLabel(trainer, action))}
               </button>`).join("")
             : ""

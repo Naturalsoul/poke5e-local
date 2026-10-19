@@ -1,4 +1,4 @@
-import { getTrainerOwnedPokemon, getTrainerPartyState } from "./trainer-party-service.mjs";
+import { getPokemonTrainerUuid, getTrainerOwnedPokemon, getTrainerPartyState, isPokemonActor } from "./trainer-party-service.mjs";
 import {
   ensureTrainerPathFeatureResources, getTrainerProgressionResource, getTrainerProgressionState, spendTrainerProgressionResource
 } from "./trainer-progression-service.mjs";
@@ -77,7 +77,7 @@ async function useCheerleader(trainer) {
   const labels = en() ? { attack: "Attack rolls", damage: "Damage rolls", ac: "AC" } : { attack: "Tiradas de ataque", damage: "Tiradas de daño", ac: "CA" };
   const choice = await foundry.applications.api.DialogV2.prompt({
     window: { title: "Cheerleader" },
-    content: `<p>${en() ? `Active Pokémon get +${bonus} until your next turn to:` : `Los Pokémon activos reciben +${bonus} hasta tu siguiente turno en:`}</p>
+    content: `<p>${en() ? `Active Pokémon get +${bonus} until your Pokémon's next turn to:` : `Los Pokémon activos reciben +${bonus} hasta el siguiente turno de tu Pokémon en:`}</p>
       <div class="form-group"><select name="choice">${Object.entries(labels).map(([id, label]) => `<option value="${id}">${label}</option>`).join("")}</select></div>`,
     rejectClose: false,
     ok: { label: "Cheerleader", callback: (_event, button) => button.form.elements.choice.value }
@@ -91,18 +91,18 @@ async function useCheerleader(trainer) {
   }
   if (!await spendTrainerProgressionResource(trainer, "cheerleaderUses", 1)) {return;}
   const name = `Cheerleader — ${labels[choice]} +${bonus}`;
+  const turnOf = cheerleaderTurnOf(pokemon);
   for (const actor of pokemon) {
     await clearCheerleader(actor);
     await actor.createEmbeddedDocuments("ActiveEffect", [{ name, img: "icons/svg/sound.svg", transfer: false, disabled: false,
-      changes: cheerleaderChanges(choice, bonus), flags: { [MODULE_ID]: { kind: CHEERLEADER_KIND, trainerUuid: trainer.uuid } } }]);
+      changes: cheerleaderChanges(choice, bonus), flags: { [MODULE_ID]: { kind: CHEERLEADER_KIND, trainerUuid: trainer.uuid, turnOf } } }]);
   }
   await ChatMessage.implementation.create({ speaker: ChatMessage.implementation.getSpeaker({ actor: trainer }),
     content: `<p><strong>${escape(trainer.name)}</strong>: ${escape(name)} (${pokemon.map(actor => escape(actor.name)).join(", ")}).</p>` });
 }
 
-async function clearCheerleader(actor, trainerUuid = null) {
-  const ids = actor.effects.filter(effect => effect.getFlag(MODULE_ID, "kind") === CHEERLEADER_KIND
-    && (!trainerUuid || effect.getFlag(MODULE_ID, "trainerUuid") === trainerUuid)).map(effect => effect.id);
+async function clearCheerleader(actor) {
+  const ids = actor.effects.filter(effect => effect.getFlag(MODULE_ID, "kind") === CHEERLEADER_KIND).map(effect => effect.id);
   if (ids.length) {await actor.deleteEmbeddedDocuments("ActiveEffect", ids);}
 }
 
@@ -112,16 +112,38 @@ export async function runTrainerPathAction(action, trainer) {
 }
 
 /* ============================================================
- * EXPIRY: Cheerleader ends when its trainer's next turn starts, or with the combat.
+ * EXPIRY
+ *
+ * Trainers are not in the initiative tracker, so "until your next turn" means until the
+ * next turn of the trainer's Pokémon: the one whose turn it was when Cheerleader was used,
+ * or, used outside its Pokémon's turn, whichever of its Pokémon acts next. Combat end clears it.
  * ============================================================ */
 
 function authority() {
   return game.user.isGM && (!game.users?.activeGM || game.users.activeGM.id === game.user.id);
 }
 
-async function expireCheerleader(trainer) {
-  for (const pokemon of getTrainerOwnedPokemon(trainer)) {await clearCheerleader(pokemon, trainer.uuid);}
+function cheerleaderTurnOf(pokemon) {
+  const current = game.combat?.combatant?.actor?.uuid;
+  return pokemon.some(actor => actor.uuid === current) ? current : null;
 }
+
+// turnOf left the combat (switched out): the next turn of any of the trainer's Pokémon ends it.
+export function cheerleaderExpiresOnTurn(turnOf, actorUuid, combatantUuids) {
+  return !turnOf || turnOf === actorUuid || !combatantUuids.includes(turnOf);
+}
+
+async function expireCheerleader(trainerUuid, shouldExpire = () => true) {
+  const trainer = fromUuidSync(trainerUuid, { strict: false });
+  if (!isTrainerActor(trainer)) {return;}
+  for (const pokemon of getTrainerOwnedPokemon(trainer)) {
+    const ids = pokemon.effects.filter(effect => effect.getFlag(MODULE_ID, "kind") === CHEERLEADER_KIND
+      && effect.getFlag(MODULE_ID, "trainerUuid") === trainerUuid && shouldExpire(effect.getFlag(MODULE_ID, "turnOf"))).map(effect => effect.id);
+    if (ids.length) {await pokemon.deleteEmbeddedDocuments("ActiveEffect", ids);}
+  }
+}
+
+const combatTrainerUuid = actor => (isPokemonActor(actor) ? getPokemonTrainerUuid(actor) : null);
 
 export function registerTrainerPathActions() {
   if (registered) {return;}
@@ -129,8 +151,10 @@ export function registerTrainerPathActions() {
   const run = task => { void task.catch(error => console.error(`[${MODULE_ID}] Error en rasgos de camino`, error)); };
   Hooks.on("updateCombat", (combat, changes) => {
     const actor = combat.combatant?.actor;
-    if (!authority() || !("turn" in changes || "round" in changes) || !isTrainerActor(actor)) {return;}
-    run(expireCheerleader(actor));
+    const trainerUuid = combatTrainerUuid(actor);
+    if (!authority() || !("turn" in changes || "round" in changes) || !trainerUuid) {return;}
+    const combatantUuids = combat.combatants.map(combatant => combatant.actor?.uuid).filter(Boolean);
+    run(expireCheerleader(trainerUuid, turnOf => cheerleaderExpiresOnTurn(turnOf, actor.uuid, combatantUuids)));
   });
   Hooks.once("ready", () => {
     if (!authority()) {return;}
@@ -140,8 +164,7 @@ export function registerTrainerPathActions() {
   });
   Hooks.on("deleteCombat", combat => {
     if (!authority()) {return;}
-    for (const combatant of combat.combatants) {
-      if (isTrainerActor(combatant.actor)) {run(expireCheerleader(combatant.actor));}
-    }
+    const trainerUuids = new Set(combat.combatants.map(combatant => combatTrainerUuid(combatant.actor)).filter(Boolean));
+    for (const trainerUuid of trainerUuids) {run(expireCheerleader(trainerUuid));}
   });
 }

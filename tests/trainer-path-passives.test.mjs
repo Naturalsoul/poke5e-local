@@ -200,3 +200,12 @@ test("Cheerleader bonus targets attacks, damage or AC", async () => {
     ["mwak", "rwak", "msak", "rsak"].map(key => `system.bonuses.${key}.damage`));
   assert.ok(cheerleaderChanges("attack", 1).every(change => change.key.endsWith(".attack")));
 });
+
+test("Cheerleader ends on the next turn of the trainer's Pokémon, since trainers are not in initiative", async () => {
+  const { cheerleaderExpiresOnTurn } = await import("../scripts/trainer-path-actions.mjs");
+  const inCombat = ["Actor.a", "Actor.b"];
+  assert.equal(cheerleaderExpiresOnTurn("Actor.a", "Actor.b", inCombat), false, "used on A's turn: B's turn keeps it");
+  assert.equal(cheerleaderExpiresOnTurn("Actor.a", "Actor.a", inCombat), true, "A's next turn ends it");
+  assert.equal(cheerleaderExpiresOnTurn(null, "Actor.b", inCombat), true, "used outside its turns: next Pokémon turn ends it");
+  assert.equal(cheerleaderExpiresOnTurn("Actor.gone", "Actor.b", inCombat), true, "A switched out");
+});
