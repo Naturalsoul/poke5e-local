@@ -96,3 +96,17 @@ test("the managed effect is created, updated and removed with the trainer's choi
   await synchronizeTrainerPathEffects(mon);
   assert.equal(effects.size, 0, "released Pokémon lose it");
 });
+
+test("Storing Power shows in the type matchups marked with *", async () => {
+  const { applyStoringPowerMatchups } = await import("../scripts/trainer-path-effects.mjs");
+  const withEffect = changes => ({ effects: new Map([["P5eTrainerPath00", { disabled: false, changes }]]) });
+  const spectreon = { resistances: [{ type: "poison", multiplier: "½" }], weaknesses: [{ type: "ghost", multiplier: "2" }, { type: "dark", multiplier: "2" }] };
+  applyStoringPowerMatchups(withEffect([{ key: "system.traits.dv.value", value: "-ghost" }]), spectreon);
+  assert.deepEqual(spectreon.weaknesses.map(entry => `${entry.type}×${entry.multiplier}`), ["dark×2", "ghost×1*"]);
+  const salandit = { resistances: [], weaknesses: [] };
+  applyStoringPowerMatchups(withEffect([{ key: "system.traits.dr.value", value: "ghost" }]), salandit);
+  assert.deepEqual(salandit.resistances, [{ type: "ghost", multiplier: "½*", storingPower: true }]);
+  const tactical = { resistances: [], weaknesses: [] };
+  applyStoringPowerMatchups(withEffect([{ key: "system.abilities.str.value", value: "1" }]), tactical);
+  assert.deepEqual(tactical, { resistances: [], weaknesses: [] }, "Tactical Mastery adds no chip");
+});

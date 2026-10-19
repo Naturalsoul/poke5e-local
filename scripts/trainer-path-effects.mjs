@@ -37,6 +37,22 @@ function storingPowerChanges(type, { specializedTypes = [], pokemonTypes = [], i
   return traits.dr?.includes(type) || traits.di?.includes(type) ? [] : [add("system.traits.dr.value", type)];
 }
 
+// Storing Power lives in the trainer path effect; marked with "*" so it reads as the trainer's, not the species'.
+export function applyStoringPowerMatchups(pokemon, result) {
+  const effect = pokemon.effects?.get?.(EFFECT_ID);
+  if (!effect || effect.disabled) {return;}
+  for (const change of effect.changes ?? []) {
+    const value = String(change.value ?? "");
+    const type = value.replace(/^-/, "");
+    if (change.key === "system.traits.dr.value" && !result.resistances.some(entry => entry.type === type)) {
+      result.resistances.push({ type, multiplier: "½*", storingPower: true });
+    } else if (change.key === "system.traits.dv.value" && value.startsWith("-")) {
+      result.weaknesses = result.weaknesses.filter(entry => entry.type !== type);
+      result.weaknesses.push({ type, multiplier: "1*", storingPower: true });
+    }
+  }
+}
+
 function sourceTraits(pokemon) {
   const traits = pokemon._source?.system?.traits ?? {};
   return Object.fromEntries(["dr", "dv", "di"].map(key => [key, Array.from(traits[key]?.value ?? [])]));
