@@ -1,4 +1,5 @@
 import { registerPokemonBondService } from "./pokemon-bond-service.mjs";
+import { registerBattleHotbar, useBattleHotbarMacro } from "./battle-hotbar.mjs";
 import { registerTrainerCombatReactions } from "./trainer-combat-reactions.mjs";
 import { registerTrainerReactionService } from "./trainer-reaction-service.mjs";
 import { registerPokemonCaptureService } from "./pokemon-capture-service.mjs";
@@ -346,7 +347,8 @@ Hooks.once(
         migratePokemonHoverMovement,
         fakemonRepository,
         openFakemonStudio,
-        playBattleTransition
+        playBattleTransition,
+        useBattleHotbarMacro
       };
     }
 
@@ -415,6 +417,7 @@ Hooks.once(
     registerTrainerReactionService();
     registerTrainerCombatReactions();
     registerPokemonBondService();
+    registerBattleHotbar();
     registerTrainerOwnershipService();
     registerTrainerSwitchAuthorityService();
     registerPokemonActorSheet();
