@@ -7,6 +7,7 @@ import { BODY_FLAG, MULTITALENTED_FLAG } from "./trainer-path-effects.mjs";
 import { publishRollBeforeDamage, trackRollDisplay } from "./chat-roll-display.mjs";
 import { getTrainerLevel, isTrainerActor } from "./trainer-service.mjs";
 import { battleDieFaces } from "./trainer-combat-reactions.mjs";
+import { activePokemonAbilityId } from "./status-runtime.mjs";
 
 const MODULE_ID = "poke5e-local";
 const CHEERLEADER_KIND = "trainer-cheerleader";
@@ -30,11 +31,11 @@ export const TRAINER_PATH_ACTION_RESOURCES = { "trainer-skill-dice": "skillDice"
 export const TRAINER_PATH_ACTION_ICONS = { "trainer-skill-dice": "fa-dice-six", "trainer-multitalented": "fa-graduation-cap", "trainer-partner": "fa-handshake",
   "trainer-cheerleader": "fa-bullhorn", "trainer-battle-dice": "fa-dice-d6", "trainer-directed-strike": "fa-crosshairs", "trainer-dark-advantage": "fa-mask",
   "trainer-body": "fa-dumbbell", "trainer-spirit": "fa-yin-yang", "trainer-pokechef": "fa-cookie-bite", "trainer-field-medic": "fa-kit-medical",
-  "trainer-tracker": "fa-binoculars" };
+  "trainer-tracker": "fa-binoculars", "trainer-analyst": "fa-magnifying-glass" };
 const ACTION_NAMES = { "trainer-skill-dice": "Skill Dice", "trainer-cheerleader": "Cheerleader", "trainer-battle-dice": "Battle Dice",
   "trainer-spirit": "Spirit", "trainer-pokechef": "Pokéchef", "trainer-directed-strike": "Directed Strike", "trainer-dark-advantage": "Dark Advantage",
   "trainer-multitalented": "Multitalented", "trainer-body": "Body", "trainer-field-medic": "Field Medic",
-  "trainer-tracker": "Pokémon Tracker" };
+  "trainer-tracker": "Pokémon Tracker", "trainer-analyst": "Analyst" };
 
 export function availableTrainerPathActions(trainer) {
   return [
@@ -49,7 +50,8 @@ export function availableTrainerPathActions(trainer) {
     pathAtLevel(trainer, "guru", 15) ? "trainer-spirit" : null,
     pathAtLevel(trainer, "nurse", 5) ? "trainer-pokechef" : null,
     pathAtLevel(trainer, "nurse", 9) ? "trainer-field-medic" : null,
-    (getTrainerLevel(trainer) ?? 0) >= 13 ? "trainer-tracker" : null
+    (getTrainerLevel(trainer) ?? 0) >= 13 ? "trainer-tracker" : null,
+    pathAtLevel(trainer, "researcher", 5) ? "trainer-analyst" : null
   ].filter(Boolean);
 }
 
@@ -511,6 +513,92 @@ async function useTracker(trainer) {
     content: `<div class="poke5e-turn-message"><strong>${escape(trainer.name)}</strong> ${en()
       ? "uses <strong>Pokémon Tracker</strong> and searches the area for wild Pokémon."
       : "usa <strong>Pokémon Tracker</strong> y busca Pokémon salvajes en la zona."}</div>` });
+  if (pathAtLevel(trainer, "pokemon-collector", 15)) {await expertTrack(trainer);}
+}
+
+// Pokémon Collector L15, Expert Tracker: DC 11 Investigation or Nature to find a specific Pokémon of the list.
+const EXPERT_TRACKER_DC = 11;
+
+async function expertTrack(trainer) {
+  const skill = await foundry.applications.api.DialogV2.prompt({
+    window: { title: "Expert Tracker" },
+    content: `<p>${en() ? "Look for a specific Pokémon from the local list (DC 11):" : "Buscar un Pokémon específico de la lista local (CD 11):"}</p>
+      <div class="form-group"><select name="skill"><option value="inv">${en() ? "Investigation" : "Investigación"}</option>
+        <option value="nat">${en() ? "Nature" : "Naturaleza"}</option></select></div>`,
+    rejectClose: false,
+    ok: { label: en() ? "Roll" : "Tirar", callback: (_event, button) => button.form.elements.skill.value }
+  });
+  if (!skill) {return;}
+  const total = await displayedSkillTotal(trainer, { skill, target: EXPERT_TRACKER_DC }, "Expert Tracker");
+  if (total === null) {return;}
+  await ChatMessage.implementation.create({ speaker: ChatMessage.implementation.getSpeaker({ actor: trainer }),
+    content: `<div class="poke5e-turn-message"><strong>Expert Tracker</strong>: ${expertTrackerText(total >= EXPERT_TRACKER_DC)}</div>` });
+}
+
+function expertTrackerText(found) {
+  if (found) {return en() ? "a specific Pokémon from the local list can be encountered." : "puede encontrar un Pokémon específico de la lista local.";}
+  return en() ? "no specific Pokémon is found." : "no encuentra un Pokémon específico.";
+}
+
+// Rolls a skill of the trainer and resolves with its total once Dice So Nice has shown it (null if cancelled).
+async function displayedSkillTotal(trainer, config, flavor) {
+  const display = trackRollDisplay();
+  let rolls;
+  try {
+    rolls = await trainer.rollSkill(config, {}, { data: { flavor, flags: { [MODULE_ID]: display.flags } } });
+  } catch (error) {
+    display.stop();
+    throw error;
+  }
+  if (!rolls?.length) {
+    display.stop();
+    return null;
+  }
+  await display.displayed();
+  return Number(rolls[0].total);
+}
+
+/* ============================================================
+ * RESEARCHER L5 — ANALYST (L15 PROFESSOR)
+ *
+ * The trainer's Investigation against the targeted Pokémon's Deception; the Pokémon
+ * wins ties. On a success the trainer's owners and the GM learn its Ability and one
+ * random Move; Professor adds one more Ability or Move.
+ * ============================================================ */
+
+const randomOf = entries => entries[Math.floor(Math.random() * entries.length)];
+const itemsOfKind = (actor, kind) => actor.items.filter(item => item.getFlag?.(MODULE_ID, "kind") === kind);
+
+export function analystReveal(pokemon, { professor = false, pick = randomOf } = {}) {
+  const activeId = activePokemonAbilityId(pokemon);
+  const abilities = itemsOfKind(pokemon, "ability");
+  const ability = abilities.find(item => item.getFlag(MODULE_ID, "sourceId") === activeId) ?? null;
+  const moves = itemsOfKind(pokemon, "move");
+  const move = moves.length ? pick(moves) : null;
+  const rest = [...abilities, ...moves].filter(item => item !== ability && item !== move);
+  const extra = professor && rest.length ? pick(rest) : null;
+  return [ability, move, extra].filter(Boolean);
+}
+
+async function useAnalyst(trainer) {
+  const target = singleTargetActor();
+  if (!target) {return;}
+  if (!isPokemonActor(target)) {
+    ui.notifications.warn(en() ? "Analyst needs a Pokémon as target." : "Analyst necesita un Pokémon como objetivo.");
+    return;
+  }
+  const investigation = await displayedSkillTotal(trainer, { skill: "inv" }, `Analyst → ${target.name}`);
+  if (investigation === null) {return;}
+  const deception = await new Roll(`1d20 + ${Number(target.system?.skills?.dec?.total ?? 0)}`).evaluate();
+  await publishRollBeforeDamage(deception, { speaker: ChatMessage.implementation.getSpeaker({ actor: target }),
+    flavor: `${escape(target.name)} — ${en() ? "Deception" : "Engaño"}` });
+  const learned = investigation > Number(deception.total) ? analystReveal(target, { professor: pathAtLevel(trainer, "researcher", 15) }) : [];
+  const whisper = game.users.filter(user => user.isGM || trainer.testUserPermission(user, "OWNER")).map(user => user.id);
+  const content = learned.length
+    ? `${en() ? "learns about" : "aprende sobre"} <strong>${escape(target.name)}</strong>: ${learned.map(item => `<strong>${escape(item.name)}</strong>`).join(", ")}.`
+    : `${en() ? "learns nothing about" : "no aprende nada sobre"} <strong>${escape(target.name)}</strong>.`;
+  await ChatMessage.implementation.create({ speaker: ChatMessage.implementation.getSpeaker({ actor: trainer }), whisper,
+    content: `<div class="poke5e-turn-message"><strong>${escape(trainer.name)}</strong> (Analyst) ${content}</div>` });
 }
 
 /* ============================================================
@@ -546,6 +634,7 @@ export async function runTrainerPathAction(action, trainer) {
   if (action === "trainer-pokechef") {return usePokechef(trainer);}
   if (action === "trainer-field-medic") {return useFieldMedic(trainer);}
   if (action === "trainer-tracker") {return useTracker(trainer);}
+  if (action === "trainer-analyst") {return useAnalyst(trainer);}
   return useTeamBonus(trainer, TEAM_BONUSES[action]);
 }
 

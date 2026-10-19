@@ -290,6 +290,68 @@ export function applySinisterDodge(actor, damages, options) {
 }
 
 /* ============================================================
+ * POKÉMON COLLECTOR L9 — DISCIPLINED STRIKES
+ *
+ * When a Move of the trainer's Pokémon would faint a targeted Pokémon (by dnd5e's own
+ * damage calculation), the owner may leave it at 1 HP; stored on the damage message.
+ * ============================================================ */
+
+const DISCIPLINED_FLAG = "disciplinedStrikes";
+
+function collectorOf(pokemon) {
+  const trainer = trainerOf(pokemon);
+  return trainer && getTrainerProgressionState(trainer)?.path?.id === "pokemon-collector" && (getTrainerLevel(trainer) ?? 0) >= 9 ? trainer : null;
+}
+
+export function wouldFaint(target, rolls, message) {
+  const hp = target?.system?.attributes?.hp;
+  if (!(Number(hp?.value) > 0) || typeof target.calculateDamage !== "function") {return false;}
+  const damages = rolls.map(roll => ({ value: Number(roll.total), type: roll.options?.type, properties: new Set(roll.options?.properties ?? []) }));
+  const result = target.calculateDamage(damages, { originatingMessage: message });
+  return result !== false && result.amount >= Number(hp.value) + Number(hp.temp ?? 0);
+}
+
+// The targeted Pokémon this Move of a Collector 9's Pokémon would faint.
+function disciplinedTargets(rolls, activity, message) {
+  if (activity?.item?.getFlag?.(MODULE_ID, "kind") !== "move" || message?.documentName !== "ChatMessage") {return [];}
+  return [...game.user.targets].map(token => token.actor)
+    .filter(actor => isPokemonActor(actor) && actor !== activity.actor && wouldFaint(actor, rolls, message));
+}
+
+async function offerDisciplinedStrikes(rolls, data) {
+  const activity = data?.subject;
+  const message = rolls?.[0]?.parent;
+  const trainer = collectorOf(activity?.actor);
+  const targets = trainer ? disciplinedTargets(rolls, activity, message) : [];
+  if (!targets.length) {return;}
+  await messageRollShown(message);
+  const spared = [];
+  for (const target of targets) {
+    const answer = await askTrainerReaction(trainer, {
+      title: "Disciplined Strikes",
+      use: en() ? "Leave at 1 HP" : "Dejar en 1 PV",
+      content: en()
+        ? `<p><strong>${escape(activity.item.name)}</strong> would faint <strong>${escape(target.name)}</strong>. Leave it at 1 HP instead?</p>`
+        : `<p><strong>${escape(activity.item.name)}</strong> debilitaría a <strong>${escape(target.name)}</strong>. ¿Dejarlo en 1 PV en su lugar?</p>`
+    });
+    if (answer) {spared.push(target.uuid);}
+  }
+  if (!spared.length) {return;}
+  await message.setFlag(MODULE_ID, DISCIPLINED_FLAG, spared);
+  await announce(trainer, en()
+    ? `<strong>${escape(trainer.name)}</strong> uses <strong>Disciplined Strikes</strong>: this damage leaves ${spared.length} Pokémon at 1 HP.`
+    : `<strong>${escape(trainer.name)}</strong> usa <strong>Disciplined Strikes</strong>: este daño deja a ${spared.length} Pokémon en 1 PV.`);
+}
+
+// dnd5e.preApplyDamage: the spared Pokémon keeps 1 HP.
+export function applyDisciplinedStrikes(actor, _amount, updates, options) {
+  const spared = options?.originatingMessage?.getFlag?.(MODULE_ID, DISCIPLINED_FLAG);
+  if (Array.isArray(spared) && spared.includes(actor?.uuid) && updates["system.attributes.hp.value"] <= 0) {
+    updates["system.attributes.hp.value"] = 1;
+  }
+}
+
+/* ============================================================
  * GRUNT L15 — NEFARIOUS STAGGER
  *
  * When the trainer's Pokémon inflicts Flinched, 2 Shadow Points turn it into Stunned,
@@ -394,6 +456,10 @@ export function registerTrainerCombatReactions() {
     void offerSinisterDodge(rolls, data).catch(error => console.error(`[${MODULE_ID}] Error en Sinister Dodge`, error));
   });
   Hooks.on("dnd5e.calculateDamage", applySinisterDodge);
+  Hooks.on("dnd5e.rollDamage", (rolls, data) => {
+    void offerDisciplinedStrikes(rolls, data).catch(error => console.error(`[${MODULE_ID}] Error en Disciplined Strikes`, error));
+  });
+  Hooks.on("dnd5e.preApplyDamage", applyDisciplinedStrikes);
   Hooks.on("createActiveEffect", (effect, _options, userId) => {
     const step = staggerOffer(effect, userId);
     if (step) {void step().catch(error => console.error(`[${MODULE_ID}] Error en Nefarious Stagger`, error));}
