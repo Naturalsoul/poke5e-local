@@ -16,7 +16,8 @@ const actions = await import("../scripts/trainer-path-actions.mjs");
 function trainer(pathId, level, abilities = {}) {
   const actor = createFlagDocument({ uuid: `Actor.trainer-${game.actors.length}`, documentName: "Actor", flags: { [MODULE_ID]: {
     kind: "trainer", trainerLevel: level, trainerProgression: { path: { id: pathId, choices: {} }, resources: {} } } } });
-  actor.system = { abilities: Object.fromEntries(Object.entries(abilities).map(([id, value]) => [id, { value }])) };
+  actor.system = { abilities: Object.fromEntries(Object.entries(abilities).map(([id, value]) => [id, { value }])), traits: { ci: { value: new Set() } } };
+  actor.update = async changes => { actor.system.traits.ci.value = new Set(changes["system.traits.ci.value"]); };
   game.actors.push(actor);
   return actor;
 }
@@ -92,4 +93,33 @@ test("Tip-Top Shape: advantage on saves against Moves that inflict a status, for
   assert.equal(save(chansey, status), true);
   assert.equal(save(chansey, plain), false);
   assert.equal(save(pokemon(trainer("nurse", 9)), status), false, "not before level 15");
+});
+
+test("Trainer's Resolve makes level 10 trainers immune to Frightened; Tracker uses: 1, or 2 for a Collector 15", async () => {
+  const resolute = trainer("ace-trainer", 10);
+  resolute.system.traits.ci.value = new Set(["charmed"]);
+  await ensureTrainerPathFeatureResources(resolute);
+  assert.deepEqual([...resolute.system.traits.ci.value], ["charmed", "frightened"]);
+  const tracker = trainer("ranger", 13);
+  await ensureTrainerPathFeatureResources(tracker);
+  assert.equal(tracker.getFlag(MODULE_ID, "trainerProgression").resources.trackerUses.max, 1);
+  const collector = trainer("pokemon-collector", 15);
+  await ensureTrainerPathFeatureResources(collector);
+  assert.equal(collector.getFlag(MODULE_ID, "trainerProgression").resources.trackerUses.max, 2);
+  assert.equal(trainer("guru", 12).getFlag(MODULE_ID, "trainerProgression").resources.trackerUses, undefined);
+});
+
+test("the Pokémon Tracker button only spends the use and says so in chat", async () => {
+  const brock = trainer("ranger", 13);
+  await ensureTrainerPathFeatureResources(brock);
+  assert.ok(actions.availableTrainerPathActions(brock).includes("trainer-tracker"));
+  assert.equal(actions.trainerPathActionLabel(brock, "trainer-tracker"), "Pokémon Tracker 1/1");
+  const chat = [];
+  globalThis.foundry.applications = { api: { DialogV2: { confirm: async () => true } } };
+  globalThis.ChatMessage = { implementation: { getSpeaker: () => ({}), create: async data => chat.push(data.content) } };
+  globalThis.ui = { notifications: { warn: text => chat.push(text) } };
+  await actions.runTrainerPathAction("trainer-tracker", brock);
+  assert.match(chat.at(-1), /usa <strong>Pokémon Tracker<\/strong>/);
+  await actions.runTrainerPathAction("trainer-tracker", brock);
+  assert.match(chat.at(-1), /gastado hasta un descanso largo/);
 });

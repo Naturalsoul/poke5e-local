@@ -332,6 +332,54 @@ export function staggerOffer(effect, userId) {
   };
 }
 
+/* ============================================================
+ * MASTER TRAINER (TRAINER L20)
+ *
+ * Twice per long rest, a failed save of the trainer or one of its Pokémon succeeds.
+ * Move saves come through the save engine; any other save with a known DC is
+ * offered from its own roll hook.
+ * ============================================================ */
+
+export function masterTrainerOwner(actor) {
+  const trainer = isTrainerActor(actor) ? actor : trainerOf(actor);
+  if (!trainer || (getTrainerLevel(trainer) ?? 0) < 20) {return null;}
+  const resource = getTrainerProgressionResource(trainer, "masterTrainerUses");
+  return resource?.value > 0 ? { trainer, resource } : null;
+}
+
+export function masterTrainerOffer(roll, { actor, dc }) {
+  if (!Number.isFinite(dc) || saveSucceeds(roll, dc)) {return null;}
+  const owner = masterTrainerOwner(actor);
+  if (!owner) {return null;}
+  return async () => {
+    const answer = await askTrainerReaction(owner.trainer, {
+      title: "Master Trainer",
+      use: en() ? "Succeed" : "Tener éxito",
+      content: en()
+        ? `<p><strong>${escape(actor.name)}</strong> fails its save: <strong>${roll.total}</strong> against DC <strong>${dc}</strong>. Succeed instead? Left: ${owner.resource.value}/${owner.resource.max}.</p>`
+        : `<p><strong>${escape(actor.name)}</strong> falla su salvación: <strong>${roll.total}</strong> contra CD <strong>${dc}</strong>. ¿Tener éxito en su lugar? Quedan: ${owner.resource.value}/${owner.resource.max}.</p>`
+    });
+    if (!answer || !await spendTrainerProgressionResource(owner.trainer, "masterTrainerUses", 1)) {return null;}
+    const replacement = await rewriteRoll(roll, rollWith(roll, { bonus: dc - Number(roll.total), label: "Master Trainer" }));
+    await announce(owner.trainer, en()
+      ? `<strong>${escape(owner.trainer.name)}</strong> uses <strong>Master Trainer</strong>: <strong>${escape(actor.name)}</strong> succeeds on the save.`
+      : `<strong>${escape(owner.trainer.name)}</strong> usa <strong>Master Trainer</strong>: <strong>${escape(actor.name)}</strong> supera la salvación.`);
+    return replacement;
+  };
+}
+
+function onStandaloneSave(rolls, data) {
+  const roll = rolls?.[0];
+  // Saves tied to a Move already went through the save engine's reactions.
+  if (!roll || roll.options?.[MODULE_ID]?.modifierUsage) {return;}
+  const step = masterTrainerOffer(roll, { actor: data?.subject, dc: Number(roll.options?.target) });
+  if (!step) {return;}
+  void (async () => {
+    await messageRollShown(roll.parent);
+    await step();
+  })().catch(error => console.error(`[${MODULE_ID}] Error en Master Trainer`, error));
+}
+
 export function registerTrainerCombatReactions() {
   if (registered) {return;}
   registered = true;
@@ -340,6 +388,8 @@ export function registerTrainerCombatReactions() {
   for (const feature of DEFENSES) {registerAttackReaction(defenseOffer(feature));}
   registerSaveReaction(saveDefenseOffer);
   registerSaveReaction(notThisTimeOffer);
+  registerSaveReaction(masterTrainerOffer);
+  Hooks.on("dnd5e.rollSavingThrow", onStandaloneSave);
   Hooks.on("dnd5e.rollDamage", (rolls, data) => {
     void offerSinisterDodge(rolls, data).catch(error => console.error(`[${MODULE_ID}] Error en Sinister Dodge`, error));
   });

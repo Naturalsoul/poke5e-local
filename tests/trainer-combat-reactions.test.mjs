@@ -178,3 +178,25 @@ test("Sinister Dodge: a Grunt 9's Pokémon with 4 Shadow Points resists the Move
   assert.deepEqual(damages.map(damage => damage.value), [6, 2, 0, -4]);
   assert.equal(damages.amount, 4);
 });
+
+test("Master Trainer: a level 20 trainer or its Pokémon turns a failed save into a success, twice per long rest", async () => {
+  const red = trainer("ace-trainer", 20, { masterTrainerUses: { value: 1, max: 2 } });
+  const pikachu = pokemon(red);
+  const save = total => {
+    const message = { documentName: "ChatMessage", rolls: [], update: async changes => { message.rolls = changes.rolls.map(FakeRoll.fromData); } };
+    const roll = new FakeRoll({ total, formula: "1d20 + 3", terms: [], options: { target: 15 }, parent: message });
+    message.rolls = [roll];
+    return roll;
+  };
+  assert.equal(combat.masterTrainerOffer(save(16), { actor: pikachu, dc: 15 }), null, "already a success");
+  assert.equal(combat.masterTrainerOffer(save(9), { actor: pokemon(trainer("ace-trainer", 19, { masterTrainerUses: { value: 2, max: 2 } })), dc: 15 }), null);
+  assert.ok(combat.masterTrainerOffer(save(9), { actor: red, dc: 15 }), "the trainer's own saves too");
+  prompts.answer = {};
+  const roll = save(9);
+  const replacement = await combat.masterTrainerOffer(roll, { actor: pikachu, dc: 15 })();
+  assert.equal(replacement.total, 15);
+  assert.equal(replacement.isSuccess, true);
+  assert.equal(roll.parent.rolls[0].total, 15);
+  assert.equal(points(red, "masterTrainerUses"), 0);
+  assert.equal(combat.masterTrainerOffer(save(9), { actor: pikachu, dc: 15 }), null, "no uses left");
+});

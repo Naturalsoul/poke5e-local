@@ -26,13 +26,15 @@ function pathAtLevel(trainer, pathId, level) {
 
 // Path features used from the command center; resource → shown by its button instead of a counter.
 export const TRAINER_PATH_ACTION_RESOURCES = { "trainer-skill-dice": "skillDice", "trainer-cheerleader": "cheerleaderUses", "trainer-battle-dice": "battleDice",
-  "trainer-spirit": "spiritUses", "trainer-pokechef": "pokechefUses" };
+  "trainer-spirit": "spiritUses", "trainer-pokechef": "pokechefUses", "trainer-tracker": "trackerUses" };
 export const TRAINER_PATH_ACTION_ICONS = { "trainer-skill-dice": "fa-dice-six", "trainer-multitalented": "fa-graduation-cap", "trainer-partner": "fa-handshake",
   "trainer-cheerleader": "fa-bullhorn", "trainer-battle-dice": "fa-dice-d6", "trainer-directed-strike": "fa-crosshairs", "trainer-dark-advantage": "fa-mask",
-  "trainer-body": "fa-dumbbell", "trainer-spirit": "fa-yin-yang", "trainer-pokechef": "fa-cookie-bite", "trainer-field-medic": "fa-kit-medical" };
+  "trainer-body": "fa-dumbbell", "trainer-spirit": "fa-yin-yang", "trainer-pokechef": "fa-cookie-bite", "trainer-field-medic": "fa-kit-medical",
+  "trainer-tracker": "fa-binoculars" };
 const ACTION_NAMES = { "trainer-skill-dice": "Skill Dice", "trainer-cheerleader": "Cheerleader", "trainer-battle-dice": "Battle Dice",
   "trainer-spirit": "Spirit", "trainer-pokechef": "Pokéchef", "trainer-directed-strike": "Directed Strike", "trainer-dark-advantage": "Dark Advantage",
-  "trainer-multitalented": "Multitalented", "trainer-body": "Body", "trainer-field-medic": "Field Medic" };
+  "trainer-multitalented": "Multitalented", "trainer-body": "Body", "trainer-field-medic": "Field Medic",
+  "trainer-tracker": "Pokémon Tracker" };
 
 export function availableTrainerPathActions(trainer) {
   return [
@@ -46,7 +48,8 @@ export function availableTrainerPathActions(trainer) {
     pathAtLevel(trainer, "guru", 9) ? "trainer-body" : null,
     pathAtLevel(trainer, "guru", 15) ? "trainer-spirit" : null,
     pathAtLevel(trainer, "nurse", 5) ? "trainer-pokechef" : null,
-    pathAtLevel(trainer, "nurse", 9) ? "trainer-field-medic" : null
+    pathAtLevel(trainer, "nurse", 9) ? "trainer-field-medic" : null,
+    (getTrainerLevel(trainer) ?? 0) >= 13 ? "trainer-tracker" : null
   ].filter(Boolean);
 }
 
@@ -486,6 +489,31 @@ function fieldMedicText(target, status, healed) {
 }
 
 /* ============================================================
+ * POKÉMON TRACKER (TRAINER L13)
+ *
+ * Only spends the use; the GM shares the list of wild Pokémon nearby.
+ * ============================================================ */
+
+async function useTracker(trainer) {
+  const resource = getTrainerProgressionResource(trainer, "trackerUses");
+  if (!resource?.value) {
+    ui.notifications.warn(en() ? "Pokémon Tracker is spent until a long rest." : "Pokémon Tracker está gastado hasta un descanso largo.");
+    return;
+  }
+  const use = await foundry.applications.api.DialogV2.confirm({
+    window: { title: "Pokémon Tracker" },
+    content: `<p>${en() ? `Search the area for wild Pokémon? Left: ${resource.value}/${resource.max}.`
+      : `¿Buscar Pokémon salvajes en la zona? Quedan: ${resource.value}/${resource.max}.`}</p>`,
+    rejectClose: false
+  });
+  if (use !== true || !await spendTrainerProgressionResource(trainer, "trackerUses", 1)) {return;}
+  await ChatMessage.implementation.create({ speaker: ChatMessage.implementation.getSpeaker({ actor: trainer }),
+    content: `<div class="poke5e-turn-message"><strong>${escape(trainer.name)}</strong> ${en()
+      ? "uses <strong>Pokémon Tracker</strong> and searches the area for wild Pokémon."
+      : "usa <strong>Pokémon Tracker</strong> y busca Pokémon salvajes en la zona."}</div>` });
+}
+
+/* ============================================================
  * NURSE L15 — TIP-TOP SHAPE
  *
  * The trainer's Pokémon save with advantage against Moves that inflict a status.
@@ -517,6 +545,7 @@ export async function runTrainerPathAction(action, trainer) {
   if (action === "trainer-body") {return chooseBodyAbilities(trainer);}
   if (action === "trainer-pokechef") {return usePokechef(trainer);}
   if (action === "trainer-field-medic") {return useFieldMedic(trainer);}
+  if (action === "trainer-tracker") {return useTracker(trainer);}
   return useTeamBonus(trainer, TEAM_BONUSES[action]);
 }
 
