@@ -17,15 +17,22 @@ const SETTING = "battlefieldEffects";
 const SCENE_FLAG = "battlefieldFx";
 const JB2A = "modules/JB2A_DnD5e/Library/Generic";
 
-// Weather → [FXMaster preset, preset options].
-const WEATHER_PRESETS = {
-  sun: ["heat-wave", {}],
-  "extreme-sun": ["heat-wave", { density: "very-high" }],
-  rain: ["rain", {}],
-  "heavy-rain": ["thunderstorm", {}],
-  sandstorm: ["sandstorm", {}],
-  hail: ["hail", {}],
-  snow: ["snow", {}]
+// Weather → an FXMaster preset (with options), or our own effects when the free preset is empty.
+const SAND = "#d9b77e";
+const WEATHER_EFFECTS = {
+  sun: { preset: "heat-wave" },
+  "extreme-sun": { preset: "heat-wave", options: { density: "very-high" } },
+  rain: { preset: "rain" },
+  "heavy-rain": { preset: "thunderstorm" },
+  // FXMaster's sandstorm preset needs FXMaster+: sand-colored blowing particles and a brown haze instead.
+  sandstorm: { effects: [
+    { kind: "particle", type: "snowstorm", options: { tint: { apply: true, value: SAND }, scale: 0.5, direction: 0, speed: 1.8,
+      lifetime: 0.4, density: 1.4, alpha: 1 } },
+    { kind: "filter", type: "fog", options: { color: { apply: true, value: "#b38b5a" }, dimensions: 0.6, speed: 1.2, density: 0.45 } },
+    { kind: "filter", type: "color", options: { belowTokens: true, color: { apply: true, value: "#f0d9a8" } } }
+  ] },
+  hail: { preset: "hail" },
+  snow: { preset: "snow" }
 };
 
 // Terrain → tint, animation and its radius in feet.
@@ -44,10 +51,8 @@ const enabled = () => game.settings.get(MODULE_ID, SETTING) !== false && fxReady
 
 // What the scene should show for this combat. No combat, or effects off: nothing.
 export function wantedEffects(combat, on = true) {
-  if (!combat || !on) {return { preset: null, presetOptions: {}, terrain: null };}
-  const weather = activeWeathers(combat).find(id => WEATHER_PRESETS[id]) ?? null;
-  const [preset, presetOptions] = weather ? WEATHER_PRESETS[weather] : [null, {}];
-  return { preset, presetOptions, weather, terrain: activeTerrain(combat) };
+  if (!combat || !on) {return { weather: null, terrain: null };}
+  return { weather: activeWeathers(combat).find(id => WEATHER_EFFECTS[id]) ?? null, terrain: activeTerrain(combat) };
 }
 
 /* ============================================================
@@ -77,11 +82,16 @@ function playTerrainAnimation(combat, terrain) {
  * SYNC
  * ============================================================ */
 
+// Stops the weather this module started and plays the new one. Returns what to remember for stopping it.
 async function syncWeather(scene, current, wanted) {
-  const { presets } = globalThis.FXMASTER.api;
-  if (current.preset === wanted.preset && current.presetOptions === JSON.stringify(wanted.presetOptions)) {return;}
+  if (current.weather === wanted.weather) {return { preset: current.preset ?? null, ids: current.weatherIds ?? null };}
+  const { presets, effects } = globalThis.FXMASTER.api;
   if (current.preset) {await presets.stop(current.preset, { scene });}
-  if (wanted.preset) {await presets.play(wanted.preset, { ...wanted.presetOptions, scene });}
+  if (current.weatherIds) {await effects.stop({ ...current.weatherIds, scene });}
+  const rule = WEATHER_EFFECTS[wanted.weather];
+  if (rule?.preset) {await presets.play(rule.preset, { ...rule.options, scene });}
+  const ids = rule?.effects ? await effects.play({ effects: rule.effects, scene }) : null;
+  return { preset: rule?.preset ?? null, ids: ids ? { particles: ids.particles ?? [], filters: ids.filters ?? [] } : null };
 }
 
 async function syncTerrain(scene, current, wanted, combat) {
@@ -99,11 +109,13 @@ export async function syncScene(scene, combat) {
   if (!scene || !gmAuthority() || !fxReady()) {return;}
   const current = scene.getFlag(MODULE_ID, SCENE_FLAG) ?? {};
   const wanted = wantedEffects(combat, enabled());
-  await syncWeather(scene, current, wanted);
+  const weather = await syncWeather(scene, current, wanted);
   const filters = await syncTerrain(scene, current, wanted, combat);
-  // Options as text: setFlag merges objects, and an old option would stay behind.
-  const next = { preset: wanted.preset, presetOptions: JSON.stringify(wanted.presetOptions), terrain: wanted.terrain, filters };
-  if (JSON.stringify(next) !== JSON.stringify(current)) {await scene.setFlag(MODULE_ID, SCENE_FLAG, next);}
+  const next = { weather: wanted.weather, preset: weather.preset, weatherIds: weather.ids, terrain: wanted.terrain, filters };
+  if (JSON.stringify(next) === JSON.stringify(current)) {return;}
+  // Replaced whole: setFlag would merge with what an older weather left behind.
+  await scene.update({ [`flags.${MODULE_ID}.-=${SCENE_FLAG}`]: null });
+  await scene.setFlag(MODULE_ID, SCENE_FLAG, next);
 }
 
 // One sync at a time, so quick changes do not start the same effect twice.
