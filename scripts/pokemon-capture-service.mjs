@@ -1,9 +1,10 @@
 import { trackRollDisplay } from "./chat-roll-display.mjs";
 import { loadDatabase } from "./importer.mjs";
 import { hasPokemonStatus } from "./status-runtime.mjs";
-import { getPokemonTrainerUuid, getTrainerOwnedPokemon, getTrainerPartyState, isPokemonActor } from "./trainer-party-service.mjs";
+import { getPokemonTrainerUuid, getTrainerOwnedPokemon, getTrainerPartyState, getTrainerPokeslotLimit, isPokemonActor } from "./trainer-party-service.mjs";
 import { getTrainerProgressionResource, getTrainerProgressionState, spendTrainerProgressionResource } from "./trainer-progression-service.mjs";
 import { getTrainerLevel, isTrainerActor } from "./trainer-service.mjs";
+import { acquireWildPokemonToken } from "./trainer-wild-pokemon-service.mjs";
 
 /* ============================================================
  * THROW POKÉBALL (poke5e "Catching Pokémon", 2024 rules)
@@ -17,6 +18,12 @@ const MODULE_ID = "poke5e-local";
 const GOTTA_CATCH_RESOURCE_ID = "gottaCatchUses";
 const ADVANTAGE_STATUSES = ["poisoned", "paralysis", "asleep", "burned", "frozen", "confused"];
 const MEDIUM_OR_LARGER = ["med", "lg", "huge", "grg"];
+const SOCKET_CHANNEL = `module.${MODULE_ID}`;
+const ACQUIRE_REQUEST = "pokemon-capture-acquire-request";
+const ACQUIRE_RESPONSE = "pokemon-capture-acquire-response";
+const REQUEST_TIMEOUT_MS = 30000;
+const pendingRequests = new Map();
+let registered = false;
 
 const en = () => game.settings.get(MODULE_ID, "language") === "en";
 const escape = value => String(value ?? "").replace(/[&<>"']/g, character => `&#${character.charCodeAt(0)};`);
@@ -158,27 +165,111 @@ export function captureQuestions(trainer, ballId, reasons) {
  * THROW
  * ============================================================ */
 
-function singleTarget() {
+function singleTargetToken() {
   const targets = [...game.user.targets];
-  return targets.length === 1 ? targets[0].actor : null;
+  return targets.length === 1 ? targets[0].document ?? null : null;
 }
 
-function resultText(trainer, target, ball, caught) {
+function resultText(trainer, target, ball, outcome) {
   const [pokemon, ballName, trainerName] = [target.name, ball.name, trainer.name].map(escape);
-  if (caught) {
+  if (!outcome.caught) {
     return en()
-      ? `<p><strong>${pokemon}</strong> was caught in a ${ballName}! The GM moves it to ${trainerName}'s party or PC.</p>`
-      : `<p>¡<strong>${pokemon}</strong> fue capturado en una ${ballName}! El GM lo mueve al equipo o al PC de ${trainerName}.</p>`;
+      ? `<p><strong>${pokemon}</strong> broke free. The ${ballName} was destroyed.</p>`
+      : `<p><strong>${pokemon}</strong> se escapó. La ${ballName} se destruyó.</p>`;
   }
-  return en()
-    ? `<p><strong>${pokemon}</strong> broke free. The ${ballName} was destroyed.</p>`
-    : `<p><strong>${pokemon}</strong> se escapó. La ${ballName} se destruyó.</p>`;
+  const caught = en() ? `<strong>${pokemon}</strong> was caught in a ${ballName}!` : `¡<strong>${pokemon}</strong> fue capturado en una ${ballName}!`;
+  const destination = {
+    party: en() ? `It joins ${trainerName}'s party.` : `Se une al equipo de ${trainerName}.`,
+    pc: en() ? `${trainerName}'s party is full: it goes to the PC.` : `El equipo de ${trainerName} está lleno: va al PC.`
+  }[outcome.destination] ?? "";
+  return `<p>${caught} ${destination}</p>`;
 }
 
-async function postResult(trainer, target, ball, caught) {
+async function postResult(trainer, target, ball, outcome) {
   await ChatMessage.implementation.create({ speaker: ChatMessage.implementation.getSpeaker({ actor: trainer }),
-    content: resultText(trainer, target, ball, caught),
-    flags: { [MODULE_ID]: { capture: { trainerUuid: trainer.uuid, targetUuid: target.uuid, ballId: ball.getFlag(MODULE_ID, "sourceId"), caught } } } });
+    content: resultText(trainer, target, ball, outcome),
+    flags: { [MODULE_ID]: { capture: { trainerUuid: trainer.uuid, targetUuid: target.uuid, ballId: ball.getFlag(MODULE_ID, "sourceId"), ...outcome } } } });
+}
+
+/* ============================================================
+ * MOVING THE CAUGHT POKÉMON
+ *
+ * acquireWildPokemonToken (GM only) turns the wild token into the trainer's own
+ * Pokémon, keeping its HP, moves, nature, gender and shininess, and removes the token.
+ * Players ask the active GM over the socket.
+ * ============================================================ */
+
+export function captureDestination(trainer) {
+  return getTrainerPartyState(trainer).pokemonUuids.length < getTrainerPokeslotLimit(trainer) ? "party" : "pc";
+}
+
+async function acquireAsGm(trainer, tokenDocument) {
+  const destination = captureDestination(trainer);
+  const { pokemon } = await acquireWildPokemonToken(trainer, tokenDocument, { destination });
+  return { destination, pokemonUuid: pokemon.uuid };
+}
+
+function requestAcquisition(trainer, tokenDocument) {
+  if (game.user.isGM) {return acquireAsGm(trainer, tokenDocument);}
+  const gm = game.users.activeGM;
+  if (!gm) {return Promise.reject(new Error(en() ? "No active GM to move the Pokémon." : "No hay un GM activo para mover al Pokémon."));}
+  const requestId = `${game.user.id}:${Date.now()}:${Math.random().toString(36).slice(2)}`;
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      pendingRequests.delete(requestId);
+      reject(new Error(en() ? "The GM did not answer." : "El GM no respondió."));
+    }, REQUEST_TIMEOUT_MS);
+    pendingRequests.set(requestId, { resolve, reject, timeout });
+    game.socket.emit(SOCKET_CHANNEL, { type: ACQUIRE_REQUEST, requestId, senderId: game.user.id, targetGmId: gm.id,
+      trainerUuid: trainer.uuid, tokenUuid: tokenDocument.uuid });
+  });
+}
+
+// The GM only acts for someone who owns the trainer, on a wild token (acquireWildPokemonToken checks the token).
+// shortcut: the GM trusts the player's capture roll; a server-side reroll would be needed against a hostile client.
+async function handleAcquireRequest(payload) {
+  if (payload?.type !== ACQUIRE_REQUEST || payload.targetGmId !== game.user.id) {return;}
+  const reply = data => game.socket.emit(SOCKET_CHANNEL, { type: ACQUIRE_RESPONSE, requestId: payload.requestId, recipientId: payload.senderId, ...data });
+  try {
+    const trainer = await fromUuid(payload.trainerUuid);
+    const tokenDocument = await fromUuid(payload.tokenUuid);
+    const sender = game.users.get(payload.senderId);
+    if (!isTrainerActor(trainer) || !sender || !trainer.testUserPermission(sender, "OWNER")) {throw new Error("Solicitud de captura no autorizada.");}
+    reply({ ok: true, result: await acquireAsGm(trainer, tokenDocument) });
+  } catch (error) {
+    reply({ ok: false, error: error?.message ?? String(error) });
+  }
+}
+
+function handleAcquireResponse(payload) {
+  if (payload?.type !== ACQUIRE_RESPONSE || payload.recipientId !== game.user.id) {return;}
+  const pending = pendingRequests.get(payload.requestId);
+  if (!pending) {return;}
+  pendingRequests.delete(payload.requestId);
+  clearTimeout(pending.timeout);
+  if (payload.ok) {pending.resolve(payload.result);} else {pending.reject(new Error(payload.error));}
+}
+
+export function registerPokemonCaptureService() {
+  if (registered) {return;}
+  registered = true;
+  Hooks.once("ready", () => {
+    game.socket.on(SOCKET_CHANNEL, payload => {
+      handleAcquireResponse(payload);
+      void handleAcquireRequest(payload);
+    });
+  });
+}
+
+// Caught: move it; if that fails the capture still stands and the GM is told why.
+async function settleCapture(trainer, tokenDocument) {
+  try {
+    return { caught: true, ...await requestAcquisition(trainer, tokenDocument) };
+  } catch (error) {
+    console.error(`[${MODULE_ID}] Error moviendo el Pokémon capturado`, error);
+    ui.notifications.error(en() ? `The Pokémon could not be moved: ${error.message}` : `No se pudo mover al Pokémon: ${error.message}`);
+    return { caught: true, destination: null };
+  }
 }
 
 // Animal Handling against the hidden DC; true when caught, null when the roll was cancelled.
@@ -211,7 +302,8 @@ export async function prepareCapture(ball) {
     ui.notifications.warn(en() ? "Only a trainer can throw a Pokéball." : "Solo un entrenador puede lanzar una Pokéball.");
     return null;
   }
-  const target = singleTarget();
+  const tokenDocument = singleTargetToken();
+  const target = tokenDocument?.actor ?? null;
   const blocker = captureBlocker(trainer, target);
   if (blocker) {
     ui.notifications.warn(blocker);
@@ -233,7 +325,8 @@ export async function prepareCapture(ball) {
       // Spent on success (it now holds the Pokémon) and on failure (destroyed).
       await ball.update({ "system.quantity": quantity - 1 });
       const caught = ballId === "master-ball" || await rollCapture({ trainer, target, ball, ballId, context, reasons, choice });
-      if (caught !== null) {await postResult(trainer, target, ball, caught);}
+      if (caught === null) {return;}
+      await postResult(trainer, target, ball, caught ? await settleCapture(trainer, tokenDocument) : { caught: false });
     }
   };
 }

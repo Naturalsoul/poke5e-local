@@ -78,11 +78,18 @@ test("negative statuses and Poké Assist give advantage", async () => {
   assert.deepEqual(capture.captureAdvantageReasons(ranger, wild({ types: ["fire"] })), []);
 });
 
-test("throwing a ball spends it, hides the DC and announces the result only after Dice So Nice shows the roll", async () => {
+const socket = { handler: null, sent: [], on(_channel, handler) { this.handler = handler; }, emit(_channel, payload) { this.sent.push(payload); } };
+game.socket = socket;
+game.users = { activeGM: { id: "gm" }, get: id => ({ id }) };
+capture.registerPokemonCaptureService();
+hooks.handler("ready")();
+
+test("a player's catch asks the GM to move the Pokémon and the message says where it went, after Dice So Nice", async () => {
   const ash = trainer(5);
   const target = wild({ hp: [5, 20] });
   target.statuses.add("restrained");
-  game.user.targets = new Set([{ actor: target }]);
+  const tokenDocument = { uuid: "Scene.route1.Token.caterpie", actor: target };
+  game.user = { id: "player", isGM: false, targets: new Set([{ document: tokenDocument }]) };
   const events = [];
   const ball = createFlagDocument({ documentName: "Item", flags: { [MODULE_ID]: { sourceId: "great-ball", itemType: "pokeball" } } });
   ball.name = "Great Ball";
@@ -96,18 +103,52 @@ test("throwing a ball spends it, hides the DC and announces the result only afte
     setTimeout(() => hooks.handler("dnd5e.renderChatMessage")(rendered, {}), 0);
     return [{ total: 3 }];
   };
+  socket.emit = (_channel, payload) => {
+    events.push(["request", payload.trainerUuid, payload.tokenUuid, payload.targetGmId]);
+    setTimeout(() => socket.handler({ type: "pokemon-capture-acquire-response", requestId: payload.requestId, recipientId: "player",
+      ok: true, result: { destination: "pc", pokemonUuid: "Actor.caught" } }), 0);
+  };
   game.dice3d = { waitFor3DAnimationByMessageID: async id => { events.push(["dice", id]); } };
   globalThis.requestAnimationFrame = callback => setTimeout(callback, 0);
-  globalThis.ChatMessage = { implementation: { getSpeaker: () => ({}), create: async data => { events.push(["result", data.flags[MODULE_ID].capture.caught]); } } };
-  globalThis.ui = { notifications: { warn: message => events.push(["warn", message]) } };
+  globalThis.ChatMessage = { implementation: { getSpeaker: () => ({}), create: async data => {
+    events.push(["result", data.flags[MODULE_ID].capture.destination, /PC/.test(data.content), /GM/.test(data.content)]);
+  } } };
+  globalThis.ui = { notifications: { warn: message => events.push(["warn", message]), error: message => events.push(["error", message]) } };
 
-  const capture_ = await capture.prepareCapture(ball);
-  assert.equal(capture_.questions, "", "a Great Ball needs no questions");
-  await capture_.throwBall({});
+  const prepared = await capture.prepareCapture(ball);
+  assert.equal(prepared.questions, "", "a Great Ball needs no questions");
+  await prepared.throwBall({});
   // Caterpie at quarter HP: 12 − 5 (below half) − 5 (Great Ball) = 2; the 3 catches it.
-  assert.deepEqual(events, [["roll", "ani", false, true, `Great Ball → ${target.name}`], ["dice", "roll-message"], ["result", true]]);
+  assert.deepEqual(events, [
+    ["roll", "ani", false, true, `Great Ball → ${target.name}`],
+    ["dice", "roll-message"],
+    ["request", ash.uuid, tokenDocument.uuid, "gm"],
+    ["result", "pc", true, false]
+  ]);
   assert.equal(ball.system.quantity, 1);
-  game.user.targets = new Set();
+});
+
+test("the Pokémon goes to the party while a Pokéslot is free, else to the PC", async () => {
+  const { getTrainerPokeslotLimit } = await import("../scripts/trainer-party-service.mjs");
+  const ash = trainer(5);
+  assert.equal(capture.captureDestination(ash), "party");
+  const limit = getTrainerPokeslotLimit(ash);
+  await ash.setFlag(MODULE_ID, "trainerParty", { pokemonUuids: Array.from({ length: limit }, (_, index) => `Actor.p${index}`), activePokemonUuids: [] });
+  assert.equal(capture.captureDestination(ash), "pc");
+});
+
+test("the GM refuses to move a Pokémon for someone who does not own the trainer", async () => {
+  const ash = trainer(5);
+  ash.testUserPermission = () => false;
+  globalThis.fromUuid = async uuid => game.actors.find(actor => actor.uuid === uuid) ?? null;
+  game.user = { id: "gm", isGM: true, targets: new Set() };
+  const replies = [];
+  socket.emit = (_channel, payload) => replies.push(payload);
+  socket.handler({ type: "pokemon-capture-acquire-request", requestId: "r1", senderId: "intruder", targetGmId: "gm",
+    trainerUuid: ash.uuid, tokenUuid: "Scene.s.Token.t" });
+  await new Promise(resolve => setTimeout(resolve, 0));
+  assert.equal(replies[0].ok, false);
+  assert.match(replies[0].error, /no autorizada/);
 });
 
 test("the use window only asks what the module cannot see", () => {
