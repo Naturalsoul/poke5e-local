@@ -191,3 +191,59 @@ test("targeted modifier requires exactly one current target", () => {
 
   targets.add(targetToken);
 });
+
+function rollModeEffect(rule, sourceActorUuid = sourceActor.uuid) {
+  const flags = { kind: "pokemon-modifier", sourceActorUuid, rollModes: { ...rule } };
+  const effect = {
+    uuid: `ActiveEffect.${Math.random()}`,
+    disabled: false,
+    getFlag: (moduleId, key) => moduleId === "poke5e-local" ? flags[key] : undefined,
+    async setFlag(_moduleId, key, value) { flags.rollModes.nextAttack = key === "rollModes.nextAttack" ? value : flags.rollModes.nextAttack; },
+    async delete() { effect.deleted = true; }
+  };
+  return effect;
+}
+
+function rollModes(actor) {
+  const rollConfig = { parts: [], data: {}, options: {} };
+  hooks.handler("dnd5e.preRollAttack", 1)({ subject: { actor }, rolls: [rollConfig] }, {}, { data: {} });
+  return rollConfig.options;
+}
+
+test("roll modes give advantage, disadvantage, or both cancelling, and respect vsSource", () => {
+  const user = { uuid: "Actor.user", effects: [rollModeEffect({ own: 1 })] };
+  target.effects = [];
+  assert.equal(rollModes(user).advantage, true);
+  user.effects = [rollModeEffect({ own: 1 }), rollModeEffect({ own: -1 })];
+  assert.deepEqual([rollModes(user).advantage, rollModes(user).disadvantage], [true, true]);
+  // Snarl: only against its source, Crush Claw: only from its source.
+  user.effects = [rollModeEffect({ own: -1, vsSource: true }, "Actor.elsewhere")];
+  assert.equal(rollModes(user).disadvantage, undefined);
+  user.effects = [];
+  target.effects = [rollModeEffect({ against: 1, vsSource: true }, "Actor.user")];
+  assert.equal(rollModes(user).advantage, true);
+  assert.equal(rollModes(attacker).advantage, undefined);
+  target.effects = [targetedEffect()];
+});
+
+test("next-attack roll modes are spent by the GM when the attack message is created", async () => {
+  const { consumeAttackRollModes } = await import("../scripts/targeted-modifier-engine.mjs");
+  const twice = rollModeEffect({ against: 1, nextAttack: 2 });
+  const lasting = rollModeEffect({ against: 1 });
+  const snarl = rollModeEffect({ own: -1, vsSource: true, nextAttack: 1 }, "Actor.elsewhere");
+  const user = { uuid: "Actor.user", effects: [snarl] };
+  target.effects = [twice, lasting];
+  const options = rollModes(user);
+  assert.deepEqual(options["poke5e-local"].consumedRollModes, [snarl.uuid, twice.uuid]);
+  const effects = new Map([twice, lasting, snarl].map(effect => [effect.uuid, effect]));
+  globalThis.fromUuidSync = uuid => effects.get(uuid);
+  game.user.isGM = true;
+  await consumeAttackRollModes({ rolls: [{ options }, { options }] });
+  assert.equal(snarl.deleted, true);
+  assert.equal(twice.deleted, undefined);
+  assert.equal(twice.getFlag("poke5e-local", "rollModes").nextAttack, 1);
+  game.user.isGM = false;
+  await consumeAttackRollModes({ rolls: [{ options }] });
+  assert.equal(twice.deleted, undefined, "only the GM spends them");
+  target.effects = [targetedEffect()];
+});

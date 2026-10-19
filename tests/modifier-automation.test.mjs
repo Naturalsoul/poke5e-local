@@ -699,3 +699,56 @@ test("Trop Kick lowers the target's attacks on a natural 16+, up to -3 for the c
   assert.equal(changeValue(target.effects[0], "system.bonuses.mwak.attack"), "-3");
   assert.equal(target.effects[0].getFlag(MODULE_ID, "removeOnCombatEnd"), true);
 });
+
+const rollModesOf = entry => entry?.getFlag(MODULE_ID, "rollModes");
+
+test("batch 5f debuffs carry their roll modes to the target on their trigger", async () => {
+  for (const [id, natural, hit, expected] of [
+    ["aurora-beam", 15, true, { own: -1 }],
+    ["spirit-break", 5, true, { own: -1, nextAttack: 1 }],
+    ["earth-power", 19, false, { against: 1, nextAttack: 1 }],
+    // Close Combat applies on use, hit or miss.
+    ["close-combat", 1, false, { own: 1, vsSource: true }]
+  ]) {
+    const item = move(id);
+    const target = actor();
+    await show(attack(item, target, natural - 1 || 1, { hit: false }));
+    if (id !== "close-combat") {assert.equal(target.effects.length, 0, id);}
+    await show(attack(item, target, natural, { hit }));
+    assert.deepEqual(rollModesOf(target.effects[0]), expected, id);
+    assert.equal(target.effects[0].getFlag(MODULE_ID, "sourceActorUuid"), item.actor.uuid, id);
+  }
+});
+
+test("Crush Claw keeps one next-attack advantage per user on the same target", async () => {
+  const target = actor();
+  for (const item of [move("crush-claw"), move("crush-claw")]) {await show(attack(item, target, 15));}
+  assert.equal(target.effects.length, 2);
+  assert.deepEqual(rollModesOf(target.effects[0]), { against: 1, vsSource: true, nextAttack: 1 });
+});
+
+test("batch 5f self roll modes apply on use or on a high natural roll", async () => {
+  const overheat = move("overheat");
+  usage(overheat);
+  await paints();
+  assert.deepEqual(rollModesOf(overheat.actor.effects[0]), { own: -1, nextAttack: 1 });
+  const cannon = move("armor-cannon");
+  usage(cannon);
+  await paints();
+  assert.deepEqual(rollModesOf(cannon.actor.effects[0]), { against: 1 });
+  assert.equal(changeValue(cannon.actor.effects[0], "system.abilities.con.save.roll.mode"), "-1");
+  const claw = move("metal-claw");
+  await show(attack(claw, actor(), 19, { hit: false }));
+  assert.equal(changeValue(claw.actor.effects[0], "system.bonuses.mwak.attack"), "1");
+  assert.deepEqual(rollModesOf(claw.actor.effects[0]), { own: 0, nextAttack: 1 });
+});
+
+test("Fake Tears and Metal Sound give +5 to everyone's attacks against the target", () => {
+  for (const id of ["fake-tears", "metal-sound"]) {
+    const built = buildMoveModifierEffects({ id }, "en").effects[0];
+    assert.deepEqual(built.flags[MODULE_ID].targetedAttack, { bonusPerStack: 5, alliesOnly: false, excludeSource: false }, id);
+    assert.equal(built.flags[MODULE_ID].expireAtEndOfNextTurn, true, id);
+  }
+  // Decorate keeps dnd5e's apply button; the GM picks the creature.
+  assert.equal(buildMoveModifierEffects({ id: "decorate" }).activityEffects.length, 1);
+});

@@ -18,7 +18,14 @@ export const AUTOMATED_MODIFIER_MOVES = new Set(["growl", "leer", "screech", "ta
   // Batch 5d: speed modifiers.
   "aqua-step", "autotomize", "esper-wing", "flame-charge", "trailblaze", "shift-gear", "tar-shot",
   // Batch 5e: leftovers.
-  "belly-drum", "dragon-dance", "hone-claws", "rage", "superpower", "trop-kick"]);
+  "belly-drum", "dragon-dance", "hone-claws", "rage", "superpower", "trop-kick",
+  // Batch 5f: roll modes (decorate stays on the chat button).
+  "armor-cannon", "aurora-beam", "bitter-malice", "breaking-swipe", "bug-buzz", "chilling-water", "close-combat",
+  "crush-claw", "dragon-ascent", "earth-power", "energy-ball", "fake-tears", "fillet-away", "flash-cannon",
+  "fleur-cannon", "focus-blast", "geomancy", "glaive-rush", "headlong-rush", "hyperspace-fury", "leaf-tornado",
+  "lunge", "luster-purge", "metal-claw", "metal-sound", "meteor-mash", "mirror-shot", "mist-ball", "moonblast",
+  "mud-bomb", "muddy-water", "mystical-fire", "night-daze", "no-retreat", "overheat", "play-nice", "psycho-boost",
+  "seed-flare", "snarl", "spicy-extract", "spirit-break", "spotlight", "sweet-scent"]);
 
 
 /* ============================================================
@@ -274,6 +281,20 @@ const untilTurnStart = { duration: {}, expireAtStartTurn: true };
 const combatDebuff = (name, trigger, max = 1, changes = [ac(-1)]) =>
   ({ name, target: "target", trigger, duration: {}, removeOnCombatEnd: true, stack: { max }, changes });
 
+// Batch 5f roll modes, read by targeted-modifier-engine. own: the bearer's attacks; against: attacks on the bearer;
+// vsSource: only toward / from whoever applied it; nextAttack: how many of those attacks it lasts.
+const untilNextAttack = { duration: {}, removeOnCombatEnd: true };
+const rollModeDebuff = (name, trigger, rollModes, timing = untilNextTurn) =>
+  ({ name, target: "target", trigger, changes: [], rollModes, ...timing });
+const attacksAtDisadvantage = (name, trigger) => rollModeDebuff(name, trigger, { own: -1 });
+const nextAttackDisadvantage = (name, trigger) => rollModeDebuff(name, trigger, { own: -1, nextAttack: 1 }, untilNextAttack);
+const nextAttackAgainstAdvantage = name => rollModeDebuff(name, "natural-attack-19+", { against: 1, nextAttack: 1 }, untilNextAttack);
+// "Any attack you make against the user": natural 1+ means on use, hit or miss.
+const retaliation = name => rollModeDebuff(name, "natural-attack-1+", { own: 1, vsSource: true });
+const exposed = name => selfBuff(name, [], { ...untilTurnStart, rollModes: { against: 1 } });
+const exhausted = name => selfBuff(name, [], { ...untilNextAttack, rollModes: { own: -1, nextAttack: 1 } });
+const attackedWithBonus = name => ({ name, target: "target", trigger: "failed-save", ...untilNextTurn, changes: [],
+  targetedAttack: { bonusPerStack: 5, alliesOnly: false, excludeSource: false } });
 const COMPACT_DEFINITIONS = Object.freeze({
   "cotton-guard": en => concentrationBuff(en ? "Cotton Guard — AC +2" : "Rizo Algodón — CA +2", [ac(2)]),
   minimize: en => concentrationBuff(en ? "Minimize — AC +2" : "Reducción — CA +2", [ac(2)]),
@@ -392,7 +413,66 @@ const COMPACT_DEFINITIONS = Object.freeze({
   },
   superpower: en => selfBuff(en ? "Superpower — STR and DEX -10" : "Fuerza Bruta — FUE y DES -10",
     [add("system.abilities.str.value", -10), add("system.abilities.dex.value", -10)], untilNextTurn),
-  "trop-kick": en => combatDebuff(en ? "Trop Kick — Attacks -1" : "Patada Tropical — Ataques -1", "natural-attack-16+", 3, attackChanges(-1))
+  "trop-kick": en => combatDebuff(en ? "Trop Kick — Attacks -1" : "Patada Tropical — Ataques -1", "natural-attack-16+", 3, attackChanges(-1)),
+  // Batch 5f: roll modes.
+  "armor-cannon": en => selfBuff(en ? "Armor Cannon — Attacked with advantage, CON saves at disadvantage" : "Cañón Armadura — Atacado con ventaja, salvaciones CON con desventaja",
+    saveModes(["con"], -1), { ...untilNextTurn, rollModes: { against: 1 } }),
+  "aurora-beam": en => attacksAtDisadvantage(en ? "Aurora Beam — Attacks at disadvantage" : "Rayo Aurora — Ataques con desventaja", "natural-attack-15+"),
+  "bitter-malice": en => attacksAtDisadvantage(en ? "Bitter Malice — Attacks at disadvantage" : "Rencor Reprimido — Ataques con desventaja", "hit-and-failed-save"),
+  "breaking-swipe": en => attacksAtDisadvantage(en ? "Breaking Swipe — Attacks at disadvantage" : "Vasto Impacto — Ataques con desventaja", "failed-save"),
+  "bug-buzz": en => nextAttackDisadvantage(en ? "Bug Buzz — Next attack at disadvantage" : "Zumbido — Próximo ataque con desventaja", "failed-save-by-5"),
+  "chilling-water": en => attacksAtDisadvantage(en ? "Chilling Water — Attacks at disadvantage" : "Agua Fría — Ataques con desventaja", "hit-and-failed-save"),
+  "close-combat": en => retaliation(en ? "Close Combat — Advantage against the user" : "A Bocajarro — Ventaja contra el usuario"),
+  "crush-claw": en => rollModeDebuff(en ? "Crush Claw — User's next attack with advantage" : "Garra Brutal — Próximo ataque del usuario con ventaja",
+    "natural-attack-15+", { against: 1, vsSource: true, nextAttack: 1 }, untilNextAttack),
+  "dragon-ascent": en => exposed(en ? "Dragon Ascent — Attacked with advantage" : "Ascenso Draco — Atacado con ventaja"),
+  "earth-power": en => nextAttackAgainstAdvantage(en ? "Earth Power — Next attack against it with advantage" : "Tierra Viva — Próximo ataque en su contra con ventaja"),
+  "energy-ball": en => nextAttackAgainstAdvantage(en ? "Energy Ball — Next attack against it with advantage" : "Energibola — Próximo ataque en su contra con ventaja"),
+  "fake-tears": en => attackedWithBonus(en ? "Fake Tears — Attacks against it +5" : "Llanto Falso — Ataques en su contra +5"),
+  "fillet-away": en => selfBuff(en ? "Fillet Away — Next attack with advantage, speed +15" : "Deslome — Próximo ataque con ventaja, velocidad +15",
+    [speedBonus(15)], { ...untilTurnStart, rollModes: { own: 1, nextAttack: 1 } }),
+  "flash-cannon": en => nextAttackAgainstAdvantage(en ? "Flash Cannon — Next attack against it with advantage" : "Cañón Resplandor — Próximo ataque en su contra con ventaja"),
+  "fleur-cannon": en => exhausted(en ? "Fleur Cannon — Next attack at disadvantage" : "Cañón Floral — Próximo ataque con desventaja"),
+  "focus-blast": en => nextAttackAgainstAdvantage(en ? "Focus Blast — Next attack against it with advantage" : "Onda Certera — Próximo ataque en su contra con ventaja"),
+  geomancy: en => selfBuff(en ? "Geomancy — Advantage on attacks and saves, speed +10" : "Geocontrol — Ventaja en ataques y salvaciones, velocidad +10",
+    [speedBonus(10), ...saveModes(ABILITIES, 1)], { duration: { rounds: 3 }, concentration: true, rollModes: { own: 1 } }),
+  "glaive-rush": en => exposed(en ? "Glaive Rush — Attacked with advantage" : "Asalto Espadón — Atacado con ventaja"),
+  "headlong-rush": en => retaliation(en ? "Headlong Rush — Advantage against the user" : "Arremetida — Ventaja contra el usuario"),
+  "hyperspace-fury": en => exposed(en ? "Hyperspace Fury — Attacked with advantage" : "Cerco Dimensión — Atacado con ventaja"),
+  "leaf-tornado": en => nextAttackDisadvantage(en ? "Leaf Tornado — Next attack at disadvantage" : "Ciclón de Hojas — Próximo ataque con desventaja", "natural-attack-15+"),
+  lunge: en => nextAttackDisadvantage(en ? "Lunge — Next attack at disadvantage" : "Plancha — Próximo ataque con desventaja", "natural-attack-15+"),
+  "luster-purge": en => rollModeDebuff(en ? "Luster Purge — Attacked with advantage" : "Resplandor — Atacado con ventaja", "failed-save-by-5", { against: 1 }),
+  // The +1 is a plain change; own: 0 only makes the next attack consume it.
+  "metal-claw": en => selfBuff(en ? "Metal Claw — Next attack +1" : "Garra Metal — Próximo ataque +1", attackChanges(1),
+    { ...untilNextAttack, trigger: "natural-attack-19+", rollModes: { own: 0, nextAttack: 1 } }),
+  "metal-sound": en => attackedWithBonus(en ? "Metal Sound — Attacks against it +5" : "Eco Metálico — Ataques en su contra +5"),
+  "meteor-mash": en => selfBuff(en ? "Meteor Mash — Next attack with advantage" : "Puño Meteoro — Próximo ataque con ventaja", [],
+    { ...untilNextAttack, trigger: "natural-attack-18+", rollModes: { own: 1, nextAttack: 1 } }),
+  "mirror-shot": en => nextAttackDisadvantage(en ? "Mirror Shot — Next attack at disadvantage" : "Disparo Espejo — Próximo ataque con desventaja", "hit-and-failed-save"),
+  "mist-ball": en => attacksAtDisadvantage(en ? "Mist Ball — Attacks at disadvantage" : "Bola Neblina — Ataques con desventaja", "natural-attack-11+"),
+  moonblast: en => nextAttackDisadvantage(en ? "Moonblast — Next attack at disadvantage" : "Fuerza Lunar — Próximo ataque con desventaja", "natural-attack-15+"),
+  "mud-bomb": en => nextAttackDisadvantage(en ? "Mud Bomb — Next attack at disadvantage" : "Bomba Fango — Próximo ataque con desventaja", "hit-and-failed-save"),
+  "muddy-water": en => nextAttackDisadvantage(en ? "Muddy Water — Next attack at disadvantage" : "Agua Lodosa — Próximo ataque con desventaja", "natural-attack-15+"),
+  "mystical-fire": en => attacksAtDisadvantage(en ? "Mystical Fire — Attacks at disadvantage" : "Llama Embrujada — Ataques con desventaja", "hit"),
+  "night-daze": en => nextAttackDisadvantage(en ? "Night Daze — Next attack at disadvantage" : "Pulso Noche — Próximo ataque con desventaja", "natural-attack-13+"),
+  "no-retreat": en => selfBuff(en ? "No Retreat — Advantage on attacks and saves" : "Bastión Final — Ventaja en ataques y salvaciones",
+    saveModes(ABILITIES, 1), { rollModes: { own: 1 } }),
+  overheat: en => exhausted(en ? "Overheat — Next attack at disadvantage" : "Sofoco — Próximo ataque con desventaja"),
+  "play-nice": en => attacksAtDisadvantage(en ? "Play Nice — Attacks at disadvantage" : "Camaradería — Ataques con desventaja", "failed-save"),
+  "psycho-boost": en => exhausted(en ? "Psycho Boost — Next attack at disadvantage" : "Psicoataque — Próximo ataque con desventaja"),
+  "seed-flare": en => rollModeDebuff(en ? "Seed Flare — Attacked with advantage" : "Fulgor Semilla — Atacado con ventaja", "failed-save", { against: 1 }),
+  snarl: en => rollModeDebuff(en ? "Snarl — Next attack against the user at disadvantage" : "Alarido — Próximo ataque contra el usuario con desventaja",
+    "failed-save", { own: -1, vsSource: true, nextAttack: 1 }, untilNextAttack),
+  "spicy-extract": en => rollModeDebuff(en ? "Spicy Extract — Attacks with and against it at advantage" : "Extracto Picante — Ventaja en sus ataques y en su contra",
+    "failed-save", { own: 1, against: 1 }, { duration: { seconds: 60 } }),
+  "spirit-break": en => nextAttackDisadvantage(en ? "Spirit Break — Next attack at disadvantage" : "Choque Anímico — Próximo ataque con desventaja", "hit"),
+  spotlight: en => rollModeDebuff(en ? "Spotlight — Attacked with advantage" : "Foco — Atacado con ventaja", "failed-save", { against: 1 },
+    { duration: { seconds: 60 }, concentration: true }),
+  "sweet-scent": en => rollModeDebuff(en ? "Sweet Scent — User's next two attacks with advantage" : "Dulce Aroma — Próximos dos ataques del usuario con ventaja",
+    "failed-save", { against: 1, vsSource: true, nextAttack: 2 }, untilNextAttack),
+  // Not automated: the GM targets the creature and applies it with the chat button, like Growth.
+  decorate: en => ({ name: en ? "Decorate — Attacks with advantage" : "Decoración — Ataques con ventaja", target: "target",
+    trigger: "manual", duration: { seconds: 60 }, changes: [], rollModes: { own: 1 } })
 });
 
 
@@ -1215,6 +1295,7 @@ function buildEffect(
             targetedAttack:
             definition.targetedAttack ??
             null,
+            rollModes: definition.rollModes ?? null,
 
             expireAtStartTurn:
                 Boolean(

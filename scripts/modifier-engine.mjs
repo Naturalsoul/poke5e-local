@@ -203,6 +203,9 @@ function sourceContext(
         : `${baseStackKey}|actor:${actor?.uuid ?? "unknown"}`;
   }
 
+  // Roll modes tied to their user (Crush Claw, Sweet Scent) stay separate per user.
+  if (template.getFlag(MODULE_ID, "rollModes")?.vsSource) {stackKey = `${baseStackKey}|actor:${actor?.uuid ?? "unknown"}`;}
+
 
   return {
 

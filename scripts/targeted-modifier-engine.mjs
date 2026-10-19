@@ -576,6 +576,63 @@ function onPreRollAttack(
 
 
 /* ============================================================
+ * ROLL MODES (batch 5f)
+ *
+ * rollModes on an effect: own → the bearer's attacks, against → attacks on the bearer,
+ * vsSource → only toward / from whoever applied it, nextAttack → attacks it lasts.
+ * ============================================================ */
+
+function rollModeEffects(actor) {
+  return actor?.effects?.filter(effect => !effect.disabled && effect.getFlag(MODULE_ID, "rollModes")) ?? [];
+}
+
+function collectRollModes(attacker, target) {
+  const modes = [];
+  const consumed = [];
+  for (const effect of rollModeEffects(attacker)) {
+    const rule = effect.getFlag(MODULE_ID, "rollModes");
+    if (!("own" in rule)) {continue;}
+    // "Its next attack": spent even when it isn't aimed at the source.
+    if (!rule.vsSource || target?.uuid === effect.getFlag(MODULE_ID, "sourceActorUuid")) {modes.push(rule.own);}
+    if (rule.nextAttack) {consumed.push(effect.uuid);}
+  }
+  for (const effect of rollModeEffects(target)) {
+    const rule = effect.getFlag(MODULE_ID, "rollModes");
+    if (!("against" in rule) || (rule.vsSource && attacker.uuid !== effect.getFlag(MODULE_ID, "sourceActorUuid"))) {continue;}
+    modes.push(rule.against);
+    if (rule.nextAttack) {consumed.push(effect.uuid);}
+  }
+  return { modes, consumed };
+}
+
+function onPreRollAttackModes(config) {
+  const attacker = config?.subject?.actor;
+  if (!attacker || !Array.isArray(config.rolls) || !config.rolls.length) {return;}
+  const { modes, consumed } = collectRollModes(attacker, currentTarget()?.actor ?? null);
+  if (!modes.length && !consumed.length) {return;}
+  for (const rollConfig of config.rolls) {
+    rollConfig.options ??= {};
+    // Both set cancel out in dnd5e, like 5e rules.
+    if (modes.includes(1)) {rollConfig.options.advantage = true;}
+    if (modes.includes(-1)) {rollConfig.options.disadvantage = true;}
+    rollConfig.options[MODULE_ID] = { ...rollConfig.options[MODULE_ID], consumedRollModes: consumed };
+  }
+}
+
+// The GM spends "next attack" effects once the attack message exists, so a cancelled roll keeps them.
+export async function consumeAttackRollModes(message) {
+  if (!game.user.isGM || (game.users?.activeGM && game.users.activeGM.id !== game.user.id)) {return;}
+  const uuids = new Set(Array.from(message.rolls ?? []).flatMap(roll => roll.options?.[MODULE_ID]?.consumedRollModes ?? []));
+  for (const uuid of uuids) {
+    const effect = fromUuidSync(uuid, { strict: false });
+    if (!effect) {continue;}
+    const left = Number(effect.getFlag(MODULE_ID, "rollModes")?.nextAttack ?? 1) - 1;
+    await (left > 0 ? effect.setFlag(MODULE_ID, "rollModes.nextAttack", left) : effect.delete());
+  }
+}
+
+
+/* ============================================================
  * REGISTER
  * ============================================================ */
 
@@ -613,6 +670,11 @@ export function registerPokemonTargetedModifierEngine() {
     "dnd5e.preRollAttack",
     onPreRollAttack
   );
+
+  Hooks.on("dnd5e.preRollAttack", onPreRollAttackModes);
+  Hooks.on("createChatMessage", message => {
+    void consumeAttackRollModes(message).catch(error => console.error(`[${MODULE_ID}] Error consumiendo roll modes`, error));
+  });
 
 
   console.log(
