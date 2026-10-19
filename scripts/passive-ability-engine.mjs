@@ -2,6 +2,7 @@ import { hasPokemonAbility, hasPokemonStatus, pokemonTypes } from "./status-runt
 import { originatingMoveItem } from "./damage-engine.mjs";
 import { grantNextAttackAdvantage } from "./attack-ability-engine.mjs";
 import { abilityWeather, activeTerrain } from "./battlefield-service.mjs";
+import { auraAdvantage, auraAttackBonus, syrupBonus } from "./aura-ability-engine.mjs";
 
 /* ============================================================
  * PASSIVE ABILITIES
@@ -223,7 +224,7 @@ function abilityAttackBonus(actor, move) {
   const defiant = has("defiant") && (NEGATIVE_STATUSES.some(status => hasPokemonStatus(actor, status)) ||
     Array.from(actor.effects ?? []).some(effect => !effect.disabled && isOpponentDebuff(effect, actor)));
   return (has("compound-eyes") ? 1 : 0) + (has("gale-wings") && move?.getFlag?.(MODULE_ID, "moveType") === "flying" ? 1 : 0) +
-    (defiant ? 2 : 0) + (has("supreme-overlord") ? downedAllies(actor) : 0);
+    (defiant ? 2 : 0) + (has("supreme-overlord") ? downedAllies(actor) : 0) + auraAttackBonus(actor);
 }
 
 // The ability the Move is made with: the best of its power abilities.
@@ -255,7 +256,7 @@ export function attackAbilityModifiers(actor, move, targets, { melee = false } =
   return {
     bonus: abilityAttackBonus(actor, move),
     advantage: (has("intrepid-sword") && melee) || has("no-guard") || targets.some(target => hasPokemonAbility(target, "no-guard")) ||
-      battlefieldAdvantage(actor, move),
+      battlefieldAdvantage(actor, move) || auraAdvantage(actor),
     disadvantage: !has("minds-eye") && abilityDisadvantage(actor, targets, melee),
     critical: has("super-luck") ? 19 : null
   };
@@ -270,6 +271,8 @@ function onPreRollAttack(config) {
   rollConfig.options ??= {};
   rollConfig.parts ??= [];
   if (modifiers.bonus) {rollConfig.parts.push(String(modifiers.bonus));}
+  const syrup = syrupBonus(targetActors());
+  if (syrup) {rollConfig.parts.push(syrup);}
   if (modifiers.advantage) {rollConfig.options.advantage = true;}
   if (modifiers.disadvantage) {rollConfig.options.disadvantage = true;}
   if (modifiers.critical) {rollConfig.options.criticalSuccess = Math.min(rollConfig.options.criticalSuccess ?? 20, modifiers.critical);}

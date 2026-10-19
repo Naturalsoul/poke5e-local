@@ -4,6 +4,7 @@ import { doubleDamageDice } from "./active-ability-service.mjs";
 import { SOUND_MOVES } from "./passive-ability-engine.mjs";
 import { messageRollShown } from "./chat-roll-display.mjs";
 import { abilityWeather, activeTerrain, distanceBetween, hasWeather, isGrounded } from "./battlefield-service.mjs";
+import { auraDamage, auraDamageMultiplier, telepathyBlocks } from "./aura-ability-engine.mjs";
 
 /* ============================================================
  * ABILITIES THAT CHANGE A MOVE
@@ -15,7 +16,8 @@ import { abilityWeather, activeTerrain, distanceBetween, hasWeather, isGrounded 
  *   Water Compaction;
  * - initiative (Quick Draw), using a Move (Truant) and critical hits (Hustle);
  * - weather and terrain: Weather Ball, Solar Power, Flower Gift, Sand Force, the terrains that double MOVE,
- *   primal weathers that stop Water or Fire damage, Misty Terrain against Dragon, Protosynthesis, Quark Drive.
+ *   primal weathers that stop Water or Fire damage, Misty Terrain against Dragon, Protosynthesis, Quark Drive;
+ * - auras from aura-ability-engine: Battery, Power Spot, Steely Spirit, Plus/Minus, Fairy/Dark Aura, Telepathy.
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
@@ -102,18 +104,22 @@ export function damageRiders(actor, move, targets, { melee = false } = {}) {
   const merciless = mercilessApplies(actor, targets);
   const sharp = hasPokemonAbility(actor, "sharpness") && SHARP_MOVE.test(moveId(move));
   const moveAgain = (sharp ? 1 : 0) + (electric && charge.electromorphosis ? 1 : 0);
+  const aura = auraDamage(actor, type);
   return {
     type,
-    doubleDice: merciless || (electric && Boolean(charge["wind-power"])) || Boolean(weatherBallType(move)),
-    flat: moveAgain * moveModifier(actor, move) + stabRiders(actor, move, melee) + weatherFlat(actor, move, type),
+    doubleDice: merciless || (electric && Boolean(charge["wind-power"])) || Boolean(weatherBallType(move)) || aura.doubleDice,
+    flat: moveAgain * moveModifier(actor, move) + stabRiders(actor, move, melee) + weatherFlat(actor, move, type) + aura.flat,
+    dice: aura.dice,
     critical: hasPokemonAbility(actor, "sniper") ? 3 : null,
     consume: electric ? Object.keys(charge) : []
   };
 }
 
+// A number or a dice formula ("1d6") added to the roll.
 function addFlat(roll, value) {
   const { OperatorTerm, NumericTerm } = foundry.dice.terms;
-  roll.terms.push(new OperatorTerm({ operator: "+" }), new NumericTerm({ number: value }));
+  const terms = typeof value === "string" ? foundry.dice.Roll.parse(value) : [new NumericTerm({ number: value })];
+  roll.terms.push(new OperatorTerm({ operator: "+" }), ...terms);
   roll.resetFormula();
 }
 
@@ -137,6 +143,7 @@ function onPostRollConfiguration(rolls, config) {
   const damage = rolls.filter(roll => roll && !["healing", "temphp"].includes(roll.options?.type));
   damage.forEach(roll => applyRiders(roll, riders, move.getFlag(MODULE_ID, "moveType")));
   if (riders.flat && damage[0]) {addFlat(damage[0], riders.flat);}
+  if (riders.dice && damage[0]) {addFlat(damage[0], riders.dice);}
   if (riders.consume.length && actor.isOwner) {
     void actor.unsetFlag(MODULE_ID, CHARGE_FLAG).catch(error => console.error(`[${MODULE_ID}] ability charge`, error));
   }
@@ -187,8 +194,10 @@ export function applyRiderDefenses(actor, damages, options = {}) {
   // Misty Terrain: a grounded Pokémon weak to Dragon takes regular damage instead.
   if (activeTerrain() === "misty" && isGrounded(actor) && weakTo(actor, "dragon")) {ignore(options, "vulnerability", ["dragon"]);}
   const halved = halvedBy(actor, move);
+  const ally = telepathyBlocks(actor, move?.actor);
   for (const damage of damages.filter(isDamage)) {
-    if (nullified(damage.type)) {damage.value = 0;}
+    if (nullified(damage.type) || ally) {damage.value = 0;}
+    if (move) {damage.value = Math.trunc(damage.value * auraDamageMultiplier(damage.type));}
     if (halved(damage.type)) {damage.value = Math.trunc(damage.value / 2);}
   }
 }

@@ -1007,6 +1007,10 @@ function onRollSavingThrow(
 
   const reactionContext = {
     actor,
+    ability:
+      context.ability ??
+      usage.ability ??
+      null,
 
     dc:
       finiteNumber(

@@ -8,6 +8,7 @@ import { registerRiderAbilityEngine } from "./rider-ability-engine.mjs";
 import { registerEventAbilityEngine } from "./event-ability-engine.mjs";
 import { registerBattlefieldService } from "./battlefield-service.mjs";
 import { registerBattlefieldEffects } from "./battlefield-effects.mjs";
+import { registerAuraAbilityEngine } from "./aura-ability-engine.mjs";
 import { registerTrainerCombatReactions } from "./trainer-combat-reactions.mjs";
 import { registerTrainerReactionService } from "./trainer-reaction-service.mjs";
 import { registerPokemonCaptureService } from "./pokemon-capture-service.mjs";
@@ -434,6 +435,7 @@ Hooks.once(
     registerEventAbilityEngine();
     registerBattlefieldService();
     registerBattlefieldEffects();
+    registerAuraAbilityEngine();
     registerTrainerOwnershipService();
     registerTrainerSwitchAuthorityService();
     registerPokemonActorSheet();

@@ -1,4 +1,5 @@
-import { hasPokemonAbility, hasPokemonStatus } from "./status-runtime.mjs";
+import { hasPokemonAbility, hasPokemonStatus, pokemonTypes } from "./status-runtime.mjs";
+import { auraBlocksStatus } from "./aura-ability-engine.mjs";
 import { isPokemonActor } from "./trainer-party-service.mjs";
 import { originatingMoveItem } from "./damage-engine.mjs";
 import { isMeleeDamage, isOpponentDebuff, WIND_MOVES } from "./passive-ability-engine.mjs";
@@ -251,6 +252,8 @@ function adjustStatChange(effect, actor) {
 
 // What keeps this status off the Pokémon now, or null.
 export function battlefieldBlocksStatus(actor, status) {
+  const veil = auraBlocksStatus(actor, status, pokemonTypes(actor));
+  if (veil) {return veil;}
   if (hasPokemonAbility(actor, "leaf-guard") && abilityWeather("sun")) {return "leaf-guard";}
   if (hasPokemonAbility(actor, "hydration") && (abilityWeather("rain") || environment() === "water")) {return "hydration";}
   if (!isGrounded(actor)) {return null;}
