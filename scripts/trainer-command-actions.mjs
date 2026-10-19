@@ -1,3 +1,4 @@
+import { runTrainerPathAction } from "./trainer-path-actions.mjs";
 import {
   assignPokemonToParty,
   getTrainerPartyState,
@@ -1183,6 +1184,17 @@ export function activateTrainerCommandCenter({
         return;
       }
 
+
+      if (["trainer-partner", "trainer-cheerleader"].includes(action)) {
+        try {
+          await runTrainerPathAction(action, trainer);
+          refresh();
+        } catch (error) {
+          console.error(`[${MODULE_ID}] Error usando rasgo de camino`, error);
+          ui.notifications.error(error?.message ?? labels.error);
+        }
+        return;
+      }
 
       if (
         action ===

@@ -1,3 +1,4 @@
+import { availableTrainerPathActions, trainerPathActionLabel } from "./trainer-path-actions.mjs";
 import {
   getTrainerLevel
 } from "./trainer-service.mjs";
@@ -296,10 +297,12 @@ const RESOURCE_LABELS =
           "Tactical Points",
 
         masterTrainerUses:
-          "Master Trainer"
+          "Master Trainer",
+        skillDice:
+          "Skill Dice",
+        cheerleaderUses:
+          "Cheerleader"
       }),
-
-
     en:
       Object.freeze({
 
@@ -313,7 +316,11 @@ const RESOURCE_LABELS =
           "Tactical Points",
 
         masterTrainerUses:
-          "Master Trainer"
+          "Master Trainer",
+        skillDice:
+          "Skill Dice",
+        cheerleaderUses:
+          "Cheerleader"
       })
   });
 
@@ -2098,7 +2105,14 @@ export function buildTrainerCommandCenter(
         ${trainerResourceCountersMarkup(
           trainer
         )}
-
+        ${
+          editable
+            ? availableTrainerPathActions(trainer).map(action => `
+              <button type="button" class="poke5e-trainer-command-action" data-command-action="${action}">
+                ${escapeHtml(trainerPathActionLabel(trainer, action))}
+              </button>`).join("")
+            : ""
+        }
       </div>
 
 

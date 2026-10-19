@@ -1,3 +1,4 @@
+import { registerTrainerPathActions } from "./trainer-path-actions.mjs";
 import {
   Poke5eImporter,
   loadDatabase,
@@ -405,6 +406,7 @@ Hooks.once(
     registerPokemonCrySettings();
     registerTrainerFeatureEngine();
     registerTrainerPathEffects();
+    registerTrainerPathActions();
     registerTrainerOwnershipService();
     registerTrainerSwitchAuthorityService();
     registerPokemonActorSheet();
