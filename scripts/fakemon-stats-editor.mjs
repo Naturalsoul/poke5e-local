@@ -155,6 +155,11 @@ const MOVEMENT_OPTIONS = [
     id: "burrowing",
     es: "Excavación",
     en: "Burrowing"
+  },
+  {
+    id: "hover",
+    es: "Levitación",
+    en: "Hover"
   }
 ];
 

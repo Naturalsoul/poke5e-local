@@ -1,6 +1,7 @@
 import {
   buildActorSource,
-  buildPokemonMedia
+  buildPokemonMedia,
+  missingHoverMovementUpdate
 } from "./builder.mjs";
 
 import {
@@ -2463,6 +2464,10 @@ export function registerPokemonImporter() {
     );
   });
 
+  void migratePokemonHoverMovement({ notify: true }).catch(error => {
+    console.error(`[${MODULE_ID}] Error migrando velocidades de levitación:`, error);
+  });
+
   void migrateLegacyPokemonGender({
     notify:
       true
@@ -2511,6 +2516,7 @@ export function registerPokemonImporter() {
         migratePokemonPrototypeTokens,
       
       migrateLegacyPokemonGender,
+      migratePokemonHoverMovement,
 
       importPokemon,
       repository
@@ -3355,6 +3361,34 @@ function normalizedCanonicalGenderRatio(
     null;
 }
 
+
+function missingHoverUpdate(actor) {
+  const species = repository.getPokemon(String(getDocumentFlag(actor, "sourceId") ?? ""));
+  return species ? missingHoverMovementUpdate(actor.system?.attributes?.movement, species.combat?.speed) : null;
+}
+
+export async function migratePokemonHoverMovement({ notify = false } = {}) {
+  if (!game.user.isGM) {return { affected: 0 };}
+  await repository.load();
+  let affected = 0;
+  const repair = async actor => {
+    const update = getDocumentFlag(actor, "kind") === "pokemon" ? missingHoverUpdate(actor) : null;
+    if (!update) {return;}
+    await actor.update(update);
+    affected += 1;
+  };
+  for (const actor of game.actors ?? []) {await repair(actor);}
+  // Unlinked tokens follow their base actor, so this only catches deltas that override the movement.
+  for (const scene of game.scenes ?? []) {
+    for (const token of scene.tokens ?? []) {
+      if (!token.actorLink && token.actor) {await repair(token.actor);}
+    }
+  }
+  if (notify && affected) {
+    ui.notifications.info(`Poke5e: velocidad de levitación reparada en ${affected} Pokémon.`);
+  }
+  return { affected };
+}
 
 export async function migrateLegacyPokemonGender({
   notify = false

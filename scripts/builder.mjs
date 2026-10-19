@@ -27,7 +27,7 @@ import {
 } from "./struggle-rules.mjs";
 
 const MODULE_ID = "poke5e-local";
-const BUILDER_VERSION = "0.18.22";
+const BUILDER_VERSION = "0.18.23";
 const ABILITY_IDS = ["str", "dex", "con", "int", "wis", "cha"];
 const DEFAULT_MOVE_ICON = "icons/svg/sword.svg";
 const MOVE_ICON_ROOT =
@@ -55,7 +55,9 @@ const MOVEMENT_MAP = {
   climb: "climb",
   climbing: "climb",
   burrow: "burrow",
-  burrowing: "burrow"
+  burrowing: "burrow",
+  // dnd5e models hover as a fly speed plus the hover toggle.
+  hover: "fly"
 };
 
 const SKILL_MAP = {
@@ -1927,7 +1929,7 @@ function normalizeSkillId(
   );
 }
 
-function buildMovement(
+export function buildMovement(
   rawSpeed
 ) {
   const movement = {
@@ -1969,9 +1971,20 @@ function buildMovement(
           0
         )
       );
+    if (key === "fly" && String(entry?.type).trim().toLowerCase() === "hover") {
+      movement.hover = true;
+    }
   }
 
   return movement;
+}
+
+// Builders before 0.18.23 dropped "hover" speeds (Gastly, Magnemite...): the update that adds fly + hover back.
+// Only movement with no fly speed at all is touched, so hand-edited speeds stay.
+export function missingHoverMovementUpdate(current = {}, rawSpeed = []) {
+  const expected = buildMovement(rawSpeed);
+  if (!expected.hover || current?.hover || Number(current?.fly) > 0) {return null;}
+  return { "system.attributes.movement.fly": expected.fly, "system.attributes.movement.hover": true };
 }
 
 function buildSenses(
