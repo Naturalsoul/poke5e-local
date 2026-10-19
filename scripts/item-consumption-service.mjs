@@ -1,4 +1,4 @@
-import { throwPokeball } from "./pokemon-capture-service.mjs";
+import { prepareCapture } from "./pokemon-capture-service.mjs";
 import { refundItemHealingBonuses, resolveItemHealingBonuses } from "./trainer-feature-engine.mjs";
 const MODULE_ID =
   "poke5e-local";
@@ -483,50 +483,72 @@ function confirmationContent(
 }
 
 
+// With `extraFields` (form inputs), resolves to their values instead of true.
 async function confirmConsumableUse(
   item,
-  quantity
+  quantity,
+  extraFields = ""
 ) {
-
   const text =
     labels();
-
-
   const confirmed =
     await foundry.applications.api
       .DialogV2.confirm({
-
         window: {
           title:
             text.title
         },
-
         content:
           confirmationContent(
             item,
             quantity
-          ),
-
+          ) +
+          extraFields,
         modal:
           true,
-
         rejectClose:
           false,
-
         yes: {
           label:
-            text.use
+            text.use,
+          callback:
+            (event, button) =>
+              extraFields
+                ? formValues(
+                    button.form
+                  )
+                : true
         },
-
         no: {
           label:
             text.cancel
         }
       });
-
-
+  if (
+    confirmed &&
+    typeof confirmed ===
+      "object"
+  ) {
+    return confirmed;
+  }
   return confirmed ===
     true;
+}
+
+
+function formValues(
+  form
+) {
+  return Object.fromEntries(
+    [...form.elements]
+      .filter(element => element.name)
+      .map(element => [
+        element.name,
+        element.type === "checkbox"
+          ? element.checked
+          : element.value
+      ])
+  );
 }
 
 
@@ -715,6 +737,33 @@ async function consumeAndDisplay(
 }
 
 
+async function usePokeball(
+  ball,
+  quantity
+) {
+  const capture =
+    await prepareCapture(
+      ball
+    );
+  if (!capture) {
+    return;
+  }
+  const answers =
+    await confirmConsumableUse(
+      ball,
+      quantity,
+      capture.questions
+    );
+  if (answers) {
+    await capture.throwBall(
+      answers === true
+        ? {}
+        : answers
+    );
+  }
+}
+
+
 async function requestConsumableUse(
   item
 ) {
@@ -800,7 +849,7 @@ async function requestConsumableUse(
     }
 
 
-    // Pokéballs are thrown at the target instead of showing a card.
+    // Pokéballs keep the use window, then are thrown at the target instead of showing a card.
     if (
       currentItem.getFlag(
         MODULE_ID,
@@ -808,8 +857,9 @@ async function requestConsumableUse(
       ) ===
       "pokeball"
     ) {
-      await throwPokeball(
-        currentItem
+      await usePokeball(
+        currentItem,
+        quantity
       );
       return;
     }

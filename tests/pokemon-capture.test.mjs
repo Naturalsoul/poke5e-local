@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createFlagDocument, installFoundryUtils } from "./helpers/foundry-mocks.mjs";
+import { createFlagDocument, createHooks, installFoundryUtils } from "./helpers/foundry-mocks.mjs";
 
 installFoundryUtils();
+const hooks = createHooks();
 const MODULE_ID = "poke5e-local";
 globalThis.game = { actors: [], user: { targets: new Set() }, settings: { get: () => "es" }, combat: null };
 globalThis.canvas = { tokens: { placeables: [] } };
@@ -77,7 +78,7 @@ test("negative statuses and Poké Assist give advantage", async () => {
   assert.deepEqual(capture.captureAdvantageReasons(ranger, wild({ types: ["fire"] })), []);
 });
 
-test("throwing a ball spends it, rolls Animal Handling against the DC and announces the result after Dice So Nice", async () => {
+test("throwing a ball spends it, hides the DC and announces the result only after Dice So Nice shows the roll", async () => {
   const ash = trainer(5);
   const target = wild({ hp: [5, 20] });
   target.statuses.add("restrained");
@@ -89,18 +90,30 @@ test("throwing a ball spends it, rolls Animal Handling against the DC and announ
   ball.system = { quantity: 2 };
   ball.update = async changes => { ball.system.quantity = changes["system.quantity"]; };
   ash.rollSkill = async (config, dialog, message) => {
-    events.push(["roll", config.skill, config.target, config.advantage, dialog.configure]);
-    message.document = { id: "roll-message" };
+    events.push(["roll", config.skill, "target" in config, config.advantage, message.data.flavor]);
+    const rendered = { id: "roll-message", getFlag: (_module, key) => message.data.flags[MODULE_ID][key] };
+    // dnd5e renders the card first; Dice So Nice reveals the total later.
+    setTimeout(() => hooks.handler("dnd5e.renderChatMessage")(rendered, {}), 0);
     return [{ total: 3 }];
   };
-  globalThis.game.dice3d = { waitFor3DAnimationByMessageID: async id => { events.push(["dice", id]); } };
+  game.dice3d = { waitFor3DAnimationByMessageID: async id => { events.push(["dice", id]); } };
   globalThis.requestAnimationFrame = callback => setTimeout(callback, 0);
-  globalThis.foundry.applications.api.DialogV2 = { prompt: async () => ({ situational: false, timerTurns: 0, styler: false, gotta: false }) };
   globalThis.ChatMessage = { implementation: { getSpeaker: () => ({}), create: async data => { events.push(["result", data.flags[MODULE_ID].capture.caught]); } } };
   globalThis.ui = { notifications: { warn: message => events.push(["warn", message]) } };
-  await capture.throwPokeball(ball);
-  // Caterpie at quarter HP: 12 − 5 (below half) − 5 (Great Ball) = 2.
-  assert.deepEqual(events, [["roll", "ani", 2, true, false], ["dice", "roll-message"], ["result", true]]);
+
+  const capture_ = await capture.prepareCapture(ball);
+  assert.equal(capture_.questions, "", "a Great Ball needs no questions");
+  await capture_.throwBall({});
+  // Caterpie at quarter HP: 12 − 5 (below half) − 5 (Great Ball) = 2; the 3 catches it.
+  assert.deepEqual(events, [["roll", "ani", false, true, `Great Ball → ${target.name}`], ["dice", "roll-message"], ["result", true]]);
   assert.equal(ball.system.quantity, 1);
   game.user.targets = new Set();
+});
+
+test("the use window only asks what the module cannot see", () => {
+  const ranger = trainer(5, "ranger");
+  assert.match(capture.captureQuestions(ranger, "dusk-ball", []), /name="situational"/);
+  assert.match(capture.captureQuestions(ranger, "timer-ball", []), /name="timerTurns"/);
+  assert.match(capture.captureQuestions(ranger, "poke-ball", []), /name="styler"/);
+  assert.doesNotMatch(capture.captureQuestions(ranger, "dusk-ball", []), /−|DC|CD/);
 });

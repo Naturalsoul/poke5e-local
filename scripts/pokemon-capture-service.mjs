@@ -1,4 +1,4 @@
-import { afterPaint } from "./chat-roll-display.mjs";
+import { trackRollDisplay } from "./chat-roll-display.mjs";
 import { loadDatabase } from "./importer.mjs";
 import { hasPokemonStatus } from "./status-runtime.mjs";
 import { getPokemonTrainerUuid, getTrainerOwnedPokemon, getTrainerPartyState, isPokemonActor } from "./trainer-party-service.mjs";
@@ -132,55 +132,26 @@ async function captureContext(trainer, target, ballId) {
 }
 
 /* ============================================================
- * DIALOG
+ * USE WINDOW EXTRAS
+ *
+ * The usual "use item" window is kept; it only gains the questions the module
+ * cannot answer itself. The DC is never shown.
  * ============================================================ */
-
-function dcLine(target, ball, ballId, context) {
-  if (ballId === "master-ball") {return `<p>${en() ? "Automatic success." : "Éxito automático."}</p>`;}
-  const { base, health, reduction, dc } = captureDc(target, ballReduction(ballId, context));
-  const parts = [String(base), health ? `${health} (HP)` : "", reduction ? `${reduction} (${escape(ball.name)})` : ""].filter(Boolean);
-  return `<p>${en() ? "DC" : "CD"} ${dc} = ${parts.join(" − ")}</p>`;
-}
 
 function checkbox(name, label) {
   return `<div class="form-group"><label><input type="checkbox" name="${name}"> ${label}</label></div>`;
 }
 
-function featureOptions(trainer, reasons) {
+export function captureQuestions(trainer, ballId, reasons) {
+  const situational = SITUATIONAL_BALLS[ballId];
   const gotta = pathAtLevel(trainer, "pokemon-collector", 5) && getTrainerProgressionResource(trainer, GOTTA_CATCH_RESOURCE_ID)?.value > 0;
   return [
-    pathAtLevel(trainer, "ranger", 5) ? checkbox("styler", en() ? "Capture Styler: you circled it (+10)" : "Capture Styler: lo rodeaste (+10)") : "",
-    gotta && !reasons.length ? checkbox("gotta", en() ? "Gotta Catch 'Em All: advantage (1/long rest)" : "Gotta Catch 'Em All: ventaja (1/descanso largo)") : ""
-  ];
-}
-
-function captureDialogContent({ trainer, target, ball, ballId, context, reasons }) {
-  const situational = SITUATIONAL_BALLS[ballId];
-  return [
-    `<p><strong>${escape(trainer.name)}</strong> → <strong>${escape(target.name)}</strong> (${escape(ball.name)})</p>`,
-    dcLine(target, ball, ballId, context),
-    reasons.length ? `<p>${en() ? "Advantage" : "Ventaja"}: ${reasons.map(escape).join(", ")}</p>` : "",
-    situational ? checkbox("situational", `${situational[en() ? "en" : "es"]} (−${situational.reduction})`) : "",
+    situational ? checkbox("situational", situational[en() ? "en" : "es"]) : "",
     ballId === "timer-ball" ? `<div class="form-group"><label>${en() ? "Turns concentrating" : "Turnos concentrando"}</label>
       <input type="number" name="timerTurns" min="0" max="10" value="0"></div>` : "",
-    ...featureOptions(trainer, reasons)
+    pathAtLevel(trainer, "ranger", 5) ? checkbox("styler", en() ? "Capture Styler: you circled it" : "Capture Styler: lo rodeaste") : "",
+    gotta && !reasons.length ? checkbox("gotta", en() ? "Gotta Catch 'Em All (1/long rest)" : "Gotta Catch 'Em All (1/descanso largo)") : ""
   ].join("");
-}
-
-async function promptCapture(options) {
-  return foundry.applications.api.DialogV2.prompt({
-    window: { title: en() ? "Throw Pokéball" : "Lanzar Pokéball" },
-    content: captureDialogContent(options),
-    rejectClose: false,
-    ok: {
-      label: en() ? "Throw" : "Lanzar",
-      callback: (_event, button) => {
-        const elements = button.form.elements;
-        return { situational: Boolean(elements.situational?.checked), timerTurns: Number(elements.timerTurns?.value ?? 0),
-          styler: Boolean(elements.styler?.checked), gotta: Boolean(elements.gotta?.checked) };
-      }
-    }
-  });
 }
 
 /* ============================================================
@@ -210,49 +181,59 @@ async function postResult(trainer, target, ball, caught) {
     flags: { [MODULE_ID]: { capture: { trainerUuid: trainer.uuid, targetUuid: target.uuid, ballId: ball.getFlag(MODULE_ID, "sourceId"), caught } } } });
 }
 
-// Animal Handling against the DC; true when caught.
+// Animal Handling against the hidden DC; true when caught, null when the roll was cancelled.
 async function rollCapture({ trainer, target, ball, ballId, context, reasons, choice }) {
   const gotta = choice.gotta && await spendTrainerProgressionResource(trainer, GOTTA_CATCH_RESOURCE_ID, 1);
   const { dc } = captureDc(target, ballReduction(ballId, context, choice));
-  const message = { data: { flavor: `${escape(ball.name)} → ${escape(target.name)} (${en() ? "DC" : "CD"} ${dc})` } };
+  const display = trackRollDisplay();
+  // No `target` option: dnd5e would show the DC on the card.
   const rolls = await trainer.rollSkill(
-    { skill: "ani", target: dc, advantage: reasons.length > 0 || Boolean(gotta), ...(choice.styler ? { bonus: "10" } : {}) },
+    { skill: "ani", advantage: reasons.length > 0 || Boolean(gotta), ...(choice.styler ? { bonus: "10" } : {}) },
     { configure: false },
-    message
+    { data: { flavor: `${escape(ball.name)} → ${escape(target.name)}`, flags: { [MODULE_ID]: display.flags } } }
   );
   const roll = rolls?.[0];
-  if (!roll) {return null;}
-  // The result is announced once Dice So Nice has shown the roll; dnd5e leaves the created message in message.document.
-  if (message.document?.id) {await game.dice3d?.waitFor3DAnimationByMessageID?.(message.document.id);}
-  await afterPaint();
+  if (!roll) {
+    display.stop();
+    return null;
+  }
+  await display.displayed();
   return Number(roll.total) >= dc;
 }
 
-export async function throwPokeball(ball) {
+/**
+ * Checks the throw before the use window opens. Returns null (already warned) or
+ * { questions, throwBall(answers) } where answers come from the window's fields.
+ */
+export async function prepareCapture(ball) {
   const trainer = ball.parent;
   if (!isTrainerActor(trainer)) {
     ui.notifications.warn(en() ? "Only a trainer can throw a Pokéball." : "Solo un entrenador puede lanzar una Pokéball.");
-    return;
+    return null;
   }
   const target = singleTarget();
   const blocker = captureBlocker(trainer, target);
   if (blocker) {
     ui.notifications.warn(blocker);
-    return;
+    return null;
   }
   const ballId = ball.getFlag(MODULE_ID, "sourceId");
   const context = await captureContext(trainer, target, ballId);
   const reasons = captureAdvantageReasons(trainer, target);
-  const choice = await promptCapture({ trainer, target, ball, ballId, context, reasons });
-  if (!choice) {return;}
-
-  const quantity = Math.trunc(Number(ball.system?.quantity ?? 0));
-  if (quantity <= 0) {
-    ui.notifications.warn(en() ? `No ${ball.name} left.` : `No quedan ${ball.name}.`);
-    return;
-  }
-  // Spent on success (it now holds the Pokémon) and on failure (destroyed).
-  await ball.update({ "system.quantity": quantity - 1 });
-  const caught = ballId === "master-ball" || await rollCapture({ trainer, target, ball, ballId, context, reasons, choice });
-  if (caught !== null) {await postResult(trainer, target, ball, caught);}
+  return {
+    questions: captureQuestions(trainer, ballId, reasons),
+    async throwBall(answers = {}) {
+      const choice = { situational: Boolean(answers.situational), timerTurns: Number(answers.timerTurns ?? 0),
+        styler: Boolean(answers.styler), gotta: Boolean(answers.gotta) };
+      const quantity = Math.trunc(Number(ball.system?.quantity ?? 0));
+      if (quantity <= 0) {
+        ui.notifications.warn(en() ? `No ${ball.name} left.` : `No quedan ${ball.name}.`);
+        return;
+      }
+      // Spent on success (it now holds the Pokémon) and on failure (destroyed).
+      await ball.update({ "system.quantity": quantity - 1 });
+      const caught = ballId === "master-ball" || await rollCapture({ trainer, target, ball, ballId, context, reasons, choice });
+      if (caught !== null) {await postResult(trainer, target, ball, caught);}
+    }
+  };
 }
