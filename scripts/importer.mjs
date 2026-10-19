@@ -2464,10 +2464,6 @@ export function registerPokemonImporter() {
     );
   });
 
-  void migratePokemonHoverMovement({ notify: true }).catch(error => {
-    console.error(`[${MODULE_ID}] Error migrando velocidades de levitación:`, error);
-  });
-
   void migrateLegacyPokemonGender({
     notify:
       true
@@ -2516,7 +2512,6 @@ export function registerPokemonImporter() {
         migratePokemonPrototypeTokens,
       
       migrateLegacyPokemonGender,
-      migratePokemonHoverMovement,
 
       importPokemon,
       repository

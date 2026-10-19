@@ -1,6 +1,7 @@
 import {
   Poke5eImporter,
-  loadDatabase
+  loadDatabase,
+  migratePokemonHoverMovement
 } from "./importer.mjs";
 
 import {
@@ -332,6 +333,7 @@ Hooks.once(
           syncPoke5eItemCompendium,
 
         loadDatabase,
+        migratePokemonHoverMovement,
         fakemonRepository,
         openFakemonStudio,
         playBattleTransition
@@ -650,6 +652,12 @@ Hooks.once(
         `Poke5e Local fue validado con D&D5e ${EXPECTED_VERSION}. ` +
         `Versión actual: ${game.system.version}`
       );
+    }
+
+    try {
+      await migratePokemonHoverMovement({ notify: true });
+    } catch (error) {
+      console.error(`[${MODULE_ID}] Error migrando velocidades de levitación.`, error);
     }
 
     try {
