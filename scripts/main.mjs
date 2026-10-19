@@ -9,6 +9,7 @@ import { registerEventAbilityEngine } from "./event-ability-engine.mjs";
 import { registerBattlefieldService } from "./battlefield-service.mjs";
 import { registerBattlefieldEffects } from "./battlefield-effects.mjs";
 import { registerAuraAbilityEngine } from "./aura-ability-engine.mjs";
+import { registerFormAbilityEngine } from "./form-ability-engine.mjs";
 import { registerTrainerCombatReactions } from "./trainer-combat-reactions.mjs";
 import { registerTrainerReactionService } from "./trainer-reaction-service.mjs";
 import { registerPokemonCaptureService } from "./pokemon-capture-service.mjs";
@@ -436,6 +437,7 @@ Hooks.once(
     registerBattlefieldService();
     registerBattlefieldEffects();
     registerAuraAbilityEngine();
+    registerFormAbilityEngine();
     registerTrainerOwnershipService();
     registerTrainerSwitchAuthorityService();
     registerPokemonActorSheet();

@@ -31,6 +31,7 @@ import { processHeldItemEndTurn } from "./held-item-engine.mjs";
 import { processBerryAbilitiesEndTurn } from "./berry-ability-engine.mjs";
 import { effectSourceActor, processEventAbilitiesEndTurn, processEventAbilitiesStartTurn } from "./event-ability-engine.mjs";
 import { processBattlefieldEndTurn, processBattlefieldStartTurn } from "./battlefield-service.mjs";
+import { processFormAbilitiesStartTurn } from "./form-ability-engine.mjs";
 
 import {
   isPokemonActor
@@ -1834,6 +1835,11 @@ async function processStartTurn(
 
   // Sandstorm and Hail.
   await processBattlefieldStartTurn(
+    actor
+  );
+
+  // Schooling, Ice Face in the hail, Hunger Switch.
+  await processFormAbilitiesStartTurn(
     actor
   );
 

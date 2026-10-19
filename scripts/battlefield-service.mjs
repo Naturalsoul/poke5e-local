@@ -72,6 +72,7 @@ export function battlefield(combat = game.combat) {
 
 // The weathers in force. The primal ones replace any other, and can be both at once.
 export function activeWeathers(combat = game.combat) {
+  if (present(combat, "teraform-zero")) {return [];}
   const primal = [present(combat, "desolate-land") && "extreme-sun", present(combat, "primordial-sea") && "heavy-rain"].filter(Boolean);
   if (primal.length) {return primal;}
   const id = battlefield(combat).weather?.id;
@@ -90,7 +91,8 @@ export function abilityWeather(id, combat = game.combat) {
   return !present(combat, "cloud-nine") && !present(combat, "air-lock") && hasWeather(id, combat);
 }
 
-export const activeTerrain = (combat = game.combat) => battlefield(combat).terrain?.id ?? null;
+// Teraform Zero: no weather or terrain while Stellar Terapagos fights.
+export const activeTerrain = (combat = game.combat) => (present(combat, "teraform-zero") ? null : battlefield(combat).terrain?.id ?? null);
 export const environment = (combat = game.combat) => battlefield(combat).environment ?? "outdoor";
 
 export function isGrounded(actor) {
@@ -189,7 +191,13 @@ function onEntry(pokemon, decides) {
 const FORECAST = { sun: "fire", rain: "water", hail: "ice", snow: "ice" };
 const MIMICRY = { electric: "electric", grassy: "grass", misty: "fairy", psychic: "psychic" };
 
+// Other engines (form changes) that also give a Pokémon its types during the combat.
+const typeShapers = [];
+export const registerTypeShaper = shaper => typeShapers.push(shaper);
+
 export function shapedTypes(actor, combat = game.combat) {
+  const formed = typeShapers.map(shaper => shaper(actor, combat)).find(Boolean);
+  if (formed) {return formed;}
   if (hasPokemonAbility(actor, "forecast")) {
     const weather = Object.keys(FORECAST).find(id => abilityWeather(id, combat));
     return [weather ? FORECAST[weather] : "normal"];
@@ -198,10 +206,10 @@ export function shapedTypes(actor, combat = game.combat) {
   return hasPokemonAbility(actor, "mimicry") && terrain ? [MIMICRY[terrain]] : null;
 }
 
-async function reshape(combat) {
-  for (const actor of combatActors(combat).filter(isPokemonActor)) {
-    if (!["forecast", "mimicry"].some(abilityId => hasPokemonAbility(actor, abilityId))) {continue;}
+export async function reshape(combat, actors = combatActors(combat)) {
+  for (const actor of actors.filter(isPokemonActor)) {
     const original = actor.getFlag(MODULE_ID, ORIGINAL_TYPES);
+    if (!original && !shapedTypes(actor, combat)) {continue;}
     const wanted = shapedTypes(actor, combat) ?? original ?? getPokemonTypes(actor);
     if (wanted.join() === pokemonTypes(actor).join()) {continue;}
     if (!original) {await actor.setFlag(MODULE_ID, ORIGINAL_TYPES, getPokemonTypes(actor));}
