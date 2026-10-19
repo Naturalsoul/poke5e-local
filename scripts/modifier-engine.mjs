@@ -135,6 +135,15 @@ function tokenForActor(
  * CONTEXTO DEL ORIGEN
  * ============================================================ */
 
+// side: the source's disposition for targeted attacks, null otherwise.
+function sourceStackKey(template, baseStackKey, side, actor) {
+  const perActor = `${baseStackKey}|actor:${actor?.uuid ?? "unknown"}`;
+  // Roll modes tied to their user (Crush Claw, Sweet Scent) stay separate per user.
+  if (template.getFlag(MODULE_ID, "rollModes")?.vsSource) {return perActor;}
+  if (side === null) {return baseStackKey;}
+  return side !== 0 ? `${baseStackKey}|side:${side}` : perActor;
+}
+
 function sourceContext(
   item,
   template
@@ -186,25 +195,13 @@ function sourceContext(
    * único efecto.
    */
 
-  let stackKey =
-    baseStackKey;
-
-
-  if (
-    targetedAttack
-  ) {
-
-    stackKey =
-
-      disposition !== 0
-
-        ? `${baseStackKey}|side:${disposition}`
-
-        : `${baseStackKey}|actor:${actor?.uuid ?? "unknown"}`;
-  }
-
-  // Roll modes tied to their user (Crush Claw, Sweet Scent) stay separate per user.
-  if (template.getFlag(MODULE_ID, "rollModes")?.vsSource) {stackKey = `${baseStackKey}|actor:${actor?.uuid ?? "unknown"}`;}
+  const stackKey =
+    sourceStackKey(
+      template,
+      baseStackKey,
+      targetedAttack ? disposition : null,
+      actor
+    );
 
 
   return {

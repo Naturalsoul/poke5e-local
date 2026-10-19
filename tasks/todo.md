@@ -36,5 +36,5 @@
   - Verify: modifier and coverage tests; the `pending:stat-modifiers` count goes down.
   - Files: `scripts/modifier-effects.mjs`, `scripts/move-coverage.mjs`, `tests/modifier-automation.test.mjs`
 
-- [ ] 6. Final check and commit
+- [x] 6. Final check and commit
   - Verify: zero `pending:stat-modifiers` without a note; `node --test tests/*.test.mjs` shows only the 29 old failures; lint on the touched files.
