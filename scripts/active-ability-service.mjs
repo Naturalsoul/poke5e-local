@@ -49,7 +49,8 @@ const TEXT = {
   ally: { en: "Target the allied Pokémon it protects.", es: "Marca como objetivo al Pokémon aliado que protege." },
   owner: { en: "Only its owner or the GM can switch it on for", es: "Solo su dueño o el GM pueden activarla para" },
   used: { en: "uses", es: "usa" },
-  on: { en: "on", es: "activa" }
+  on: { en: "on", es: "activa" },
+  reaction: { en: "Offered when it would change a rolled result", es: "Se ofrece cuando cambiaría el resultado de una tirada" }
 };
 
 const en = () => game.settings.get(MODULE_ID, "language") === "en";
@@ -253,23 +254,24 @@ function onRestCompleted(actor, result, config) {
  * SHEET
  * ============================================================ */
 
-export function activeAbilityMarkup(pokemon) {
+// Play button and uses left next to the Ability's name, like the held item's use buttons.
+export function activeAbilityButton(pokemon) {
   const abilityId = activeAbilityOf(pokemon);
   const rule = ACTIVE_ABILITIES[abilityId];
   if (!rule) {return "";}
   const left = abilityUsesLeft(pokemon, abilityId);
-  const on = Object.values(guardOf(pokemon)).includes(abilityId) ? ` <em>(${text("on")})</em>` : "";
-  const button = !rule.reaction && pokemon.isOwner
-    ? `<button type="button" class="poke5e-pokemon-bond__spend" data-poke5e-ability-action="use" data-actor-uuid="${escape(pokemon.uuid)}"
-        ${left ? "" : "disabled"}>${en() ? "Use" : "Usar"}</button>`
-    : "";
+  const on = Object.values(guardOf(pokemon)).includes(abilityId);
+  const charges = on ? text("on") : `${left}/1`;
+  const tooltip = escape(rule.reaction ? text("reaction") : `${en() ? "Use" : "Usar"}: ${abilityName(pokemon, abilityId)} · ${charges}`);
+  const button = rule.reaction ? "" : `
+    <button type="button" class="poke5e-pokemon-held-item__use" data-poke5e-ability-action="use" data-actor-uuid="${escape(pokemon.uuid)}"
+      ${left && pokemon.isOwner ? "" : "disabled"} title="${tooltip}" aria-label="${tooltip}">
+      <i class="fa-solid fa-play" aria-hidden="true"></i>
+    </button>`;
   return `
-    <div class="poke5e-pokemon-nature poke5e-pokemon-bond">
-      <span class="poke5e-pokemon-nature__label"><i class="fa-solid fa-bolt" aria-hidden="true"></i>${escape(abilityName(pokemon, abilityId))}</span>
-      <div class="poke5e-pokemon-nature__modifiers">
-        <span class="poke5e-pokemon-bond__points">${left}/1${on}</span>${button}
-      </div>
-    </div>`;
+    <span class="poke5e-pokemon-held-item__use-control" ${rule.reaction ? `title="${tooltip}"` : ""}>${button}
+      <span class="poke5e-pokemon-held-item__charges">${charges}</span>
+    </span>`;
 }
 
 function onDocumentClick(event) {

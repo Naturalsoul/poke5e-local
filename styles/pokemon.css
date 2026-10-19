@@ -5061,13 +5061,17 @@ small {
  * HELD ITEM
  * ============================================================ */
 
+/* The Ability panel reuses the held item's use button. */
+.poke5e-pokemon-panel--ability,
 .poke5e-pokemon-panel--held-item {
   --poke5e-held-item-accent:
     #c7af73;
 
   --poke5e-held-item-soft:
     rgba(199, 175, 115, 0.1);
+}
 
+.poke5e-pokemon-panel--held-item {
   align-content:
     start;
 }

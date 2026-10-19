@@ -99,3 +99,12 @@ test("Heavy Metal and Steadfast are only offered when they would change the resu
   assert.equal(service.steadfastOffer({ total: 11 }, { actor: lucario, dc: 13, move: { effects: [] } }), null, "no status on a failure");
   assert.equal(service.steadfastOffer({ total: 14 }, { actor: lucario, dc: 13, move: statusMove }), null);
 });
+
+test("the Ability card shows a play button with the uses left, 'activa' while switched on, and no button for reactions", async () => {
+  const gyarados = pokemon("intimidate");
+  assert.match(service.activeAbilityButton(gyarados), /data-poke5e-ability-action="use"[\s\S]*>1\/1</);
+  await service.useActiveAbility(gyarados);
+  assert.match(service.activeAbilityButton(gyarados), /disabled[\s\S]*>activa</);
+  assert.doesNotMatch(service.activeAbilityButton(pokemon("steadfast")), /<button/);
+  assert.equal(service.activeAbilityButton(pokemon("static")), "");
+});
