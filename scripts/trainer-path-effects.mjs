@@ -6,7 +6,8 @@ import { getTrainerLevel, isTrainerActor } from "./trainer-service.mjs";
 const MODULE_ID = "poke5e-local";
 const EFFECT_KIND = "trainer-path-effect";
 const EFFECT_ID = "P5eTrainerPath00";
-const TRAINER_FLAGS = ["trainerProgression", "trainerLevel", "trainerParty"];
+export const MULTITALENTED_FLAG = "multitalentedSkills";
+const TRAINER_FLAGS = ["trainerProgression", "trainerLevel", "trainerParty", MULTITALENTED_FLAG];
 let registered = false;
 
 function authority() {
@@ -20,9 +21,15 @@ const add = (key, value) => ({ key, mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 
  * Ace Trainer, Tactical Mastery: +1 to the chosen ability score of every Pokémon.
  * Type Master, Storing Power: carried Pokémon of a specialized type resist the chosen type,
  * or lose their vulnerability to it.
+ * Hobbyist L15, Multitalented: each Pokémon is proficient in the skill chosen for it.
  */
 export function trainerPathEffectChanges({ pathId, choices = {}, level = 0, ...pokemon }) {
   if (level < 9) {return [];}
+  if (pathId === "hobbyist") {
+    return level >= 15 && pokemon.multitalentedSkill
+      ? [{ key: `system.skills.${pokemon.multitalentedSkill}.value`, mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE, value: "1", priority: 20 }]
+      : [];
+  }
   if (pathId === "ace-trainer") {return tacticalMasteryChanges(choices.tacticalMasteryAbilityId);}
   return pathId === "type-master" ? storingPowerChanges(choices.storingPowerResistanceType, pokemon) : [];
 }
@@ -71,6 +78,7 @@ function desiredChanges(pokemon) {
       .map(id => getTrainerSpecialization(id)?.type).filter(Boolean),
     pokemonTypes: Array.from(pokemon.getFlag(MODULE_ID, "types") ?? []).map(type => String(type).toLowerCase()),
     inParty: isPokemonInParty(trainer, pokemon),
+    multitalentedSkill: trainer.getFlag(MODULE_ID, MULTITALENTED_FLAG)?.[pokemon.id],
     traits: sourceTraits(pokemon)
   });
 }

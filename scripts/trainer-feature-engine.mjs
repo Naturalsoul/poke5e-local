@@ -543,6 +543,27 @@ export function getPokemonPartnerBonus(pokemon) {
   return Math.floor((Number(trainer.system?.abilities?.wis?.value ?? 10) - 10) / 2);
 }
 
+// Type Master L15, Releasing Power: a specialized-type Pokémon gets its STAB (PB + Type Master's +1/+2) on damaging Moves without it.
+export function getPokemonReleasingPowerBonus(pokemon, moveItem) {
+  const trainer = trainerFromPokemon(pokemon);
+  const stab = moveItem?.getFlag?.(MODULE_ID, "stab");
+  if (!trainer || !trainerPathAtLevel(trainer, "type-master", 15) || moveItem.getFlag(MODULE_ID, "kind") !== "move"
+    || stab?.eligible === true || moveItem.getFlag(MODULE_ID, "struggle")) {return 0;}
+  const specializedTypes = getTrainerSpecializationTypes(trainer);
+  const matches = pokemonTypes(pokemon).filter(type => specializedTypes.has(type)).length;
+  // shortcut: STAB-doubling Abilities (Adaptability) only double the STAB baked into the formula, not this one.
+  return matches ? Number(pokemon.system?.attributes?.prof ?? 0) + matches : 0;
+}
+
+// Ranger L15, Poké Assist: the trainer's Pokémon attack with advantage using Moves of one of the Partner's types.
+export function hasPokeAssistAdvantage(pokemon, moveItem) {
+  const trainer = trainerFromPokemon(pokemon);
+  if (!trainer || !trainerPathAtLevel(trainer, "ranger", 15)) {return false;}
+  const partner = fromUuidSync(trainer.getFlag(MODULE_ID, RANGER_PARTNER_FLAG) ?? "", { strict: false });
+  const moveType = moveItem?.getFlag?.(MODULE_ID, "moveType");
+  return Boolean(partner && moveType && pokemonTypes(partner).includes(moveType));
+}
+
 function isWildTarget() {
   const targets = [...(game.user?.targets ?? [])];
   const actor = targets.length === 1 ? targets[0].actor : null;
@@ -2894,6 +2915,10 @@ function onPreRollAttack(
   const partnerAttack = isWildTarget() ? getPokemonPartnerBonus(pokemon) : 0;
   if (partnerAttack !== 0) {appendAttackRollBonus(config, partnerAttack, "rangerPartnerAttack");}
 
+  if (hasPokeAssistAdvantage(pokemon, config?.subject?.item)) {
+    for (const rollConfig of config.rolls ?? []) {(rollConfig.options ??= {}).advantage = true;}
+  }
+
   const bonus =
     getPokemonAceTrainerBonus(
       pokemon
@@ -3162,11 +3187,14 @@ function onPostRollConfiguration(
     {
       bonus:
         typeMasterBonus,
-
       key:
         "typeMasterStab"
     }
   );
+
+  if (!rolls.some(isHitPointHealingRoll)) {
+    applyTrainerDamageBonus(rolls, { bonus: getPokemonReleasingPowerBonus(pokemon, moveItem), key: "releasingPowerStab" });
+  }
 }
 
 /* ============================================================
@@ -3332,6 +3360,17 @@ function onTrainerRestCompleted(
       console.error(`[${MODULE_ID}] Error restaurando recursos de Trainer`, error);
     });
     return;
+  }
+
+  // Master Teacher: moves can already be learned and forgotten from the sheet at any time; this is the reminder.
+  if (trainerPathAtLevel(actor, "poke-mentor", 15)) {
+    void ChatMessage.implementation.create({
+      speaker: ChatMessage.implementation.getSpeaker({ actor }),
+      whisper: game.users.filter(user => actor.testUserPermission(user, "OWNER")).map(user => user.id),
+      content: getLanguage() === "en"
+        ? `<p><strong>Master Teacher</strong>: ${foundry.utils.escapeHTML(actor.name)}'s Pokémon may learn and forget Moves now.</p>`
+        : `<p><strong>Master Teacher</strong>: los Pokémon de ${foundry.utils.escapeHTML(actor.name)} pueden aprender y olvidar Moves ahora.</p>`
+    });
   }
 
   // Partners: a new partner is chosen after each long rest.

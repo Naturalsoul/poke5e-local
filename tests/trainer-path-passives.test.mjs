@@ -5,7 +5,7 @@ import { createFlagDocument, createHooks, installFoundryUtils } from "./helpers/
 installFoundryUtils();
 const hooks = createHooks();
 const MODULE_ID = "poke5e-local";
-globalThis.CONST = { ACTIVE_EFFECT_MODES: { ADD: 2 } };
+globalThis.CONST = { ACTIVE_EFFECT_MODES: { ADD: 2, UPGRADE: 4 } };
 globalThis.game = { actors: [], user: { isGM: true, targets: new Set() }, users: { activeGM: null }, settings: { get: () => "es" } };
 globalThis.canvas = { tokens: { placeables: [] } };
 const { getGeneralistSkillBonus, getPokemonDrawingPowerBonus, registerTrainerFeatureEngine } = await import("../scripts/trainer-feature-engine.mjs");
@@ -220,4 +220,49 @@ test("catalog item healing adds Nurse's WIS and offers Tactician's d4s", async (
   await refundItemHealingBonuses(result);
   assert.equal(points(), 3);
   tactician.isOwner = false;
+});
+
+function move(actor, flags) {
+  const item = createFlagDocument({ documentName: "Item", flags: { [MODULE_ID]: { kind: "move", ...flags } } });
+  item.actor = actor;
+  return item;
+}
+
+test("Releasing Power gives specialized-type Pokémon their STAB on damaging Moves without it, from level 15", async () => {
+  const { getPokemonReleasingPowerBonus } = await import("../scripts/trainer-feature-engine.mjs");
+  const syla = trainer("type-master", 15, ["punk", "mystic"]);
+  const gengar = pokemon(syla, ["ghost", "poison"]);
+  gengar.system.attributes = { prof: 4 };
+  // PB 4 + Type Master's +2 for matching both types.
+  assert.equal(getPokemonReleasingPowerBonus(gengar, move(gengar, { moveType: "psychic", stab: { eligible: false } })), 6);
+  assert.equal(getPokemonReleasingPowerBonus(gengar, move(gengar, { moveType: "ghost", stab: { eligible: true } })), 0, "already has STAB");
+  assert.equal(getPokemonReleasingPowerBonus(gengar, move(gengar, { struggle: { noAmplification: true } })), 0);
+  const pikachu = pokemon(syla, ["electric"]);
+  pikachu.system.attributes = { prof: 4 };
+  assert.equal(getPokemonReleasingPowerBonus(pikachu, move(pikachu, { moveType: "normal" })), 0, "not a specialized type");
+  const early = trainer("type-master", 14, ["mystic"]);
+  const ghost = pokemon(early, ["ghost"]);
+  ghost.system.attributes = { prof: 4 };
+  assert.equal(getPokemonReleasingPowerBonus(ghost, move(ghost, { moveType: "normal" })), 0);
+});
+
+test("Poké Assist gives advantage to Moves of the Partner's types from level 15", async () => {
+  const { hasPokeAssistAdvantage } = await import("../scripts/trainer-feature-engine.mjs");
+  const ranger = trainer("ranger", 15);
+  const partner = pokemon(ranger, ["grass", "poison"]);
+  const ally = pokemon(ranger, ["water"]);
+  await ranger.setFlag(MODULE_ID, "rangerPartnerUuid", partner.uuid);
+  assert.equal(hasPokeAssistAdvantage(ally, move(ally, { moveType: "grass" })), true);
+  assert.equal(hasPokeAssistAdvantage(ally, move(ally, { moveType: "water" })), false);
+  const item = move(ally, { moveType: "poison" });
+  const rollConfig = { parts: [], options: {} };
+  hooks.handler("dnd5e.preRollAttack")({ subject: { item }, rolls: [rollConfig] });
+  assert.equal(rollConfig.options.advantage, true);
+});
+
+test("Multitalented adds the chosen skill proficiency from level 15", () => {
+  const base = { pathId: "hobbyist", choices: {}, multitalentedSkill: "ath" };
+  assert.deepEqual(trainerPathEffectChanges({ ...base, level: 15 }), [{ key: "system.skills.ath.value", mode: 4, value: "1", priority: 20 }]);
+  assert.deepEqual(trainerPathEffectChanges({ ...base, level: 14 }), []);
+  assert.deepEqual(trainerPathEffectChanges({ ...base, level: 15, multitalentedSkill: "" }), []);
 });

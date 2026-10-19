@@ -3,6 +3,7 @@ import {
   ensureTrainerPathFeatureResources, getTrainerProgressionResource, getTrainerProgressionState, spendTrainerProgressionResource
 } from "./trainer-progression-service.mjs";
 import { refreshTrainerFeatureIcons } from "./trainer-feature-service.mjs";
+import { MULTITALENTED_FLAG } from "./trainer-path-effects.mjs";
 import { getTrainerLevel, isTrainerActor } from "./trainer-service.mjs";
 
 const MODULE_ID = "poke5e-local";
@@ -21,17 +22,20 @@ function pathAtLevel(trainer, pathId, level) {
 
 // Path features used from the command center; resource → shown by its button instead of a counter.
 export const TRAINER_PATH_ACTION_RESOURCES = { "trainer-skill-dice": "skillDice", "trainer-cheerleader": "cheerleaderUses" };
-export const TRAINER_PATH_ACTION_ICONS = { "trainer-skill-dice": "fa-dice-six", "trainer-partner": "fa-handshake", "trainer-cheerleader": "fa-bullhorn" };
+export const TRAINER_PATH_ACTION_ICONS = { "trainer-skill-dice": "fa-dice-six", "trainer-multitalented": "fa-graduation-cap", "trainer-partner": "fa-handshake",
+  "trainer-cheerleader": "fa-bullhorn" };
 
 export function availableTrainerPathActions(trainer) {
   return [
     pathAtLevel(trainer, "hobbyist", 5) ? "trainer-skill-dice" : null,
+    pathAtLevel(trainer, "hobbyist", 15) ? "trainer-multitalented" : null,
     pathAtLevel(trainer, "ranger", 9) ? "trainer-partner" : null,
     pathAtLevel(trainer, "poke-mentor", 9) ? "trainer-cheerleader" : null
   ].filter(Boolean);
 }
 
 export function trainerPathActionLabel(trainer, action) {
+  if (action === "trainer-multitalented") {return "Multitalented";}
   if (action === "trainer-partner") {
     const partner = fromUuidSync(trainer.getFlag(MODULE_ID, RANGER_PARTNER_FLAG) ?? "", { strict: false });
     return `Partner: ${partner?.name ?? "—"}`;
@@ -89,13 +93,40 @@ async function useSkillDie(trainer) {
   const use = await foundry.applications.api.DialogV2.confirm({
     window: { title: "Versatile" },
     content: `<p><strong>${escape(actor.name)}</strong> — ${escape(message.flavor)}: <strong>${Number(roll.total)}</strong></p>
-      <p>${en() ? `Add a Skill Die (d6)? Left: ${resource.value}/${resource.max}.` : `¿Añadir un Skill Die (d6)? Quedan: ${resource.value}/${resource.max}.`}</p>`,
+      <p>${en() ? `Add a Skill Die? Left: ${resource.value}/${resource.max}.` : `¿Añadir un Skill Die? Quedan: ${resource.value}/${resource.max}.`}</p>`,
     rejectClose: false
   });
   if (use !== true || !await spendTrainerProgressionResource(trainer, "skillDice", 1)) {return;}
-  const die = await new Roll("1d6").evaluate();
+  // Multitalented (L15): Skill Dice become d10.
+  const die = await new Roll(pathAtLevel(trainer, "hobbyist", 15) ? "1d10" : "1d6").evaluate();
   await game.dice3d?.showForRoll(die, game.user, true);
   await message.update({ rolls: [withVersatileDie(roll, die), ...rest].map(entry => entry.toJSON()) });
+}
+
+/* ============================================================
+ * HOBBYIST L15 — MULTITALENTED
+ * ============================================================ */
+
+async function chooseMultitalentedSkills(trainer) {
+  const pokemon = getTrainerOwnedPokemon(trainer);
+  if (!pokemon.length) {
+    ui.notifications.warn(en() ? "This trainer has no Pokémon." : "Este entrenador no tiene Pokémon.");
+    return;
+  }
+  const chosen = trainer.getFlag(MODULE_ID, MULTITALENTED_FLAG) ?? {};
+  const skills = Object.entries(CONFIG.DND5E.skills).map(([id, skill]) => [id, game.i18n.localize(skill.label)]);
+  const rows = pokemon.map(actor => `<div class="form-group"><label>${escape(actor.name)}</label>
+    <select name="${escape(actor.id)}"><option value="">—</option>${skills.map(([id, label]) =>
+    `<option value="${id}" ${chosen[actor.id] === id ? "selected" : ""}>${escape(label)}</option>`).join("")}</select></div>`);
+  const result = await foundry.applications.api.DialogV2.prompt({
+    window: { title: "Multitalented" },
+    content: `<p>${en() ? "Extra skill proficiency for each Pokémon:" : "Proficiencia de skill adicional para cada Pokémon:"}</p>${rows.join("")}`,
+    rejectClose: false,
+    ok: { label: en() ? "Save" : "Guardar",
+      callback: (_event, button) => Object.fromEntries(pokemon.map(actor => [actor.id, button.form.elements[actor.id].value])) }
+  });
+  // An empty value clears that Pokémon's skill (setFlag merges, so every Pokémon is written).
+  if (result) {await trainer.setFlag(MODULE_ID, MULTITALENTED_FLAG, result);}
 }
 
 /* ============================================================
@@ -171,6 +202,7 @@ async function clearCheerleader(actor) {
 
 export async function runTrainerPathAction(action, trainer) {
   if (action === "trainer-skill-dice") {return useSkillDie(trainer);}
+  if (action === "trainer-multitalented") {return chooseMultitalentedSkills(trainer);}
   if (action === "trainer-partner") {return choosePartner(trainer);}
   return useCheerleader(trainer);
 }
