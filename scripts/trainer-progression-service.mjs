@@ -830,7 +830,6 @@ function buildTrainerResources(
   proficiencyBonus,
   previous
 ) {
-
   const resources = {};
 
 
@@ -918,6 +917,45 @@ function buildTrainerResources(
   return resources;
 }
 
+
+/* ============================================================
+ * PATH FEATURE RESOURCES (niveles 5+)
+ * ============================================================ */
+
+// Hobbyist L5 Versatile: 1 + WIS mod skill dice (min 1). Poké Mentor L9 Cheerleader: once per short rest.
+function pathFeatureResources(pathId, level, abilities, previous = {}) {
+  const resources = {};
+  const keep = (id, max, recovery) => {
+    const value = previous?.[id] ? Math.min(Number(previous[id].value ?? max), max) : max;
+    resources[id] = { value, max, recovery };
+  };
+  if (pathId === "hobbyist" && level >= 5) {
+    keep("skillDice", Math.max(1, 1 + Math.floor((Number(abilities?.wis ?? 10) - 10) / 2)), "long-rest");
+  }
+  if (pathId === "poke-mentor" && level >= 9) {keep("cheerleaderUses", 1, "short-rest");}
+  return resources;
+}
+
+// Trainers configured before these resources existed get them without leveling up.
+export async function ensureTrainerPathFeatureResources(trainer) {
+  const progression = getTrainerProgressionState(trainer);
+  if (!progression?.path) {return;}
+  const abilities = Object.fromEntries(Object.entries(trainer.system?.abilities ?? {}).map(([id, ability]) => [id, ability?.value]));
+  const wanted = pathFeatureResources(progression.path.id, Number(trainer.getFlag(MODULE_ID, "trainerLevel")) || 1, abilities,
+    progression.resources);
+  const current = progression.resources ?? {};
+  if (Object.entries(wanted).every(([id, resource]) => current[id]?.max === resource.max)) {return;}
+  await trainer.setFlag(MODULE_ID, "trainerProgression", { ...progression, resources: { ...current, ...wanted } });
+}
+
+export async function resetTrainerShortRestResources(trainer) {
+  const progression = getTrainerProgressionState(trainer);
+  const resources = foundry.utils.deepClone(progression?.resources ?? {});
+  const spent = Object.values(resources).filter(resource => resource?.recovery === "short-rest" && resource.value !== resource.max);
+  if (!spent.length) {return;}
+  for (const resource of spent) {resource.value = normalizeResourceAmount(resource.max);}
+  await trainer.setFlag(MODULE_ID, "trainerProgression", { ...progression, resources });
+}
 
 function calculateTrainerHp(
   level,
@@ -1570,10 +1608,15 @@ export async function resetTrainerLongRestResources(
     )
   ) {
 
+    // A long rest includes a short rest.
     if (
-      resource
-        ?.recovery !==
-        "long-rest"
+      ![
+        "long-rest",
+        "short-rest"
+      ].includes(
+        resource
+          ?.recovery
+      )
     ) {
 
       continue;
@@ -1897,13 +1940,21 @@ export async function configureTrainerProgression(
     });
 
   const resources =
-    buildTrainerResources(
-      path,
-      level,
-      levelRule
-        .proficiencyBonus,
-      previous?.resources
-    );
+    {
+      ...pathFeatureResources(
+        path?.id,
+        level,
+        abilities,
+        previous?.resources
+      ),
+      ...buildTrainerResources(
+        path,
+        level,
+        levelRule
+          .proficiencyBonus,
+        previous?.resources
+      )
+    };
 
 
   const managedSkillIds =

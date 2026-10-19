@@ -1,3 +1,4 @@
+import { TRAINER_PATH_ACTION_ICONS, TRAINER_PATH_ACTION_RESOURCES, availableTrainerPathActions, trainerPathActionLabel } from "./trainer-path-actions.mjs";
 import {
   getTrainerLevel
 } from "./trainer-service.mjs";
@@ -296,10 +297,12 @@ const RESOURCE_LABELS =
           "Tactical Points",
 
         masterTrainerUses:
-          "Master Trainer"
+          "Master Trainer",
+        skillDice:
+          "Skill Dice",
+        cheerleaderUses:
+          "Cheerleader"
       }),
-
-
     en:
       Object.freeze({
 
@@ -313,7 +316,11 @@ const RESOURCE_LABELS =
           "Tactical Points",
 
         masterTrainerUses:
-          "Master Trainer"
+          "Master Trainer",
+        skillDice:
+          "Skill Dice",
+        cheerleaderUses:
+          "Cheerleader"
       })
   });
 
@@ -513,8 +520,10 @@ function trainerResourceLabel(
 }
 
 
+// Resources in shownByButtons are already displayed on their feature button.
 function trainerResourceCountersMarkup(
-  trainer
+  trainer,
+  shownByButtons = []
 ) {
 
   const progression =
@@ -542,6 +551,15 @@ function trainerResourceCountersMarkup(
           normalizeResourceAmount(
             resource?.max
           );
+
+
+        if (
+          shownByButtons.includes(
+            resourceId
+          )
+        ) {
+          return "";
+        }
 
 
         if (
@@ -2096,9 +2114,20 @@ export function buildTrainerCommandCenter(
 
 
         ${trainerResourceCountersMarkup(
-          trainer
+          trainer,
+          editable
+            ? availableTrainerPathActions(trainer).map(action => TRAINER_PATH_ACTION_RESOURCES[action])
+            : []
         )}
-
+        ${
+          editable
+            ? availableTrainerPathActions(trainer).map(action => `
+              <button type="button" class="poke5e-trainer-command-feature" data-command-action="${action}">
+                <i class="fa-solid ${TRAINER_PATH_ACTION_ICONS[action]}" aria-hidden="true"></i>
+                ${escapeHtml(trainerPathActionLabel(trainer, action))}
+              </button>`).join("")
+            : ""
+        }
       </div>
 
 

@@ -1,3 +1,4 @@
+import { applyStoringPowerMatchups } from "./trainer-path-effects.mjs";
 import {
   getPokemonExperienceState
 } from "./pokemon-experience-service.mjs";
@@ -365,6 +366,9 @@ const LABELS = {
     matchups:
       "Afinidades de tipo",
 
+    storingPower:
+      "Type Master — Storing Power",
+
     resistances:
       "Resiste",
 
@@ -672,6 +676,9 @@ const LABELS = {
 
     matchups:
       "Type Matchups",
+
+    storingPower:
+      "Type Master — Storing Power",
 
     resistances:
       "Resists",
@@ -2362,7 +2369,8 @@ function typeLabel(
 function typeBadgeMarkup(
   type,
   language,
-  multiplier = null
+  multiplier = null,
+  title = null
 ) {
 
   const normalized =
@@ -2385,6 +2393,7 @@ function typeBadgeMarkup(
     <span
       class="poke5e-pokemon-type-badge"
       data-type="${escapeHtml(normalized)}"
+      ${title ? `title="${escapeHtml(title)}"` : ""}
     >
       ${escapeHtml(
         typeLabel(
@@ -4062,9 +4071,14 @@ function pokemonMatchups(
     }
   }
 
+  applyStoringPowerMatchups(
+    pokemon,
+    result
+  );
 
   return result;
 }
+
 
 
 function matchupGroupMarkup(
@@ -4081,7 +4095,8 @@ function matchupGroupMarkup(
               typeBadgeMarkup(
                 entry.type,
                 language,
-                entry.multiplier
+                entry.multiplier,
+                entry.storingPower ? LABELS[language].storingPower : null
               )
           )
           .join("")
@@ -5667,7 +5682,11 @@ function buildPokemonSummary(
                 )
               : ""
           }
-
+          ${
+            [...matchups.resistances, ...matchups.weaknesses].some(entry => entry.storingPower)
+              ? `<small class="poke5e-pokemon-matchup-note">* ${escapeHtml(labels.storingPower)}</small>`
+              : ""
+          }
         </div>
 
       </section>

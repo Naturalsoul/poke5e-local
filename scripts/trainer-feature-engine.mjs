@@ -7,17 +7,22 @@ import {
   getTrainerProgressionResource,
   getTrainerProgressionState,
   resetTrainerLongRestResources,
+  resetTrainerShortRestResources,
   restoreTrainerProgressionResource,
   spendTrainerProgressionResource
 } from "./trainer-progression-service.mjs";
 
 import {
+  getTrainerLevelRule,
   getTrainerSpecialization
 } from "./trainer-rules.mjs";
 
 import {
+  getTrainerLevel,
   isTrainerActor
 } from "./trainer-service.mjs";
+
+import { RANGER_PARTNER_FLAG } from "./trainer-path-actions.mjs";
 
 
 const MODULE_ID =
@@ -506,6 +511,43 @@ export function getPokemonTypeMasterStabBonus(
 /* ============================================================
  * RESEARCHER
  * ============================================================ */
+
+/* ============================================================
+ * PATH FEATURES DE NIVEL 5+ (pasivos)
+ * ============================================================ */
+
+function trainerPathAtLevel(trainer, pathId, level) {
+  return getTrainerProgressionState(trainer)?.path?.id === pathId && (getTrainerLevel(trainer) ?? 0) >= level;
+}
+
+// Type Master L5, Drawing Power: +2 to attack rolls of Pokémon of a specialized type.
+export function getPokemonDrawingPowerBonus(pokemon) {
+  const trainer = trainerFromPokemon(pokemon);
+  if (!trainer || !trainerPathAtLevel(trainer, "type-master", 5)) {return 0;}
+  const specialized = getTrainerSpecializationTypes(trainer);
+  return pokemonTypes(pokemon).some(type => specialized.has(type)) ? 2 : 0;
+}
+
+// Hobbyist L9, Generalist: half the trainer's PB (round down) on checks with a skill the roller lacks.
+export function getGeneralistSkillBonus(actor, skillId) {
+  const trainer = isTrainerActor(actor) ? actor : trainerFromPokemon(actor);
+  const skill = actor?.system?.skills?.[skillId];
+  if (!trainer || !skill || Number(skill.value ?? 0) > 0 || !trainerPathAtLevel(trainer, "hobbyist", 9)) {return 0;}
+  return Math.floor(Number(getTrainerLevelRule(getTrainerLevel(trainer))?.proficiencyBonus ?? 0) / 2);
+}
+
+// Ranger L9, Partners: the partner adds the trainer's WIS mod to its skill checks and attacks against wild Pokémon.
+export function getPokemonPartnerBonus(pokemon) {
+  const trainer = trainerFromPokemon(pokemon);
+  if (!trainer || !trainerPathAtLevel(trainer, "ranger", 9) || trainer.getFlag(MODULE_ID, RANGER_PARTNER_FLAG) !== pokemon.uuid) {return 0;}
+  return Math.floor((Number(trainer.system?.abilities?.wis?.value ?? 10) - 10) / 2);
+}
+
+function isWildTarget() {
+  const targets = [...(game.user?.targets ?? [])];
+  const actor = targets.length === 1 ? targets[0].actor : null;
+  return isPokemonActor(actor) && !actor.getFlag(MODULE_ID, "trainerOwnerUuid");
+}
 
 function trainerIntelligenceModifier(
   trainer
@@ -2235,6 +2277,51 @@ async function promptTactician(
 }
 
 
+/* ============================================================
+ * CATALOG ITEM HEALING
+ *
+ * Potions, Revives and healing Berries roll their own formula from the chat card,
+ * outside dnd5e's healing roll, so Nurse and Tactician are added here as extra parts.
+ * ============================================================ */
+
+function itemUserTrainer(actor) {
+  if (isTrainerActor(actor)) {return actor;}
+  return isPokemonActor(actor) ? trainerFromPokemon(actor) : null;
+}
+
+// Nurse: an item used by the trainer, or by one of its Pokémon, heals +WIS mod (min 1).
+export function getNurseItemHealingBonus(actor) {
+  const trainer = itemUserTrainer(actor);
+  if (!trainerHasPath(trainer, "nurse")) {return 0;}
+  return Math.max(1, Math.floor((Number(trainer.system?.abilities?.wis?.value ?? 10) - 10) / 2));
+}
+
+function itemHealingPokemon(actor) {
+  const targets = [...game.user.targets].map(token => token.actor).filter(isPokemonActor);
+  if (targets.length === 1) {return targets[0];}
+  return isPokemonActor(actor) ? actor : { name: "Pokémon" };
+}
+
+export async function resolveItemHealingBonuses(actor) {
+  const parts = [];
+  const nurse = getNurseItemHealingBonus(actor);
+  if (nurse > 0) {parts.push(`${nurse}[Nurse]`);}
+  const candidates = tacticianCandidates();
+  if (!candidates.length) {return { parts, tactician: null };}
+  const decision = await promptTactician({ pokemon: itemHealingPokemon(actor), candidates });
+  const trainer = decision ? game.actors.find(entry => entry.uuid === decision.trainerUuid) : null;
+  if (!isTrainerActor(trainer) || !await spendTrainerProgressionResource(trainer, TACTICAL_RESOURCE_ID, decision.spent)) {
+    return { parts, tactician: null };
+  }
+  parts.push(`${decision.spent}d4[Tactician]`);
+  return { parts, tactician: { trainer, spent: decision.spent } };
+}
+
+// The roll failed after Tactical Points were spent.
+export async function refundItemHealingBonuses({ tactician } = {}) {
+  if (tactician) {await restoreTrainerProgressionResource(tactician.trainer, TACTICAL_RESOURCE_ID, tactician.spent);}
+}
+
 function buildDamageReplayConfig(
   config,
   resolution
@@ -2593,6 +2680,15 @@ function onPreRollSkill(
   message
 ) {
 
+  if (
+    isTrainerActor(
+      config?.subject
+    )
+  ) {
+    appendGeneralistBonus(config);
+    return;
+  }
+
   const pokemon =
     config?.subject;
 
@@ -2644,12 +2740,9 @@ function onPreRollSkill(
         config,
         dialog,
         message,
-
         context:
           researcherContext
       });
-
-
       return false;
     }
   }
@@ -2696,6 +2789,16 @@ function onPreRollSkill(
       specializationBonus
     );
   }
+
+  appendGeneralistBonus(config);
+
+  const partnerBonus = getPokemonPartnerBonus(pokemon);
+  if (partnerBonus !== 0) {appendRollBonus(config, partnerBonus);}
+}
+
+function appendGeneralistBonus(config) {
+  const bonus = getGeneralistSkillBonus(config?.subject, config?.skill);
+  if (bonus > 0) {appendRollBonus(config, bonus);}
 }
 
 /* ============================================================
@@ -2704,7 +2807,8 @@ function onPreRollSkill(
 
 function appendAttackRollBonus(
   config,
-  bonus
+  bonus,
+  key = "aceTrainerAttack"
 ) {
 
   if (
@@ -2743,8 +2847,9 @@ function appendAttackRollBonus(
      * a reconstruirse.
      */
     if (
-      moduleOptions
-        .aceTrainerAttack
+      moduleOptions[
+        key
+      ]
     ) {
 
       continue;
@@ -2758,10 +2863,11 @@ function appendAttackRollBonus(
     );
 
 
-    moduleOptions
-      .aceTrainerAttack = {
-        bonus
-      };
+    moduleOptions[
+      key
+    ] = {
+      bonus
+    };
   }
 }
 
@@ -2781,6 +2887,12 @@ function onPreRollAttack(
     return;
   }
 
+
+  const drawingPower = getPokemonDrawingPowerBonus(pokemon);
+  if (drawingPower > 0) {appendAttackRollBonus(config, drawingPower, "drawingPowerAttack");}
+
+  const partnerAttack = isWildTarget() ? getPokemonPartnerBonus(pokemon) : 0;
+  if (partnerAttack !== 0) {appendAttackRollBonus(config, partnerAttack, "rangerPartnerAttack");}
 
   const bonus =
     getPokemonAceTrainerBonus(
@@ -3216,8 +3328,15 @@ function onTrainerRestCompleted(
   if (
     !longRest
   ) {
-
+    void resetTrainerShortRestResources(actor).catch(error => {
+      console.error(`[${MODULE_ID}] Error restaurando recursos de Trainer`, error);
+    });
     return;
+  }
+
+  // Partners: a new partner is chosen after each long rest.
+  if (actor.getFlag(MODULE_ID, RANGER_PARTNER_FLAG)) {
+    void actor.unsetFlag(MODULE_ID, RANGER_PARTNER_FLAG);
   }
 
 

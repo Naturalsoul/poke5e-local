@@ -1,3 +1,4 @@
+import { registerTrainerPathActions } from "./trainer-path-actions.mjs";
 import {
   Poke5eImporter,
   loadDatabase,
@@ -123,6 +124,10 @@ import {
 import {
   registerTrainerFeatureEngine
 } from "./trainer-feature-engine.mjs";
+
+import {
+  registerTrainerPathEffects
+} from "./trainer-path-effects.mjs";
 
 import {
   registerTrainerBattleFeedback
@@ -400,6 +405,8 @@ Hooks.once(
     registerFoundryRegressionRunner();
     registerPokemonCrySettings();
     registerTrainerFeatureEngine();
+    registerTrainerPathEffects();
+    registerTrainerPathActions();
     registerTrainerOwnershipService();
     registerTrainerSwitchAuthorityService();
     registerPokemonActorSheet();
