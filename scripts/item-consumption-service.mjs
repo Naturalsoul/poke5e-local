@@ -1,3 +1,4 @@
+import { throwPokeball } from "./pokemon-capture-service.mjs";
 import { refundItemHealingBonuses, resolveItemHealingBonuses } from "./trainer-feature-engine.mjs";
 const MODULE_ID =
   "poke5e-local";
@@ -798,6 +799,20 @@ async function requestConsumableUse(
       return;
     }
 
+
+    // Pokéballs are thrown at the target instead of showing a card.
+    if (
+      currentItem.getFlag(
+        MODULE_ID,
+        "itemType"
+      ) ===
+      "pokeball"
+    ) {
+      await throwPokeball(
+        currentItem
+      );
+      return;
+    }
 
     const confirmed =
       await confirmConsumableUse(

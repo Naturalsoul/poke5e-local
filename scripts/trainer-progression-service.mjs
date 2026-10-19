@@ -933,6 +933,8 @@ function pathFeatureResources(pathId, level, abilities, previous = {}) {
     keep("skillDice", Math.max(1, 1 + Math.floor((Number(abilities?.wis ?? 10) - 10) / 2)), "long-rest");
   }
   if (pathId === "poke-mentor" && level >= 9) {keep("cheerleaderUses", 1, "short-rest");}
+  // Pokémon Collector L5, Gotta Catch 'Em All: one advantaged capture per long rest.
+  if (pathId === "pokemon-collector" && level >= 5) {keep("gottaCatchUses", 1, "long-rest");}
   return resources;
 }
 
