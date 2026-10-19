@@ -435,9 +435,19 @@ async function rollToChat(
   actor
 ) {
 
+  /*
+   * Guru L5, Mind: la tabla se tira dos veces
+   * y se usa el resultado mayor.
+   */
+
   const roll =
     new Roll(
-      CONFUSION_FORMULA
+      actor.getFlag?.(
+        MODULE_ID,
+        "guruMind"
+      )
+        ? "2d8kh"
+        : CONFUSION_FORMULA
     );
 
 
