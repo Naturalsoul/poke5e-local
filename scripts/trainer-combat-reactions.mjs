@@ -69,7 +69,7 @@ export function rollWith(roll, { target, ...addition }) {
   return roll.constructor.fromData(data);
 }
 
-async function rewriteRoll(roll, replacement) {
+export async function rewriteRoll(roll, replacement) {
   const message = roll.parent;
   if (message?.documentName !== "ChatMessage") {throw new Error("No se encontró el mensaje de la tirada.");}
   const index = message.rolls.length === 1 ? 0 : message.rolls.findIndex(entry => entry.total === roll.total && entry.formula === roll.formula);

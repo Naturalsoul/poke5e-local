@@ -613,7 +613,7 @@ async function useAnalyst(trainer) {
  * ============================================================ */
 
 // shortcut: a Move "inflicts a status" when it carries a status effect; saves from other sources are not covered.
-const inflictsStatus = item => Array.from(item?.effects ?? []).some(effect =>
+export const inflictsStatus = item => Array.from(item?.effects ?? []).some(effect =>
   effect.getFlag?.(MODULE_ID, "kind") === "pokemon-status" || effect.statuses?.size > 0);
 
 export function applyTipTopShape(config) {

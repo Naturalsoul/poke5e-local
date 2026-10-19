@@ -89,3 +89,12 @@ test("the trainer's player follows a deploy, and the battle slots are cleared wh
   await change([]);
   assert.deepEqual(Object.keys(user.hotbar), ["12"]);
 });
+
+test("an Ability switched on beforehand goes right after the Moves, with its use left", () => {
+  const ace = trainer("ace-trainer", 5);
+  const arbok = pokemon(ace, [["bite", 25]]);
+  arbok.items.push({ name: "Intimidate", img: "intimidate.webp", getFlag: (_module, key) => ({ kind: "ability", sourceId: "intimidate" })[key] });
+  const slots = hotbar.battleHotbarSlots(arbok, ace);
+  assert.deepEqual([slots[2].name, slots[2].entry.kind], ["Intimidate", "ability"]);
+  assert.deepEqual(hotbar.battleHotbarCounter(slots[2].entry), { value: 1, max: 1 });
+});

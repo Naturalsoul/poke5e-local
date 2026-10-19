@@ -1,4 +1,5 @@
 import { bondMarkup } from "./pokemon-bond-service.mjs";
+import { activeAbilityMarkup } from "./active-ability-service.mjs";
 import { applyStoringPowerMatchups } from "./trainer-path-effects.mjs";
 import {
   getPokemonExperienceState
@@ -5325,6 +5326,8 @@ function buildPokemonSummary(
         ${bondMarkup(
           pokemon
         )}
+
+        ${activeAbilityMarkup(pokemon)}
 
       </div>
 

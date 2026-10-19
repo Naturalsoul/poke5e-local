@@ -5,11 +5,12 @@ import { availableTrainerPathActions, runTrainerPathAction, TRAINER_PATH_ACTION_
 import { getTrainerProgressionResource } from "./trainer-progression-service.mjs";
 import { trainerFeatureIcon } from "./trainer-feature-icons.mjs";
 import { reactionDecider } from "./trainer-reaction-service.mjs";
+import { ACTIVE_ABILITIES, activeAbilityOf, abilityUsesLeft, useActiveAbility } from "./active-ability-service.mjs";
 
 /* ============================================================
  * BATTLE HOTBAR
  *
- * Page 1 of the hotbar follows the deployed (or selected) Pokémon: its Moves from slot 1,
+ * Page 1 of the hotbar follows the deployed (or selected) Pokémon: its Moves (and an Ability switched on beforehand) from slot 1,
  * the trainer's path actions ending at slot 10. Each slot shows the PP or uses left.
  * The macros are the user's own, reused between Pokémon; only slots holding them are rewritten.
  * ============================================================ */
@@ -31,9 +32,18 @@ let writing = Promise.resolve();
 const knownActive = new Map();
 
 // { slot: { name, img, entry } }, entry = { kind: "move" | "action", uuid, id }.
+// The Pokémon's Ability when it is switched on beforehand (Intimidate, Huge Power...).
+function abilitySlot(pokemon) {
+  const abilityId = activeAbilityOf(pokemon);
+  const item = pokemon.items.find(entry => entry.getFlag?.(MODULE_ID, "kind") === "ability" && entry.getFlag?.(MODULE_ID, "sourceId") === abilityId);
+  return abilityId && !ACTIVE_ABILITIES[abilityId].reaction
+    ? [{ name: item?.name ?? abilityId, img: item?.img ?? DEFAULT_ACTION_ICON, entry: { kind: "ability", uuid: pokemon.uuid, id: abilityId } }]
+    : [];
+}
+
 export function battleHotbarSlots(pokemon, trainer) {
-  const moves = getPokemonBattleMoves(pokemon).slice(0, SLOTS).map(move => ({ name: move.name, img: move.img,
-    entry: { kind: "move", uuid: pokemon.uuid, id: move.id } }));
+  const moves = [...getPokemonBattleMoves(pokemon).map(move => ({ name: move.name, img: move.img,
+    entry: { kind: "move", uuid: pokemon.uuid, id: move.id } })), ...abilitySlot(pokemon)].slice(0, SLOTS);
   const actions = availableTrainerPathActions(trainer).slice(0, SLOTS - moves.length).map(action => ({ name: trainerPathActionName(action),
     img: trainerFeatureIcon(ACTION_FEATURES[action]) ?? DEFAULT_ACTION_ICON, entry: { kind: "action", uuid: trainer.uuid, id: action } }));
   return Object.fromEntries([
@@ -57,6 +67,7 @@ function actionCounter(trainer, action) {
 export function battleHotbarCounter(entry) {
   const document = fromUuidSync(entry?.uuid ?? "", { strict: false });
   if (!document) {return null;}
+  if (entry.kind === "ability") {return { value: abilityUsesLeft(document, entry.id), max: 1 };}
   return entry.kind === "move" ? moveCounter(document, entry.id) : actionCounter(document, entry.id);
 }
 
@@ -104,15 +115,20 @@ function operableTrainer(pokemon) {
   return trainer && isPokemonActive(trainer, pokemon) && canCurrentUserOperateTrainerPokemon(trainer, pokemon) ? trainer : null;
 }
 
+// What each kind of battle macro runs, or null when it is not available to this user.
+const RUNNERS = {
+  action: (document, id) => (document?.isOwner ? () => runTrainerPathAction(id, document) : null),
+  ability: document => (document?.isOwner ? () => useActiveAbility(document) : null),
+  move: (document, id) => {
+    const move = document?.items.get(id);
+    return move && isPokemonMoveKnown(document, move) && operableTrainer(document) ? () => move.use() : null;
+  }
+};
+
 export async function useBattleHotbarMacro(macro) {
   const entry = macro?.getFlag(MODULE_ID, FLAG);
-  const document = fromUuidSync(entry?.uuid ?? "", { strict: false });
-  if (entry?.kind === "action") {
-    if (document?.isOwner) {return runTrainerPathAction(entry.id, document);}
-  } else {
-    const move = document?.items.get(entry?.id);
-    if (move && isPokemonMoveKnown(document, move) && operableTrainer(document)) {return move.use();}
-  }
+  const run = RUNNERS[entry?.kind]?.(fromUuidSync(entry?.uuid ?? "", { strict: false }), entry?.id);
+  if (run) {return run();}
   ui.notifications.warn(game.settings.get(MODULE_ID, "language") === "en"
     ? "That Pokémon or action is no longer available to you." : "Ese Pokémon o acción ya no está disponible para ti.");
   return null;
