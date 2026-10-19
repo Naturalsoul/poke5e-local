@@ -8052,3 +8052,68 @@ select:focus {
       12px;
   }
 }
+
+
+/* ============================================================
+ * BONDS (row under Nature)
+ * ============================================================ */
+
+.poke5e-pokemon-bond__points {
+  border:
+    1px solid
+    rgba(199, 175, 115, 0.32);
+
+  background:
+    rgba(199, 175, 115, 0.08);
+
+  color:
+    var(--poke5e-fr-cream);
+}
+
+
+.poke5e-pokemon-bond__spend {
+  width:
+    auto;
+
+  height:
+    20px;
+
+  margin:
+    0;
+
+  padding:
+    0 8px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--poke5e-type-color)
+      52%,
+      var(--poke5e-fr-border)
+    );
+
+  border-radius:
+    999px;
+
+  background:
+    var(--poke5e-fr-panel-deep);
+
+  color:
+    var(--poke5e-fr-ink);
+
+  font-size:
+    8px;
+
+  font-weight:
+    900;
+
+  line-height:
+    1;
+}
+
+
+.poke5e-pokemon-bond__spend:disabled {
+  opacity:
+    0.45;
+}

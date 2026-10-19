@@ -5,7 +5,8 @@ import {
   getTrainerLevelRule,
   getTrainerOrigin,
   getTrainerPath,
-  getTrainerSpecialization
+  getTrainerSpecialization,
+  missingPathRequirement
 } from "./trainer-rules.mjs";
 
 import {
@@ -1757,11 +1758,13 @@ export async function configureTrainerProgression(
   }
 
   if (
-    path?.requires
+    missingPathRequirement(
+      path
+    )
   ) {
 
     throw new Error(
-      `${path.name} requiere el subsistema ${path.requires}, que todavía no está implementado.`
+      `${path.name} requiere el subsistema ${path.requires}, que no está activo en este mundo.`
     );
   }
 

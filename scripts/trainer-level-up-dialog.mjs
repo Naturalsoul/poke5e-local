@@ -9,7 +9,8 @@ import {
   TRAINER_PATHS,
   TRAINER_SKILLS,
   TRAINER_SPECIALIZATIONS,
-  getTrainerProgressionLimits
+  getTrainerProgressionLimits,
+  missingPathRequirement
 } from "./trainer-rules.mjs";
 
 import {
@@ -182,7 +183,9 @@ function pathOptions(
 
         const blocked =
           Boolean(
-            path.requires
+            missingPathRequirement(
+              path
+            )
           );
 
 

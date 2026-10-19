@@ -83,9 +83,9 @@ const PATH_DESCRIPTIONS =
 
     commander: {
       es:
-        "Path dependiente del suplemento Bonds.",
+        "Requiere el suplemento Bonds. Al elegir este Path, el Bond Level de tu starter pasa a +2. Todos tus Pokémon con Bond Level positivo tienen 1 Bond Point adicional.",
       en:
-        "This Path requires the Bonds supplement."
+        "Requires the Bonds supplement. When you choose this Path, your starter's Bond Level becomes +2. All of your Pokémon with a positive Bond Level have 1 additional Bond Point."
     },
 
     grunt: {
@@ -126,6 +126,22 @@ const PATH_DESCRIPTIONS =
 
 const PATH_LEVEL_5_FEATURES =
   Object.freeze({
+
+    commander: {
+      id:
+        "follow-me",
+
+      name:
+        "Follow Me",
+
+      description: {
+        es:
+          "Los Pokémon que captures o eclosiones obtienen +1 Bond Level (máximo +2). El Bond Level de tus Pokémon no baja por perder un combate.",
+
+        en:
+          "Any new Pokémon you catch or hatch gets +1 Bond Level (max +2). Your Pokémon's Bond Level cannot be decreased by losing a battle."
+      }
+    },
 
     "ace-trainer": {
       id:
@@ -307,6 +323,22 @@ const PATH_LEVEL_5_FEATURES =
   const PATH_LEVEL_9_FEATURES =
     Object.freeze({
 
+      commander: {
+        id:
+          "show-me-what-youve-got",
+
+        name:
+          "Show Me What You've Got",
+
+        description: {
+          es:
+            "Tus Pokémon pueden gastar un Bond Point para usar cualquier Move que puedan aprender de un tier superior al suyo o menor. Cada Pokémon puede hacerlo una vez por descanso largo.",
+
+          en:
+            "Your Pokémon may spend a Bond Point to use any Move they can learn at one tier higher than their current tier or below. Each Pokémon may do this once per long rest."
+        }
+      },
+
       "ace-trainer": {
         id:
           "tactical-mastery",
@@ -486,6 +518,22 @@ const PATH_LEVEL_5_FEATURES =
 
   const PATH_LEVEL_15_FEATURES =
     Object.freeze({
+
+      commander: {
+        id:
+          "were-a-team",
+
+        name:
+          "We're a Team",
+
+        description: {
+          es:
+            "Como Reacción, una frase de mando permite que uno de tus Pokémon gaste un Bond Point para dar su beneficio a un Pokémon aliado, aunque no sea tuyo.",
+
+          en:
+            "As a Reaction, a commanding phrase lets one of your Pokémon spend a Bond Point to confer its benefit on an allied Pokémon, even one that isn't yours."
+        }
+      },
 
       "ace-trainer": {
         id:

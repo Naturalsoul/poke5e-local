@@ -788,3 +788,41 @@ export function getTrainerPath(
     null
   );
 }
+
+/* ============================================================
+ * SUPPLEMENT REQUIREMENTS
+ *
+ * Commander needs Bonds, which the world turns on in the module settings.
+ * Breeding is not implemented yet.
+ * ============================================================ */
+
+const SUPPLEMENT_SETTINGS =
+  Object.freeze({
+    bonds:
+      "bondsEnabled"
+  });
+
+export function missingPathRequirement(
+  path
+) {
+  const setting =
+    SUPPLEMENT_SETTINGS[
+      path?.requires
+    ];
+
+  if (!path?.requires) {
+    return null;
+  }
+
+  try {
+    return setting &&
+      game.settings.get(
+        "poke5e-local",
+        setting
+      ) === true
+      ? null
+      : path.requires;
+  } catch {
+    return path.requires;
+  }
+}
