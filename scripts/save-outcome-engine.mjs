@@ -7,6 +7,10 @@ import {
   hasPokemonStatus
 } from "./status-runtime.mjs";
 
+import {
+  messageRollShown
+} from "./chat-roll-display.mjs";
+
 const MODULE_ID = "poke5e-local";
 const CONTEXT_TTL = 5 * 60 * 1000;
 
@@ -24,6 +28,7 @@ const FLINCHED_STATUS_ID =
  *     └── Actor UUID → failure
  */
 const saveUsages = new Map();
+const saveReactions = new Set();
 
 /*
  * Contextos de botones de Save actualmente en resolución.
@@ -37,6 +42,64 @@ const pendingSaveContexts = [];
 /* ============================================================
  * REGISTRATION
  * ============================================================ */
+
+/* ============================================================
+ * REACTIONS
+ *
+ * Trainer features that change a save after it is rolled (Raise Your Defenses,
+ * Not This Time). offer(roll, { actor, dc, moveUser }) answers synchronously: null
+ * when it cannot change the result, otherwise an async step resolving to the
+ * replacement roll (null keeps it). The outcome is recorded with the final roll.
+ * ============================================================ */
+
+export function registerSaveReaction(
+  offer
+) {
+  saveReactions.add(
+    offer
+  );
+
+  return () => saveReactions.delete(
+    offer
+  );
+}
+
+async function resolveSaveReactions(
+  roll,
+  context
+) {
+  await messageRollShown(
+    roll.parent
+  );
+
+  let current =
+    roll;
+
+  for (const offer of saveReactions) {
+    const step =
+      offer(
+        current,
+        context
+      );
+
+    if (!step) {
+      continue;
+    }
+
+    try {
+      current =
+        await step() ??
+        current;
+    } catch (error) {
+      console.error(
+        `[${MODULE_ID}] Error en reacción de entrenador a la salvación:`,
+        error
+      );
+    }
+  }
+
+  return current;
+}
 
 export function registerSaveOutcomeEngine() {
 
@@ -937,6 +1000,73 @@ function onRollSavingThrow(
     return;
   }
 
+  finishActorInContext(
+    context,
+    actor.uuid
+  );
+
+  const reactionContext = {
+    actor,
+
+    dc:
+      finiteNumber(
+        roll.options?.target ??
+        context.dc,
+        null
+      ),
+
+    get moveUser() {
+      return fromUuidSync(
+        usage.itemUuid ??
+        "",
+        {
+          strict: false
+        }
+      )?.actor ??
+      null;
+    }
+  };
+
+  if (
+    saveReactions.size &&
+    [...saveReactions].some(
+      offer =>
+        offer(
+          roll,
+          reactionContext
+        )
+    )
+  ) {
+    void resolveSaveReactions(
+      roll,
+      reactionContext
+    ).then(
+      final =>
+        recordSaveOutcome(
+          usage,
+          context,
+          actor,
+          final
+        )
+    );
+
+    return;
+  }
+
+  recordSaveOutcome(
+    usage,
+    context,
+    actor,
+    roll
+  );
+}
+
+function recordSaveOutcome(
+  usage,
+  context,
+  actor,
+  roll
+) {
   const success =
     determineSaveSuccess(
       roll,
@@ -974,11 +1104,6 @@ function onRollSavingThrow(
   usage.targets.set(
     actor.uuid,
     outcome
-  );
-
-  finishActorInContext(
-    context,
-    actor.uuid
   );
 
   console.debug(

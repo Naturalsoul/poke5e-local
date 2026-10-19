@@ -39,6 +39,12 @@ export function afterPaint() {
   return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 }
 
+// The roll's message already exists: resolves once Dice So Nice has revealed it.
+export async function messageRollShown(message) {
+  if (message?.id) {await game.dice3d?.waitFor3DAnimationByMessageID?.(message.id);}
+  await afterPaint();
+}
+
 // Subscribe before creating the message: Foundry may render it during toMessage.
 // Only the caller continues with damage; rerendering never reapplies it.
 export async function publishRollBeforeDamage(roll, data) {
