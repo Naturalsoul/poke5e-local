@@ -47,12 +47,12 @@ export function tokenInArea(template, token) {
 }
 
 // The Move DC from its save activity, or 8 + proficiency + MOVE.
-function moveDc(item) {
+export function moveDc(item) {
   const activity = Array.from(item.system?.activities ?? []).find(entry => Number.isFinite(entry.save?.dc?.value));
   return activity?.save.dc.value ?? 8 + Number(item.actor?.system?.attributes?.prof ?? 2) + moveModifier(item.actor, item);
 }
 
-async function areaSave(actor, item, dc) {
+export async function areaSave(actor, item, dc) {
   const display = trackRollDisplay();
   const rolls = await actor.rollSavingThrow({ ability: "con", target: dc }, { configure: false },
     { data: { flavor: `${item.name} — ${actor.name} (DC ${dc})`, flags: { [MODULE_ID]: display.flags } } });

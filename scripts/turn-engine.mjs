@@ -35,6 +35,7 @@ import { processFormAbilitiesStartTurn } from "./form-ability-engine.mjs";
 import { processSelfStatusMovesEndTurn } from "./self-status-moves.mjs";
 import { processLingeringAreasStartTurn } from "./lingering-area-moves.mjs";
 import { processStatusFieldMovesStartTurn } from "./status-field-moves.mjs";
+import { processProtectStartTurn } from "./protect-moves.mjs";
 
 import {
   isPokemonActor
@@ -1876,6 +1877,7 @@ async function processStartTurn(
   // Sandstorm and Hail.
     await processLingeringAreasStartTurn(actor);
   await processStatusFieldMovesStartTurn(actor);
+  await processProtectStartTurn(actor);
   await processBattlefieldStartTurn(
     actor
   );
