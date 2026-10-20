@@ -5,7 +5,7 @@ import {
   expireEndOfNextTurnEffects,
   markEndOfNextTurnEffectsStarted,
   refreshEndOfNextTurnDuration
-} from "../turn-duration-runtime.mjs";
+} from "../scripts/turn-duration-runtime.mjs";
 
 function effect(id, started = false) {
   const flags = {

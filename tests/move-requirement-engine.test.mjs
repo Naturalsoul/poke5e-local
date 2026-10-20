@@ -32,7 +32,7 @@ globalThis.fromUuidSync = uuid => actors.get(uuid) ?? null;
 
 const {
   registerMoveRequirementEngine
-} = await import("../move-requirement-engine.mjs");
+} = await import("../scripts/move-requirement-engine.mjs");
 
 registerMoveRequirementEngine();
 

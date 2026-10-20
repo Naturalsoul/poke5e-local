@@ -6,7 +6,7 @@ import {
   isAtOrBelowHpRatio,
   isBelowHpRatio,
   projectedPokemonHpState
-} from "../hp-runtime.mjs";
+} from "../scripts/hp-runtime.mjs";
 
 function actor(value, max) {
   return {

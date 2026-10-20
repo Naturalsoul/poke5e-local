@@ -64,7 +64,7 @@ globalThis.fromUuidSync = uuid => uuidDocuments.get(uuid) ?? null;
 
 const {
   registerMultiTargetEngine
-} = await import("../multi-target-engine.mjs");
+} = await import("../scripts/multi-target-engine.mjs");
 
 registerMultiTargetEngine();
 

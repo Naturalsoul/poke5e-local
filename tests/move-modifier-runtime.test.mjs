@@ -6,7 +6,7 @@ import {
   armFollowingTurnMoveModifier,
   consumeActiveMoveModifier,
   expireActiveMoveModifiers
-} from "../move-modifier-runtime.mjs";
+} from "../scripts/move-modifier-runtime.mjs";
 import {
   createFlagDocument,
   installFoundryUtils

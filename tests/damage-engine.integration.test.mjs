@@ -90,6 +90,7 @@ function pokemonActor({
     effects,
     flags: {
       "poke5e-local": {
+        kind: "pokemon",
         sourceId: uuid.toLowerCase()
       }
     },
@@ -189,8 +190,8 @@ async function waitFor(predicate) {
   throw new Error("Asynchronous damage pipeline did not finish in time.");
 }
 
-const moveModifiers = await import("../move-modifier-runtime.mjs");
-const damageEngine = await import("../damage-engine.mjs");
+const moveModifiers = await import("../scripts/move-modifier-runtime.mjs");
+const damageEngine = await import("../scripts/damage-engine.mjs");
 damageEngine.registerPokemonDamageEngine();
 
 test("Burned replaces a random damage roll with two rolls keeping the lower result", () => {

@@ -8,7 +8,7 @@ import {
   buildStruggleDamageFormula,
   getStruggleActivityVariants,
   isStruggleMove
-} from "../struggle-rules.mjs";
+} from "../scripts/struggle-rules.mjs";
 
 test("Struggle exposes the canonical move id and activity ids", () => {
   assert.equal(STRUGGLE_MOVE_ID, "struggle");

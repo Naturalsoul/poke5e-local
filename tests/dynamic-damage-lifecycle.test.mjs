@@ -49,7 +49,7 @@ globalThis.fromUuidSync = uuid => uuidDocuments.get(uuid) ?? null;
 
 const {
   registerDynamicDamageEngine
-} = await import("../dynamic-damage-engine.mjs");
+} = await import("../scripts/dynamic-damage-engine.mjs");
 
 registerDynamicDamageEngine();
 

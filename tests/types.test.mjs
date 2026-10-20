@@ -4,7 +4,7 @@ import {
   calculatePokemonDefenses,
   hasStab,
   pokemonTypeLabel
-} from "../types.mjs";
+} from "../scripts/types.mjs";
 
 test("dual types preserve raw x4 while Foundry classification remains vulnerability", () => {
   const defenses = calculatePokemonDefenses(["fire", "flying"]);
