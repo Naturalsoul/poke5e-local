@@ -1,5 +1,5 @@
 import { getPokemonBattleMoves, isPokemonMoveKnown } from "./pokemon-move-service.mjs";
-import { getPokemonTrainerUuid, getTrainerPartyState, isPokemonActive } from "./trainer-party-service.mjs";
+import { getPokemonTrainerUuid, getTrainerPartyState, isPokemonActive, isPokemonActor } from "./trainer-party-service.mjs";
 import { canCurrentUserOperateTrainerPokemon } from "./trainer-ownership-service.mjs";
 import { availableTrainerPathActions, runTrainerPathAction, TRAINER_PATH_ACTION_RESOURCES, trainerPathActionName } from "./trainer-path-actions.mjs";
 import { getTrainerProgressionResource } from "./trainer-progression-service.mjs";
@@ -11,7 +11,7 @@ import { ACTIVE_ABILITIES, activeAbilityOf, abilityMaxUses, abilityUsesLeft, use
  * BATTLE HOTBAR
  *
  * Page 1 of the hotbar follows the deployed (or selected) Pokémon: its Moves (and an Ability switched on beforehand) from slot 1,
- * the trainer's path actions ending at slot 10. Each slot shows the PP or uses left.
+ * the trainer's path actions ending at slot 10. A Pokémon without a trainer (wild) shows only its Moves, to its owner (the GM). Each slot shows the PP or uses left.
  * The macros are the user's own, reused between Pokémon; only slots holding them are rewritten.
  * ============================================================ */
 
@@ -44,7 +44,7 @@ function abilitySlot(pokemon) {
 export function battleHotbarSlots(pokemon, trainer) {
   const moves = [...getPokemonBattleMoves(pokemon).map(move => ({ name: move.name, img: move.img,
     entry: { kind: "move", uuid: pokemon.uuid, id: move.id } })), ...abilitySlot(pokemon)].slice(0, SLOTS);
-  const actions = availableTrainerPathActions(trainer).slice(0, SLOTS - moves.length).map(action => ({ name: trainerPathActionName(action),
+  const actions = (trainer ? availableTrainerPathActions(trainer) : []).slice(0, SLOTS - moves.length).map(action => ({ name: trainerPathActionName(action),
     img: trainerFeatureIcon(ACTION_FEATURES[action]) ?? DEFAULT_ACTION_ICON, entry: { kind: "action", uuid: trainer.uuid, id: action } }));
   return Object.fromEntries([
     ...moves.map((slot, index) => [index + 1, slot]),
@@ -113,9 +113,11 @@ export function showBattleHotbar(pokemon, trainer) {
   return writeHotbar(battleHotbarSlots(pokemon, trainer));
 }
 
-function operableTrainer(pokemon) {
+// { trainer } when this user can use the Pokémon now: its trainer's, once deployed, or a wild one (trainer null) it owns.
+function operator(pokemon) {
   const trainer = fromUuidSync(getPokemonTrainerUuid(pokemon) ?? "", { strict: false });
-  return trainer && isPokemonActive(trainer, pokemon) && canCurrentUserOperateTrainerPokemon(trainer, pokemon) ? trainer : null;
+  if (!trainer) {return isPokemonActor(pokemon) && pokemon.isOwner ? { trainer: null } : null;}
+  return isPokemonActive(trainer, pokemon) && canCurrentUserOperateTrainerPokemon(trainer, pokemon) ? { trainer } : null;
 }
 
 // What each kind of battle macro runs, or null when it is not available to this user.
@@ -124,7 +126,7 @@ const RUNNERS = {
   ability: document => (document?.isOwner ? () => useActiveAbility(document) : null),
   move: (document, id) => {
     const move = document?.items.get(id);
-    return move && isPokemonMoveKnown(document, move) && operableTrainer(document) ? () => move.use() : null;
+    return move && isPokemonMoveKnown(document, move) && operator(document) ? () => move.use() : null;
   }
 };
 
@@ -139,8 +141,8 @@ export async function useBattleHotbarMacro(macro) {
 
 function onControlToken(token, controlled) {
   const pokemon = token.actor;
-  const trainer = controlled && pokemon ? operableTrainer(pokemon) : null;
-  if (trainer) {showBattleHotbar(pokemon, trainer);}
+  const operating = controlled && pokemon ? operator(pokemon) : null;
+  if (operating) {showBattleHotbar(pokemon, operating.trainer);}
 }
 
 // After a deploy, recall or switch, the trainer's player (or the GM when none is online) follows the change.
