@@ -101,6 +101,34 @@ const MOVE_STATUS_EFFECTS = {
    * STATUS RIDERS (batch)
    * ========================================================== */
 
+  ember: [
+    {
+      status: "burned",
+      trigger: "natural-attack-19+"
+    }
+  ],
+
+  "signal-beam": [
+    {
+      status: "confused",
+      trigger: "natural-attack-19+"
+    }
+  ],
+
+  inferno: [
+    {
+      status: "burned",
+      trigger: "hit"
+    }
+  ],
+
+  "venom-drench": [
+    {
+      status: "poisoned",
+      trigger: "failed-save"
+    }
+  ],
+
   "air-slash": [
     {
       status: "flinched",

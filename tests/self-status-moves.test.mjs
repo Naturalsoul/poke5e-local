@@ -69,3 +69,15 @@ test("Raging Fury's concentration ending in combat confuses its user", () => {
   assert.equal(moves.ragingFuryEnded(concentration(move("agility"))), null);
   game.combat = null;
 });
+
+test("Yawn leaves sleep for the end of its target's next turn, and leaving the battle cancels it", async () => {
+  const target = pokemon();
+  documents.set(target.uuid, target);
+  const yawn = move("yawn");
+  await moves.onCreateUsageMessage({ type: "usage", getAssociatedItem: () => yawn,
+    getFlag: (scope, key) => (scope === "dnd5e" && key === "targets" ? [{ uuid: target.uuid }] : undefined) });
+  assert.equal(target.getFlag(MODULE_ID, "selfStatusAtEndOfTurn"), "asleep");
+  hooks.handler("poke5ePokemonSwitched")({ outgoing: target });
+  await tick();
+  assert.equal(target.getFlag(MODULE_ID, "selfStatusAtEndOfTurn"), undefined);
+});
