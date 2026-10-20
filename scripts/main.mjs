@@ -6,6 +6,7 @@ import { registerRerollAbilityEngine } from "./reroll-ability-engine.mjs";
 import { registerBerryAbilityEngine } from "./berry-ability-engine.mjs";
 import { registerRiderAbilityEngine } from "./rider-ability-engine.mjs";
 import { registerEventAbilityEngine } from "./event-ability-engine.mjs";
+import { registerSelfStatusMoves } from "./self-status-moves.mjs";
 import { registerBattlefieldService } from "./battlefield-service.mjs";
 import { registerBattlefieldEffects } from "./battlefield-effects.mjs";
 import { registerAuraAbilityEngine } from "./aura-ability-engine.mjs";
@@ -434,7 +435,8 @@ Hooks.once(
     registerRerollAbilityEngine();
     registerBerryAbilityEngine();
     registerRiderAbilityEngine();
-    registerEventAbilityEngine();
+        registerEventAbilityEngine();
+    registerSelfStatusMoves();
     registerBattlefieldService();
     registerBattlefieldEffects();
     registerAuraAbilityEngine();

@@ -32,6 +32,7 @@ import { processBerryAbilitiesEndTurn } from "./berry-ability-engine.mjs";
 import { effectSourceActor, processEventAbilitiesEndTurn, processEventAbilitiesStartTurn } from "./event-ability-engine.mjs";
 import { processBattlefieldEndTurn, processBattlefieldStartTurn } from "./battlefield-service.mjs";
 import { processFormAbilitiesStartTurn } from "./form-ability-engine.mjs";
+import { processSelfStatusMovesEndTurn } from "./self-status-moves.mjs";
 
 import {
   isPokemonActor
@@ -1598,7 +1599,8 @@ async function processEndTurn(
 
   await processHeldItemEndTurn(actor);
   await processBerryAbilitiesEndTurn(actor);
-  await processEventAbilitiesEndTurn(actor);
+    await processEventAbilitiesEndTurn(actor);
+  await processSelfStatusMovesEndTurn(actor);
   await processBattlefieldEndTurn(actor);
 
 
