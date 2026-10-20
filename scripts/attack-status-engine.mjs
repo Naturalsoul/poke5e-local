@@ -3,6 +3,8 @@ import {
   isNaturalAttackAtLeast,
   subscribeAttackOutcome
 } from "./attack-outcome-engine.mjs";
+import { publishRollBeforeDamage } from "./chat-roll-display.mjs";
+import { createStatusEffect } from "./status-effects.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -189,13 +191,25 @@ function actorFromUuid(
  * - exclusividad de estados no-volátiles.
  * ============================================================ */
 
-async function applyStatusTemplate(
+// A d6 table rolls in chat (after Dice So Nice) and becomes that face's status.
+async function rolledStatusSource(actor, template) {
+  const table = template.getFlag(MODULE_ID, "randomStatuses");
+  const roll = await new Roll("1d6").evaluate();
+  await publishRollBeforeDamage(roll, { speaker: ChatMessage.getSpeaker({ actor }), flavor: `${template.parent?.name ?? ""} — d6` });
+  const move = { id: template.getFlag(MODULE_ID, "sourceMove") };
+  const source = createStatusEffect(table[roll.total - 1], move, game.settings.get(MODULE_ID, "language"));
+  Object.assign(source.flags[MODULE_ID], { trigger: template.getFlag(MODULE_ID, "trigger"), sourceMove: move.id });
+  return source;
+}
+
+export async function applyStatusTemplate(
   actor,
   template
 ) {
-
   const source =
-    template.toObject();
+    template.getFlag(MODULE_ID, "randomStatuses")
+      ? await rolledStatusSource(actor, template)
+      : template.toObject();
 
 
   delete source._id;

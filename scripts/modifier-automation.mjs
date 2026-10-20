@@ -1,5 +1,6 @@
 import { AUTOMATED_MODIFIER_MOVES, buildMoveModifierEffects } from "./modifier-effects.mjs";
 import { buildMoveStatusEffects } from "./status-effects.mjs";
+import { applyStatusTemplate } from "./attack-status-engine.mjs";
 import { applyPokemonMoveModifier } from "./modifier-engine.mjs";
 import { buildAttackOutcome, isNaturalAttackAtLeast } from "./attack-outcome-engine.mjs";
 import { afterPaint, waitForVisibleResult } from "./chat-roll-display.mjs";
@@ -96,14 +97,6 @@ function usageConcentration(item, usageId) {
 }
 
 // Serialize applications from different roll messages to avoid losing stacks.
-// A status template is copied with its Move as origin, like attack-status-engine does.
-async function applyStatusTemplate(actor, template) {
-  const source = template.toObject();
-  delete source._id;
-  source.origin ||= template.parent?.uuid ?? null;
-  await actor.createEmbeddedDocuments("ActiveEffect", [source]);
-}
-
 async function applyApplication({ actor, item, usageId, template, dependentOn = usageConcentration(item, usageId) }) {
   if (!isPokemonActor(actor)) {return;}
   const previous = actorsPending.get(actor.uuid) ?? Promise.resolve();

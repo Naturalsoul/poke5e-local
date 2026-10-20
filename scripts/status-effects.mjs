@@ -98,8 +98,30 @@ const MOVE_STATUS_EFFECTS = {
   ],
 
   /* ==========================================================
-   * STATUS RIDERS (batch)
+      * STATUS RIDERS (batch)
    * ========================================================== */
+
+  "secret-power": [
+    {
+      table: ["poisoned", "burned", "confused", "frozen", "paralysis", "asleep"],
+      trigger: "natural-attack-15+"
+    }
+  ],
+
+  "tri-attack": [
+    {
+      table: ["burned", "burned", "frozen", "frozen", "paralysis", "paralysis"],
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  "dire-claw": [
+    {
+      table: ["poisoned", "poisoned", "paralysis", "paralysis", "asleep", "asleep"],
+      trigger: "hit-and-failed-save"
+    }
+  ],
+
 
   ember: [
     {
@@ -1916,7 +1938,7 @@ export function buildConfusedStatusEffect(
  * ============================================================ */
 
 
-function createStatusEffect(
+export function createStatusEffect(
   status,
   move,
   language,
@@ -2096,10 +2118,10 @@ export function buildMoveStatusEffects(
     of definitions
   ) {
 
-    const effect =
+        const effect =
       createStatusEffect(
 
-        definition.status,
+        definition.table?.[0] ?? definition.status,
 
         move,
 
@@ -2121,10 +2143,17 @@ export function buildMoveStatusEffects(
       definition.trigger;
 
 
-    effect.flags[
+        effect.flags[
       MODULE_ID
     ].sourceMove =
       move.id;
+
+    // A d6 table: the status is rolled when the template is applied.
+    if (definition.table) {
+      effect.flags[MODULE_ID].randomStatuses = definition.table;
+      effect.name = `${move.id} (d6)`;
+    }
+
 
 
     effects.push(

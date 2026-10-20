@@ -800,3 +800,24 @@ test("Moves created before their status was automated get its templates once", a
   assert.deepEqual(bite.effects.map(applied => [applied.getFlag(MODULE_ID, "status"), applied.getFlag(MODULE_ID, "trigger")]),
     [["flinched", "natural-attack-19+"]]);
 });
+
+test("a d6 status table is one template that rolls in chat and applies that face's status", async () => {
+  const rolled = [];
+  globalThis.ChatMessage = { getSpeaker: () => ({}) };
+  globalThis.Roll = class {
+    async evaluate() { this.total = 5; return this; }
+    async toMessage(data) {
+      rolled.push(data.flavor);
+      const shown = createFlagDocument({ id: `Roll.${++sequence}`, flags: data.flags });
+      Hooks.callAll("dnd5e.renderChatMessage", shown, { isConnected: true });
+      return shown;
+    }
+  };
+  const item = statusMove("tri-attack");
+  assert.equal(item.effects.filter(applied => applied.getFlag(MODULE_ID, "kind") === "pokemon-status").length, 1);
+  const target = actor();
+  await show(message(item, target));
+  assert.equal(rolled.length, 1);
+  assert.deepEqual(statusOf(target), [["paralysis", false]], "a 5 is paralysis");
+  assert.equal(target.effects[0].getFlag(MODULE_ID, "randomStatuses"), undefined);
+});
