@@ -1,157 +1,126 @@
-# Pokemon FoundryVTT — Regression Suite v1 · Fase 8
+# Poke5e Local
 
-## Estado
+Módulo de Foundry VTT para jugar **Pokémon 5e** ([poke5e.app](https://poke5e.app)) sobre el sistema **D&D5e**.
+Importa Pokémon, Moves, Abilities y objetos, da hojas propias a Pokémon y entrenadores, y automatiza la mayor
+parte de las reglas de combate: tipos, STAB, estados, Abilities, rasgos de entrenador, capturas y más.
 
-- Node regression suite: **114 tests PASS**
-- `node --check`: **PASS**
-- ESLint en este entorno: no ejecutable (`eslint: not found`)
-- Foundry smoke runner: validado por el usuario con **0 FAIL** después de corregir el registro de statuses.
+- **Versión:** 0.19.0
+- **Requisitos:** Foundry VTT 13 (13.351 o superior) y D&D5e 5.3.3 o superior.
+- **Idiomas:** español e inglés (ajuste del módulo `language`).
 
-## Base heredada de la fase 7
+Los cambios están en el [CHANGELOG](CHANGELOG.md).
 
-Agregar fixtures reales y temporales dentro de Foundry VTT para comprobar la integración que un mock Node no puede garantizar.
+## Instalación
 
-La fase 7 NO modifica los Pokémon originales.
+1. Copia la carpeta `poke5e-local` en `Data/modules/` de Foundry.
+2. Activa el módulo en un mundo de D&D5e.
+3. Recarga el mundo. Al cargar, el módulo migra los Pokémon existentes (velocidad de vuelo estacionario,
+   género) y añade a sus Moves las automatizaciones nuevas.
 
-El runner:
+### Módulos opcionales
 
-1. selecciona un Pokémon importado;
-2. crea un Actor world temporal clonado;
-3. elimina ActiveEffects y estado runtime del clon;
-4. prueba daño tipado real mediante `Actor5e.applyDamage()`;
-5. crea una Scene temporal inactiva;
-6. crea en ella un Token no enlazado para comprobar un synthetic Actor;
-7. elimina Scene y Actor temporal en `finally`.
+| Módulo | Para qué |
+|---|---|
+| Dice So Nice | Los efectos que dependen de una tirada esperan a que el dado termine y el resultado se vea en el chat. |
+| FXMaster | Clima visible (lluvia, nieve, sol, tormenta de arena). |
+| JB2A (gratis) | Animación al crear un terreno. |
 
-## Cobertura Foundry real añadida
+Sin ellos, el módulo funciona igual; solo se pierde la parte visual.
 
-### Damage integration
+## Qué incluye
 
-Se compara la tabla canónica `calculatePokemonDefenses()` con el resultado efectivo de D&D5e:
+### Base de datos e importación
+- **1151 Pokémon, 830 Moves, 330 Abilities y 366 objetos** normalizados en `data/normalized/`.
+- **Importador Pokémon** (botón de Poké Ball en los controles de token, solo DM): crea Pokémon con su nivel,
+  Moves, Ability, naturaleza, género, shiny, sprites animados y grito.
+- Catálogo de objetos sincronizado con un compendio y descripciones adaptadas.
 
-- Resistance: daño base 2 → 1
-- Vulnerability: daño base 2 → 4
-- Immunity: daño base 2 → 0, si el Pokémon dispone de una inmunidad
-- Neutral: daño base 2 → 2
-- Direct/typeless: `applyDamage(2)` → 2
+### Pokémon
+- Hoja propia: tipos y su tabla de debilidades, PP de cada Move, objeto equipado, Ability, estados y
+  modificadores de stats.
+- Subida de nivel, experiencia, evolución, aprendizaje de Moves, Centro Pokémon y descanso.
+- **Barra de combate:** al seleccionar un Pokémon, la página 1 de la barra de macros muestra sus Moves (con los PP
+  que quedan), su Ability activable y las acciones de su entrenador. Con un Pokémon salvaje, el DM ve sus Moves.
 
-Los casos que no existen para el tipo del Pokémon se marcan `SKIP`, no `FAIL`.
+### Entrenadores
+- Hoja de entrenador, equipo y PC, despliegue, retirada y cambio de Pokémon, y centro de mando.
+- **Todos los caminos de entrenador están automatizados** salvo Pokémon Breeder, que está aparcado (ver
+  `tasks/backlog.md`). Incluye las reacciones de combate (Battle Die, Sabotage, Raise Your Defenses…).
+- Suplemento de Bonds (básico) y el camino Commander.
+- Los entrenadores no entran en la iniciativa: las reglas de "su próximo turno" usan los turnos de sus Pokémon.
+- **Captura:** lanzar una Poké Ball tira la captura, gasta la ball y mueve el Pokémon capturado al equipo o al PC.
 
-### Synthetic Actor
+### Combate automatizado
+- **Daño:** efectividad de tipos, STAB, MOVE y LEVEL en las fórmulas, críticos, daño dinámico, drenaje,
+  retroceso, autodaño, multiobjetivo y Struggle.
+- **Estados:** Poisoned, Badly Poisoned, Burned, Frozen, Paralysis, Asleep, Confused y Flinched, con sus tiradas,
+  inmunidades por tipo, el límite de un estado no volátil, el periodo de gracia y el fin de los volátiles al
+  cambiar de Pokémon o terminar el combate.
+- **Moves:** 303 de 830 están automatizados (`scripts/move-coverage.mjs` lleva la cuenta de todos). Entre ellos:
+  - modificadores de stats, de CA, de salvaciones, de velocidad y de modos de tirada;
+  - estados al acertar, con natural N+ o por salvación fallida (o fallida por 5), y tablas d6 de estado;
+  - daño que depende de un estado (Facade, Venoshock…) y Moves que cambian el estado de su usuario (Rest, Thrash…);
+  - áreas que duran (Poison Gas, Smog, Sludge Bomb), Uproar, Safeguard, Sing, Yawn y Sleep Talk;
+  - la familia Protect como reacción al recibir un golpe.
+- **Abilities:** las 311 del registro `scripts/ability-coverage.mjs` están automatizadas (255) o marcadas como
+  manuales con su motivo (56). Incluye auras, cambios de forma, bayas, clima, terreno y entorno.
+- **Clima y terreno** por combate, con su panel en el registro de combate.
+- **Objetos equipados** y bayas.
 
-El runner crea una Scene temporal que no se activa y añade un Token con `actorLink: false`.
+Lo que un Move automatizado aún deja al DM está en la nota de su entrada en `scripts/move-coverage.mjs`.
 
-Se valida:
+### Otras herramientas del DM
+- **Planificador de encuentros:** encuentros salvajes y de entrenadores con aleatorizado y XP.
+- **Fakemon Studio:** crea Pokémon propios con asistente, evoluciones, Moves y copia de seguridad.
+- Transiciones de batalla con sonido.
 
-- `token.actor` existe;
-- `token.actor.isToken === true`;
-- conserva `flags.poke5e-local.sourceId`.
+## API
 
-## Archivos
+Desde la consola, en `game.modules.get("poke5e-local").api`:
 
-- `foundry-regression-fixtures.mjs` — nuevo fixture runner.
-- `foundry-regression-runner.mjs` — expone `runFixtures()` y `cleanupFixtures()`.
-- `eslint.config.mjs` — agrega `Scene` como global Foundry readonly.
-- `tests/foundry-regression-fixtures.test.mjs` — 5 regresiones Node nuevas.
+| Función | Qué hace |
+|---|---|
+| `loadDatabase()` | Carga la base de datos normalizada. |
+| `syncItemCatalog()` | Sincroniza el compendio de objetos. |
+| `migratePokemonHoverMovement()` | Repite la migración del vuelo estacionario. |
+| `openFakemonStudio()` | Abre Fakemon Studio. |
+| `playBattleTransition()` | Reproduce la transición de batalla. |
 
-## Integración
+### Pruebas dentro de Foundry
 
-Copiar a la raíz del módulo:
-
-- `foundry-regression-fixtures.mjs`
-- `foundry-regression-runner.mjs`
-- `eslint.config.mjs`
-
-`main.mjs` no necesita un nuevo cambio si ya registra `registerFoundryRegressionRunner()` desde la fase 6.
-
-Reiniciar Foundry antes de ejecutar el runner.
-
-## Ejecución
-
-### Smoke
-
-```js
-const smoke = await Poke5eRegression.runSmoke();
-smoke.summary;
-```
-
-### Fixtures reales
-
-```js
-const fixtures = await Poke5eRegression.runFixtures();
-fixtures.summary;
-```
-
-FAIL:
-
-```js
-fixtures.checks.filter(
-  check => check.status === "fail"
-);
-```
-
-SKIP:
-
-```js
-fixtures.checks.filter(
-  check => check.status === "skip"
-);
-```
-
-### Elegir Actor fuente
+`Poke5eRegression` prueba la integración real con D&D5e sobre actores, escenas y mensajes temporales, que borra
+al terminar:
 
 ```js
-const fixtures = await Poke5eRegression.runFixtures({
-  actorUuid: "Actor.ID"
-});
+(await Poke5eRegression.runSmoke()).summary;
+(await Poke5eRegression.runFixtures()).summary;          // daño tipado y actores sintéticos
+(await Poke5eRegression.runActivityFixtures()).summary;  // Attack → Damage → applyDamage (sin targets seleccionados)
+(await Poke5eRegression.runSaveFixtures()).summary;
+await Poke5eRegression.cleanupFixtures();                // si Foundry se cerró a mitad de una prueba
 ```
 
-### Cleanup de emergencia
-
-Si Foundry/browser se cierra durante una prueba antes de ejecutar el `finally`:
-
-```js
-await Poke5eRegression.cleanupFixtures();
-```
-
-Solo elimina documentos marcados con:
-
-`flags.poke5e-local.regressionFixture.kind === "foundry-fixture"`.
-
-## Validación local
+## Desarrollo
 
 ```bash
-npm run lint
-npm test
+npm install
+node --test tests/        # en Windows; `npm test` usa un glob que allí no funciona
+npx eslint scripts/x.mjs
 ```
 
-Estado del harness usado para construir esta fase:
+- `scripts/main.mjs` registra todo; cada motor (`*-engine.mjs`, `*-moves.mjs`) se registra con sus hooks.
+- Las reglas viven en tablas (`MOVE_STATUS_EFFECTS` en `status-effects.mjs`, `ACTIVE_ABILITIES`…) y los motores
+  las aplican.
+- Los tests (`tests/`, 430 en este momento) usan los mocks de Foundry de `tests/helpers/foundry-mocks.mjs`.
+- Los registros de cobertura (`move-coverage.mjs`, `ability-coverage.mjs`) tienen sus tests: un Move que un
+  motor automatiza tiene que estar marcado como automatizado.
+- Documentos de diseño: `SPEC-move-coverage.md`, `SPEC-stat-modifiers.md`, `CAPABILITY-MAP-moves.md`,
+  `HELD_ITEMS.md`.
+- `tasks/backlog.md` guarda el trabajo aparcado.
 
-```text
-1..114
-# tests 114
-# pass 114
-# fail 0
-```
+## Límites conocidos
 
-## Fase 8 — Foundry Activity Fixtures
-
-Nueva API:
-
-```js
-await Poke5eRegression.runActivityFixtures();
-```
-
-Ejecuta sobre Actors temporales una Activity `attack` sencilla usando los métodos reales de D&D5e:
-
-1. `AttackActivity.rollAttack()`.
-2. `AttackActivity.rollDamage()`.
-3. `Actor5e.applyDamage()` con el tipo devuelto por el `DamageRoll`.
-4. Compara el daño efectivo con la clasificación Pokémon esperada.
-5. Elimina ChatMessages y Actors temporales en `finally`.
-
-### Precondición de seguridad
-
-Antes de ejecutarlo deben existir **0 targets seleccionados** en la escena real. El runner no deselecciona targets del usuario automáticamente; si encuentra alguno devuelve `SKIP`.
-
-Este bloque evita deliberadamente Dynamic Damage, Struggle, Drain, Recoil, Multi-target y Moves con triggers de status para aislar la canalización nativa `Attack → Damage → applyDamage`.
+- 440 Moves siguen pendientes (421) o manuales (19); otros 87 son solo daño. Los grupos pendientes más grandes son
+  mecánicas especiales, efectos de campo y efectos de ataque.
+- El camino Pokémon Breeder y el suplemento de crianza no están (faltan grupos huevo y proporción de géneros).
+- Varias reacciones se resuelven en el cliente de quien ataca, que necesita permisos sobre el defensor.
+- Las automatizaciones están probadas con mocks; conviene probar en una partida antes de confiar en una nueva.

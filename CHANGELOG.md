@@ -1,0 +1,116 @@
+# Changelog
+
+Los cambios del módulo por versión, de la más reciente a la más antigua. La versión es la de `module.json`:
+se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
+solo se corrige algo.
+
+## [0.19.0] — 2026-10-20
+
+Todo lo hecho desde 0.18.8, agrupado por día.
+
+### 2026-10-20
+
+#### Barra de combate
+- Los Pokémon salvajes muestran sus Moves en la barra a su dueño (el DM). Antes la barra solo aparecía con el
+  Pokémon desplegado de un entrenador, así que el DM nunca la veía con los salvajes. Los tokens que no son Pokémon
+  no tocan la barra.
+
+#### Estados
+- **Badly Poisoned:** como Poisoned, pero con el doble de daño al final del turno. Toxic, Poison Fang, Malignant
+  Chain y Toxic Spikes (al fallar por 5) lo aplican.
+- Asleep dura como máximo tres turnos.
+- La CD de Frozen usa la competencia actual de quien congeló.
+- Confused y Flinched terminan al retirar o cambiar al Pokémon; Flinched también al terminar el combate.
+- Shields Down impide la Parálisis (el id del estado estaba mal escrito).
+- Un estado volátil que el Pokémon ya tiene no se aplica dos veces.
+
+#### Moves con estados (10 lotes)
+1. **101 Moves aplican su estado** solos: con natural N+ (Bite, Thunderbolt, Fire Fang…), al acertar (Confuse Ray,
+   Fake Out…), al acertar y fallar la salvación (Nuzzle, Poison Fang…), al fallar la salvación (Hypnosis,
+   Supersonic…) o al fallarla por 5 (Flamethrower, Ice Beam, Thunder…). Los estados por salvación, que antes eran
+   un botón de dnd5e, se aplican después de que el resultado se vea en el chat. Los Moves que ya estaban en las
+   hojas reciben sus plantillas al cargar el mundo.
+2. **Daño que depende de un estado:** Facade, Smelling Salts y Venoshock doblan sus dados; Wake-Up Slap, Barb
+   Barrage e Infernal Parade suman MOVE otra vez. Wake-Up Slap despierta al objetivo.
+3. **Moves que cambian el estado de su usuario:** Refresh lo cura; Flame Wheel y Fusion Flare lo descongelan; Rest
+   lo duerme y Thrash lo confunde al final de su turno, igual que Petal Dance dos rondas seguidas; Raging Fury lo
+   confunde al terminar su concentración. Sparkling Aria cura la quemadura de quien recibe su daño.
+4. Ember, Signal Beam e Inferno. **Yawn** duerme al objetivo al final de su siguiente turno si sigue en combate.
+   **Venom Drench** convierte el veneno en Badly Poisoned.
+5. **Tablas d6:** Secret Power, Tri Attack y Dire Claw tiran el d6 en el chat y aplican el estado de esa cara.
+6. **Áreas que duran:** quien empieza su turno dentro de Poison Gas, Smog o Sludge Bomb recibe su daño y su
+   salvación. Sludge Bomb coloca su área al acertar. Toxic Spikes envenena o, al fallar por 5, envenena gravemente.
+7. **Uproar** impide dormir a 30 pies y hace daño al empezar el turno ahí; **Electric Terrain** despierta a los
+   Pokémon en el suelo; **Safeguard** protege de estados nuevos a su usuario y a sus aliados durante 3 rondas.
+8. **Sing** (5d8 PG de criaturas, de menos a más), **Nightmare** (daño a los que duermen), **Snore** y **Sleep
+   Talk** (solo dormido; Sleep Talk tira qué Move usa).
+9. **Familia Protect** (Protect, Detect, Obstruct, Baneful Bunker, King's Shield y Spiky Shield): al recibir un
+   golpe se ofrece como reacción, gasta 1 PP y convierte el acierto en fallo. A partir del segundo uso en el combate
+   hace falta más de 15 en un d20. Castiga a los atacantes cuerpo a cuerpo según el Move.
+10. **Take Heart** (reacción a recibir un estado o quedar asustado) y **Psycho Shift** (pasa el estado del usuario
+    al objetivo).
+
+#### Abilities
+- Lote 8: Download, Healer, Curious Medicine, Sheer Force, Gorilla Tactics, Skill Link, Receiver y Power of
+  Alchemy. Con esto todas las Abilities están automatizadas o marcadas como manuales.
+
+#### Tests
+- La suite vuelve a funcionar entera: los tests importaban rutas antiguas y algunos actores de prueba no estaban
+  marcados como Pokémon. Pasó de 29 fallos a 0, y ahora son 430 tests.
+
+### 2026-10-19
+
+#### Abilities (lotes 1 a 7)
+- Registro de cobertura de Abilities y Abilities pasivas por tabla.
+- Abilities de una vez por descanso que se activan desde la hoja o la barra de combate, con su botón en la tarjeta.
+- Volver a tirar el daño (Adaptability, Iron Fist…), Prism Armor, Sturdy y Filter.
+- Bayas: Ripen, Cheek Pouch, Gluttony, Harvest, Cud Chew y Unnerve.
+- Efectos sobre Moves, eventos al golpear y al debilitarse, protección de stats, estados, turnos, cambios y
+  descansos.
+- Clima, terreno y entorno por combate, con sus Abilities; clima visible con FXMaster y animación de terreno con
+  JB2A.
+- Auras (Victory Star, Plus/Minus, Battery, veils, Ruin, Neutralizing Gas…), cambios de forma (Schooling, Zen
+  Mode, Shields Down, Disguise, Stance Change…) y Magic Guard, Protean, Libero, Magic Bounce, Mirror Armor, Unaware…
+- Iconos pintados para las Abilities.
+
+#### Entrenadores
+- Rasgos de camino de niveles 5, 9 y 15, con iconos pintados: Versatile, Partners, Cheerleader, Nurse, Tactician…
+- Reacciones de combate: Battle Die, Sabotage, Raise Your Defenses, Not This Time, Directed Strike, Dark
+  Advantage, Sinister Dodge y Nefarious Stagger.
+- Guru y Nurse (Mind, Body, Spirit, Pokéchef, Field Medic, Tip-Top Shape), Researcher y Collector (Analyst,
+  Professor, Disciplined Strikes, Expert Tracker) y rasgos de nivel alto (Master Trainer…).
+- Suplemento de Bonds (básico) y el camino Commander.
+- El camino Pokémon Breeder queda aparcado; lo que sigue siendo manual está en `tasks/backlog.md`.
+
+#### Captura
+- Lanzar una Poké Ball tira la captura (sin mostrar la CD), espera a Dice So Nice, gasta la ball y mueve el
+  Pokémon capturado al equipo o al PC si el equipo está lleno.
+
+#### Barra de combate
+- La página 1 de la barra muestra los Moves del Pokémon en combate y las acciones de su entrenador, con los PP y
+  los usos que quedan.
+
+#### Pokémon
+- La velocidad de vuelo estacionario se importa como vuelo + hover, y se reparan los Pokémon existentes.
+- La migración de género se ejecuta al cargar el mundo.
+- Storing Power se muestra en la tabla de tipos.
+
+### 2026-10-18
+
+#### Modificadores de stats
+- Registro de cobertura de Moves con su test.
+- MOVE, LEVEL y STAB se resuelven en las fórmulas de daño.
+- Modificadores automáticos: Leer, Tail Whip, Growl… y mejoras propias al usar el Move, ligadas a la
+  concentración (Agility, Amnesia, Acid Armor, Aqua Ring, Defend Order…).
+- Disparadores "natural N+" (Bubble Beam, Mud Shot) y "acierto + salvación fallida" (Acid Spray).
+- Lotes 5a a 5f: modificadores de CA (26 Moves), de ataque (11), de salvaciones (7), de velocidad (7), restantes
+  (6) y modos de tirada (43).
+- graphify para explorar el código.
+
+### 2026-10-17
+
+- Versión estable: auditoría de Moves y automatización de objetos y de algunos Moves.
+
+## [0.18.8] — 2026-09-21
+
+- Primera versión estable.
