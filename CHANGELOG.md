@@ -4,6 +4,12 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.20.1] — 2026-10-20
+
+- README: requisitos para Foundry 14 (probado en 14.365) y sus límites conocidos: las plantillas son Regions, las
+  áreas que duran usan la compatibilidad de v14 y algunos módulos de terceros aún no funcionan en v14.
+- `module.json`: verificado en Foundry 14.365.
+
 ## [0.20.0] — 2026-10-20
 
 - **Animaciones de Moves** con Sequencer y JB2A (gratis). Cada Move tiene una según su tipo y su forma:

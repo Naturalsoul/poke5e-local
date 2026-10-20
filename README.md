@@ -25,8 +25,8 @@ Módulo de Foundry VTT para jugar **Pokémon 5e** ([poke5e.app](https://poke5e.a
 Importa Pokémon, Moves, Abilities y objetos, da hojas propias a Pokémon y entrenadores, y automatiza la mayor
 parte de las reglas de combate: tipos, STAB, estados, Abilities, rasgos de entrenador, capturas y más.
 
-- **Versión:** 0.20.0
-- **Requisitos:** Foundry VTT 13 (13.351 o superior) y D&D5e 5.3.3 o superior.
+- **Versión:** 0.20.1
+- **Requisitos:** Foundry VTT 13 (13.351 o superior) o 14 (probado en 14.365), y D&D5e 5.3.3 o superior.
 - **Idiomas:** español e inglés (ajuste del módulo `language`).
 
 Los cambios están en el [CHANGELOG](CHANGELOG.md).
@@ -148,3 +148,8 @@ npx eslint scripts/x.mjs
 - El camino Pokémon Breeder y el suplemento de crianza no están (faltan grupos huevo y proporción de géneros).
 - Varias reacciones se resuelven en el cliente de quien ataca, que necesita permisos sobre el defensor.
 - Las automatizaciones están probadas con mocks; conviene probar en una partida antes de confiar en una nueva.
+- **Foundry 14:** las plantillas pasan a ser Regions. Las animaciones de Moves ya lo tienen en cuenta; las áreas
+  que duran (Poison Gas, Smog, Sludge Bomb) siguen usando las plantillas por la compatibilidad que v14 mantiene
+  hasta la versión 16, y dan avisos de obsoleto en la consola.
+- Algunos módulos opcionales de terceros aún no funcionan en Foundry 14 (por ejemplo, Weather FX); sus errores
+  en la consola no vienen de este módulo.
