@@ -64,9 +64,13 @@ function isGmManualPoisonOverride(
 ) {
 
   return (
-    game.user.isGM &&
-    statusId ===
-      "poisoned"
+        game.user.isGM &&
+    [
+      "poisoned",
+      "badly-poisoned"
+    ].includes(
+      statusId
+    )
   );
 }
 
@@ -235,9 +239,15 @@ export function getPokemonAppliedStatuses(
         }
 
 
+                // Badly Poisoned is a Poisoned effect; show its own name.
         const definition =
           definitions.get(
-            statusId
+            effect.getFlag(
+              MODULE_ID,
+              "badlyPoisoned"
+            )
+              ? "badly-poisoned"
+              : statusId
           );
 
 

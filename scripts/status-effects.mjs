@@ -42,6 +42,13 @@ const MOVE_STATUS_EFFECTS = {
     }
   ],
 
+  toxic: [
+    {
+      status: "badly-poisoned",
+      trigger: "failed-save"
+    }
+  ],
+
     /* ==========================================================
    * BURNED
    * ========================================================== */
@@ -89,6 +96,799 @@ const MOVE_STATUS_EFFECTS = {
       trigger: "failed-save"
     }
   ],
+
+  /* ==========================================================
+      * STATUS RIDERS (batch)
+   * ========================================================== */
+
+    "psycho-shift": [
+    {
+      status: "confused",
+      trigger: "failed-save",
+      transferStatus: true
+    }
+  ],
+
+  "toxic-spikes": [
+    {
+      status: "poisoned",
+      trigger: "failed-save",
+      exceptBy5: true
+    },
+    {
+      status: "badly-poisoned",
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  "secret-power": [
+    {
+      table: ["poisoned", "burned", "confused", "frozen", "paralysis", "asleep"],
+      trigger: "natural-attack-15+"
+    }
+  ],
+
+  "tri-attack": [
+    {
+      table: ["burned", "burned", "frozen", "frozen", "paralysis", "paralysis"],
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  "dire-claw": [
+    {
+      table: ["poisoned", "poisoned", "paralysis", "paralysis", "asleep", "asleep"],
+      trigger: "hit-and-failed-save"
+    }
+  ],
+
+
+  ember: [
+    {
+      status: "burned",
+      trigger: "natural-attack-19+"
+    }
+  ],
+
+  "signal-beam": [
+    {
+      status: "confused",
+      trigger: "natural-attack-19+"
+    }
+  ],
+
+  inferno: [
+    {
+      status: "burned",
+      trigger: "hit"
+    }
+  ],
+
+  "venom-drench": [
+    {
+      status: "poisoned",
+      trigger: "failed-save"
+    }
+  ],
+
+  "air-slash": [
+    {
+      status: "flinched",
+      trigger: "natural-attack-15+"
+    }
+  ],
+
+  astonish: [
+    {
+      status: "flinched",
+      trigger: "natural-attack-15+"
+    }
+  ],
+
+  bite: [
+    {
+      status: "flinched",
+      trigger: "natural-attack-19+"
+    }
+  ],
+
+  "blaze-kick": [
+    {
+      status: "burned",
+      trigger: "natural-attack-18+"
+    }
+  ],
+
+  "bone-club": [
+    {
+      status: "flinched",
+      trigger: "natural-attack-18+"
+    }
+  ],
+
+  bounce: [
+    {
+      status: "paralysis",
+      trigger: "natural-attack-15+"
+    }
+  ],
+
+  confusion: [
+    {
+      status: "confused",
+      trigger: "natural-attack-15+"
+    }
+  ],
+
+  "cross-poison": [
+    {
+      status: "poisoned",
+      trigger: "natural-attack-19+"
+    }
+  ],
+
+  "dark-pulse": [
+    {
+      status: "flinched",
+      trigger: "natural-attack-17+"
+    }
+  ],
+
+  "dizzy-punch": [
+    {
+      status: "confused",
+      trigger: "natural-attack-18+"
+    }
+  ],
+
+  "double-iron-bash": [
+    {
+      status: "flinched",
+      trigger: "natural-attack-16+"
+    }
+  ],
+
+  "dragon-rush": [
+    {
+      status: "flinched",
+      trigger: "natural-attack-17+"
+    }
+  ],
+
+  extrasensory: [
+    {
+      status: "flinched",
+      trigger: "natural-attack-19+"
+    }
+  ],
+
+  "fire-fang": [
+    {
+      status: "burned",
+      trigger: "natural-attack-19+"
+    },
+    {
+      status: "flinched",
+      trigger: "natural-attack-19+"
+    }
+  ],
+
+  "fire-punch": [
+    {
+      status: "burned",
+      trigger: "natural-attack-19+"
+    }
+  ],
+
+  "force-palm": [
+    {
+      status: "paralysis",
+      trigger: "natural-attack-16+"
+    }
+  ],
+
+  "freeze-dry": [
+    {
+      status: "frozen",
+      trigger: "natural-attack-19+"
+    }
+  ],
+
+  "freeze-shock": [
+    {
+      status: "paralysis",
+      trigger: "natural-attack-15+"
+    }
+  ],
+
+  "gunk-shot": [
+    {
+      status: "poisoned",
+      trigger: "natural-attack-16+"
+    }
+  ],
+
+  "hyper-fang": [
+    {
+      status: "flinched",
+      trigger: "natural-attack-18+"
+    }
+  ],
+
+  "ice-fang": [
+    {
+      status: "frozen",
+      trigger: "natural-attack-19+"
+    },
+    {
+      status: "flinched",
+      trigger: "natural-attack-19+"
+    }
+  ],
+
+  "ice-punch": [
+    {
+      status: "frozen",
+      trigger: "natural-attack-19+"
+    }
+  ],
+
+  "icicle-crash": [
+    {
+      status: "flinched",
+      trigger: "natural-attack-15+"
+    }
+  ],
+
+  "iron-head": [
+    {
+      status: "flinched",
+      trigger: "natural-attack-16+"
+    }
+  ],
+
+  lick: [
+    {
+      status: "paralysis",
+      trigger: "natural-attack-18+"
+    }
+  ],
+
+  "low-kick": [
+    {
+      status: "flinched",
+      trigger: "natural-attack-19+"
+    }
+  ],
+
+  "needle-arm": [
+    {
+      status: "flinched",
+      trigger: "natural-attack-15+"
+    }
+  ],
+
+  "poison-jab": [
+    {
+      status: "poisoned",
+      trigger: "natural-attack-16+"
+    }
+  ],
+
+  "poison-sting": [
+    {
+      status: "poisoned",
+      trigger: "natural-attack-18+"
+    }
+  ],
+
+  "poison-tail": [
+    {
+      status: "poisoned",
+      trigger: "natural-attack-19+"
+    }
+  ],
+
+  "powder-snow": [
+    {
+      status: "frozen",
+      trigger: "natural-attack-18+"
+    }
+  ],
+
+  psychic: [
+    {
+      status: "confused",
+      trigger: "natural-attack-18+"
+    }
+  ],
+
+  "rock-climb": [
+    {
+      status: "confused",
+      trigger: "natural-attack-17+"
+    }
+  ],
+
+  "rolling-kick": [
+    {
+      status: "flinched",
+      trigger: "natural-attack-18+"
+    }
+  ],
+
+  "sacred-fire": [
+    {
+      status: "burned",
+      trigger: "natural-attack-10+"
+    }
+  ],
+
+  spark: [
+    {
+      status: "paralysis",
+      trigger: "natural-attack-18+"
+    }
+  ],
+
+  steamroller: [
+    {
+      status: "flinched",
+      trigger: "natural-attack-15+"
+    }
+  ],
+
+  stomp: [
+    {
+      status: "flinched",
+      trigger: "natural-attack-18+"
+    }
+  ],
+
+  "thunder-fang": [
+    {
+      status: "paralysis",
+      trigger: "natural-attack-19+"
+    },
+    {
+      status: "flinched",
+      trigger: "natural-attack-19+"
+    }
+  ],
+
+  "thunder-punch": [
+    {
+      status: "paralysis",
+      trigger: "natural-attack-19+"
+    }
+  ],
+
+  thunderbolt: [
+    {
+      status: "paralysis",
+      trigger: "natural-attack-19+"
+    }
+  ],
+
+  twineedle: [
+    {
+      status: "poisoned",
+      trigger: "natural-attack-19+"
+    }
+  ],
+
+  twister: [
+    {
+      status: "flinched",
+      trigger: "natural-attack-16+"
+    }
+  ],
+
+  "water-pulse": [
+    {
+      status: "confused",
+      trigger: "natural-attack-17+"
+    }
+  ],
+
+  "zap-cannon": [
+    {
+      status: "paralysis",
+      trigger: "natural-attack-15+"
+    }
+  ],
+
+  "zen-headbutt": [
+    {
+      status: "flinched",
+      trigger: "natural-attack-17+"
+    }
+  ],
+
+  "zing-zap": [
+    {
+      status: "flinched",
+      trigger: "natural-attack-18+"
+    }
+  ],
+
+  chatter: [
+    {
+      status: "confused",
+      trigger: "hit"
+    }
+  ],
+
+  "confuse-ray": [
+    {
+      status: "confused",
+      trigger: "hit"
+    }
+  ],
+
+  "dynamic-punch": [
+    {
+      status: "confused",
+      trigger: "hit"
+    }
+  ],
+
+  "fake-out": [
+    {
+      status: "flinched",
+      trigger: "hit"
+    }
+  ],
+
+  "alluring-voice": [
+    {
+      status: "confused",
+      trigger: "hit-and-failed-save"
+    }
+  ],
+
+  "axe-kick": [
+    {
+      status: "confused",
+      trigger: "hit-and-failed-save"
+    }
+  ],
+
+  "infernal-parade": [
+    {
+      status: "burned",
+      trigger: "hit-and-failed-save"
+    }
+  ],
+
+  "malignant-chain": [
+    {
+      status: "badly-poisoned",
+      trigger: "hit-and-failed-save"
+    }
+  ],
+
+  "mountain-gale": [
+    {
+      status: "flinched",
+      trigger: "hit-and-failed-save"
+    }
+  ],
+
+  nuzzle: [
+    {
+      status: "paralysis",
+      trigger: "hit-and-failed-save"
+    }
+  ],
+
+  "poison-fang": [
+    {
+      status: "badly-poisoned",
+      trigger: "hit-and-failed-save"
+    }
+  ],
+
+  "pyro-ball": [
+    {
+      status: "burned",
+      trigger: "hit-and-failed-save"
+    }
+  ],
+
+  "scorching-sands": [
+    {
+      status: "burned",
+      trigger: "hit-and-failed-save"
+    }
+  ],
+
+  "shell-side-arm": [
+    {
+      status: "poisoned",
+      trigger: "hit-and-failed-save"
+    }
+  ],
+
+  sludge: [
+    {
+      status: "poisoned",
+      trigger: "hit-and-failed-save"
+    }
+  ],
+
+  "barb-barrage": [
+    {
+      status: "poisoned",
+      trigger: "failed-save"
+    }
+  ],
+
+  "burn-up": [
+    {
+      status: "burned",
+      trigger: "failed-save"
+    }
+  ],
+
+  "burning-jealousy": [
+    {
+      status: "burned",
+      trigger: "failed-save"
+    }
+  ],
+
+  confide: [
+    {
+      status: "confused",
+      trigger: "failed-save"
+    }
+  ],
+
+  "dark-void": [
+    {
+      status: "asleep",
+      trigger: "failed-save"
+    }
+  ],
+
+  "eerie-impulse": [
+    {
+      status: "flinched",
+      trigger: "failed-save"
+    }
+  ],
+
+  "fiery-wrath": [
+    {
+      status: "flinched",
+      trigger: "failed-save"
+    }
+  ],
+
+  flatter: [
+    {
+      status: "confused",
+      trigger: "failed-save"
+    }
+  ],
+
+  "grass-whistle": [
+    {
+      status: "asleep",
+      trigger: "failed-save"
+    }
+  ],
+
+  hypnosis: [
+    {
+      status: "asleep",
+      trigger: "failed-save"
+    }
+  ],
+
+  "lovely-kiss": [
+    {
+      status: "asleep",
+      trigger: "failed-save"
+    }
+  ],
+
+  "mortal-spin": [
+    {
+      status: "poisoned",
+      trigger: "failed-save"
+    }
+  ],
+
+  psywave: [
+    {
+      status: "confused",
+      trigger: "failed-save"
+    }
+  ],
+
+  "sandsear-storm": [
+    {
+      status: "burned",
+      trigger: "failed-save"
+    }
+  ],
+
+  spore: [
+    {
+      status: "asleep",
+      trigger: "failed-save"
+    }
+  ],
+
+  "strange-steam": [
+    {
+      status: "confused",
+      trigger: "failed-save"
+    }
+  ],
+
+  supersonic: [
+    {
+      status: "confused",
+      trigger: "failed-save"
+    }
+  ],
+
+  swagger: [
+    {
+      status: "confused",
+      trigger: "failed-save"
+    }
+  ],
+
+  "sweet-kiss": [
+    {
+      status: "confused",
+      trigger: "failed-save"
+    }
+  ],
+
+  "teeter-dance": [
+    {
+      status: "confused",
+      trigger: "failed-save"
+    }
+  ],
+
+  tickle: [
+    {
+      status: "flinched",
+      trigger: "failed-save"
+    }
+  ],
+
+  "wildbolt-storm": [
+    {
+      status: "paralysis",
+      trigger: "failed-save"
+    }
+  ],
+
+  blizzard: [
+    {
+      status: "frozen",
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  "blue-flare": [
+    {
+      status: "burned",
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  "bolt-strike": [
+    {
+      status: "paralysis",
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  discharge: [
+    {
+      status: "paralysis",
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  "dragon-breath": [
+    {
+      status: "paralysis",
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  "fire-blast": [
+    {
+      status: "burned",
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  flamethrower: [
+    {
+      status: "burned",
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  "heat-wave": [
+    {
+      status: "burned",
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  hurricane: [
+    {
+      status: "confused",
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  "ice-beam": [
+    {
+      status: "frozen",
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  "ice-burn": [
+    {
+      status: "burned",
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  psybeam: [
+    {
+      status: "confused",
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  "relic-song": [
+    {
+      status: "asleep",
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  "searing-shot": [
+    {
+      status: "burned",
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  "sludge-wave": [
+    {
+      status: "poisoned",
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  "steam-eruption": [
+    {
+      status: "burned",
+      trigger: "failed-save-by-5"
+    }
+  ],
+
+  thunder: [
+    {
+      status: "paralysis",
+      trigger: "failed-save-by-5"
+    }
+  ],
 };
 
 
@@ -98,10 +898,16 @@ const MOVE_STATUS_EFFECTS = {
 
 const STATUS_LABELS = {
 
-  poisoned: {
+    poisoned: {
     es: "Envenenado",
     en: "Poisoned"
   },
+
+  "badly-poisoned": {
+    es: "Gravemente envenenado",
+    en: "Badly Poisoned"
+  },
+
 
   paralysis: {
     es: "Parálisis",
@@ -209,7 +1015,8 @@ const CUSTOM_STATUSES = {
 
 const MANAGEABLE_STATUS_IDS =
   Object.freeze([
-    "poisoned",
+        "poisoned",
+    "badly-poisoned",
     "paralysis",
     "asleep",
     "burned",
@@ -222,8 +1029,12 @@ const MANAGEABLE_STATUS_IDS =
 const STATUS_IMAGES =
   Object.freeze({
 
-    poisoned:
+        poisoned:
       `${STATUS_ASSET_BASE}/poisoned.png`,
+
+    "badly-poisoned":
+      `${STATUS_ASSET_BASE}/poisoned.png`,
+
 
     paralysis:
       CUSTOM_STATUSES
@@ -399,9 +1210,15 @@ function halfMovementChanges() {
  * EFFECT: POISONED
  * ============================================================ */
 
+/*
+ * Badly Poisoned es Poisoned con el doble de daño:
+ * mismo status "poisoned" (penalizaciones, inmunidades
+ * y todo lo que reacciona a Poisoned) y badlyPoisoned: true.
+ */
 function poisonedEffect(
   move,
-  language
+  language,
+  badly = false
 ) {
 
   return {
@@ -409,13 +1226,18 @@ function poisonedEffect(
     _id:
       effectId(
         move.id,
-        "poisoned"
+        badly
+          ? "badlypoisoned"
+          : "poisoned"
       ),
 
 
     name:
-      STATUS_LABELS
-        .poisoned[language],
+      STATUS_LABELS[
+        badly
+          ? "badly-poisoned"
+          : "poisoned"
+      ][language],
 
 
     img:
@@ -451,8 +1273,11 @@ function poisonedEffect(
         kind:
           "pokemon-status",
 
-        status:
+                status:
           "poisoned",
+
+        badlyPoisoned:
+          badly,
 
         nonVolatile:
           true,
@@ -462,11 +1287,11 @@ function poisonedEffect(
          * de final de turno.
          */
 
-        endTurnDamage: {
-
+                endTurnDamage: {
           formula:
-            "@prof",
-
+            badly
+              ? "2 * @prof"
+              : "@prof",
           type:
             "poison"
         }
@@ -1133,7 +1958,7 @@ export function buildConfusedStatusEffect(
  * ============================================================ */
 
 
-function createStatusEffect(
+export function createStatusEffect(
   status,
   move,
   language,
@@ -1144,11 +1969,17 @@ function createStatusEffect(
     status
   ) {
 
-    case "poisoned":
-
+        case "poisoned":
       return poisonedEffect(
         move,
         language
+      );
+
+    case "badly-poisoned":
+      return poisonedEffect(
+        move,
+        language,
+        true
       );
 
 
@@ -1307,10 +2138,10 @@ export function buildMoveStatusEffects(
     of definitions
   ) {
 
-    const effect =
+        const effect =
       createStatusEffect(
 
-        definition.status,
+        definition.table?.[0] ?? definition.status,
 
         move,
 
@@ -1332,10 +2163,26 @@ export function buildMoveStatusEffects(
       definition.trigger;
 
 
-    effect.flags[
+        effect.flags[
       MODULE_ID
     ].sourceMove =
       move.id;
+
+        // Psycho Shift: the status applied is its user's own (the template's status is a placeholder).
+    if (definition.transferStatus) {
+      effect.flags[MODULE_ID].transferStatus = true;
+      effect.name = `${move.id} (→)`;
+    }
+
+    // Toxic Spikes: a fail by 5 gives the other (badly poisoned) template instead.
+    if (definition.exceptBy5) {effect.flags[MODULE_ID].exceptBy5 = true;}
+
+    // A d6 table: the status is rolled when the template is applied.
+    if (definition.table) {
+      effect.flags[MODULE_ID].randomStatuses = definition.table;
+      effect.name = `${move.id} (d6)`;
+    }
+
 
 
     effects.push(

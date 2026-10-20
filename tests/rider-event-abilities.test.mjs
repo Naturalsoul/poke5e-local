@@ -170,3 +170,28 @@ test("combo Moves are the d4-chain ones Skill Link guarantees", () => {
   assert.ok(rider.COMBO_MOVES.has("fury-swipes") && rider.COMBO_MOVES.has("water-shuriken"));
   assert.equal(rider.COMBO_MOVES.has("tackle"), false);
 });
+
+test("volatile statuses are cleared on switching out; the combat end only clears the ones it names", async () => {
+  const effect = (id, status, volatile) => ({ id, getFlag: (_module, key) => ({ kind: "pokemon-status", status, volatile })[key] });
+  const actor = pokemon("static", { effects: [effect("c", "confused", true), effect("f", "flinched", true), effect("b", "burned", false)] });
+  const deleted = [];
+  actor.deleteEmbeddedDocuments = async (_type, ids) => deleted.push(ids);
+  await events.clearVolatileStatuses(actor, ["flinched"]);
+  await events.clearVolatileStatuses(actor);
+  assert.deepEqual(deleted, [["f"], ["c", "f"]]);
+});
+
+test("Moves stronger against a status: doubled dice or MOVE again, only when the status is there", () => {
+  const attacker = pokemon("static", { abilities: { str: { mod: 4 } } });
+  const plain = pokemon("x");
+  const paralyzed = pokemon("x", { statuses: ["paralysis"] });
+  assert.equal(rider.damageRiders(attacker, move("smelling-salts", "normal"), [paralyzed]).doubleDice, true);
+  assert.equal(rider.damageRiders(attacker, move("smelling-salts", "normal"), [plain]).doubleDice, false);
+  assert.equal(rider.damageRiders(attacker, move("venoshock", "poison"), [pokemon("x", { statuses: ["poisoned"] })]).doubleDice, true);
+  assert.equal(rider.damageRiders(attacker, move("wake-up-slap", "fighting"), [pokemon("x", { statuses: ["asleep"] })]).flat, 4);
+  assert.equal(rider.damageRiders(attacker, move("infernal-parade", "ghost"), [pokemon("x", { statuses: ["confused"] })]).flat, 4, "any status");
+  assert.equal(rider.damageRiders(attacker, move("barb-barrage", "poison"), [pokemon("x", { statuses: ["poisoned"] }), plain]).flat, 0,
+    "every target of the area roll");
+  assert.equal(rider.damageRiders(pokemon("x", { statuses: ["burned"] }), move("facade", "normal"), [plain]).doubleDice, true, "Facade: its own status");
+  assert.equal(rider.damageRiders(attacker, move("facade", "normal"), [paralyzed]).doubleDice, false);
+});

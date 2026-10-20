@@ -1,4 +1,5 @@
-import { activePokemonAbilityId, hasPokemonAbility, hasPokemonStatus, pokemonTypes } from "./status-runtime.mjs";
+import { activePokemonAbilityId, findStatusEffect, hasPokemonAbility, hasPokemonStatus, pokemonTypes } from "./status-runtime.mjs";
+import { fieldMoveBlocksStatus } from "./status-field-moves.mjs";
 import { auraBlocksStatus } from "./aura-ability-engine.mjs";
 import { isPokemonActor } from "./trainer-party-service.mjs";
 import { originatingMoveItem } from "./damage-engine.mjs";
@@ -29,6 +30,11 @@ import { abilityWeather, activeTerrain, environment, hasWeather, isGrounded, set
  * - Seed Sower and Sand Spit set the terrain or weather when hit;
  * - turns, switches and rests: Hospitality, Bad Dreams, Natural Cure, Regenerator, Moody;
  * - Receiver and Power of Alchemy copy the Ability of the fainted ally they replace, until switched out;
+  * - volatile statuses (Confused, Flinched) end when switched out; Flinched also when the combat ends;
+  * - Wake-Up Slap wakes up the sleeper it hits (its doubled MOVE is in rider-ability-engine); Sparkling Aria
+ *   cures the burn of whoever it damages;
+
+
  * - Sheer Force: its damaging Moves give no status or stat change to others (the damage is in rider-ability-engine).
  * ============================================================ */
 
@@ -216,8 +222,10 @@ async function onApplyDamage(actor, _amount, options) {
   const before = options?.[MODULE_ID]?.hpBefore;
   const after = Number(actor.system.attributes.hp.value);
   if (before === undefined || after >= before) {return;}
-  const move = originatingMoveItem(options);
+    const move = originatingMoveItem(options);
   if (move) {await onHitByMove(actor, move, options);}
+    const cured = { "wake-up-slap": "asleep", "sparkling-aria": "burned" }[move?.getFlag(MODULE_ID, "sourceId")];
+  if (cured) {await findStatusEffect(actor, cured)?.delete();}
   if (before > 0 && after <= 0) {await onFaint(actor, move?.actor ?? null, before - after, options);}
   else {
     await onHalfHp(actor, before, after);
@@ -298,6 +306,8 @@ function adjustStatChange(effect, actor) {
 export function battlefieldBlocksStatus(actor, status) {
   const veil = auraBlocksStatus(actor, status, pokemonTypes(actor));
   if (veil) {return veil;}
+  const field = fieldMoveBlocksStatus(actor, status);
+  if (field) {return field;}
   if (hasPokemonAbility(actor, "leaf-guard") && abilityWeather("sun")) {return "leaf-guard";}
   if (hasPokemonAbility(actor, "hydration") && (abilityWeather("rain") || environment() === "water")) {return "hydration";}
   if (!isGrounded(actor)) {return null;}
@@ -490,10 +500,18 @@ async function leaveBattlefield(actor) {
   }
 }
 
+// Confused has its own combat-end cleanup in confusion-engine, so the combat end only passes ["flinched"].
+export async function clearVolatileStatuses(actor, statuses = null) {
+  const ids = Array.from(actor.effects ?? []).filter(effect => effect.getFlag(MODULE_ID, "kind") === "pokemon-status" &&
+    effect.getFlag(MODULE_ID, "volatile") && (!statuses || statuses.includes(effect.getFlag(MODULE_ID, "status")))).map(effect => effect.id);
+  if (ids.length) {await actor.deleteEmbeddedDocuments("ActiveEffect", ids);}
+}
+
 async function onSwitched({ outgoing, incoming }) {
   if (incoming) {await copyFaintedAbility(incoming, outgoing);}
   if (!isPokemonActor(outgoing) || !outgoing.isOwner) {return;}
   await leaveBattlefield(outgoing);
+  await clearVolatileStatuses(outgoing);
   if (hasPokemonAbility(outgoing, "natural-cure")) {
     const ids = outgoing.effects.filter(effect => effect.getFlag(MODULE_ID, "kind") === "pokemon-status").map(effect => effect.id);
     if (ids.length) {
@@ -538,7 +556,9 @@ export function registerEventAbilityEngine() {
   Hooks.on("updateCombat", combat => combatActors(combat).forEach(queueSync));
   Hooks.on("deleteCombat", combat => {
     combatActors(combat).forEach(queueSync);
-    if (gmAuthority()) {logged(Promise.all(combatActors(combat).map(leaveBattlefield)));}
+    if (gmAuthority()) {
+      logged(Promise.all(combatActors(combat).map(actor => leaveBattlefield(actor).then(() => clearVolatileStatuses(actor, ["flinched"])))));
+    }
   });
   Hooks.on("createItem", item => queueSync(item.parent));
   Hooks.on("deleteItem", item => queueSync(item.parent));

@@ -1,4 +1,4 @@
-import { hasPokemonAbility, hasPokemonStatus } from "./status-runtime.mjs";
+import { hasPokemonAbility, hasPokemonStatus, pokemonStatus } from "./status-runtime.mjs";
 import { originatingMoveItem } from "./damage-engine.mjs";
 import { doubleDamageDice } from "./active-ability-service.mjs";
 import { SOUND_MOVES } from "./passive-ability-engine.mjs";
@@ -23,6 +23,8 @@ import { isAttackHit, subscribeAttackOutcome } from "./attack-outcome-engine.mjs
  * - Stakeout: double damage to the Pokémon an opponent switched in, until the end of its next turn's round;
  * - Sheer Force: MOVE again on a damaging Move with a status or stat change for others (event-ability-engine drops it);
  * - Skill Link: a chat notice that a combo Move's first extra hit needs no d4 (the chain itself is rolled by hand);
+  * - Moves stronger against a status: Facade (its own), Smelling Salts, Venoshock, Wake-Up Slap, Barb Barrage,
+ *   Infernal Parade (the target's);
  * - Gorilla Tactics: the first Move it rolls damage with after entering gets MOVE twice, the others none.
  * ============================================================ */
 
@@ -114,6 +116,28 @@ function moveMultiplierRiders(actor, move) {
   return sheer + (chosen === moveId(move) ? 1 : -1);
 }
 
+// Moves stronger against a status: dice doubles the damage dice, move adds MOVE again.
+// statuses: null means any status. "user" checks the attacker, otherwise every target must have one.
+const STATUS_DAMAGE = {
+  facade: { user: true, statuses: ["poisoned", "paralysis", "burned"], dice: true },
+  "smelling-salts": { statuses: ["paralysis"], dice: true },
+  venoshock: { statuses: ["poisoned"], dice: true },
+  "wake-up-slap": { statuses: ["asleep"], move: true },
+  "barb-barrage": { statuses: ["poisoned"], move: true },
+  "infernal-parade": { statuses: null, move: true }
+};
+
+const hasAnyStatus = (actor, statuses) => (statuses
+  ? statuses.some(status => hasPokemonStatus(actor, status))
+  : Array.from(actor?.effects ?? []).some(effect => !effect.disabled && pokemonStatus(effect)));
+
+export function statusDamage(actor, move, targets) {
+  const rule = STATUS_DAMAGE[moveId(move)];
+  const affected = rule && (rule.user ? hasAnyStatus(actor, rule.statuses)
+    : targets.length > 0 && targets.every(target => hasAnyStatus(target, rule.statuses)));
+  return { dice: Boolean(affected && rule.dice), move: affected && rule.move ? 1 : 0 };
+}
+
 const mercilessApplies = (actor, targets) => hasPokemonAbility(actor, "merciless") && targets.length > 0 &&
   targets.every(target => hasPokemonStatus(target, "poisoned"));
 
@@ -124,11 +148,12 @@ export function damageRiders(actor, move, targets, { melee = false } = {}) {
   const electric = type === "electric";
   const merciless = mercilessApplies(actor, targets);
   const sharp = hasPokemonAbility(actor, "sharpness") && SHARP_MOVE.test(moveId(move));
-  const moveAgain = (sharp ? 1 : 0) + (electric && charge.electromorphosis ? 1 : 0) + moveMultiplierRiders(actor, move);
+    const status = statusDamage(actor, move, targets);
+  const moveAgain = (sharp ? 1 : 0) + (electric && charge.electromorphosis ? 1 : 0) + moveMultiplierRiders(actor, move) + status.move;
   const aura = auraDamage(actor, type);
   return {
     type,
-    doubleDice: merciless || (electric && Boolean(charge["wind-power"])) || Boolean(weatherBallType(move)) || aura.doubleDice,
+        doubleDice: [merciless, status.dice, electric && charge["wind-power"], weatherBallType(move), aura.doubleDice].some(Boolean),
     flat: moveAgain * moveModifier(actor, move) + stabRiders(actor, move, melee) + weatherFlat(actor, move, type) + aura.flat,
     dice: aura.dice,
     critical: hasPokemonAbility(actor, "sniper") ? 3 : null,

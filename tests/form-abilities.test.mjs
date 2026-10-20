@@ -73,3 +73,13 @@ test("Protean, Libero and Color Change take the type they were given; Stakeout m
   assert.equal(staked(gumshoos, replacement), false, "it lasts until the round after the switch");
   game.combat = null;
 });
+
+test("Shields Down blocks every non-volatile status in Meteor Form, Paralysis included", () => {
+  globalThis.ui = { notifications: { info() {} } };
+  const minior = pokemon("shields-down");
+  const status = id => ({ parent: minior, getFlag: (_module, key) => ({ kind: "pokemon-status", status: id })[key] });
+  minior.documentName = "Actor";
+  assert.equal(forms.onPreCreateEffect(status("paralysis")), false);
+  assert.equal(forms.onPreCreateEffect(status("asleep")), false);
+  assert.equal(forms.onPreCreateEffect(status("confused")), true, "volatile");
+});

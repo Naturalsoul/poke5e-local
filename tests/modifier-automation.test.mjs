@@ -3,7 +3,8 @@ import test from "node:test";
 import { createFlagDocument, createHooks, installFoundryUtils } from "./helpers/foundry-mocks.mjs";
 import { buildMoveModifierEffects } from "../scripts/modifier-effects.mjs";
 import { registerMoveModifierAutomation, synchronizeAutomatedMoveModifiers, clearEncounterMoveModifiers,
-  onPreCreateModifierEffect } from "../scripts/modifier-automation.mjs";
+  onPreCreateModifierEffect, synchronizeMoveStatusTemplates } from "../scripts/modifier-automation.mjs";
+import { buildMoveStatusEffects } from "../scripts/status-effects.mjs";
 import { getPokemonMoveEffects, managePokemonMoveEffect, pokemonMoveEffectsMarkup } from "../scripts/pokemon-move-effects.mjs";
 
 installFoundryUtils();
@@ -751,4 +752,96 @@ test("Fake Tears and Metal Sound give +5 to everyone's attacks against the targe
   }
   // Decorate keeps dnd5e's apply button; the GM picks the creature.
   assert.equal(buildMoveModifierEffects({ id: "decorate" }).activityEffects.length, 1);
+});
+
+function statusMove(id) {
+  const item = move(id);
+  item.effects.push(...buildMoveStatusEffects({ id }).effects.map(source => Object.assign(effect(source), { parent: item })));
+  return item;
+}
+
+const statusOf = target => target.effects.map(applied => [applied.getFlag(MODULE_ID, "status"), applied.getFlag(MODULE_ID, "badlyPoisoned") === true]);
+
+test("a failed save applies the Move's status after it is displayed; a success does not", async () => {
+  const item = statusMove("hypnosis");
+  const target = actor();
+  await show(message(item, target, { success: true }));
+  assert.deepEqual(statusOf(target), []);
+  await show(message(item, target));
+  assert.deepEqual(statusOf(target), [["asleep", false]]);
+});
+
+test("failed-save-by-5 statuses need a save missed by 5 or more", async () => {
+  const item = statusMove("thunder");
+  const target = actor();
+  const close = message(item, target, { live: false });
+  close.rolls[0].total = 10;
+  Hooks.callAll("createChatMessage", close);
+  await show(close);
+  assert.deepEqual(statusOf(target), [], "missed by 2");
+  await show(message(item, target));
+  assert.deepEqual(statusOf(target), [["paralysis", false]]);
+});
+
+test("hit-and-failed-save statuses need both from the same usage (Poison Fang badly poisons)", async () => {
+  const item = statusMove("poison-fang");
+  const target = actor();
+  await show(sprayHit(item, target, "Usage.fang"));
+  assert.deepEqual(statusOf(target), [], "a hit alone");
+  await show(spraySave(item, target, "Usage.fang"));
+  assert.deepEqual(statusOf(target), [["poisoned", true]]);
+});
+
+test("Moves created before their status was automated get its templates once", async () => {
+  const owner = actor();
+  const bite = move("bite", owner);
+  await synchronizeMoveStatusTemplates(owner);
+  await synchronizeMoveStatusTemplates(owner);
+  assert.deepEqual(bite.effects.map(applied => [applied.getFlag(MODULE_ID, "status"), applied.getFlag(MODULE_ID, "trigger")]),
+    [["flinched", "natural-attack-19+"]]);
+});
+
+test("a d6 status table is one template that rolls in chat and applies that face's status", async () => {
+  const rolled = [];
+  globalThis.ChatMessage = { getSpeaker: () => ({}) };
+  globalThis.Roll = class {
+    async evaluate() { this.total = 5; return this; }
+    async toMessage(data) {
+      rolled.push(data.flavor);
+      const shown = createFlagDocument({ id: `Roll.${++sequence}`, flags: data.flags });
+      Hooks.callAll("dnd5e.renderChatMessage", shown, { isConnected: true });
+      return shown;
+    }
+  };
+  const item = statusMove("tri-attack");
+  assert.equal(item.effects.filter(applied => applied.getFlag(MODULE_ID, "kind") === "pokemon-status").length, 1);
+  const target = actor();
+  await show(message(item, target));
+  assert.equal(rolled.length, 1);
+  assert.deepEqual(statusOf(target), [["paralysis", false]], "a 5 is paralysis");
+  assert.equal(target.effects[0].getFlag(MODULE_ID, "randomStatuses"), undefined);
+});
+
+test("Toxic Spikes poisons on a failed save and badly poisons on a fail by 5", async () => {
+  const item = statusMove("toxic-spikes");
+  const close = actor();
+  const result = message(item, close, { live: false });
+  result.rolls[0].total = 10;
+  Hooks.callAll("createChatMessage", result);
+  await show(result);
+  assert.deepEqual(statusOf(close), [["poisoned", false]]);
+  const far = actor();
+  await show(message(item, far));
+  assert.deepEqual(statusOf(far), [["poisoned", true]]);
+});
+
+test("Psycho Shift moves its user's status to a target that fails its save", async () => {
+  const item = statusMove("psycho-shift");
+  const burn = effect({ name: "Burned", flags: { [MODULE_ID]: { kind: "pokemon-status", status: "burned" } } });
+  burn.delete = async () => { item.actor.effects = item.actor.effects.filter(entry => entry !== burn); };
+  item.actor.effects.push(burn);
+  const target = actor();
+  await show(message(item, target));
+  assert.deepEqual(statusOf(target), [["burned", false]]);
+  assert.equal(item.actor.effects.length, 0);
 });

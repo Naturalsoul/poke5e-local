@@ -32,6 +32,10 @@ import { processBerryAbilitiesEndTurn } from "./berry-ability-engine.mjs";
 import { effectSourceActor, processEventAbilitiesEndTurn, processEventAbilitiesStartTurn } from "./event-ability-engine.mjs";
 import { processBattlefieldEndTurn, processBattlefieldStartTurn } from "./battlefield-service.mjs";
 import { processFormAbilitiesStartTurn } from "./form-ability-engine.mjs";
+import { processSelfStatusMovesEndTurn } from "./self-status-moves.mjs";
+import { processLingeringAreasStartTurn } from "./lingering-area-moves.mjs";
+import { processStatusFieldMovesStartTurn } from "./status-field-moves.mjs";
+import { processProtectStartTurn } from "./protect-moves.mjs";
 
 import {
   isPokemonActor
@@ -878,9 +882,18 @@ async function processPoisoned(
     }
 
 
+    // Badly Poisoned: twice the proficiency bonus.
   const pb =
     pokemonProficiency(
       actor
+    ) *
+    (
+      effect.getFlag(
+        MODULE_ID,
+        "badlyPoisoned"
+      )
+        ? 2
+        : 1
     );
 
 
@@ -1037,13 +1050,21 @@ async function processFrozen(
     {};
 
 
+  // The current proficiency of whoever froze it; the stored DC is from when its Move was built.
+  const source =
+    effectSourceActor(
+      effect
+    );
+
   const dc =
     Math.max(
       1,
-      Number(
-        recovery.dc ??
-        12
-      )
+      isPokemonActor(source)
+        ? 10 + pokemonProficiency(source)
+        : Number(
+          recovery.dc ??
+          12
+        )
     );
 
 
@@ -1181,8 +1202,20 @@ async function processAsleep(
     );
 
 
+  // It lasts three rounds: the third end of turn wakes it up anyway.
+  const turns =
+    Number(
+      effect.getFlag(
+        MODULE_ID,
+        "asleepTurns"
+      ) ??
+      0
+    ) + 1;
+
+
   if (
-    roll.total >= 11
+    roll.total >= 11 ||
+    turns >= 3
   ) {
 
     await effect.delete();
@@ -1200,6 +1233,13 @@ async function processAsleep(
 
     return;
   }
+
+
+  await effect.setFlag(
+    MODULE_ID,
+    "asleepTurns",
+    turns
+  );
 
 
   await chat(
@@ -1562,7 +1602,8 @@ async function processEndTurn(
 
   await processHeldItemEndTurn(actor);
   await processBerryAbilitiesEndTurn(actor);
-  await processEventAbilitiesEndTurn(actor);
+    await processEventAbilitiesEndTurn(actor);
+  await processSelfStatusMovesEndTurn(actor);
   await processBattlefieldEndTurn(actor);
 
 
@@ -1834,6 +1875,9 @@ async function processStartTurn(
   );
 
   // Sandstorm and Hail.
+    await processLingeringAreasStartTurn(actor);
+  await processStatusFieldMovesStartTurn(actor);
+  await processProtectStartTurn(actor);
   await processBattlefieldStartTurn(
     actor
   );
@@ -2327,7 +2371,13 @@ function onPreCreateActiveEffect(
     )
   ) {
 
-    return;
+    // A volatile status it already has (Confused twice) changes nothing.
+    return findStatusEffect(
+      actor,
+      status
+    )
+      ? false
+      : undefined;
   }
 
 
