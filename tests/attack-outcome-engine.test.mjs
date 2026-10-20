@@ -7,7 +7,7 @@ import {
   isAttackMiss,
   isMeleeAttack,
   isNaturalAttackAtLeast
-} from "../attack-outcome-engine.mjs";
+} from "../scripts/attack-outcome-engine.mjs";
 
 function item() {
   return {

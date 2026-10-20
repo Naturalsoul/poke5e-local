@@ -147,6 +147,9 @@ function createSourceActor({
 
   const flags = {
     [MODULE_ID]: {
+      kind:
+        "pokemon",
+
       sourceId:
         "pikachu",
 
@@ -648,7 +651,7 @@ function installGlobals({
 async function importActivityFixtures() {
 
   return import(
-    `../foundry-regression-activity-fixtures.mjs?test=${Date.now()}-${Math.random()}`
+    `../scripts/foundry-regression-activity-fixtures.mjs?test=${Date.now()}-${Math.random()}`
   );
 }
 

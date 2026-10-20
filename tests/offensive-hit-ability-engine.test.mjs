@@ -50,10 +50,10 @@ globalThis.Roll = TriggerRoll;
 
 const {
   registerAttackOutcomeEngine
-} = await import("../attack-outcome-engine.mjs");
+} = await import("../scripts/attack-outcome-engine.mjs");
 const {
   registerPokemonOffensiveHitAbilityEngine
-} = await import("../offensive-hit-ability-engine.mjs");
+} = await import("../scripts/offensive-hit-ability-engine.mjs");
 
 registerAttackOutcomeEngine();
 registerPokemonOffensiveHitAbilityEngine();

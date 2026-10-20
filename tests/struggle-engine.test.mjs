@@ -9,7 +9,7 @@ import {
 
 import {
   STRUGGLE_ACTIVITY_IDS
-} from "../struggle-rules.mjs";
+} from "../scripts/struggle-rules.mjs";
 
 installFoundryUtils();
 const hooks = createHooks();
@@ -61,7 +61,7 @@ globalThis.fromUuidSync = () => null;
 const {
   registerPokemonStruggleEngine,
   resolveConfusionStruggle
-} = await import("../struggle-engine.mjs");
+} = await import("../scripts/struggle-engine.mjs");
 
 registerPokemonStruggleEngine();
 
@@ -130,6 +130,7 @@ function pokemonActor(uuid, name = uuid) {
     name,
     flags: {
       "poke5e-local": {
+        kind: "pokemon",
         sourceId: name.toLowerCase()
       }
     },

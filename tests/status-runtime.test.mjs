@@ -7,7 +7,7 @@ import {
   hasPokemonStatus,
   hasStatusImmunityAbility,
   pokemonTypes
-} from "../status-runtime.mjs";
+} from "../scripts/status-runtime.mjs";
 import {
   createAbilityItem,
   createFlagDocument

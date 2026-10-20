@@ -28,7 +28,7 @@ globalThis.game = {
 
 const {
   registerPokemonFlinchEngine
-} = await import("../flinch-engine.mjs");
+} = await import("../scripts/flinch-engine.mjs");
 
 registerPokemonFlinchEngine();
 

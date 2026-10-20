@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { hasActiveBerserk } from "../berserk-runtime.mjs";
-import { resolveStabAbilityBoost } from "../stab-ability-runtime.mjs";
+import { hasActiveBerserk } from "../scripts/berserk-runtime.mjs";
+import { resolveStabAbilityBoost } from "../scripts/stab-ability-runtime.mjs";
 import {
   createAbilityItem,
   createFlagDocument

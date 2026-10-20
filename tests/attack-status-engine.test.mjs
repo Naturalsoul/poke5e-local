@@ -11,10 +11,10 @@ globalThis.fromUuidSync = uuid => actors.get(uuid) ?? null;
 
 const {
   registerAttackOutcomeEngine
-} = await import("../attack-outcome-engine.mjs");
+} = await import("../scripts/attack-outcome-engine.mjs");
 const {
   registerPokemonAttackStatusEngine
-} = await import("../attack-status-engine.mjs");
+} = await import("../scripts/attack-status-engine.mjs");
 
 registerAttackOutcomeEngine();
 registerPokemonAttackStatusEngine();

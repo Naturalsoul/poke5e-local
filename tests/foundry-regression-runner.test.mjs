@@ -9,7 +9,7 @@ import {
 
 import {
   POKEMON_TYPE_IDS
-} from "../types.mjs";
+} from "../scripts/types.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -189,6 +189,7 @@ function createPokemonActor({
 } = {}) {
 
   const flags = {
+    kind: "pokemon",
     sourceId: "pikachu",
     level: 5,
     types: ["electric"]
@@ -216,7 +217,7 @@ function createPokemonActor({
 
 async function importRunner() {
   return import(
-    `../foundry-regression-runner.mjs?test=${Date.now()}-${Math.random()}`
+    `../scripts/foundry-regression-runner.mjs?test=${Date.now()}-${Math.random()}`
   );
 }
 

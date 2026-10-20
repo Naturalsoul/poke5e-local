@@ -300,8 +300,8 @@ function sourceActor(uuid, hpValue, hpMax) {
   return actor;
 }
 
-const saveOutcome = await import("../save-outcome-engine.mjs");
-const saveResult = await import("../save-result-engine.mjs");
+const saveOutcome = await import("../scripts/save-outcome-engine.mjs");
+const saveResult = await import("../scripts/save-result-engine.mjs");
 saveOutcome.registerSaveOutcomeEngine();
 saveResult.registerSaveResultEngine();
 
