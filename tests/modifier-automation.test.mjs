@@ -821,3 +821,16 @@ test("a d6 status table is one template that rolls in chat and applies that face
   assert.deepEqual(statusOf(target), [["paralysis", false]], "a 5 is paralysis");
   assert.equal(target.effects[0].getFlag(MODULE_ID, "randomStatuses"), undefined);
 });
+
+test("Toxic Spikes poisons on a failed save and badly poisons on a fail by 5", async () => {
+  const item = statusMove("toxic-spikes");
+  const close = actor();
+  const result = message(item, close, { live: false });
+  result.rolls[0].total = 10;
+  Hooks.callAll("createChatMessage", result);
+  await show(result);
+  assert.deepEqual(statusOf(close), [["poisoned", false]]);
+  const far = actor();
+  await show(message(item, far));
+  assert.deepEqual(statusOf(far), [["poisoned", true]]);
+});

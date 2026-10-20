@@ -41,13 +41,17 @@ function attackApplication(message, roll, item, template) {
   return trigger === "hit-and-failed-save" ? { item, actor, part: "hit", usageId, template } : { item, actor, usageId, template };
 }
 
+// failed-save-by-5 needs the 5; Toxic Spikes' plain poison (exceptBy5) gives way to its badly poisoned one.
+const failedByEnough = (template, by5) => (template.getFlag(MODULE_ID, "trigger") === "failed-save-by-5"
+  ? by5 : !(by5 && template.getFlag(MODULE_ID, "exceptBy5")));
+
 function saveApplication(roll, save, item, template) {
   const trigger = template?.getFlag(MODULE_ID, "trigger");
   if (!["failed-save", "failed-save-by-5", "hit-and-failed-save"].includes(trigger) || !save?.usageMessageId) {return null;}
   const dc = Number(roll.options?.target ?? save.dc);
   if (!Number.isFinite(dc) || !Number.isFinite(Number(roll.total))) {return null;}
   const success = typeof roll.isSuccess === "boolean" ? roll.isSuccess : Number(roll.total) >= dc;
-  if (success || (trigger === "failed-save-by-5" && dc - Number(roll.total) < 5)) {return null;}
+  if (success || !failedByEnough(template, dc - Number(roll.total) >= 5)) {return null;}
   const actor = actorFromUuid(save.actorUuid);
   const usageId = save.usageMessageId;
     return trigger === "hit-and-failed-save" ? { item, actor, part: "failed-save", usageId, template } : { item, actor, usageId, template };

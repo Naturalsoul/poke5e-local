@@ -101,6 +101,18 @@ const MOVE_STATUS_EFFECTS = {
       * STATUS RIDERS (batch)
    * ========================================================== */
 
+    "toxic-spikes": [
+    {
+      status: "poisoned",
+      trigger: "failed-save",
+      exceptBy5: true
+    },
+    {
+      status: "badly-poisoned",
+      trigger: "failed-save-by-5"
+    }
+  ],
+
   "secret-power": [
     {
       table: ["poisoned", "burned", "confused", "frozen", "paralysis", "asleep"],
@@ -2147,6 +2159,9 @@ export function buildMoveStatusEffects(
       MODULE_ID
     ].sourceMove =
       move.id;
+
+        // Toxic Spikes: a fail by 5 gives the other (badly poisoned) template instead.
+    if (definition.exceptBy5) {effect.flags[MODULE_ID].exceptBy5 = true;}
 
     // A d6 table: the status is rolled when the template is applied.
     if (definition.table) {

@@ -7,6 +7,7 @@ import { registerBerryAbilityEngine } from "./berry-ability-engine.mjs";
 import { registerRiderAbilityEngine } from "./rider-ability-engine.mjs";
 import { registerEventAbilityEngine } from "./event-ability-engine.mjs";
 import { registerSelfStatusMoves } from "./self-status-moves.mjs";
+import { registerLingeringAreaMoves } from "./lingering-area-moves.mjs";
 import { registerBattlefieldService } from "./battlefield-service.mjs";
 import { registerBattlefieldEffects } from "./battlefield-effects.mjs";
 import { registerAuraAbilityEngine } from "./aura-ability-engine.mjs";
@@ -436,7 +437,8 @@ Hooks.once(
     registerBerryAbilityEngine();
     registerRiderAbilityEngine();
         registerEventAbilityEngine();
-    registerSelfStatusMoves();
+        registerSelfStatusMoves();
+    registerLingeringAreaMoves();
     registerBattlefieldService();
     registerBattlefieldEffects();
     registerAuraAbilityEngine();
