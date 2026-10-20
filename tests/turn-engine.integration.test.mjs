@@ -398,3 +398,12 @@ test("Badly Poisoned is a Poisoned effect that deals twice the proficiency bonus
   await endTurn(actor, 1);
   assert.deepEqual(actor.damageCalls, [6], "2 × proficiency 3");
 });
+
+test("a volatile status the Pokemon already has is not applied twice", () => {
+  const actor = pokemonActor({ id: "dizzy" });
+  actor.effects = [];
+  assert.equal(preCreateResult(actor, "confused"), undefined);
+  actor.effects = [statusEffect(actor, "confused", { volatile: true })];
+  assert.equal(preCreateResult(actor, "confused"), false);
+  assert.equal(preCreateResult(actor, "flinched"), undefined, "another volatile status still applies");
+});

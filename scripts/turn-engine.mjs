@@ -2363,7 +2363,13 @@ function onPreCreateActiveEffect(
     )
   ) {
 
-    return;
+    // A volatile status it already has (Confused twice) changes nothing.
+    return findStatusEffect(
+      actor,
+      status
+    )
+      ? false
+      : undefined;
   }
 
 
