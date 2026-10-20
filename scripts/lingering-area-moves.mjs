@@ -84,7 +84,7 @@ async function areaDamage(actor, item, half) {
   if (value > 0) {await actor.applyDamage([{ value, type: "poison" }]);}
 }
 
-async function sufferArea(actor, { item, rule }) {
+export async function sufferArea(actor, { item, rule }) {
   const dc = moveDc(item);
   if (rule.damage === "always") {await areaDamage(actor, item, false);}
   const total = await areaSave(actor, item, dc);

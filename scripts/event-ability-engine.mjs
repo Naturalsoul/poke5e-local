@@ -1,4 +1,5 @@
 import { activePokemonAbilityId, findStatusEffect, hasPokemonAbility, hasPokemonStatus, pokemonTypes } from "./status-runtime.mjs";
+import { fieldMoveBlocksStatus } from "./status-field-moves.mjs";
 import { auraBlocksStatus } from "./aura-ability-engine.mjs";
 import { isPokemonActor } from "./trainer-party-service.mjs";
 import { originatingMoveItem } from "./damage-engine.mjs";
@@ -305,6 +306,8 @@ function adjustStatChange(effect, actor) {
 export function battlefieldBlocksStatus(actor, status) {
   const veil = auraBlocksStatus(actor, status, pokemonTypes(actor));
   if (veil) {return veil;}
+  const field = fieldMoveBlocksStatus(actor, status);
+  if (field) {return field;}
   if (hasPokemonAbility(actor, "leaf-guard") && abilityWeather("sun")) {return "leaf-guard";}
   if (hasPokemonAbility(actor, "hydration") && (abilityWeather("rain") || environment() === "water")) {return "hydration";}
   if (!isGrounded(actor)) {return null;}
