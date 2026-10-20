@@ -198,7 +198,7 @@ async function preloadCryPath(
 }
 
 
-async function resolvePokemonCryPath(
+export async function resolvePokemonCryPath(
   pokemon
 ) {
 
