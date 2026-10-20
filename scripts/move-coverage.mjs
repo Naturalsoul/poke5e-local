@@ -770,7 +770,7 @@ export const MOVE_COVERAGE = Object.freeze({
   "topsy-turvy": { status: "pending", module: "special-mechanics", note: "Inverts the target's stat changes." },
   "torch-song": { status: "pending", module: "special-mechanics", note: "DC rises by 1 each consecutive turn, up to +5." },
   torment: { status: "pending", module: "special-mechanics", note: "Target cannot repeat the move that hit you." },
-  toxic: { status: "pending", module: "field-effects", also: ["status-riders"] },
+  toxic: { status: "automated", engines: ["status-effects"], note: "Badly poisoned on a failed CON save." },
   "toxic-spikes": { status: "pending", module: "status-riders", also: ["forced-movement"] },
   "toxic-thread": { status: "pending", module: "field-effects", also: ["status-riders","stat-modifiers","healing"] },
   trailblaze: { status: "automated", engines: ["modifier-effects"], note: "Losing the bonus when incapacitated or switched out is not automated." },

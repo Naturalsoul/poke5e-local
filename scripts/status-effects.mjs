@@ -42,6 +42,13 @@ const MOVE_STATUS_EFFECTS = {
     }
   ],
 
+  toxic: [
+    {
+      status: "badly-poisoned",
+      trigger: "failed-save"
+    }
+  ],
+
     /* ==========================================================
    * BURNED
    * ========================================================== */
@@ -98,10 +105,16 @@ const MOVE_STATUS_EFFECTS = {
 
 const STATUS_LABELS = {
 
-  poisoned: {
+    poisoned: {
     es: "Envenenado",
     en: "Poisoned"
   },
+
+  "badly-poisoned": {
+    es: "Gravemente envenenado",
+    en: "Badly Poisoned"
+  },
+
 
   paralysis: {
     es: "Parálisis",
@@ -209,7 +222,8 @@ const CUSTOM_STATUSES = {
 
 const MANAGEABLE_STATUS_IDS =
   Object.freeze([
-    "poisoned",
+        "poisoned",
+    "badly-poisoned",
     "paralysis",
     "asleep",
     "burned",
@@ -222,8 +236,12 @@ const MANAGEABLE_STATUS_IDS =
 const STATUS_IMAGES =
   Object.freeze({
 
-    poisoned:
+        poisoned:
       `${STATUS_ASSET_BASE}/poisoned.png`,
+
+    "badly-poisoned":
+      `${STATUS_ASSET_BASE}/poisoned.png`,
+
 
     paralysis:
       CUSTOM_STATUSES
@@ -399,9 +417,15 @@ function halfMovementChanges() {
  * EFFECT: POISONED
  * ============================================================ */
 
+/*
+ * Badly Poisoned es Poisoned con el doble de daño:
+ * mismo status "poisoned" (penalizaciones, inmunidades
+ * y todo lo que reacciona a Poisoned) y badlyPoisoned: true.
+ */
 function poisonedEffect(
   move,
-  language
+  language,
+  badly = false
 ) {
 
   return {
@@ -409,13 +433,18 @@ function poisonedEffect(
     _id:
       effectId(
         move.id,
-        "poisoned"
+        badly
+          ? "badlypoisoned"
+          : "poisoned"
       ),
 
 
     name:
-      STATUS_LABELS
-        .poisoned[language],
+      STATUS_LABELS[
+        badly
+          ? "badly-poisoned"
+          : "poisoned"
+      ][language],
 
 
     img:
@@ -451,8 +480,11 @@ function poisonedEffect(
         kind:
           "pokemon-status",
 
-        status:
+                status:
           "poisoned",
+
+        badlyPoisoned:
+          badly,
 
         nonVolatile:
           true,
@@ -462,11 +494,11 @@ function poisonedEffect(
          * de final de turno.
          */
 
-        endTurnDamage: {
-
+                endTurnDamage: {
           formula:
-            "@prof",
-
+            badly
+              ? "2 * @prof"
+              : "@prof",
           type:
             "poison"
         }
@@ -1144,11 +1176,17 @@ function createStatusEffect(
     status
   ) {
 
-    case "poisoned":
-
+        case "poisoned":
       return poisonedEffect(
         move,
         language
+      );
+
+    case "badly-poisoned":
+      return poisonedEffect(
+        move,
+        language,
+        true
       );
 
 

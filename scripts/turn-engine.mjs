@@ -878,9 +878,18 @@ async function processPoisoned(
     }
 
 
+    // Badly Poisoned: twice the proficiency bonus.
   const pb =
     pokemonProficiency(
       actor
+    ) *
+    (
+      effect.getFlag(
+        MODULE_ID,
+        "badlyPoisoned"
+      )
+        ? 2
+        : 1
     );
 
 

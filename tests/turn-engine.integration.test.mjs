@@ -383,3 +383,18 @@ test("Frozen's save DC uses the current proficiency of whoever froze it", async 
   globalThis.fromUuidSync = () => null;
   assert.deepEqual(targets, [14], "10 + proficiency 4 at level 9, not the stored 12");
 });
+
+test("Badly Poisoned is a Poisoned effect that deals twice the proficiency bonus at the end of the turn", async () => {
+  const { buildPokemonStatusEffect } = await import("../scripts/status-effects.mjs");
+  const built = buildPokemonStatusEffect("badly-poisoned", "en");
+  assert.deepEqual([built.name, built.statuses, built.flags["poke5e-local"].status, built.flags["poke5e-local"].badlyPoisoned],
+    ["Badly Poisoned", ["poisoned"], "poisoned", true]);
+  assert.equal(buildPokemonStatusEffect("poisoned", "en").flags["poke5e-local"].badlyPoisoned, false);
+
+  const actor = pokemonActor({ id: "toxic", level: 5 });
+  const poisoned = statusEffect(actor, "poisoned");
+  poisoned._flags.badlyPoisoned = true;
+  actor.effects = [poisoned];
+  await endTurn(actor, 1);
+  assert.deepEqual(actor.damageCalls, [6], "2 × proficiency 3");
+});
