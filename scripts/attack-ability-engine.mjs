@@ -290,6 +290,11 @@ async function setPendingAttackModifier(
 }
 
 
+// Sap Sipper, Justified, Rattled...: the holder's next attack has advantage, like Analytic.
+export function grantNextAttackAdvantage(actor, abilityId) {
+  return setPendingAttackModifier(actor, { kind: "next-attack-modifier", sourceAbility: abilityId, advantage: true });
+}
+
 async function clearPendingAttackModifier(
   actor
 ) {

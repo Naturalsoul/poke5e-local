@@ -1,5 +1,6 @@
 import { isPokemonActor } from "./trainer-party-service.mjs";
 import { afterPaint, waitForVisibleResult } from "./chat-roll-display.mjs";
+import { hasPokemonAbility } from "./status-runtime.mjs";
 
 const MODULE_ID = "poke5e-local";
 const pendingActors = new Map();
@@ -14,10 +15,16 @@ export async function prepareBerryHealing(item, pokemon) {
   if (!formulas.length && item.getFlag(MODULE_ID, "sourceId") === "sitrus-berry") {
     formulas.push("30");
   }
-  if (!formulas.length) {
-    return null;
-  }
-  return new Roll(formulas.join(" + "), pokemon.getRollData?.() ?? {}).evaluate();
+  const formula = berryHealingFormula(formulas, pokemon);
+  return formula ? new Roll(formula, pokemon.getRollData?.() ?? {}).evaluate() : null;
+}
+
+// Ripen doubles the berry's healing; Cheek Pouch adds 10% of the maximum HP, rounded up, to any berry.
+export function berryHealingFormula(formulas, pokemon) {
+  const berry = formulas.join(" + ");
+  const doubled = berry && hasPokemonAbility(pokemon, "ripen") ? `2 * (${berry})` : berry;
+  const pouch = hasPokemonAbility(pokemon, "cheek-pouch") ? Math.ceil(Number(pokemon.system?.attributes?.hp?.max ?? 0) / 10) : 0;
+  return [doubled, pouch > 0 ? String(pouch) : ""].filter(Boolean).join(" + ") || null;
 }
 
 export async function publishBerryHealing(roll, { pokemon, itemName, usageMessage, language = "es" }) {

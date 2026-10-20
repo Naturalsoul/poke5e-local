@@ -8,6 +8,7 @@ import {
 } from "./confusion-engine.mjs";
 import {
   findStatusEffect,
+  hasPokemonAbility,
   hasStatusImmunityAbility,
   pokemonStatus,
   pokemonTypes
@@ -27,6 +28,10 @@ import {
 } from "./pokemon-recovery-context.mjs";
 
 import { processHeldItemEndTurn } from "./held-item-engine.mjs";
+import { processBerryAbilitiesEndTurn } from "./berry-ability-engine.mjs";
+import { effectSourceActor, processEventAbilitiesEndTurn, processEventAbilitiesStartTurn } from "./event-ability-engine.mjs";
+import { processBattlefieldEndTurn, processBattlefieldStartTurn } from "./battlefield-service.mjs";
+import { processFormAbilitiesStartTurn } from "./form-ability-engine.mjs";
 
 import {
   isPokemonActor
@@ -112,6 +117,12 @@ const LABELS = {
     remainsAsleep:
       "continúa dormido",
 
+    shedSkinRoll:
+      "Shed Skin",
+
+    shedSkinCured:
+      "muda la piel y se cura de",
+
     fullyParalyzed:
       "queda completamente paralizado este turno",
 
@@ -172,6 +183,12 @@ const LABELS = {
 
     remainsAsleep:
       "remains asleep",
+
+    shedSkinRoll:
+      "Shed Skin",
+
+    shedSkinCured:
+      "sheds its skin and is cured of",
 
     fullyParalyzed:
       "is fully paralyzed this turn",
@@ -316,7 +333,8 @@ function pokemonProficiency(
 
 function isImmuneToStatus(
   actor,
-  status
+  status,
+  effect = null
 ) {
 
   /*
@@ -346,6 +364,23 @@ function isImmuneToStatus(
     STATUS_IMMUNITIES[
       status
     ];
+
+  // Corrosion: its Moves poison Poison and Steel types.
+  const source =
+    effectSourceActor(
+      effect
+    );
+
+  if (
+    status === "poisoned" &&
+    source &&
+    hasPokemonAbility(
+      source,
+      "corrosion"
+    )
+  ) {
+    return false;
+  }
 
 
   if (
@@ -857,6 +892,29 @@ async function processPoisoned(
   }
 
 
+  // Poison Heal: it recovers half of it instead.
+  if (
+    hasPokemonAbility(
+      actor,
+      "poison-heal"
+    )
+  ) {
+    const healed =
+      Math.floor(
+        pb / 2
+      );
+
+    await actor.applyDamage(
+      [{ value: healed, type: "healing" }]
+    );
+    await chat(
+      actor,
+      `<strong>${actor.name}</strong> (Poison Heal): +<strong>${healed}</strong> HP.`
+    );
+    return;
+  }
+
+
   /*
    * Actor5e.applyDamage(number)
    *
@@ -1116,7 +1174,8 @@ async function processAsleep(
 
       actor,
 
-      "1d20",
+      // Early Bird: advantage on the roll to wake up.
+      hasPokemonAbility(actor, "early-bird") ? "2d20kh" : "1d20",
 
       `${label("asleepRoll")} — ${actor.name}`
     );
@@ -1152,6 +1211,18 @@ async function processAsleep(
     `
   );
 }
+
+// Shed Skin: at the end of its turn, a d4 of 4 cures the non-volatile status.
+async function processShedSkin(actor) {
+  if (!hasPokemonAbility(actor, "shed-skin")) {return;}
+  const effect = [...NON_VOLATILE_STATUSES].map(status => findStatusEffect(actor, status)).find(Boolean);
+  if (!effect) {return;}
+  const roll = await rollToChat(actor, "1d4", `${label("shedSkinRoll")} — ${actor.name}`);
+  if (roll.total < 4) {return;}
+  await effect.delete();
+  await chat(actor, `<strong>${actor.name}</strong> ${label("shedSkinCured")} ${effect.name}.`);
+}
+
 
 /* ============================================================
  * EFECTOS CON CURACIÓN AL FINAL DEL TURNO
@@ -1465,6 +1536,8 @@ async function processEndTurn(
     actor
   );
 
+  await processShedSkin(actor);
+
   /* ============================================================
   * DAÑOS / EFECTOS PERIÓDICOS DE MOVES
   *
@@ -1488,6 +1561,9 @@ async function processEndTurn(
   );
 
   await processHeldItemEndTurn(actor);
+  await processBerryAbilitiesEndTurn(actor);
+  await processEventAbilitiesEndTurn(actor);
+  await processBattlefieldEndTurn(actor);
 
 
   /* ==========================================================
@@ -1749,6 +1825,21 @@ async function processStartTurn(
    * ========================================================== */
 
   await markEndOfNextTurnEffectsStarted(
+    actor
+  );
+
+  // Hospitality.
+  await processEventAbilitiesStartTurn(
+    actor
+  );
+
+  // Sandstorm and Hail.
+  await processBattlefieldStartTurn(
+    actor
+  );
+
+  // Schooling, Ice Face in the hail, Hunger Switch.
+  await processFormAbilitiesStartTurn(
     actor
   );
 
@@ -2209,7 +2300,8 @@ function onPreCreateActiveEffect(
     !gmManualOverride &&
     isImmuneToStatus(
       actor,
-      status
+      status,
+      effect
     )
   ) {
 

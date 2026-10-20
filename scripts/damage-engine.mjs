@@ -1,3 +1,4 @@
+import { hasPokemonAbility } from "./status-runtime.mjs";
 import {
   activeDamageDiceModifier,
   consumeActiveMoveModifier
@@ -801,6 +802,17 @@ function onPostRollConfiguration(
   );
 
 
+  // Guts: a burn does not reduce its damage.
+  if (
+    hasPokemonAbility(
+      actor,
+      "guts"
+    )
+  ) {
+    return;
+  }
+
+
   /*
    * Solo si está Quemado.
    */
@@ -1032,7 +1044,7 @@ function onPostRollConfiguration(
  * ChatMessage5e sabe resolver el Item original.
  * ============================================================ */
 
-function originatingMoveItem(
+export function originatingMoveItem(
   options
 ) {
 
@@ -2063,6 +2075,11 @@ async function processInstantRecoil(
       `[${MODULE_ID}] No se encontró el usuario de ${marker.itemName}.`
     );
 
+    return;
+  }
+
+  // Rock Head: no recoil damage.
+  if (hasPokemonAbility(source, "rock-head")) {
     return;
   }
 

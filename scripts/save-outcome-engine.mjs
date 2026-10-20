@@ -4,6 +4,7 @@ import {
 } from "./berserk-runtime.mjs";
 
 import {
+  hasPokemonAbility,
   hasPokemonStatus
 } from "./status-runtime.mjs";
 
@@ -47,7 +48,7 @@ const pendingSaveContexts = [];
  * REACTIONS
  *
  * Trainer features that change a save after it is rolled (Raise Your Defenses,
- * Not This Time). offer(roll, { actor, dc, moveUser }) answers synchronously: null
+ * Not This Time). offer(roll, { actor, dc, move, moveUser }) answers synchronously: null
  * when it cannot change the result, otherwise an async step resolving to the
  * replacement roll (null keeps it). The outcome is recorded with the final roll.
  * ============================================================ */
@@ -1007,6 +1008,10 @@ function onRollSavingThrow(
 
   const reactionContext = {
     actor,
+    ability:
+      context.ability ??
+      usage.ability ??
+      null,
 
     dc:
       finiteNumber(
@@ -1015,15 +1020,12 @@ function onRollSavingThrow(
         null
       ),
 
+    get move() {
+      return fromUuidSync(usage.itemUuid ?? "", { strict: false }) ?? null;
+    },
+
     get moveUser() {
-      return fromUuidSync(
-        usage.itemUuid ??
-        "",
-        {
-          strict: false
-        }
-      )?.actor ??
-      null;
+      return this.move?.actor ?? null;
     }
   };
 
@@ -1204,12 +1206,20 @@ function onPreCalculateDamage(
     return;
   }
 
+  const onSuccess =
+    multiplierOnSuccessfulSave(
+      damageMessage,
+      usage
+    );
+
+  // Magic Guard: a successful save against half damage takes none.
+  const guarded =
+    onSuccess === 0.5 &&
+    hasPokemonAbility(actor, "magic-guard");
+
   const saveMultiplier =
     outcome.success
-      ? multiplierOnSuccessfulSave(
-          damageMessage,
-          usage
-        )
+      ? Number(!guarded) * onSuccess
       : 1;
 
   /*

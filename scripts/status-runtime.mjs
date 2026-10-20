@@ -66,17 +66,15 @@ const EFFECTIVE_STATUS_ABILITIES = Object.freeze({
  * - pero effective Asleep = true
  * ============================================================ */
 
+// Good as Gold is immune to every status; Purifying Salt to the non-volatile ones.
 const STATUS_IMMUNITY_ABILITIES = Object.freeze({
-
-  asleep:
-    new Set([
-      "comatose"
-    ]),
-
-  flinched:
-    new Set([
-      "inner-focus"
-    ])
+  asleep: new Set(["comatose", "insomnia", "vital-spirit", "good-as-gold", "purifying-salt"]),
+  flinched: new Set(["inner-focus", "good-as-gold"]),
+  paralysis: new Set(["limber", "good-as-gold", "purifying-salt"]),
+  poisoned: new Set(["immunity", "pastel-veil", "good-as-gold", "purifying-salt"]),
+  frozen: new Set(["magma-armor", "good-as-gold", "purifying-salt"]),
+  burned: new Set(["water-veil", "heatproof", "water-bubble", "thermal-exchange", "good-as-gold", "purifying-salt"]),
+  confused: new Set(["own-tempo", "good-as-gold"])
 });
 
 
@@ -450,31 +448,55 @@ export function activePokemonAbilityId(
  * HAS ACTIVE ABILITY
  * ============================================================ */
 
+// Neutralizing Gas does not silence itself or the Abilities that change forms.
+const GAS_EXEMPT = new Set(["neutralizing-gas", "schooling", "zen-mode", "zen-mode-galarian", "shields-down", "power-construct-10",
+  "power-construct-50", "power-construct-100", "ice-face", "disguise", "stance-change", "multitype", "rks-system", "hunger-switch",
+  "forecast", "mimicry"]);
+
+// Another living Pokémon with Neutralizing Gas in the same combat (the whole combat counts, like the weather).
+function neutralizedByGas(actor, abilityId) {
+  const combatants = [...globalThis.game?.combat?.combatants ?? []];
+  if (GAS_EXEMPT.has(abilityId) || !combatants.some(combatant => combatant.actor === actor)) {return false;}
+  return combatants.some(({ actor: other }) => other && other !== actor && Number(other.system?.attributes?.hp?.value) > 0 &&
+    ownsPokemonAbility(other, "neutralizing-gas"));
+}
+
 export function hasPokemonAbility(
   actor,
   abilityId
 ) {
-
   const normalized =
     normalizeId(
       abilityId
     );
 
+  return Boolean(normalized) && ownsPokemonAbility(actor, normalized) && !neutralizedByGas(actor, normalized);
+}
 
-  if (!normalized) {
-
-    return false;
-  }
+function ownsPokemonAbility(
+  actor,
+  normalized
+) {
 
 
   /*
    * Guru L9, Body: la segunda Ability elegida
    * también está activa.
+   * Receiver / Power of Alchemy: la Ability copiada
+   * de un aliado debilitado, hasta que salga.
    */
 
   return (
     activePokemonAbilityId(
       actor
+    ) ===
+    normalized ||
+
+    normalizeId(
+      actor?.getFlag?.(
+        MODULE_ID,
+        "copiedAbilityId"
+      )
     ) ===
     normalized ||
 

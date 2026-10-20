@@ -1,3 +1,5 @@
+import { pokemonAbilityIcon } from "./pokemon-ability-icons.mjs";
+
 const MODULE_ID =
   "poke5e-local";
 
@@ -353,6 +355,9 @@ function renderAbilityReference({
 
       <img
         src="${escapeAttribute(
+          pokemonAbilityIcon(
+            abilityId
+          ) ??
           DEFAULT_ABILITY_ICON
         )}"
         alt=""
