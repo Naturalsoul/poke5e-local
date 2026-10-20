@@ -9,6 +9,7 @@ import { registerEventAbilityEngine } from "./event-ability-engine.mjs";
 import { registerSelfStatusMoves } from "./self-status-moves.mjs";
 import { registerLingeringAreaMoves } from "./lingering-area-moves.mjs";
 import { registerStatusFieldMoves } from "./status-field-moves.mjs";
+import { registerSleepMoves } from "./sleep-moves.mjs";
 import { registerBattlefieldService } from "./battlefield-service.mjs";
 import { registerBattlefieldEffects } from "./battlefield-effects.mjs";
 import { registerAuraAbilityEngine } from "./aura-ability-engine.mjs";
@@ -441,6 +442,7 @@ Hooks.once(
         registerSelfStatusMoves();
     registerLingeringAreaMoves();
     registerStatusFieldMoves();
+    registerSleepMoves();
     registerBattlefieldService();
     registerBattlefieldEffects();
     registerAuraAbilityEngine();

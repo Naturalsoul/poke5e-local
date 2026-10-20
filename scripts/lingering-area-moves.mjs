@@ -74,14 +74,15 @@ function damageFormula(item) {
   return dice ? `${dice} + ${moveModifier(item.actor, item)}` : null;
 }
 
-// shortcut: plain poison damage through dnd5e (resistances apply, Pokémon type effectiveness does not); route it through the damage engine if it matters.
-async function areaDamage(actor, item, half) {
+// shortcut: plain damage of the Move's type through dnd5e (resistances apply, Pokémon type effectiveness does not); route it through the damage engine if it matters.
+export async function areaDamage(actor, item, half) {
   const formula = damageFormula(item);
   if (!formula) {return;}
   const roll = await new Roll(formula).evaluate();
   await publishRollBeforeDamage(roll, { speaker: ChatMessage.getSpeaker({ actor }), flavor: `${item.name} — ${actor.name}` });
   const value = half ? Math.floor(roll.total / 2) : roll.total;
-  if (value > 0) {await actor.applyDamage([{ value, type: "poison" }]);}
+  const type = [item.getFlag(MODULE_ID, "moveDefinition")?.damage?.type ?? []].flat()[0] ?? "poison";
+  if (value > 0) {await actor.applyDamage([{ value, type }]);}
 }
 
 export async function sufferArea(actor, { item, rule }) {
