@@ -1,4 +1,5 @@
 import { registerPokemonBondService } from "./pokemon-bond-service.mjs";
+import { registerMoveAnimations } from "./move-animations.mjs";
 import { registerBattleHotbar, useBattleHotbarMacro } from "./battle-hotbar.mjs";
 import { registerPassiveAbilityEngine } from "./passive-ability-engine.mjs";
 import { registerActiveAbilityService } from "./active-ability-service.mjs";
@@ -447,6 +448,7 @@ Hooks.once(
     registerProtectMoves();
     registerBattlefieldService();
     registerBattlefieldEffects();
+    registerMoveAnimations();
     registerAuraAbilityEngine();
     registerFormAbilityEngine();
     registerPokemonAbilityIcons();

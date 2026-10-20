@@ -4,6 +4,23 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.20.0] — 2026-10-20
+
+- **Animaciones de Moves** con Sequencer y JB2A (gratis). Cada Move tiene una según su tipo y su forma:
+  - los ataques a distancia lanzan un proyectil al objetivo; se reproducen cuando se ve la tirada y, si fallan,
+    pasan de largo;
+  - los cuerpo a cuerpo golpean como dice su nombre o, si no, su descripción: mordisco, garra, pinza, puño, patada,
+    tajo, cuerno o pico, martillo o hueso, látigo o cola, y giro (Feint Attack, "a sucker punch", es un puñetazo).
+    Los de Fuego, Agua, Eléctrico, Planta, Hielo, Veneno y Hada añaden su elemento al impactar (Fire Punch: puño y
+    luego fuego). Sin palabra que lo diga, usan el golpe de su tipo;
+  - los Moves de área hacen una explosión alrededor del usuario o donde se coloca la plantilla, y los conos y
+    líneas salen hacia el objetivo;
+  - los que no hacen daño muestran una mejora en el usuario, un perjuicio en el objetivo o una curación.
+- Ajuste por jugador "Animaciones de Moves" para apagarlas. Sin Sequencer o sin JB2A no se reproduce nada.
+- Funciona con todos los Moves, también los importados antes (incluso con la definición antigua, sin área): la
+  animación se calcula de los datos del propio Move, sin migrar nada.
+- README: créditos a JB2A y Sequencer.
+
 ## [0.19.1] — 2026-10-20
 
 - README: sección de créditos al principio. Reconoce a poke5e.app como origen de todo el contenido de juego,
