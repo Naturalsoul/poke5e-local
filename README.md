@@ -29,7 +29,7 @@ Módulo de Foundry VTT para jugar **Pokémon 5e** ([poke5e.app](https://poke5e.a
 Importa Pokémon, Moves, Abilities y objetos, da hojas propias a Pokémon y entrenadores, y automatiza la mayor
 parte de las reglas de combate: tipos, STAB, estados, Abilities, rasgos de entrenador, capturas y más.
 
-- **Versión:** 0.21.0
+- **Versión:** 0.22.0
 - **Requisitos:** Foundry VTT 13 (13.351 o superior) o 14 (probado en 14.365), y D&D5e 5.3.3 o superior.
 - **Idiomas:** español e inglés (ajuste del módulo `language`).
 
@@ -104,6 +104,15 @@ Lo que un Move automatizado aún deja al DM está en la nota de su entrada en `s
 
 ### Otras herramientas del DM
 - **Planificador de encuentros:** encuentros salvajes y de entrenadores con aleatorizado y XP.
+  - **Dificultad al estilo D&D 5e** (Fácil, Media, Difícil, Mortal), medida contra el grupo: uno por jugador, al
+    nivel de su Pokémon más fuerte, detectado de sus entrenadores y editable. Cada Pokémon pesa según su nivel con la
+    curva de D&D (poke5e: "Pokémon del mismo nivel son igual de fuertes"; el SR no es un CR), y superar en número
+    al grupo multiplica como en D&D. Una pelea pareja es Media.
+  - En los combates de entrenador cuentan los equipos enteros de los dos lados, un Pokémon por entrenador en el
+    campo a la vez, y los Pokémon de entrenador pesan un 20 % más (poke5e les da una dote, una especialización y
+    mejores stats).
+  - Los dos generadores aleatorios, el salvaje y el de entrenadores, pueden buscar una dificultad, y cualquier
+    encuentro muestra la suya en el resumen, con su color.
 - **Fakemon Studio:** crea Pokémon propios con asistente, evoluciones, Moves y copia de seguridad.
 - Transiciones de batalla con sonido.
 

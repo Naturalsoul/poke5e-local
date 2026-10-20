@@ -26,6 +26,13 @@ import {
 } from "./encounter-randomizer.mjs";
 
 import {
+  DIFFICULTIES,
+  detectEncounterParty,
+  encounterDifficulty,
+  generateForDifficulty
+} from "./encounter-difficulty.mjs";
+
+import {
   generateRandomTrainerEncounter,
   rerollRandomTrainerTeam
 } from "./encounter-trainer-randomizer.mjs";
@@ -1310,6 +1317,13 @@ export class PokemonEncounterPlanner
                 this._encounterState
                   .randomMaxSr,
 
+              difficulty:
+                this._encounterState
+                  .randomDifficulty,
+
+              party:
+                this.#party(),
+
               candidateCount:
                 context.randomCandidateCount,
 
@@ -1375,7 +1389,12 @@ export class PokemonEncounterPlanner
                 context.trainerRandomMixedArchetypes,
 
               language:
-                context.language
+                context.language,
+              difficulty:
+                this._encounterState
+                  .trainerRandomDifficulty,
+              party:
+                this.#party()
             })}
 
           </section>
@@ -2003,6 +2022,32 @@ export class PokemonEncounterPlanner
 
               </div>
 
+
+              <div
+                class="
+                  poke5e-encounter-planner__status-item
+                  poke5e-encounter-planner__status-item--difficulty
+                "
+                data-role="difficulty-status"
+                data-tier="${this.#describeDifficulty(context.rows).tier}"
+                title="${this.#describeDifficulty(context.rows).title}"
+              >
+
+                <i
+                  class="fa-solid fa-skull"
+                  aria-hidden="true"
+                ></i>
+
+                <span>
+                  Dificultad
+                </span>
+
+                <strong data-total="difficulty">
+                  ${this.#describeDifficulty(context.rows).label}
+                </strong>
+
+              </div>
+
             </div>
             <button
               type="button"
@@ -2560,6 +2605,115 @@ export class PokemonEncounterPlanner
         this.#generateRandomEncounter();
       }
     );
+
+    for (
+      const [
+        role,
+        key
+      ]
+      of [
+        ["random-difficulty", "randomDifficulty"],
+        ["trainer-random-difficulty", "trainerRandomDifficulty"]
+      ]
+    ) {
+      root.querySelector(
+        `[data-role="${role}"]`
+      )?.addEventListener(
+        "change",
+
+        event => {
+          this._encounterState[key] =
+            String(
+              event.currentTarget.value ??
+              ""
+            );
+        }
+      );
+    }
+
+    for (
+      const [
+        role,
+        key,
+        max
+      ]
+      of [
+        ["party-size", "partySize", 12],
+        ["party-level", "partyLevel", 20],
+        ["party-team", "partyTeam", 6]
+      ]
+    ) {
+      const inputs =
+        root.querySelectorAll(
+          `[data-role="${role}"]`
+        );
+
+      for (const input of inputs) {
+        input.addEventListener(
+          "change",
+
+          event => {
+            this._encounterState[key] =
+              clampInteger(
+                event.currentTarget.value,
+                1,
+                max,
+                1
+              );
+
+            for (const other of inputs) {
+              other.value =
+                String(
+                  this._encounterState[key]
+                );
+            }
+
+            this.#refreshTotalsUi(
+              root
+            );
+          }
+        );
+      }
+    }
+
+    for (
+      const button
+      of root.querySelectorAll(
+        '[data-action="detect-party"]'
+      )
+    ) {
+      button.addEventListener(
+        "click",
+
+        () => {
+          const party =
+            detectPartyOrDefault();
+
+          Object.assign(
+            this._encounterState,
+            {
+              partySize:
+                party.size,
+              partyLevel:
+                party.level,
+              partyTeam:
+                party.team
+            }
+          );
+
+          ui.notifications.info(
+            party.detected
+              ? `Grupo: ${party.size} jugador(es), nivel ${party.level}, ${party.team} Pokémon cada uno.`
+              : "No hay entrenadores de jugadores con Pokémon; ajusta el grupo a mano."
+          );
+
+          void this.render({
+            force:
+              true
+          });
+        }
+      );
+    }
 
     root.querySelector(
       '[data-role="trainer-random-region"]'
@@ -4960,6 +5114,102 @@ export class PokemonEncounterPlanner
   }
 
 
+  // The party random encounters are measured against: detected when first needed, then editable.
+  #party() {
+    if (!this._encounterState.partySize) {
+      const party =
+        detectPartyOrDefault();
+
+      this._encounterState.partySize =
+        party.size;
+
+      this._encounterState.partyLevel =
+        party.level;
+
+      this._encounterState.partyTeam =
+        party.team;
+    }
+
+    return {
+      size:
+        this._encounterState
+          .partySize,
+
+      level:
+        this._encounterState
+          .partyLevel,
+
+      team:
+        this._encounterState
+          .partyTeam
+    };
+  }
+
+  // The encounter's difficulty against the party, and how it was reached (as the tooltip).
+  #describeDifficulty(
+    rows
+  ) {
+    if (!rows.length) {
+      return {
+        tier:
+          "",
+
+        label:
+          "—",
+
+        title:
+          "Añade Pokémon para ver la dificultad."
+      };
+    }
+
+    const party =
+      this.#party();
+
+    const trainerBattle =
+      this._encounterState.type ===
+        "trainer";
+
+    const {
+      tier,
+      power,
+      partyPower
+    } =
+      encounterDifficulty(
+        party,
+        rows,
+        {
+          trainers:
+            trainerBattle
+              ? Math.max(
+                  1,
+                  new Set(
+                    rows.map(
+                      row =>
+                        row.trainerId
+                    )
+                  ).size
+                )
+              : 0
+        }
+      );
+
+    const group =
+      trainerBattle
+        ? `${party.size} jugador(es), nivel ${party.level}, ${party.team} Pokémon cada uno`
+        : `${party.size} jugador(es), nivel ${party.level}`;
+
+    return {
+      tier:
+        tier.id,
+
+      label:
+        tier.label,
+
+      title:
+        `Fuerza ${formatNumber(power)} contra ${formatNumber(partyPower)} del grupo (${group}). Una pelea pareja es Media.`
+    };
+  }
+
   #refreshTotalsUi(
     root
   ) {
@@ -5020,6 +5270,29 @@ export class PokemonEncounterPlanner
             value
           );
       }
+    }
+
+    const difficulty =
+      this.#describeDifficulty(
+        rows
+      );
+
+    const difficultyStatus =
+      root.querySelector(
+        '[data-role="difficulty-status"]'
+      );
+
+    if (difficultyStatus) {
+      difficultyStatus.title =
+        difficulty.title;
+
+      difficultyStatus.dataset.tier =
+        difficulty.tier;
+
+      difficultyStatus.querySelector(
+        '[data-total="difficulty"]'
+      ).textContent =
+        difficulty.label;
     }
 
     const compositionSummary =
@@ -6691,8 +6964,7 @@ export class PokemonEncounterPlanner
           });
 
 
-      const generatedTrainers =
-        generateRandomTrainerEncounter({
+      const trainerOptions = {
           candidates,
 
           trainerCount:
@@ -6717,7 +6989,33 @@ export class PokemonEncounterPlanner
               ? this._encounterState
                   .trainerRandomMixedArchetypes
               : []
-        });
+      };
+
+      const party =
+        this.#party();
+
+      const generatedTrainers =
+        rollForDifficulty(
+          () =>
+            generateRandomTrainerEncounter(
+              trainerOptions
+            ),
+          generated =>
+            encounterDifficulty(
+              party,
+              generated.flatMap(
+                trainer =>
+                  trainer.pokemon
+              ),
+              {
+                trainers:
+                  generated.length
+              }
+            ),
+          this._encounterState
+            .trainerRandomDifficulty,
+          "Prueba otro rango de niveles, más Entrenadores o más Pokémon por Entrenador."
+        );
 
 
       /*
@@ -6997,18 +7295,39 @@ export class PokemonEncounterPlanner
         );
 
 
+      const options = {
+        candidates,
+        minLevel,
+        maxLevel,
+
+        size:
+          this._encounterState
+            .randomSize,
+
+        lockedRows
+      };
+
+      const difficulty =
+        this._encounterState
+          .randomDifficulty;
+
+      const party =
+        this.#party();
+
       const generatedRows =
-        generateRandomEncounterRows({
-          candidates,
-          minLevel,
-          maxLevel,
-
-          size:
-            this._encounterState
-              .randomSize,
-
-          lockedRows
-        });
+        rollForDifficulty(
+          () =>
+            generateRandomEncounterRows(
+              options
+            ),
+          rows =>
+            encounterDifficulty(
+              party,
+              rows
+            ),
+          difficulty,
+          "Prueba otro rango de niveles o tamaño."
+        );
 
 
       this._encounterState.rows =
@@ -7528,6 +7847,8 @@ function renderRandomEncounterControls({
   srValues,
   minSr,
   maxSr,
+  difficulty,
+  party,
   candidateCount,
   lockedCount,
   visible
@@ -7680,6 +8001,7 @@ function renderRandomEncounterControls({
         </label>
 
 
+
         <button
           type="button"
           class="poke5e-encounter-planner__random-button"
@@ -7708,6 +8030,15 @@ function renderRandomEncounterControls({
 
       </div>
 
+
+      ${renderDifficultyControls({
+        role:
+          "random-difficulty",
+        difficulty,
+        party,
+        trainerBattle:
+          false
+      })}
 
       <div class="poke5e-encounter-planner__random-hint">
         ${
@@ -7950,6 +8281,162 @@ function getDefaultWildRandomBiome(
   );
 }
 
+// One random roll, or (with a difficulty) the closest of many to it, warning when the filters can't reach it.
+function rollForDifficulty(
+  generate,
+  measure,
+  difficulty,
+  advice
+) {
+  if (!difficulty) {
+    return generate();
+  }
+
+  const best =
+    generateForDifficulty(
+      generate,
+      measure,
+      difficulty
+    );
+
+  if (best.distance > 0) {
+    const wanted =
+      DIFFICULTIES.find(
+        entry =>
+          entry.id ===
+            difficulty
+      )?.label;
+
+    ui.notifications.warn(
+      `Con estos filtros no se llega a ${wanted}: queda ${best.tier.label}. ${advice}`
+    );
+  }
+
+  return best.result;
+}
+
+// The "Difficulty and party" strip of both random generators.
+function renderDifficultyControls({
+  role,
+  difficulty,
+  party,
+  trainerBattle
+}) {
+  const options =
+    DIFFICULTIES
+      .filter(
+        entry =>
+          entry.id !==
+            "trivial"
+      )
+      .map(
+        entry =>
+          `<option value="${entry.id}"${entry.id === difficulty ? " selected" : ""}>${entry.label}</option>`
+      )
+      .join("");
+
+  const number = (
+    inputRole,
+    label,
+    value,
+    max
+  ) => `
+        <label>
+          ${label}
+
+          <input
+            type="number"
+            data-role="${inputRole}"
+            min="1"
+            max="${max}"
+            step="1"
+            value="${value}"
+          >
+        </label>`;
+
+  return `
+    <div
+      class="
+        poke5e-encounter-planner__difficulty-bar
+        ${trainerBattle ? "poke5e-encounter-planner__difficulty-bar--trainer" : ""}
+      "
+    >
+
+      <label class="poke5e-encounter-planner__difficulty-select">
+        <span>
+          <i
+            class="fa-solid fa-skull"
+            aria-hidden="true"
+          ></i>
+          Dificultad
+        </span>
+
+        <select data-role="${role}">
+          <option value=""${difficulty ? "" : " selected"}>
+            Cualquiera
+          </option>
+          ${options}
+        </select>
+      </label>
+
+      ${number("party-size", "Jugadores", party.size, 12)}
+      ${number("party-level", "Nivel del grupo", party.level, 20)}
+      ${trainerBattle ? number("party-team", "Pokémon / jugador", party.team, 6) : ""}
+
+      <button
+        type="button"
+        class="poke5e-encounter-planner__difficulty-detect"
+        data-action="detect-party"
+        title="Lee los entrenadores de los jugadores: uno por jugador, al nivel de su Pokémon más fuerte y con su equipo."
+      >
+        <i
+          class="fa-solid fa-users"
+          aria-hidden="true"
+        ></i>
+
+        Detectar grupo
+      </button>
+
+    </div>`;
+}
+
+// The players' party, or 4 players at level 5 with 3 Pokémon when there are no player trainers with Pokémon yet.
+function detectPartyOrDefault() {
+  try {
+    const party =
+      detectEncounterParty();
+
+    if (party) {
+      return {
+        ...party,
+        detected:
+          true
+      };
+    }
+  } catch (
+    error
+  ) {
+    console.warn(
+      `[${MODULE_ID}] No se pudo detectar el grupo`,
+      error
+    );
+  }
+
+  return {
+    size:
+      4,
+
+    level:
+      5,
+
+    team:
+      3,
+
+    detected:
+      false
+  };
+}
+
 function canGenerateRandomEncounter(
   candidateCount,
   size,
@@ -8112,6 +8599,8 @@ function renderTrainerRandomControls({
   archetypeId,
   mixedArchetypeIds,
   language,
+  difficulty,
+  party,
   visible
 }) {
   const regionOptions =
@@ -8325,6 +8814,15 @@ function renderTrainerRandomControls({
         </button>
 
       </div>
+
+      ${renderDifficultyControls({
+        role:
+          "trainer-random-difficulty",
+        difficulty,
+        party,
+        trainerBattle:
+          true
+      })}
 
       <div
         class="poke5e-encounter-planner__trainer-mixed-archetypes"

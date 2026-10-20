@@ -1358,6 +1358,141 @@ input[type="number"] {
 }
 
 /* ============================================================
+ * DIFFICULTY AND PARTY (both random generators)
+ * ============================================================ */
+
+.poke5e-encounter-planner__difficulty-bar {
+  display:
+    grid;
+
+  grid-template-columns:
+    minmax(140px, 1.4fr)
+    82px
+    105px
+    auto;
+
+  align-items:
+    end;
+
+  gap:
+    8px;
+
+  margin-top:
+    10px;
+
+  padding:
+    8px;
+
+  border:
+    1px solid
+    rgba(215, 91, 78, 0.2);
+
+  border-radius:
+    6px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(215, 91, 78, 0.07),
+      rgba(215, 91, 78, 0.02)
+    );
+}
+
+.poke5e-encounter-planner__difficulty-bar--trainer {
+  grid-template-columns:
+    minmax(140px, 1.4fr)
+    82px
+    105px
+    120px
+    auto;
+}
+
+.poke5e-encounter-planner__difficulty-bar
+input[type="number"],
+.poke5e-encounter-planner__difficulty-bar
+select {
+  width:
+    100%;
+}
+
+.poke5e-encounter-planner__difficulty-select
+span {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    4px;
+
+  color:
+    #ed9288;
+}
+
+.poke5e-encounter-planner__content
+.poke5e-encounter-planner__difficulty-detect {
+  min-height:
+    30px;
+
+  white-space:
+    nowrap;
+
+  border-color:
+    rgba(99, 149, 219, 0.28);
+
+  background:
+    rgba(99, 149, 219, 0.06);
+
+  color:
+    #a9c5ec;
+
+  box-shadow:
+    none;
+}
+
+.poke5e-encounter-planner__content
+.poke5e-encounter-planner__difficulty-detect:hover:not(:disabled) {
+  border-color:
+    var(--encounter-blue);
+
+  background:
+    rgba(99, 149, 219, 0.12);
+
+  color:
+    #c9dcf5;
+
+  transform:
+    none;
+}
+
+@media (max-width: 900px) {
+  .poke5e-encounter-planner__difficulty-bar,
+  .poke5e-encounter-planner__difficulty-bar--trainer {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .poke5e-encounter-planner__difficulty-select,
+  .poke5e-encounter-planner__difficulty-detect {
+    grid-column:
+      1 / -1;
+  }
+}
+
+@media (max-width: 620px) {
+  .poke5e-encounter-planner__difficulty-bar,
+  .poke5e-encounter-planner__difficulty-bar--trainer {
+    grid-template-columns:
+      1fr;
+  }
+}
+
+
+/* ============================================================
  * RANDOM TRAINER GENERATOR
  * ============================================================ */
 
@@ -4649,7 +4784,7 @@ i {
 
   grid-template-columns:
     repeat(
-      4,
+      5,
       minmax(0, 1fr)
     );
 
@@ -4786,6 +4921,47 @@ strong {
   color:
     var(--encounter-gold);
 }
+
+/* The difficulty, coloured by tier: trivial and easy calm, medium gold, hard and deadly red. */
+.poke5e-encounter-planner__status-item--difficulty {
+  --difficulty-color:
+    var(--encounter-muted);
+
+  border-color:
+    color-mix(in srgb, var(--difficulty-color) 30%, transparent);
+}
+
+.poke5e-encounter-planner__status-item--difficulty[data-tier="easy"] {
+  --difficulty-color:
+    var(--encounter-green);
+}
+
+.poke5e-encounter-planner__status-item--difficulty[data-tier="medium"] {
+  --difficulty-color:
+    var(--encounter-gold);
+}
+
+.poke5e-encounter-planner__status-item--difficulty[data-tier="hard"] {
+  --difficulty-color:
+    #e98a3f;
+}
+
+.poke5e-encounter-planner__status-item--difficulty[data-tier="deadly"] {
+  --difficulty-color:
+    var(--encounter-red);
+
+  background:
+    rgba(215, 91, 78, 0.1);
+}
+
+.poke5e-encounter-planner__status-item--difficulty
+i,
+.poke5e-encounter-planner__status-item--difficulty
+strong {
+  color:
+    var(--difficulty-color);
+}
+
 
 /* ============================================================
  * OPTIONS / FOOTER
@@ -5504,6 +5680,11 @@ button[data-action="generate"] {
         2,
         minmax(0, 1fr)
       );
+  }
+
+  .poke5e-encounter-planner__status-item--difficulty {
+    grid-column:
+      1 / -1;
   }
 }
 

@@ -4,6 +4,25 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.22.0] — 2026-10-20
+
+- **Planificador de encuentros: dificultad al estilo D&D 5e.** poke5e no tiene tabla de dificultad y su SR no es un
+  CR ("Pokémon del mismo nivel son igual de fuertes"), así que:
+  - cada Pokémon pesa según su nivel con la curva de D&D (el umbral Medio por personaje de la DMG);
+  - el grupo es un Pokémon por jugador, al nivel de su Pokémon más fuerte, y en los combates de entrenador su equipo
+    entero. Se detecta de los entrenadores de los jugadores (su equipo o, si no tienen, todos sus Pokémon) y se
+    puede cambiar a mano, o volver a detectar;
+  - un encuentro salvaje suma sus Pokémon y, si superan en número al grupo, se multiplica (2 contra 1 es ×1,5);
+  - un combate de entrenador suma todos los Pokémon de todos los equipos, un 20 % más fuertes que los salvajes, y
+    el multiplicador solo cuenta los que están a la vez en el campo: uno por entrenador. 6 contra 6 parejo es Media;
+  - una pelea pareja es Media; Fácil, Difícil y Mortal siguen las proporciones de D&D (½, 1½ y 2,2 veces Media).
+- Los dos generadores aleatorios, el salvaje y el de entrenadores, tienen una franja "Dificultad y grupo": el
+  selector de dificultad, los jugadores, el nivel del grupo, los Pokémon por jugador (en entrenadores) y "Detectar
+  grupo". Con una dificultad, el generador repite la tirada hasta que el encuentro caiga en ella y, si los filtros
+  no lo permiten, deja el más cercano y avisa.
+- El resumen del encuentro muestra su dificultad con su color (Fácil verde, Media dorado, Difícil naranja, Mortal
+  rojo), con la fuerza del encuentro y la del grupo al pasar el ratón.
+
 ## [0.21.0] — 2026-10-20
 
 - **Sonidos de Moves:** cada Move suena junto a su animación con su sonido de los juegos, de la Pokemon SFX
