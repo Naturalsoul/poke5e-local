@@ -4,6 +4,11 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.19.1] — 2026-10-20
+
+- README: sección de créditos al principio. Reconoce a poke5e.app como origen de todo el contenido de juego,
+  menciona Foundry VTT, D&D5e y Pokémon Showdown (sprites y gritos), y aclara que es un proyecto de fans sin fines de lucro.
+
 ## [0.19.0] — 2026-10-20
 
 Todo lo hecho desde 0.18.8, agrupado por día.

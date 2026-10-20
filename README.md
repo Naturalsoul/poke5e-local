@@ -1,10 +1,29 @@
 # Poke5e Local
 
+## Créditos
+
+**Todo el contenido de juego de este módulo viene de [Pokémon 5e (poke5e.app)](https://poke5e.app).** Las reglas,
+los Pokémon, los Moves, las Abilities, los objetos, los caminos de entrenador y los suplementos son trabajo de sus
+autores, y el mérito es suyo. Este módulo solo los lleva a Foundry VTT y automatiza lo que se puede. Para las
+reglas y las fichas, la referencia es siempre [poke5e.app](https://poke5e.app). Si te gusta jugar así, apoya y
+consulta su trabajo allí.
+
+También usa:
+- [Foundry VTT](https://foundryvtt.com) y el sistema [D&D5e](https://github.com/foundryvtt/dnd5e), sobre los que corre;
+- los sprites y los gritos de [Pokémon Showdown](https://play.pokemonshowdown.com).
+
+**Es un proyecto de fans, sin fines de lucro.** Nació porque quería jugar Pokémon con D&D con mis amigos. No se
+vende ni se cobra por él. Pokémon y sus nombres son marcas de Nintendo, Game Freak, Creatures Inc. y The Pokémon
+Company; Dungeons & Dragons es de Wizards of the Coast. Este proyecto no está afiliado a ninguno de ellos ni
+cuenta con su respaldo.
+
+## Qué es
+
 Módulo de Foundry VTT para jugar **Pokémon 5e** ([poke5e.app](https://poke5e.app)) sobre el sistema **D&D5e**.
 Importa Pokémon, Moves, Abilities y objetos, da hojas propias a Pokémon y entrenadores, y automatiza la mayor
 parte de las reglas de combate: tipos, STAB, estados, Abilities, rasgos de entrenador, capturas y más.
 
-- **Versión:** 0.19.0
+- **Versión:** 0.19.1
 - **Requisitos:** Foundry VTT 13 (13.351 o superior) y D&D5e 5.3.3 o superior.
 - **Idiomas:** español e inglés (ajuste del módulo `language`).
 
