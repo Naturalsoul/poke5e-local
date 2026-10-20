@@ -756,7 +756,7 @@ test("Fake Tears and Metal Sound give +5 to everyone's attacks against the targe
 
 function statusMove(id) {
   const item = move(id);
-  item.effects.push(...buildMoveStatusEffects({ id }).effects.map(effect));
+  item.effects.push(...buildMoveStatusEffects({ id }).effects.map(source => Object.assign(effect(source), { parent: item })));
   return item;
 }
 
@@ -833,4 +833,15 @@ test("Toxic Spikes poisons on a failed save and badly poisons on a fail by 5", a
   const far = actor();
   await show(message(item, far));
   assert.deepEqual(statusOf(far), [["poisoned", true]]);
+});
+
+test("Psycho Shift moves its user's status to a target that fails its save", async () => {
+  const item = statusMove("psycho-shift");
+  const burn = effect({ name: "Burned", flags: { [MODULE_ID]: { kind: "pokemon-status", status: "burned" } } });
+  burn.delete = async () => { item.actor.effects = item.actor.effects.filter(entry => entry !== burn); };
+  item.actor.effects.push(burn);
+  const target = actor();
+  await show(message(item, target));
+  assert.deepEqual(statusOf(target), [["burned", false]]);
+  assert.equal(item.actor.effects.length, 0);
 });

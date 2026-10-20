@@ -202,10 +202,25 @@ async function rolledStatusSource(actor, template) {
   return source;
 }
 
+// Psycho Shift: its user's status moves to the target (shortcut: always its user, never a chosen ally).
+async function transferStatus(actor, template) {
+  const user = template.parent?.actor;
+  const status = Array.from(user?.effects ?? []).find(effect => effect.getFlag(MODULE_ID, "kind") === "pokemon-status");
+  if (!status) {return;}
+  const source = status.toObject();
+  delete source._id;
+  const [created] = await actor.createEmbeddedDocuments("ActiveEffect", [source]) ?? [];
+  if (created) {await status.delete();}
+}
+
 export async function applyStatusTemplate(
   actor,
   template
 ) {
+  if (template.getFlag(MODULE_ID, "transferStatus")) {
+    await transferStatus(actor, template);
+    return;
+  }
   const source =
     template.getFlag(MODULE_ID, "randomStatuses")
       ? await rolledStatusSource(actor, template)

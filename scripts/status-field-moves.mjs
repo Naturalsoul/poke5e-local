@@ -2,6 +2,8 @@ import { findStatusEffect } from "./status-runtime.mjs";
 import { isPokemonActor } from "./trainer-party-service.mjs";
 import { activeTerrain, distanceBetween, isGrounded } from "./battlefield-service.mjs";
 import { sufferArea } from "./lingering-area-moves.mjs";
+import { askTrainerReaction } from "./trainer-reaction-service.mjs";
+import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
 
 /* ============================================================
  * MOVES THAT KEEP STATUSES AWAY
@@ -10,13 +12,16 @@ import { sufferArea } from "./lingering-area-moves.mjs";
  *   and those starting their turn there make a CON save against its damage (half on a success);
  * - Electric Terrain: grounded Pokémon wake up when it is up (blocking sleep and doubling MOVE are
  *   in event-ability-engine and rider-ability-engine);
- * - Safeguard: its user and allies within 50 ft can't get a new status for 3 rounds.
+ * - Safeguard: its user and allies within 50 ft can't get a new status for 3 rounds;
+ * - Take Heart: a reaction to getting a status or Frightened; it is cured, gets no new one and has
+ *   advantage on WIS and CHA saves until the end of its next turn (advantage on WIS/CHA Move attacks is manual).
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
 const SAFEGUARD_KIND = "pokemon-safeguard";
 const UPROAR = { radius: 30, rule: { damage: "half-on-save" } };
 const SAFEGUARD_RANGE = 50;
+const TAKE_HEART_KIND = "pokemon-take-heart";
 
 const en = () => game.settings.get(MODULE_ID, "language") === "en";
 const authority = () => game.user.isGM && (!game.users?.activeGM || game.users.activeGM.id === game.user.id);
@@ -48,6 +53,7 @@ function safeguarded(actor) {
 // What keeps this status off the Pokémon, or null (called from battlefieldBlocksStatus).
 export function fieldMoveBlocksStatus(actor, status) {
   if (safeguarded(actor)) {return "safeguard";}
+  if (Array.from(actor?.effects ?? []).some(effect => effect.getFlag?.(MODULE_ID, "kind") === TAKE_HEART_KIND)) {return "take-heart";}
   return status === "asleep" && activeUproars().some(uproar => inUproar(actor, uproar)) ? "uproar" : null;
 }
 
@@ -88,6 +94,32 @@ export async function processStatusFieldMovesStartTurn(actor) {
   }
 }
 
+const ppLeft = item => !Number(item.system?.uses?.max) || Number(item.system.uses.spent ?? 0) < Number(item.system.uses.max);
+
+export function takeHeartMove(effect) {
+  const actor = effect?.parent;
+  const harmful = effect?.getFlag?.(MODULE_ID, "kind") === "pokemon-status" || effect?.statuses?.has?.("frightened");
+  if (!harmful || actor?.documentName !== "Actor" || !isPokemonActor(actor)) {return null;}
+  return Array.from(actor.items ?? []).find(item => moveId(item) === "take-heart" && ppLeft(item)) ?? null;
+}
+
+async function takeHeart(effect, move) {
+  const actor = effect.parent;
+  const answer = await askTrainerReaction(actor, { title: move.name, use: `${en() ? "Use" : "Usar"} ${move.name}`,
+    content: `<p>${en() ? `${actor.name} gets ${effect.name}. Use ${move.name}?` : `${actor.name} recibe ${effect.name}. ¿Usar ${move.name}?`}</p>` });
+  if (!answer) {return;}
+  await move.update({ "system.uses.spent": Number(move.system?.uses?.spent ?? 0) + 1 });
+  await effect.delete();
+  const advantage = ["wis", "cha"].map(ability => ({ key: `system.abilities.${ability}.save.roll.mode`, mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "1" }));
+  await actor.createEmbeddedDocuments("ActiveEffect", [{ name: move.name, img: move.img, origin: move.uuid, changes: advantage,
+    flags: { [MODULE_ID]: { kind: TAKE_HEART_KIND, ...endOfNextTurnFlags() } } }]);
+}
+
+function onCreateEffect(effect, _options, userId) {
+  const move = userId === game.user.id ? takeHeartMove(effect) : null;
+  if (move) {logged(takeHeart(effect, move));}
+}
+
 async function onUpdateCombat() {
   if (!authority() || activeTerrain() !== "electric") {return;}
   for (const actor of combatActors()) {if (isGrounded(actor)) {await wake(actor);}}
@@ -100,4 +132,5 @@ export function registerStatusFieldMoves() {
   registered = true;
   Hooks.on("dnd5e.postUseActivity", activity => logged(onMoveUsed(activity)));
   Hooks.on("updateCombat", () => logged(onUpdateCombat()));
+  Hooks.on("createActiveEffect", onCreateEffect);
 }

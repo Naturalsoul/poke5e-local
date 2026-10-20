@@ -101,7 +101,15 @@ const MOVE_STATUS_EFFECTS = {
       * STATUS RIDERS (batch)
    * ========================================================== */
 
-    "toxic-spikes": [
+    "psycho-shift": [
+    {
+      status: "confused",
+      trigger: "failed-save",
+      transferStatus: true
+    }
+  ],
+
+  "toxic-spikes": [
     {
       status: "poisoned",
       trigger: "failed-save",
@@ -2160,7 +2168,13 @@ export function buildMoveStatusEffects(
     ].sourceMove =
       move.id;
 
-        // Toxic Spikes: a fail by 5 gives the other (badly poisoned) template instead.
+        // Psycho Shift: the status applied is its user's own (the template's status is a placeholder).
+    if (definition.transferStatus) {
+      effect.flags[MODULE_ID].transferStatus = true;
+      effect.name = `${move.id} (→)`;
+    }
+
+    // Toxic Spikes: a fail by 5 gives the other (badly poisoned) template instead.
     if (definition.exceptBy5) {effect.flags[MODULE_ID].exceptBy5 = true;}
 
     // A d6 table: the status is rolled when the template is applied.

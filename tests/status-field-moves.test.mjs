@@ -64,3 +64,20 @@ test("Safeguard protects its user and allies within 50 ft for 3 rounds", async (
   assert.equal(fields.fieldMoveBlocksStatus(ally, "poisoned"), null, "from round 4, three rounds later");
   game.combat.round = 1;
 });
+
+test("Take Heart is offered for a new status or Frightened while it has PP, and then blocks new statuses", () => {
+  const actor = pokemon("bravo", 0);
+  actor.documentName = "Actor";
+  const takeHeart = Object.assign(move("take-heart"), { system: { uses: { spent: 0, max: "5" } } });
+  actor.items = [takeHeart];
+  const status = Object.assign(createFlagDocument({ flags: { [MODULE_ID]: { kind: "pokemon-status" } } }), { parent: actor });
+  const frightened = Object.assign(createFlagDocument({}), { parent: actor, statuses: new Set(["frightened"]) });
+  const other = Object.assign(createFlagDocument({}), { parent: actor, statuses: new Set(["prone"]) });
+  assert.equal(fields.takeHeartMove(status), takeHeart);
+  assert.equal(fields.takeHeartMove(frightened), takeHeart);
+  assert.equal(fields.takeHeartMove(other), null);
+  takeHeart.system.uses.spent = 5;
+  assert.equal(fields.takeHeartMove(status), null, "no PP left");
+  actor.effects.push(createFlagDocument({ flags: { [MODULE_ID]: { kind: "pokemon-take-heart" } } }));
+  assert.equal(fields.fieldMoveBlocksStatus(actor, "burned"), "take-heart");
+});
