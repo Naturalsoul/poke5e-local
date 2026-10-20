@@ -128,7 +128,8 @@ function damageAnimation(item, fx, shape, definition) {
   if (shape === "melee") {
     const strike = meleeStrike(item, definition);
     const overlay = strike && fx.element ? { file: fx.element } : null;
-    return strike ? { file: strike.file, at: strike.at, tint: fx.color, overlay } : { ...fx.melee, tint: fx.element ? null : fx.color };
+    const hit = strike ? { file: strike.file, at: strike.at, tint: fx.color, overlay } : { ...fx.melee, tint: fx.element ? null : fx.color };
+    return { ...hit, melee: true };
   }
   if (shape === "spray") {return { file: fx.spray, at: "from-user", tint: fx.sprayTint ?? null };}
   if (shape === "burst" || shape === "point") {
@@ -158,12 +159,26 @@ function effect(sequence, { file, tint }) {
 }
 
 const squares = feet => (feet * 2) / (canvas.scene?.grid?.distance ?? 5);
+const cells = token => Math.max(token?.document?.width ?? 1, token?.document?.height ?? 1);
 
-// Around the user's token or on the placed template, sized to the area when it has one.
-function playAround(sequence, animation, place) {
+// Around the user's token or on the placed template, sized to the area when it has one. Around a token the
+// radius counts from its edge, so a big Pokémon's burst reaches as far past it as a small one's.
+function playAround(sequence, animation, place, onToken) {
   const step = effect(sequence, animation).atLocation(place);
-  if (animation.size) {step.size(squares(animation.size), { gridUnits: true });}
+  if (animation.size) {step.size(squares(animation.size) + (onToken ? cells(place) : 0), { gridUnits: true });}
   else {step.scaleToObject(2);}
+}
+
+// Where a strike from the user lands: the target's near edge, not deep inside a big token.
+function nearEdge(source, target) {
+  const from = source?.center;
+  const to = target?.center;
+  const reach = ((cells(target) - 1) / 2) * (canvas.grid?.size ?? 100);
+  if (!from || !to || reach <= 0) {return target;}
+  const distance = Math.hypot(to.x - from.x, to.y - from.y);
+  if (!distance) {return target;}
+  const pull = Math.min(reach, distance) / distance;
+  return { x: to.x - (to.x - from.x) * pull, y: to.y - (to.y - from.y) * pull };
 }
 
 function playOnTargets(sequence, animation, source, { targets, missed }) {
@@ -171,7 +186,7 @@ function playOnTargets(sequence, animation, source, { targets, missed }) {
     if (animation.at === "from-user" && !source) {continue;}
     const step = effect(sequence, animation);
     if (animation.at === "target") {step.atLocation(target).scaleToObject(1.5);}
-    else {step.atLocation(source).stretchTo(target);}
+    else {step.atLocation(source).stretchTo(animation.melee ? nearEdge(source, target) : target);}
     if (missed) {step.missed();}
     // The element lands on the target as the strike does.
     else if (animation.overlay) {effect(sequence, animation.overlay).atLocation(target).scaleToObject(1.5).delay(300);}
@@ -187,7 +202,7 @@ export function playMoveAnimation(item, targets, { missed = false, template = nu
   if (animation.at === "user" || animation.at === "template") {
     const place = template ?? source;
     if (!place) {return;}
-    playAround(sequence, animation, place);
+    playAround(sequence, animation, place, !template);
   } else {
     playOnTargets(sequence, animation, source, { targets, missed });
   }

@@ -109,3 +109,24 @@ test("a melee Move hits the way its name or description says, then adds its elem
   animations.playMoveAnimation(move("fire-punch"), ["foe"], { missed: true });
   assert.deepEqual(files(played[0]), [fist], "a miss has no element");
 });
+
+test("big tokens: bursts count from the user's edge and strikes stop at the target's edge", () => {
+  globalThis.canvas.grid = { size: 100 };
+  const big = { center: { x: 0, y: 0 }, document: { width: 4, height: 4 } };
+  const quake = move("earthquake");
+  quake.actor = { getActiveTokens: () => [big] };
+  played.length = 0;
+  animations.playMoveAnimation(quake, [], {});
+  assert.deepEqual(played[0][0].calls.find(([name]) => name === "size"), ["size", 12, { gridUnits: true }], "8 squares + the 4×4 token");
+  const huge = { center: { x: 500, y: 0 }, document: { width: 3, height: 3 } };
+  const punch = move("mega-punch");
+  punch.actor = { getActiveTokens: () => [{ center: { x: 0, y: 0 }, document: { width: 1, height: 1 } }] };
+  played.length = 0;
+  animations.playMoveAnimation(punch, [huge], {});
+  assert.deepEqual(played[0][0].calls.find(([name]) => name === "stretchTo"), ["stretchTo", { x: 400, y: 0 }]);
+  const ember = move("ember");
+  played.length = 0;
+  animations.playMoveAnimation(ember, [huge], {});
+  assert.deepEqual(played[0][0].calls.find(([name]) => name === "stretchTo"), ["stretchTo", huge], "projectiles still fly to the center");
+  delete globalThis.canvas.grid;
+});

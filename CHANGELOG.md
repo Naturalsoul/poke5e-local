@@ -16,6 +16,8 @@ solo se corrige algo.
   - los Moves de área hacen una explosión alrededor del usuario o donde se coloca la plantilla, y los conos y
     líneas salen hacia el objetivo;
   - los que no hacen daño muestran una mejora en el usuario, un perjuicio en el objetivo o una curación.
+- Con tokens grandes, el radio de las explosiones cuenta desde el borde del usuario y los golpes cuerpo a cuerpo
+  llegan al borde del objetivo, no a su centro. Lo que se muestra sobre el objetivo escala con su token.
 - Ajuste por jugador "Animaciones de Moves" para apagarlas. Sin Sequencer o sin JB2A no se reproduce nada.
 - Funciona con todos los Moves, también los importados antes (incluso con la definición antigua, sin área): la
   animación se calcula de los datos del propio Move, sin migrar nada.
