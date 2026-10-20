@@ -29,6 +29,7 @@ import { abilityWeather, activeTerrain, environment, hasWeather, isGrounded, set
  * - Seed Sower and Sand Spit set the terrain or weather when hit;
  * - turns, switches and rests: Hospitality, Bad Dreams, Natural Cure, Regenerator, Moody;
  * - Receiver and Power of Alchemy copy the Ability of the fainted ally they replace, until switched out;
+ * - volatile statuses (Confused, Flinched) end when switched out; Flinched also when the combat ends;
  * - Sheer Force: its damaging Moves give no status or stat change to others (the damage is in rider-ability-engine).
  * ============================================================ */
 
@@ -490,10 +491,18 @@ async function leaveBattlefield(actor) {
   }
 }
 
+// Confused has its own combat-end cleanup in confusion-engine, so the combat end only passes ["flinched"].
+export async function clearVolatileStatuses(actor, statuses = null) {
+  const ids = Array.from(actor.effects ?? []).filter(effect => effect.getFlag(MODULE_ID, "kind") === "pokemon-status" &&
+    effect.getFlag(MODULE_ID, "volatile") && (!statuses || statuses.includes(effect.getFlag(MODULE_ID, "status")))).map(effect => effect.id);
+  if (ids.length) {await actor.deleteEmbeddedDocuments("ActiveEffect", ids);}
+}
+
 async function onSwitched({ outgoing, incoming }) {
   if (incoming) {await copyFaintedAbility(incoming, outgoing);}
   if (!isPokemonActor(outgoing) || !outgoing.isOwner) {return;}
   await leaveBattlefield(outgoing);
+  await clearVolatileStatuses(outgoing);
   if (hasPokemonAbility(outgoing, "natural-cure")) {
     const ids = outgoing.effects.filter(effect => effect.getFlag(MODULE_ID, "kind") === "pokemon-status").map(effect => effect.id);
     if (ids.length) {
@@ -538,7 +547,9 @@ export function registerEventAbilityEngine() {
   Hooks.on("updateCombat", combat => combatActors(combat).forEach(queueSync));
   Hooks.on("deleteCombat", combat => {
     combatActors(combat).forEach(queueSync);
-    if (gmAuthority()) {logged(Promise.all(combatActors(combat).map(leaveBattlefield)));}
+    if (gmAuthority()) {
+      logged(Promise.all(combatActors(combat).map(actor => leaveBattlefield(actor).then(() => clearVolatileStatuses(actor, ["flinched"])))));
+    }
   });
   Hooks.on("createItem", item => queueSync(item.parent));
   Hooks.on("deleteItem", item => queueSync(item.parent));

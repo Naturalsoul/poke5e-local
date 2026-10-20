@@ -23,7 +23,7 @@ const SPENT_FLAG = "formSpent";
 const ADD = 2;
 const OVERRIDE = 5;
 const UPGRADE = 4;
-const NON_VOLATILE = ["burned", "frozen", "paralyzed", "poisoned", "badly-poisoned", "asleep"];
+const NON_VOLATILE = ["burned", "frozen", "paralysis", "poisoned", "badly-poisoned", "asleep"];
 const SHORT_REST = ["schooling", "shields-down", "ice-face", "disguise"];
 const EMBODY = { "embody-aspect-cornerstone": "con", "embody-aspect-heartflame": "str", "embody-aspect-teal": "dex", "embody-aspect-wellspring": "cha" };
 const PLATES = { draco: "dragon", dread: "dark", earth: "ground", fist: "fighting", flame: "fire", icicle: "ice", insect: "bug", iron: "steel",
@@ -237,7 +237,7 @@ async function changeStance(actor, move, activity) {
 }
 
 // Shields Down: no non-volatile status in Meteor Form.
-function onPreCreateEffect(effect) {
+export function onPreCreateEffect(effect) {
   const actor = effect.parent;
   if (actor?.documentName !== "Actor" || !hasPokemonAbility(actor, "shields-down") || spent(actor, "shields-down") ||
     effect.getFlag?.(MODULE_ID, "kind") !== "pokemon-status" || !NON_VOLATILE.includes(effect.getFlag(MODULE_ID, "status"))) {return true;}

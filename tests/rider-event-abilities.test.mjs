@@ -170,3 +170,13 @@ test("combo Moves are the d4-chain ones Skill Link guarantees", () => {
   assert.ok(rider.COMBO_MOVES.has("fury-swipes") && rider.COMBO_MOVES.has("water-shuriken"));
   assert.equal(rider.COMBO_MOVES.has("tackle"), false);
 });
+
+test("volatile statuses are cleared on switching out; the combat end only clears the ones it names", async () => {
+  const effect = (id, status, volatile) => ({ id, getFlag: (_module, key) => ({ kind: "pokemon-status", status, volatile })[key] });
+  const actor = pokemon("static", { effects: [effect("c", "confused", true), effect("f", "flinched", true), effect("b", "burned", false)] });
+  const deleted = [];
+  actor.deleteEmbeddedDocuments = async (_type, ids) => deleted.push(ids);
+  await events.clearVolatileStatuses(actor, ["flinched"]);
+  await events.clearVolatileStatuses(actor);
+  assert.deepEqual(deleted, [["f"], ["c", "f"]]);
+});

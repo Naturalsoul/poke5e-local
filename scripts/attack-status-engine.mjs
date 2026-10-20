@@ -201,6 +201,12 @@ async function applyStatusTemplate(
   delete source._id;
 
 
+  // Its Move, so the status knows who caused it (Frozen's DC, Synchronize, Sheer Force).
+  source.origin ||=
+    template.parent?.uuid ??
+    null;
+
+
   await actor.createEmbeddedDocuments(
     "ActiveEffect",
     [

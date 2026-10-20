@@ -1037,13 +1037,21 @@ async function processFrozen(
     {};
 
 
+  // The current proficiency of whoever froze it; the stored DC is from when its Move was built.
+  const source =
+    effectSourceActor(
+      effect
+    );
+
   const dc =
     Math.max(
       1,
-      Number(
-        recovery.dc ??
-        12
-      )
+      isPokemonActor(source)
+        ? 10 + pokemonProficiency(source)
+        : Number(
+          recovery.dc ??
+          12
+        )
     );
 
 
@@ -1181,8 +1189,20 @@ async function processAsleep(
     );
 
 
+  // It lasts three rounds: the third end of turn wakes it up anyway.
+  const turns =
+    Number(
+      effect.getFlag(
+        MODULE_ID,
+        "asleepTurns"
+      ) ??
+      0
+    ) + 1;
+
+
   if (
-    roll.total >= 11
+    roll.total >= 11 ||
+    turns >= 3
   ) {
 
     await effect.delete();
@@ -1200,6 +1220,13 @@ async function processAsleep(
 
     return;
   }
+
+
+  await effect.setFlag(
+    MODULE_ID,
+    "asleepTurns",
+    turns
+  );
 
 
   await chat(

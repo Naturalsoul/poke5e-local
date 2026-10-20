@@ -122,6 +122,10 @@ function statusEffect(actor, status, {
       }
       return this;
     },
+    async setFlag(_moduleId, key, value) {
+      flags[key] = value;
+      return this;
+    },
     async delete() {
       this.deleted = true;
       return this;
@@ -339,4 +343,43 @@ test("Burned end-turn damage uses the Pokemon proficiency progression and skips 
   );
 
   assert.deepEqual(burnedActor.damageCalls, []);
+});
+
+async function endTurn(actor, round) {
+  const next = pokemonActor({ id: `next-${round}` });
+  await hooks.handler("combatTurnChange")(
+    { combatants: new Map([["actor", { id: "actor", actor }], ["next", { id: "next", actor: next }]]) },
+    { round, turn: 0, combatantId: "actor" },
+    { round, turn: 1, combatantId: "next" }
+  );
+}
+
+test("Asleep ends after three of its turns even if every wake-up roll fails", async () => {
+  TurnRoll.nextTotal = 4;
+  const actor = pokemonActor({ id: "sleeper" });
+  const asleep = statusEffect(actor, "asleep");
+  actor.effects = [asleep];
+  await endTurn(actor, 1);
+  await endTurn(actor, 2);
+  assert.equal(asleep.deleted, undefined, "still asleep after two turns");
+  await endTurn(actor, 3);
+  assert.equal(asleep.deleted, true);
+});
+
+test("Frozen's save DC uses the current proficiency of whoever froze it", async () => {
+  const freezer = pokemonActor({ id: "freezer", level: 9 });
+  const actor = pokemonActor({ id: "frozen" });
+  const frozen = statusEffect(actor, "frozen");
+  frozen.origin = freezer.uuid;
+  frozen._flags.recovery = { ability: "str", dc: 12 };
+  actor.effects = [frozen];
+  const targets = [];
+  actor.rollSavingThrow = async ({ target }) => {
+    targets.push(target);
+    return [{ total: 1 }];
+  };
+  globalThis.fromUuidSync = uuid => (uuid === freezer.uuid ? freezer : null);
+  await endTurn(actor, 1);
+  globalThis.fromUuidSync = () => null;
+  assert.deepEqual(targets, [14], "10 + proficiency 4 at level 9, not the stored 12");
 });
