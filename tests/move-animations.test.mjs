@@ -8,6 +8,8 @@ const hooks = createHooks();
 const MODULE_ID = "poke5e-local";
 const settings = { moveAnimations: true, language: "es" };
 const played = [];
+const heard = [];
+globalThis.fetch = async url => ({ ok: true, json: async () => JSON.parse(readFileSync(new URL(`../${url.replace("modules/poke5e-local/", "")}`, import.meta.url), "utf8")) });
 globalThis.game = { user: { id: "u1", targets: [] }, settings: { get: (_m, key) => settings[key], register() {} },
   modules: { get: () => ({ active: true }) } };
 globalThis.canvas = { scene: { grid: { distance: 5 } } };
@@ -22,10 +24,19 @@ globalThis.Sequence = class {
     (this.steps ??= []).push(step);
     return step;
   }
-  async play() { played.push(this.steps ?? []); }
+  sound() {
+    const sound = { calls: [] };
+    for (const name of ["file", "audioChannel", "volume"]) {
+      sound[name] = (...args) => { sound.calls.push([name, ...args]); return sound; };
+    }
+    (this.sounds ??= []).push(sound);
+    return sound;
+  }
+  async play() { played.push(this.steps ?? []); heard.push(...(this.sounds ?? []).map(sound => sound.calls[0][1])); }
 };
 const animations = await import("../scripts/move-animations.mjs");
 animations.registerMoveAnimations();
+await animations.loadMoveSounds();
 const { moves } = JSON.parse(readFileSync(new URL("../data/normalized/moves.json", import.meta.url), "utf8"));
 
 const user = { getActiveTokens: () => ["userToken"] };
@@ -213,4 +224,20 @@ test("Foundry 14: a placed template is a Region, and its Move plays over it", as
   await settle();
   assert.equal(played.length, 0, "a Region that isn't a template plays nothing");
   delete globalThis.canvas.dimensions;
+});
+
+test("each Move plays its own Pokémon sound with its animation; the rest sound like their type", () => {
+  const root = "modules/poke5e-local/assets/audio/moves";
+  assert.equal(animations.moveSound(move("ember")), `${root}/gen7-ember.ogg`);
+  assert.equal(animations.moveSound(move("dragon-breath")), `${root}/gen7-dragon-breath.ogg`);
+  assert.equal(animations.moveSound(move("body-press")), `${root}/slam.ogg`, "a Gen 8 Move: from the Essentials pack");
+  assert.equal(animations.moveSound(move("tera-blast")), `${root}/gen7-tackle.ogg`, "no sound of its own: its type's");
+  const sounds = JSON.parse(readFileSync(new URL("../data/move-sounds.json", import.meta.url), "utf8"));
+  for (const [type, id] of Object.entries(animations.TYPE_SOUND_MOVES)) {assert.ok(sounds[id], `${type}: ${id}`);}
+  for (const file of new Set(Object.values(sounds))) {
+    assert.ok(readFileSync(new URL(`../assets/audio/moves/${file}`, import.meta.url)).length > 0, file);
+  }
+  heard.length = 0;
+  animations.playMoveAnimation(move("ember"), ["foe"], { missed: true });
+  assert.deepEqual(heard, [`${root}/gen7-ember.ogg`], "a miss still sounds");
 });

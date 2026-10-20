@@ -4,6 +4,19 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.21.0] — 2026-10-20
+
+- **Sonidos de Moves:** cada Move suena junto a su animación con su sonido de los juegos, de la Pokemon SFX
+  Attack Moves Collection de BellBlitzKing: 671 Moves, de la generación más reciente que lo tenga (658 de Sol y
+  Luna). Los de Gen 8 y 9, que la colección no tiene, usan el sonido de su animación en el Gen 9 Move Animation
+  Project (Pokémon Essentials): 150 más. Los 9 restantes suenan como un Move de su tipo, y Growl, Roar, Howl,
+  Hyper Voice, Disarming Voice y Halo Song usan el grito del Pokémon.
+- Los sonidos van por el canal de interfaz de Foundry, como los gritos: cada jugador regula su volumen ahí.
+- `tools/build-move-sounds.py` busca cada Move por su nombre en la colección (o, si no está, el sonido de su
+  animación en el pack de Essentials), lo convierte a .ogg (46 MB en total) y escribe `data/move-sounds.json`. Los
+  archivos de la colección que están dañados se saltan y se usa otra generación.
+- README: créditos a BellBlitzKing, Celebi MM8BDM y el Gen 9 Move Animation Project.
+
 ## [0.20.1] — 2026-10-20
 
 - README: requisitos para Foundry 14 (probado en 14.365) y sus límites conocidos: las plantillas son Regions, las
