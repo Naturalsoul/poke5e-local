@@ -98,3 +98,24 @@ test("an Ability switched on beforehand goes right after the Moves, with its use
   assert.deepEqual([slots[2].name, slots[2].entry.kind], ["Intimidate", "ability"]);
   assert.deepEqual(hotbar.battleHotbarCounter(slots[2].entry), { value: 1, max: 1 });
 });
+
+test("selecting a wild Pokémon shows its Moves to its owner (the GM), and nothing for others or non-Pokémon", async () => {
+  const wild = pokemon({}, [["thunder-shock", 30]]);
+  const select = async actor => {
+    hooks.handler("controlToken")({ actor }, true);
+    await new Promise(resolve => setTimeout(resolve, 0));
+  };
+  const before = { ...user.hotbar };
+  wild.isOwner = false;
+  await select(wild);
+  assert.deepEqual(user.hotbar, before, "not its owner");
+  const npc = createFlagDocument({ uuid: "Actor.npc", flags: {} });
+  npc.isOwner = true;
+  await select(npc);
+  assert.deepEqual(user.hotbar, before, "not a Pokémon");
+  wild.isOwner = true;
+  await select(wild);
+  assert.equal(macros.find(doc => doc.id === user.hotbar[1]).name, "thunder-shock");
+  assert.equal(user.hotbar[10], undefined, "no trainer actions");
+  assert.deepEqual(Object.keys(hotbar.battleHotbarSlots(wild, null)), ["1"]);
+});
