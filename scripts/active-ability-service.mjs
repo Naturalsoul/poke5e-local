@@ -1,4 +1,8 @@
 import { hasPokemonAbility, pokemonStatus } from "./status-runtime.mjs";
+import { applyPokemonStatus } from "./pokemon-status-service.mjs";
+import { publishRollBeforeDamage } from "./chat-roll-display.mjs";
+import { distanceBetween } from "./battlefield-service.mjs";
+import { POKEMON_TYPES } from "./types.mjs";
 import { getPokemonTrainerUuid, isPokemonActor } from "./trainer-party-service.mjs";
 import { isTrainerActor } from "./trainer-service.mjs";
 import { registerAttackReaction } from "./attack-outcome-engine.mjs";
@@ -18,7 +22,9 @@ import { addFlat, moveModifier } from "./rider-ability-engine.mjs";
  * - blockStatus: the next status it would get;
  * - doubleDice: the damage dice of its next damage roll;
  * - doubleMove: its MOVE modifier, once more, on its next Move damage roll (Simple);
- * - saveDisadvantage: the next save against a status from its Moves (Mycelium Might).
+ * - saveDisadvantage: the next save against a status from its Moves (Mycelium Might);
+ * - damageType: the damage type of its next Move damage roll, chosen when switched on (Download).
+ * Others act right away on the targeted creature: Healer (at will) and Curious Medicine (INT mod uses).
  * Magic Bounce blocks the next status like Shield Dust and gives it to whoever caused it.
  * Heavy Metal and Steadfast depend on a result already rolled, so they ask (only when
  * they would change it), like the trainer reactions.
@@ -43,7 +49,11 @@ export const ACTIVE_ABILITIES = {
   steadfast: { rest: "long", reaction: true },
   "magic-bounce": { rest: "long", guard: "blockStatus" },
   simple: { rest: "short", guard: "doubleMove" },
-  "mycelium-might": { rest: "short", guard: "saveDisadvantage" }
+  "mycelium-might": { rest: "short", guard: "saveDisadvantage" },
+  download: { rest: "short", guard: "damageType", choose: chooseDamageType },
+  healer: { act: heal, reach: 5, hint: "touch" },
+  "curious-medicine": { rest: "long", act: resetStatChanges, reach: 30, ally: true, self: true, hint: "near",
+    uses: pokemon => Math.max(1, Number(pokemon.system?.abilities?.int?.mod ?? 0)) }
 };
 
 const TEXT = {
@@ -54,6 +64,15 @@ const TEXT = {
   doubleMove: { en: "{target}'s next Move damage roll doubles its MOVE modifier", es: "la próxima tirada de daño de un Move de {target} duplica su modificador MOVE" },
   saveDisadvantage: { en: "the next save against a status from {target}'s Moves has disadvantage",
     es: "la próxima salvación contra un estado de los Moves de {target} tendrá desventaja" },
+  damageType: { en: "{target}'s next Move damage roll deals {choice} damage", es: "la próxima tirada de daño de un Move de {target} hará daño {choice}" },
+  type: { en: "Damage type", es: "Tipo de daño" },
+  touch: { en: "Target the creature it touches (within 5 ft).", es: "Marca como objetivo a la criatura que toca (a 5 ft)." },
+  near: { en: "Target itself or an ally within 30 ft (or nothing, for itself).", es: "Marca a sí mismo o a un aliado a 30 ft (o nada, para sí mismo)." },
+  noStatus: { en: "has no poison, burn or paralysis", es: "no tiene veneno, quemadura ni parálisis" },
+  cures: { en: "cures {target} of {status}", es: "cura a {target} de {status}" },
+  takes: { en: "and takes it itself", es: "y se lo queda" },
+  noChanges: { en: "has no ability score, AC or attack changes", es: "no tiene cambios de características, CA ni ataque" },
+  resets: { en: "resets {target}'s ability score, AC and attack changes", es: "restablece los cambios de características, CA y ataque de {target}" },
   short: { en: "already used until a short rest", es: "ya usada hasta un descanso corto" },
   long: { en: "already used until a long rest", es: "ya usada hasta un descanso largo" },
   ally: { en: "Target the allied Pokémon it protects.", es: "Marca como objetivo al Pokémon aliado que protege." },
@@ -67,6 +86,8 @@ const en = () => game.settings.get(MODULE_ID, "language") === "en";
 const text = key => TEXT[key][en() ? "en" : "es"];
 const escape = value => String(value ?? "").replace(/[&<>"']/g, character => `&#${character.charCodeAt(0)};`);
 const actorFrom = uuid => (uuid ? fromUuidSync(uuid, { strict: false }) : null);
+const typeName = type => POKEMON_TYPES[type]?.[en() ? "en" : "es"] ?? type ?? "";
+const usesLabel = (left, max) => (max === null ? "" : `${left}/${max}`);
 
 export function activeAbilityOf(pokemon) {
   return isPokemonActor(pokemon) ? Object.keys(ACTIVE_ABILITIES).find(abilityId => hasPokemonAbility(pokemon, abilityId)) ?? null : null;
@@ -76,11 +97,21 @@ function abilityName(pokemon, abilityId) {
   return pokemon.items?.find(item => item.getFlag?.(MODULE_ID, "kind") === "ability" && item.getFlag?.(MODULE_ID, "sourceId") === abilityId)?.name ?? abilityId;
 }
 
-export const abilityUsesLeft = (pokemon, abilityId) => (pokemon?.getFlag?.(MODULE_ID, USES_FLAG)?.[abilityId] ? 0 : 1);
+// Uses per rest (null: at will). A spent use is stored as a count; true is one use.
+export function abilityMaxUses(pokemon, abilityId) {
+  const rule = ACTIVE_ABILITIES[abilityId];
+  return rule?.rest ? rule.uses?.(pokemon) ?? 1 : null;
+}
+const usesSpent = (pokemon, abilityId) => Number(pokemon?.getFlag?.(MODULE_ID, USES_FLAG)?.[abilityId] ?? 0);
+export function abilityUsesLeft(pokemon, abilityId) {
+  const max = abilityMaxUses(pokemon, abilityId);
+  return max === null ? 1 : Math.max(0, max - usesSpent(pokemon, abilityId));
+}
 const guardOf = actor => actor?.getFlag?.(MODULE_ID, GUARD_FLAG) ?? {};
 
 async function spendUse(pokemon, abilityId) {
-  await pokemon.setFlag(MODULE_ID, USES_FLAG, { ...pokemon.getFlag(MODULE_ID, USES_FLAG), [abilityId]: true });
+  if (abilityMaxUses(pokemon, abilityId) === null) {return;}
+  await pokemon.setFlag(MODULE_ID, USES_FLAG, { ...pokemon.getFlag(MODULE_ID, USES_FLAG), [abilityId]: usesSpent(pokemon, abilityId) + 1 });
 }
 
 async function announce(pokemon, abilityId, html) {
@@ -96,6 +127,20 @@ function allyTarget(pokemon) {
   return targets.length === 1 && isPokemonActor(token.actor) && token.actor !== pokemon && token.document?.disposition === own ? token.actor : null;
 }
 
+// Healer, Curious Medicine: the one targeted creature within reach (an ally for Curious Medicine), or itself.
+function reachTarget(pokemon, rule) {
+  const targets = [...game.user.targets];
+  if (!targets.length) {return rule.self ? pokemon : null;}
+  const actor = targets.length === 1 ? targets[0].actor : null;
+  if (!actor || actor === pokemon) {return actor && rule.self ? pokemon : null;}
+  return (!rule.ally || allyTarget(pokemon) === actor) && distanceBetween(pokemon, actor) <= rule.reach ? actor : null;
+}
+
+function recipientOf(pokemon, rule) {
+  if (rule.reach) {return reachTarget(pokemon, rule);}
+  return rule.ally ? allyTarget(pokemon) : pokemon;
+}
+
 /* ============================================================
  * SWITCHING ON
  * ============================================================ */
@@ -108,9 +153,9 @@ export async function useActiveAbility(pokemon) {
     ui.notifications.warn(`${abilityName(pokemon, abilityId)}: ${text(rule.rest)}.`);
     return false;
   }
-  const recipient = rule.ally ? allyTarget(pokemon) : pokemon;
+  const recipient = recipientOf(pokemon, rule);
   if (!recipient) {
-    ui.notifications.warn(text("ally"));
+    ui.notifications.warn(text(rule.hint ?? "ally"));
     return false;
   }
   if (!recipient.isOwner) {
@@ -118,16 +163,69 @@ export async function useActiveAbility(pokemon) {
     ui.notifications.warn(`${text("owner")} ${recipient.name}.`);
     return false;
   }
+  if (rule.act) {
+    const html = await rule.act(pokemon, recipient);
+    if (!html) {return false;}
+    await spendUse(pokemon, abilityId);
+    await announce(pokemon, abilityId, html);
+    return true;
+  }
+  const choice = rule.choose ? await rule.choose(pokemon) : null;
+  if (rule.choose && !choice) {return false;}
   await spendUse(pokemon, abilityId);
-  await recipient.setFlag(MODULE_ID, GUARD_FLAG, { ...guardOf(recipient), [rule.guard]: abilityId });
-  await announce(pokemon, abilityId, text(rule.guard).replace("{target}", escape(recipient.name)));
+  await recipient.setFlag(MODULE_ID, GUARD_FLAG, { ...guardOf(recipient), [rule.guard]: abilityId, ...(choice ? { [`${rule.guard}Choice`]: choice } : {}) });
+  await announce(pokemon, abilityId, text(rule.guard).replace("{target}", escape(recipient.name)).replace("{choice}", escape(typeName(choice))));
   return true;
+}
+
+// Download: the damage type, from a list of the Pokémon types.
+async function chooseDamageType(pokemon) {
+  const options = Object.keys(POKEMON_TYPES).map(type => `<option value="${type}">${escape(typeName(type))}</option>`).join("");
+  const choice = await foundry.applications.api.DialogV2.prompt({ window: { title: abilityName(pokemon, "download") },
+    content: `<label>${text("type")} <select name="type">${options}</select></label>`, rejectClose: false,
+    ok: { callback: (_event, button) => button.form.elements.type.value } });
+  return POKEMON_TYPES[choice] ? choice : null;
+}
+
+// Healer: cures poison, burn or paralysis; on a d4 of 1 or 2 the holder takes the status.
+const HEALED = ["poisoned", "burned", "paralysis"];
+
+async function heal(pokemon, recipient) {
+  const effect = Array.from(recipient.effects ?? []).find(entry => HEALED.includes(pokemonStatus(entry)));
+  if (!effect) {
+    ui.notifications.warn(`${recipient.name} ${text("noStatus")}.`);
+    return null;
+  }
+  const status = pokemonStatus(effect);
+  const roll = await new Roll("1d4").evaluate();
+  await publishRollBeforeDamage(roll, { speaker: ChatMessage.implementation.getSpeaker({ actor: pokemon }), flavor: `${abilityName(pokemon, "healer")} — ${pokemon.name}` });
+  await effect.delete();
+  const taken = roll.total <= 2 && recipient !== pokemon;
+  if (taken) {await applyPokemonStatus(pokemon, status, { language: en() ? "en" : "es" });}
+  return `${text("cures").replace("{target}", escape(recipient.name)).replace("{status}", escape(effect.name))}${taken ? ` ${text("takes")}` : ""}`;
+}
+
+// Curious Medicine: removes the stat changes to ability scores, AC and attack, raised or lowered.
+const RESET_KEY = /^system\.(abilities|attributes\.ac|bonuses)\./;
+
+export const resettableEffects = actor => Array.from(actor?.effects ?? []).filter(effect =>
+  effect.getFlag?.(MODULE_ID, "kind") === "pokemon-modifier" && (effect.changes ?? []).some(change => RESET_KEY.test(change.key)));
+
+async function resetStatChanges(_pokemon, recipient) {
+  const ids = resettableEffects(recipient).map(effect => effect.id);
+  if (!ids.length) {
+    ui.notifications.warn(`${recipient.name} ${text("noChanges")}.`);
+    return null;
+  }
+  await recipient.deleteEmbeddedDocuments("ActiveEffect", ids);
+  return text("resets").replace("{target}", escape(recipient.name));
 }
 
 async function clearGuard(actor, kind) {
   const guard = { ...guardOf(actor) };
   if (!guard[kind]) {return;}
   delete guard[kind];
+  delete guard[`${kind}Choice`];
   await (Object.keys(guard).length ? actor.setFlag(MODULE_ID, GUARD_FLAG, guard) : actor.unsetFlag(MODULE_ID, GUARD_FLAG));
 }
 
@@ -199,6 +297,17 @@ function applyGuardDoubleMove(rolls, config) {
   const bonus = moveModifier(actor, move);
   if (roll && bonus) {addFlat(roll, bonus);}
   logged(clearGuard(actor, "doubleMove"));
+}
+
+// Download: the next Move damage roll deals the chosen type.
+function applyGuardDamageType(rolls, config) {
+  if (!Array.isArray(rolls) || !Array.from(config?.hookNames ?? []).includes("damage")) {return;}
+  const move = config.subject?.item;
+  const actor = move?.actor;
+  const type = guardOf(actor).damageTypeChoice;
+  if (!guardOf(actor).damageType || !type || move.getFlag?.(MODULE_ID, "kind") !== "move") {return;}
+  rolls.filter(roll => roll && !["healing", "temphp"].includes(roll.options?.type)).forEach(roll => { roll.options.type = type; });
+  logged(clearGuard(actor, "damageType"));
 }
 
 // Mycelium Might: the next save against a status from its Moves has disadvantage.
@@ -309,9 +418,10 @@ export function activeAbilityButton(pokemon) {
   const rule = ACTIVE_ABILITIES[abilityId];
   if (!rule) {return "";}
   const left = abilityUsesLeft(pokemon, abilityId);
+  const max = abilityMaxUses(pokemon, abilityId);
   const on = Object.values(guardOf(pokemon)).includes(abilityId);
-  const charges = on ? text("on") : `${left}/1`;
-  const tooltip = escape(rule.reaction ? text("reaction") : `${en() ? "Use" : "Usar"}: ${abilityName(pokemon, abilityId)} · ${charges}`);
+  const charges = on ? text("on") : usesLabel(left, max);
+  const tooltip = escape(rule.reaction ? text("reaction") : `${en() ? "Use" : "Usar"}: ${abilityName(pokemon, abilityId)}${charges ? ` · ${charges}` : ""}`);
   const button = rule.reaction ? "" : `
     <button type="button" class="poke5e-pokemon-held-item__use" data-poke5e-ability-action="use" data-actor-uuid="${escape(pokemon.uuid)}"
       ${left && pokemon.isOwner ? "" : "disabled"} title="${tooltip}" aria-label="${tooltip}">
@@ -346,6 +456,7 @@ export function registerActiveAbilityService() {
   Hooks.on("preCreateActiveEffect", blockStatus);
   Hooks.on("dnd5e.postRollConfiguration", applyGuardDoubleDice);
   Hooks.on("dnd5e.postRollConfiguration", applyGuardDoubleMove);
+  Hooks.on("dnd5e.postRollConfiguration", applyGuardDamageType);
   Hooks.on("dnd5e.preRollSavingThrow", applyGuardSaveDisadvantage);
   Hooks.on("dnd5e.restCompleted", onRestCompleted);
   document.addEventListener("click", onDocumentClick);

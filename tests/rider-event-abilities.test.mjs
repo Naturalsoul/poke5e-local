@@ -127,3 +127,46 @@ test("Unaware attacks ignore the AC its target gained in battle", () => {
   assert.equal(passive.attackAbilityModifiers(pokemon("unaware"), null, [target]).bonus, 2);
   assert.equal(passive.attackAbilityModifiers(pokemon("static"), null, [target]).bonus, 0);
 });
+
+test("Sheer Force doubles MOVE on Moves with an added effect and drops that effect on others", () => {
+  const strong = { str: { mod: 4 }, dex: { mod: 2 } };
+  const status = { getFlag: (_module, key) => ({ kind: "pokemon-status", trigger: "natural-attack-16+" })[key] };
+  const selfBuff = { getFlag: (_module, key) => ({ kind: "pokemon-modifier", trigger: "self" })[key] };
+  const nidoking = pokemon("sheer-force", { abilities: strong });
+  const poisonJab = { ...move("poison-jab", "poison", {}, nidoking), effects: [status] };
+  assert.equal(rider.damageRiders(nidoking, poisonJab, []).flat, 4);
+  assert.equal(rider.damageRiders(nidoking, { ...move("close-combat", "fighting"), effects: [selfBuff] }, []).flat, 0, "self effects are not added effects");
+  nidoking.items.push(poisonJab);
+  globalThis.fromUuidSync = uuid => (uuid === nidoking.uuid ? nidoking : null);
+  const target = pokemon("static");
+  const poisoned = { parent: target, getFlag: (_module, key) => ({ kind: "pokemon-status", sourceActorUuid: nidoking.uuid, sourceMove: "poison-jab" })[key] };
+  assert.equal(events.sheerForceBlocks(target, poisoned), nidoking);
+  assert.equal(events.sheerForceBlocks(nidoking, { ...poisoned, parent: nidoking }), null, "its own effects stay");
+  assert.equal(events.sheerForceBlocks(target, { ...poisoned, getFlag: (_module, key) => ({ kind: "pokemon-status", sourceActorUuid: "Actor.x" })[key] }), null);
+});
+
+test("Gorilla Tactics: MOVE twice on its Move (the first one, if none yet), none on the others", async () => {
+  const darmanitan = pokemon("gorilla-tactics", { abilities: { str: { mod: 4 } } });
+  assert.equal(rider.damageRiders(darmanitan, move("tackle", "normal"), []).flat, 4);
+  await darmanitan.setFlag(MODULE_ID, rider.GORILLA_FLAG, "tackle");
+  assert.equal(rider.damageRiders(darmanitan, move("tackle", "normal"), []).flat, 4);
+  assert.equal(rider.damageRiders(darmanitan, move("flare-blitz", "fire"), []).flat, -4, "cancels the MOVE in its damage");
+});
+
+test("Receiver and Power of Alchemy copy the fainted ally's non-hidden Ability", async () => {
+  const { hasPokemonAbility } = await import("../scripts/status-runtime.mjs");
+  assert.equal(events.copiableAbility(pokemon("intimidate")), "intimidate");
+  assert.equal(events.copiableAbility(pokemon("receiver")), null);
+  const hidden = pokemon("drought");
+  hidden.items = [{ getFlag: (_module, key) => ({ kind: "ability", sourceId: "drought", hiddenAbility: true })[key] }];
+  assert.equal(events.copiableAbility(hidden), null);
+  const passimian = pokemon("receiver");
+  await passimian.setFlag(MODULE_ID, "copiedAbilityId", "intimidate");
+  assert.equal(hasPokemonAbility(passimian, "intimidate"), true);
+  assert.equal(hasPokemonAbility(passimian, "receiver"), true);
+});
+
+test("combo Moves are the d4-chain ones Skill Link guarantees", () => {
+  assert.ok(rider.COMBO_MOVES.has("fury-swipes") && rider.COMBO_MOVES.has("water-shuriken"));
+  assert.equal(rider.COMBO_MOVES.has("tackle"), false);
+});

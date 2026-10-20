@@ -5,6 +5,8 @@ import { SOUND_MOVES } from "./passive-ability-engine.mjs";
 import { messageRollShown } from "./chat-roll-display.mjs";
 import { abilityWeather, activeTerrain, distanceBetween, hasWeather, isGrounded } from "./battlefield-service.mjs";
 import { auraDamage, auraDamageMultiplier, telepathyBlocks } from "./aura-ability-engine.mjs";
+import { inflictsStatus } from "./trainer-path-actions.mjs";
+import { isAttackHit, subscribeAttackOutcome } from "./attack-outcome-engine.mjs";
 
 /* ============================================================
  * ABILITIES THAT CHANGE A MOVE
@@ -18,11 +20,15 @@ import { auraDamage, auraDamageMultiplier, telepathyBlocks } from "./aura-abilit
  * - weather and terrain: Weather Ball, Solar Power, Flower Gift, Sand Force, the terrains that double MOVE,
  *   primal weathers that stop Water or Fire damage, Misty Terrain against Dragon, Protosynthesis, Quark Drive;
  * - auras from aura-ability-engine: Battery, Power Spot, Steely Spirit, Plus/Minus, Fairy/Dark Aura, Telepathy;
- * - Stakeout: double damage to the Pokémon an opponent switched in, until the end of its next turn's round.
+ * - Stakeout: double damage to the Pokémon an opponent switched in, until the end of its next turn's round;
+ * - Sheer Force: MOVE again on a damaging Move with a status or stat change for others (event-ability-engine drops it);
+ * - Skill Link: a chat notice that a combo Move's first extra hit needs no d4 (the chain itself is rolled by hand);
+ * - Gorilla Tactics: the first Move it rolls damage with after entering gets MOVE twice, the others none.
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
 const CHARGE_FLAG = "abilityCharge";
+export const GORILLA_FLAG = "gorillaTacticsMove";
 const WATER_COMPACTION = "water-compaction";
 const MENTAL = ["int", "wis", "cha"];
 const SHARP_MOVE = /cut|blade|slash|edge|cleave|razor|sword|axe/;
@@ -38,7 +44,8 @@ const TYPE_CHANGE = {
 
 const TEXT = {
   truant: { en: "Truant: it cannot use the same Move two rounds in a row.", es: "Truant: no puede usar el mismo Move dos rondas seguidas." },
-  hustle: { en: "may take another action this turn; an attack with it has disadvantage", es: "puede realizar otra acción este turno; si ataca con ella, tiene desventaja" }
+  hustle: { en: "may take another action this turn; an attack with it has disadvantage", es: "puede realizar otra acción este turno; si ataca con ella, tiene desventaja" },
+  skillLink: { en: "hits at least twice: the first extra hit needs no d4", es: "golpea al menos dos veces: el primer golpe extra no necesita el d4" }
 };
 
 const en = () => game.settings.get(MODULE_ID, "language") === "en";
@@ -94,6 +101,19 @@ function weatherFlat(actor, move, type) {
     (TERRAIN_TYPE[activeTerrain()] === type ? moveModifier(actor, move) : 0);
 }
 
+// A status, or a stat change for someone other than the user.
+export const hasSecondaryEffect = move => inflictsStatus(move) || Array.from(move?.effects ?? []).some(effect =>
+  effect.getFlag?.(MODULE_ID, "kind") === "pokemon-modifier" && effect.getFlag(MODULE_ID, "trigger") !== "self" &&
+  effect.getFlag(MODULE_ID, "target") !== "self");
+
+// How many extra times MOVE counts: Sheer Force +1; Gorilla Tactics +1 on its Move (the first one, if none yet), -1 on the others.
+function moveMultiplierRiders(actor, move) {
+  const sheer = hasPokemonAbility(actor, "sheer-force") && hasSecondaryEffect(move) ? 1 : 0;
+  if (!hasPokemonAbility(actor, "gorilla-tactics")) {return sheer;}
+  const chosen = actor.getFlag?.(MODULE_ID, GORILLA_FLAG) ?? moveId(move);
+  return sheer + (chosen === moveId(move) ? 1 : -1);
+}
+
 const mercilessApplies = (actor, targets) => hasPokemonAbility(actor, "merciless") && targets.length > 0 &&
   targets.every(target => hasPokemonStatus(target, "poisoned"));
 
@@ -104,7 +124,7 @@ export function damageRiders(actor, move, targets, { melee = false } = {}) {
   const electric = type === "electric";
   const merciless = mercilessApplies(actor, targets);
   const sharp = hasPokemonAbility(actor, "sharpness") && SHARP_MOVE.test(moveId(move));
-  const moveAgain = (sharp ? 1 : 0) + (electric && charge.electromorphosis ? 1 : 0);
+  const moveAgain = (sharp ? 1 : 0) + (electric && charge.electromorphosis ? 1 : 0) + moveMultiplierRiders(actor, move);
   const aura = auraDamage(actor, type);
   return {
     type,
@@ -145,9 +165,16 @@ function onPostRollConfiguration(rolls, config) {
   damage.forEach(roll => applyRiders(roll, riders, move.getFlag(MODULE_ID, "moveType")));
   if (riders.flat && damage[0]) {addFlat(damage[0], riders.flat);}
   if (riders.dice && damage[0]) {addFlat(damage[0], riders.dice);}
+  lockGorillaMove(actor, move);
   if (riders.consume.length && actor.isOwner) {
     void actor.unsetFlag(MODULE_ID, CHARGE_FLAG).catch(error => console.error(`[${MODULE_ID}] ability charge`, error));
   }
+}
+
+// Gorilla Tactics: the first Move with MOVE damage becomes its Move until it leaves the battlefield.
+function lockGorillaMove(actor, move) {
+  if (!hasPokemonAbility(actor, "gorilla-tactics") || actor.getFlag(MODULE_ID, GORILLA_FLAG) || !moveModifier(actor, move) || !actor.isOwner) {return;}
+  void actor.setFlag(MODULE_ID, GORILLA_FLAG, moveId(move)).catch(error => console.error(`[${MODULE_ID}] gorilla tactics`, error));
 }
 
 // Electromorphosis (any damage) and Wind Power (a wind Move) charge the next Electric Move.
@@ -252,6 +279,18 @@ async function onRollAttack(rolls, data) {
     content: `<div class="poke5e-turn-message"><strong>${actor.name}</strong> (Hustle) ${text("hustle")}.</div>` });
 }
 
+// Combo Moves: after a hit, a d4 of 3 or 4 hits again (up to four extra hits).
+export const COMBO_MOVES = new Set(["arm-thrust", "bone-rush", "bullet-seed", "comet-punch", "double-slap", "fury-attack", "fury-swipes",
+  "icicle-spear", "pin-missile", "rock-blast", "spike-cannon", "tail-slap", "water-shuriken"]);
+
+async function onSkillLinkOutcome(outcome, context) {
+  const move = moveOf(context?.activity);
+  const actor = move?.actor;
+  if (!isAttackHit(outcome) || !COMBO_MOVES.has(moveId(move)) || !hasPokemonAbility(actor, "skill-link")) {return;}
+  await ChatMessage.implementation.create({ speaker: ChatMessage.implementation.getSpeaker({ actor }),
+    content: `<div class="poke5e-turn-message"><strong>${actor.name}</strong> (Skill Link) ${text("skillLink")}.</div>` });
+}
+
 // Stakeout: the replacement an opponent switched in, until the round after the switch ends.
 const STAKEOUT_FLAG = "stakeout";
 
@@ -270,6 +309,7 @@ async function onSwitched({ incoming }) {
 }
 
 export function registerRiderAbilityEngine() {
+  subscribeAttackOutcome(onSkillLinkOutcome);
   Hooks.on("poke5ePokemonSwitched", event => { void onSwitched(event).catch(error => console.error(`[${MODULE_ID}] stakeout`, error)); });
   Hooks.on("dnd5e.postRollConfiguration", onPostRollConfiguration);
   Hooks.on("dnd5e.preCalculateDamage", applyRiderDefenses);

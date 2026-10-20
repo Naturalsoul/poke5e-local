@@ -108,3 +108,55 @@ test("the Ability card shows a play button with the uses left, 'activa' while sw
   assert.doesNotMatch(service.activeAbilityButton(pokemon("steadfast")), /<button/);
   assert.equal(service.activeAbilityButton(pokemon("static")), "");
 });
+
+test("Download switches on with a chosen type and changes the damage type of its next Move damage roll", async () => {
+  foundry.applications = { api: { DialogV2: { prompt: async () => "fire" } } };
+  const porygon = pokemon("download");
+  assert.equal(await service.useActiveAbility(porygon), true);
+  assert.match(chat.at(-1), /hará daño Fuego/);
+  const move = { actor: porygon, getFlag: (_module, key) => ({ kind: "move" })[key] };
+  const roll = { options: { type: "normal" } };
+  hooks.handlers("dnd5e.postRollConfiguration").forEach(handler => handler([roll], { hookNames: ["damage"], subject: { item: move } }));
+  assert.equal(roll.options.type, "fire");
+  await tick();
+  assert.equal(porygon.getFlag(MODULE_ID, "abilityGuard"), undefined);
+  assert.equal(service.abilityUsesLeft(porygon, "download"), 0);
+});
+
+test("Curious Medicine resets its own or a nearby ally's stat changes, INT mod times per long rest", async () => {
+  globalThis.canvas = { grid: { measurePath: () => ({ distance: 25 }) } };
+  const slowking = pokemon("curious-medicine");
+  slowking.system = { abilities: { int: { mod: 2 } } };
+  const change = key => ({ id: key, changes: [{ key }], getFlag: (_module, flag) => ({ kind: "pokemon-modifier" })[flag] });
+  const deleted = [];
+  slowking.effects = [change("system.abilities.str.value"), change("system.attributes.movement.walk")];
+  slowking.deleteEmbeddedDocuments = async (_type, ids) => deleted.push(...ids);
+  assert.equal(service.abilityMaxUses(slowking, "curious-medicine"), 2);
+  assert.equal(await service.useActiveAbility(slowking), true, "nothing targeted: itself");
+  assert.deepEqual(deleted, ["system.abilities.str.value"], "speed is not reset");
+  const ally = pokemon("static");
+  ally.effects = [change("system.attributes.ac.bonus")];
+  ally.deleteEmbeddedDocuments = async (_type, ids) => deleted.push(...ids);
+  game.user.targets = new Set([token(pokemon("static"), -1)]);
+  assert.equal(await service.useActiveAbility(slowking), false, "not an enemy");
+  game.user.targets = new Set([token(ally)]);
+  assert.equal(await service.useActiveAbility(slowking), true);
+  assert.equal(service.abilityUsesLeft(slowking, "curious-medicine"), 0);
+  assert.match(service.activeAbilityButton(slowking), />0\/2</);
+  await service.restoreAbilityUses(slowking, true);
+  assert.equal(service.abilityUsesLeft(slowking, "curious-medicine"), 2);
+  game.user.targets = new Set();
+});
+
+test("Healer is at will but needs a touched creature with poison, burn or paralysis", async () => {
+  globalThis.canvas = { grid: { measurePath: () => ({ distance: 5 }) } };
+  const chansey = pokemon("healer");
+  assert.equal(service.abilityMaxUses(chansey, "healer"), null);
+  assert.equal(await service.useActiveAbility(chansey), false, "nothing targeted");
+  const ally = pokemon("static");
+  ally.effects = [];
+  game.user.targets = new Set([token(ally)]);
+  assert.equal(await service.useActiveAbility(chansey), false);
+  assert.match(chat.at(-1), /no tiene veneno, quemadura ni parálisis/);
+  game.user.targets = new Set();
+});

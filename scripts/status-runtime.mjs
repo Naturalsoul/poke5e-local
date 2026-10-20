@@ -482,11 +482,21 @@ function ownsPokemonAbility(
   /*
    * Guru L9, Body: la segunda Ability elegida
    * también está activa.
+   * Receiver / Power of Alchemy: la Ability copiada
+   * de un aliado debilitado, hasta que salga.
    */
 
   return (
     activePokemonAbilityId(
       actor
+    ) ===
+    normalized ||
+
+    normalizeId(
+      actor?.getFlag?.(
+        MODULE_ID,
+        "copiedAbilityId"
+      )
     ) ===
     normalized ||
 

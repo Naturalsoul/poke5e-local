@@ -1,9 +1,9 @@
-import { hasPokemonAbility, hasPokemonStatus, pokemonTypes } from "./status-runtime.mjs";
+import { activePokemonAbilityId, hasPokemonAbility, hasPokemonStatus, pokemonTypes } from "./status-runtime.mjs";
 import { auraBlocksStatus } from "./aura-ability-engine.mjs";
 import { isPokemonActor } from "./trainer-party-service.mjs";
 import { originatingMoveItem } from "./damage-engine.mjs";
 import { isMeleeDamage, isOpponentDebuff, WIND_MOVES } from "./passive-ability-engine.mjs";
-import { chargeNextElectricMove, WATER_COMPACTION } from "./rider-ability-engine.mjs";
+import { chargeNextElectricMove, GORILLA_FLAG, hasSecondaryEffect, WATER_COMPACTION } from "./rider-ability-engine.mjs";
 import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
 import { getPokemonHeldItem } from "./pokemon-held-item-service.mjs";
 import { applyPokemonStatus } from "./pokemon-status-service.mjs";
@@ -27,11 +27,15 @@ import { abilityWeather, activeTerrain, environment, hasWeather, isGrounded, set
  *   ones (Chlorophyll, Swift Swim, Sand Rush, Slush Rush, Sand Veil, Snow Cloak, Grass Pelt, Surge Surfer);
  * - statuses the weather or terrain prevents (Leaf Guard, Hydration, Electric and Misty Terrain);
  * - Seed Sower and Sand Spit set the terrain or weather when hit;
- * - turns, switches and rests: Hospitality, Bad Dreams, Natural Cure, Regenerator, Moody.
+ * - turns, switches and rests: Hospitality, Bad Dreams, Natural Cure, Regenerator, Moody;
+ * - Receiver and Power of Alchemy copy the Ability of the fainted ally they replace, until switched out;
+ * - Sheer Force: its damaging Moves give no status or stat change to others (the damage is in rider-ability-engine).
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
 const REGENERATOR_FLAG = "regeneratorUsed";
+const COPIED_FLAG = "copiedAbilityId";
+const COPIERS = ["receiver", "power-of-alchemy"];
 const WEATHER_REACTION_FLAG = "weatherReactionUses";
 const ADD = 2;
 const MULTIPLY = 1;
@@ -53,7 +57,9 @@ const TEXT = {
   nature: { en: "changes its nature", es: "cambia su naturaleza" },
   temp: { en: "gives its allies within 20 ft temporary HP", es: "da PG temporales a sus aliados a 20 ft" },
   dreams: { en: "torments the sleeper", es: "atormenta al dormido" },
-  speed: { en: "Speed", es: "Velocidad" }
+  speed: { en: "Speed", es: "Velocidad" },
+  copies: { en: "copies", es: "copia" },
+  sheer: { en: "gives up the added effect", es: "renuncia al efecto adicional" }
 };
 
 const en = () => game.settings.get(MODULE_ID, "language") === "en";
@@ -299,9 +305,32 @@ export function battlefieldBlocksStatus(actor, status) {
   return activeTerrain() === "electric" && status === "asleep" ? "electric-terrain" : null;
 }
 
+// Sheer Force: a status or stat change that the holder's damaging Move would give to another creature.
+export function sheerForceBlocks(actor, effect) {
+  if (!["pokemon-status", "pokemon-modifier"].includes(effect.getFlag?.(MODULE_ID, "kind"))) {return null;}
+  const sourceUuid = effect.getFlag(MODULE_ID, "sourceActorUuid");
+  const source = effectSourceActor(effect) ?? (sourceUuid ? fromUuidSync(sourceUuid, { strict: false }) : null);
+  if (!source || source === actor || !hasPokemonAbility(source, "sheer-force")) {return null;}
+  const move = effectMove(effect, source);
+  return move?.getFlag?.(MODULE_ID, "moveDefinition")?.damage && hasSecondaryEffect(move) ? source : null;
+}
+
+// The Move that made the effect: its origin, or the source's Move with that id.
+function effectMove(effect, source) {
+  const origin = effect.origin ? fromUuidSync(effect.origin, { strict: false }) : null;
+  if (origin?.documentName === "Item") {return origin;}
+  const sourceMove = effect.getFlag(MODULE_ID, "sourceMove");
+  return source.items?.find(item => item.getFlag?.(MODULE_ID, "kind") === "move" && item.getFlag(MODULE_ID, "sourceId") === sourceMove) ?? null;
+}
+
 function onPreCreateEffect(effect) {
   const actor = effect.parent;
   if (actor?.documentName !== "Actor" || !isPokemonActor(actor)) {return true;}
+  const sheer = sheerForceBlocks(actor, effect);
+  if (sheer) {
+    logged(announce(sheer, "sheer-force", text("sheer")));
+    return false;
+  }
   const blocker = effect.getFlag(MODULE_ID, "kind") === "pokemon-status" ? battlefieldBlocksStatus(actor, effect.getFlag(MODULE_ID, "status")) : null;
   if (blocker) {
     logged(announce(actor, blocker, text("blocked")));
@@ -438,8 +467,33 @@ export async function processEventAbilitiesEndTurn(actor) {
   }
 }
 
-async function onSwitched({ outgoing }) {
+// Receiver, Power of Alchemy: the fainted ally's non-hidden Ability, while this Pokémon stays in.
+export function copiableAbility(fainted) {
+  const abilityId = activePokemonAbilityId(fainted);
+  const item = fainted?.items?.find(entry => entry.getFlag?.(MODULE_ID, "kind") === "ability" && entry.getFlag(MODULE_ID, "sourceId") === abilityId);
+  return abilityId && !COPIERS.includes(abilityId) && !item?.getFlag(MODULE_ID, "hiddenAbility") ? abilityId : null;
+}
+
+async function copyFaintedAbility(incoming, outgoing) {
+  const copier = COPIERS.find(abilityId => hasPokemonAbility(incoming, abilityId));
+  if (!copier || !incoming.isOwner || !isPokemonActor(outgoing) || Number(outgoing.system?.attributes?.hp?.value) > 0) {return;}
+  const abilityId = copiableAbility(outgoing);
+  if (!abilityId) {return;}
+  await incoming.setFlag(MODULE_ID, COPIED_FLAG, abilityId);
+  await announce(incoming, copier, `${text("copies")} ${abilityName(outgoing, abilityId)} (${outgoing.name})`);
+}
+
+// What only lasts while the Pokémon is on the battlefield: a copied Ability, the Gorilla Tactics Move.
+async function leaveBattlefield(actor) {
+  for (const flag of [COPIED_FLAG, GORILLA_FLAG]) {
+    if (actor.getFlag(MODULE_ID, flag) !== undefined) {await actor.unsetFlag(MODULE_ID, flag);}
+  }
+}
+
+async function onSwitched({ outgoing, incoming }) {
+  if (incoming) {await copyFaintedAbility(incoming, outgoing);}
   if (!isPokemonActor(outgoing) || !outgoing.isOwner) {return;}
+  await leaveBattlefield(outgoing);
   if (hasPokemonAbility(outgoing, "natural-cure")) {
     const ids = outgoing.effects.filter(effect => effect.getFlag(MODULE_ID, "kind") === "pokemon-status").map(effect => effect.id);
     if (ids.length) {
@@ -482,7 +536,10 @@ export function registerEventAbilityEngine() {
   Hooks.on("updateActor", actor => queueSync(actor));
   // The weather, terrain or environment changed.
   Hooks.on("updateCombat", combat => combatActors(combat).forEach(queueSync));
-  Hooks.on("deleteCombat", combat => combatActors(combat).forEach(queueSync));
+  Hooks.on("deleteCombat", combat => {
+    combatActors(combat).forEach(queueSync);
+    if (gmAuthority()) {logged(Promise.all(combatActors(combat).map(leaveBattlefield)));}
+  });
   Hooks.on("createItem", item => queueSync(item.parent));
   Hooks.on("deleteItem", item => queueSync(item.parent));
   Hooks.once("ready", () => game.actors?.forEach(queueSync));

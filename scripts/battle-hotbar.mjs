@@ -5,7 +5,7 @@ import { availableTrainerPathActions, runTrainerPathAction, TRAINER_PATH_ACTION_
 import { getTrainerProgressionResource } from "./trainer-progression-service.mjs";
 import { trainerFeatureIcon } from "./trainer-feature-icons.mjs";
 import { reactionDecider } from "./trainer-reaction-service.mjs";
-import { ACTIVE_ABILITIES, activeAbilityOf, abilityUsesLeft, useActiveAbility } from "./active-ability-service.mjs";
+import { ACTIVE_ABILITIES, activeAbilityOf, abilityMaxUses, abilityUsesLeft, useActiveAbility } from "./active-ability-service.mjs";
 
 /* ============================================================
  * BATTLE HOTBAR
@@ -67,7 +67,10 @@ function actionCounter(trainer, action) {
 export function battleHotbarCounter(entry) {
   const document = fromUuidSync(entry?.uuid ?? "", { strict: false });
   if (!document) {return null;}
-  if (entry.kind === "ability") {return { value: abilityUsesLeft(document, entry.id), max: 1 };}
+  if (entry.kind === "ability") {
+    const max = abilityMaxUses(document, entry.id);
+    return max === null ? null : { value: abilityUsesLeft(document, entry.id), max };
+  }
   return entry.kind === "move" ? moveCounter(document, entry.id) : actionCounter(document, entry.id);
 }
 
