@@ -10,7 +10,9 @@ consulta su trabajo allí.
 
 También usa:
 - [Foundry VTT](https://foundryvtt.com) y el sistema [D&D5e](https://github.com/foundryvtt/dnd5e), sobre los que corre;
-- los sprites y los gritos de [Pokémon Showdown](https://play.pokemonshowdown.com).
+- los sprites y los gritos de [Pokémon Showdown](https://play.pokemonshowdown.com);
+- las animaciones gratuitas de [JB2A](https://jb2a.com) (licencia CC BY-NC-SA), reproducidas con
+  [Sequencer](https://github.com/fantasycalendar/FoundryVTT-Sequencer).
 
 **Es un proyecto de fans, sin fines de lucro.** Nació porque quería jugar Pokémon con D&D con mis amigos. No se
 vende ni se cobra por él. Pokémon y sus nombres son marcas de Nintendo, Game Freak, Creatures Inc. y The Pokémon
@@ -23,7 +25,7 @@ Módulo de Foundry VTT para jugar **Pokémon 5e** ([poke5e.app](https://poke5e.a
 Importa Pokémon, Moves, Abilities y objetos, da hojas propias a Pokémon y entrenadores, y automatiza la mayor
 parte de las reglas de combate: tipos, STAB, estados, Abilities, rasgos de entrenador, capturas y más.
 
-- **Versión:** 0.19.1
+- **Versión:** 0.20.0
 - **Requisitos:** Foundry VTT 13 (13.351 o superior) y D&D5e 5.3.3 o superior.
 - **Idiomas:** español e inglés (ajuste del módulo `language`).
 
@@ -42,7 +44,7 @@ Los cambios están en el [CHANGELOG](CHANGELOG.md).
 |---|---|
 | Dice So Nice | Los efectos que dependen de una tirada esperan a que el dado termine y el resultado se vea en el chat. |
 | FXMaster | Clima visible (lluvia, nieve, sol, tormenta de arena). |
-| JB2A (gratis) | Animación al crear un terreno. |
+| Sequencer + JB2A (gratis) | Animación de cada Move al usarlo, y al crear un terreno. |
 
 Sin ellos, el módulo funciona igual; solo se pierde la parte visual.
 
@@ -83,6 +85,9 @@ Sin ellos, el módulo funciona igual; solo se pierde la parte visual.
   - la familia Protect como reacción al recibir un golpe.
 - **Abilities:** las 311 del registro `scripts/ability-coverage.mjs` están automatizadas (255) o marcadas como
   manuales con su motivo (56). Incluye auras, cambios de forma, bayas, clima, terreno y entorno.
+- **Animaciones de Moves:** cada Move tiene una animación de JB2A según su tipo y su forma (proyectil, golpe,
+  explosión alrededor, cono o línea, mejora o perjuicio). Los ataques la reproducen al verse la tirada y, si fallan,
+  la desvían. Se apaga por jugador con el ajuste "Animaciones de Moves".
 - **Clima y terreno** por combate, con su panel en el registro de combate.
 - **Objetos equipados** y bayas.
 

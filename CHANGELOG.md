@@ -4,6 +4,31 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.20.0] — 2026-10-20
+
+- **Animaciones de Moves** con Sequencer y JB2A (gratis). Cada Move tiene una según su tipo y su forma:
+  - los ataques a distancia lanzan un proyectil al objetivo; se reproducen cuando se ve la tirada y, si fallan,
+    pasan de largo;
+  - los cuerpo a cuerpo golpean como dice su nombre o, si no, su descripción: mordisco, garra, pinza, puño, patada,
+    tajo, cuerno o pico, martillo o hueso, látigo o cola, y giro (Feint Attack, "a sucker punch", es un puñetazo).
+    Los de Fuego, Agua, Eléctrico, Planta, Hielo, Veneno y Hada añaden su elemento al impactar (Fire Punch: puño y
+    luego fuego). Sin palabra que lo diga, usan el golpe de su tipo;
+  - los Moves que colocan plantilla se animan sobre ella, haya o no objetivos marcados: el cono o la línea de su
+    tipo a lo largo de conos y líneas, y su explosión sobre círculos y cuadrados (y sobre los conos de tipos sin
+    cono propio). La animación se dibuja algo más grande que la plantilla y se recorta a su forma, así que la
+    llena entera sin salirse;
+  - sin plantilla, los de área hacen una explosión alrededor del usuario y los conos y líneas salen hacia el
+    objetivo;
+  - los que no hacen daño muestran una mejora en el usuario, un perjuicio en el objetivo o una curación.
+- Funciona en Foundry 13 y 14. En Foundry 14 una plantilla colocada es una Region y ya no avisa como plantilla, así
+  que la animación también escucha la creación de Regions de plantilla.
+- Con tokens grandes, el radio de las explosiones cuenta desde el borde del usuario y los golpes cuerpo a cuerpo
+  llegan al borde del objetivo, no a su centro. Lo que se muestra sobre el objetivo escala con su token.
+- Ajuste por jugador "Animaciones de Moves" para apagarlas. Sin Sequencer o sin JB2A no se reproduce nada.
+- Funciona con todos los Moves, también los importados antes (incluso con la definición antigua, sin área): la
+  animación se calcula de los datos del propio Move, sin migrar nada.
+- README: créditos a JB2A y Sequencer.
+
 ## [0.19.1] — 2026-10-20
 
 - README: sección de créditos al principio. Reconoce a poke5e.app como origen de todo el contenido de juego,
