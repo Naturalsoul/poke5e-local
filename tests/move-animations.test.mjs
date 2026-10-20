@@ -16,7 +16,7 @@ globalThis.fromUuidSync = () => null;
 globalThis.Sequence = class {
   effect() {
     const step = { calls: [] };
-    for (const name of ["file", "tint", "atLocation", "stretchTo", "scaleToObject", "size", "missed", "delay"]) {
+    for (const name of ["file", "tint", "atLocation", "stretchTo", "scaleToObject", "size", "missed", "delay", "mask"]) {
       step[name] = (...args) => { step.calls.push([name, ...args]); return step; };
     }
     (this.steps ??= []).push(step);
@@ -71,7 +71,9 @@ test("non-attack Moves play on use, attacks and areas on a point wait; the setti
   settings.moveAnimations = true;
 });
 
-test("Moves imported with an old definition (no area) still get their size and their template", () => {
+const settle = () => new Promise(resolve => setImmediate(resolve));
+
+test("Moves imported with an old definition (no area) still get their size and their template", async () => {
   const legacy = move("earthquake");
   legacy.setFlag(MODULE_ID, "moveDefinition", { ...legacy.getFlag(MODULE_ID, "moveDefinition"), area: undefined });
   assert.equal(animations.moveAnimation(legacy).size, 20, "from \"self (20ft radius)\"");
@@ -81,14 +83,52 @@ test("Moves imported with an old definition (no area) still get their size and t
   hooks.handler("dnd5e.postUseActivity")({ type: "save", item: gas, target: { template: { type: "radius" } } });
   assert.equal(played.length, 0, "it waits for its template");
   game.user.id = "u1";
-  const template = { distance: 15, getFlag: () => "Item.gas" };
+  const template = { t: "circle", distance: 15, object: { shape: {} }, getFlag: () => "Item.gas" };
   globalThis.fromUuidSync = () => gas;
   hooks.handler("createMeasuredTemplate")(template, {}, "u1");
+  await settle();
   globalThis.fromUuidSync = () => null;
   assert.equal(played.length, 1);
   const [step] = played[0];
-  assert.deepEqual(step.calls.find(([name]) => name === "atLocation"), ["atLocation", template]);
-  assert.deepEqual(step.calls.find(([name]) => name === "size"), ["size", 6, { gridUnits: true }]);
+  assert.deepEqual(step.calls.find(([name]) => name === "atLocation"), ["atLocation", { x: 0, y: 0 }]);
+  assert.deepEqual(step.calls.find(([name]) => name === "size")?.slice(0, 2), ["size", (30 * 1.3) / 5], "past the edge…");
+  assert.deepEqual(step.calls.at(-1), ["mask", template], "…and masked to it");
+});
+
+test("any Move with a template plays over it without targets, filling its shape", async () => {
+  const onTemplate = async (id, template) => {
+    const item = move(id);
+    played.length = 0;
+    globalThis.fromUuidSync = () => item;
+    hooks.handler("createMeasuredTemplate")({ object: { shape: {} }, ...template, getFlag: () => "Item.x" }, {}, game.user.id);
+    await settle();
+    globalThis.fromUuidSync = () => null;
+    return played[0][0].calls;
+  };
+  // An attack with an area: no target needed, and no second animation from its attack.
+  played.length = 0;
+  hooks.handler("dnd5e.postUseActivity")({ type: "save", item: move("flamethrower"), target: { template: { type: "cone" } } });
+  assert.equal(played.length, 0);
+  // Dragon Breath: placed but not drawn yet, so its points come from its data, not from Sequencer measuring it.
+  globalThis.canvas.dimensions = { size: 100, distance: 5 };
+  const breath = await onTemplate("dragon-breath", { t: "cone", x: 100, y: 200, distance: 40, direction: 90 });
+  assert.equal(breath[0][1], "jb2a.breath_weapons.fire.cone.orange.01");
+  assert.deepEqual(breath.slice(1).map(([name, at]) => [name, at && { x: Math.round(at.x ?? 0), y: Math.round(at.y ?? 0) }]),
+    [["atLocation", { x: 100, y: 200 }], ["stretchTo", { x: 100, y: 1000 }], ["mask", { x: 100, y: 200 }]]);
+  const square = await onTemplate("ember", { t: "rect", x: 0, y: 0, distance: 20 * Math.SQRT2, direction: 45 });
+  assert.deepEqual(square.find(([name]) => name === "atLocation")[1], { x: 200.00000000000003, y: 200 }, "a square plays on its center");
+  delete globalThis.canvas.dimensions;
+  const cone = await onTemplate("flamethrower", { t: "cone", distance: 15 });
+  assert.deepEqual(cone.map(([name]) => name), ["file", "atLocation", "stretchTo", "mask"]);
+  assert.equal(cone[0][1], "jb2a.breath_weapons.fire.cone.orange.01");
+  const waterCone = await onTemplate("water-gun", { t: "cone", distance: 15 });
+  assert.equal(waterCone[0][1], "jb2a.liquid.splash.blue", "no Water cone file: its burst, masked to the cone");
+  assert.ok(waterCone.some(([name]) => name === "size"));
+  const ray = await onTemplate("ember", { t: "ray", distance: 30, width: 5 });
+  assert.equal(ray[0][1], "jb2a.fire_bolt.orange", "a Fire line: its projectile along the ray");
+  assert.ok(ray.some(([name]) => name === "stretchTo") && ray.at(-1)[0] === "mask");
+  const rect = await onTemplate("ember", { t: "rect", distance: 20 });
+  assert.deepEqual(rect.find(([name]) => name === "size")?.slice(0, 2), ["size", (20 * 1.3) / 5], "a square's distance is its diagonal");
 });
 
 test("a melee Move hits the way its name or description says, then adds its element", () => {
@@ -129,4 +169,48 @@ test("big tokens: bursts count from the user's edge and strikes stop at the targ
   animations.playMoveAnimation(ember, [huge], {});
   assert.deepEqual(played[0][0].calls.find(([name]) => name === "stretchTo"), ["stretchTo", huge], "projectiles still fly to the center");
   delete globalThis.canvas.grid;
+});
+
+test("a just-created template waits until it is drawn to be masked; its Move is found by its activity too", async () => {
+  const item = move("dragon-breath");
+  const template = { t: "cone", x: 0, y: 0, distance: 40, direction: 0, object: null,
+    getFlag: (_scope, key) => (key === "origin" ? "Activity.breath" : undefined) };
+  globalThis.fromUuidSync = uuid => (uuid === "Activity.breath" ? { item } : null);
+  let frames = 0;
+  globalThis.requestAnimationFrame = callback => {
+    if (++frames === 3) {template.object = { shape: {} };}
+    setImmediate(callback);
+  };
+  played.length = 0;
+  hooks.handler("createMeasuredTemplate")(template, {}, game.user.id);
+  for (let tick = 0; tick < 10; tick++) {await settle();}
+  globalThis.fromUuidSync = () => null;
+  delete globalThis.requestAnimationFrame;
+  assert.equal(played.length, 1);
+  assert.equal(frames, 3, "it waited for the drawing");
+  assert.deepEqual(played[0][0].calls.at(-1), ["mask", template]);
+});
+
+test("Foundry 14: a placed template is a Region, and its Move plays over it", async () => {
+  globalThis.canvas.dimensions = { size: 100, distance: 5 };
+  const item = move("dragon-breath");
+  const region = { shapes: [{ type: "cone", x: 100, y: 200, radius: 800, rotation: 90, angle: 53 }],
+    getFlag: (scope, key) => ({ "core.MeasuredTemplate": true, "dnd5e.item": "Item.breath" })[`${scope}.${key}`] };
+  globalThis.fromUuidSync = uuid => (uuid === "Item.breath" ? item : null);
+  played.length = 0;
+  hooks.handler("createRegion")(region, {}, game.user.id);
+  await settle();
+  globalThis.fromUuidSync = () => null;
+  const calls = played[0][0].calls;
+  assert.equal(calls[0][1], "jb2a.breath_weapons.fire.cone.orange.01");
+  assert.deepEqual(calls.find(([name]) => name === "atLocation")[1], { x: 100, y: 200 });
+  const end = calls.find(([name]) => name === "stretchTo")[1];
+  assert.deepEqual([Math.round(end.x), Math.round(end.y)], [100, 1000], "40 ft down");
+  assert.deepEqual(calls.at(-1), ["mask", region]);
+  assert.deepEqual(animations.regionTemplate({ shapes: [{ type: "rectangle", x: 0, y: 0, width: 400, height: 300, rotation: 0 }] }).distance, 25);
+  played.length = 0;
+  hooks.handler("createRegion")({ ...region, getFlag: () => undefined }, {}, game.user.id);
+  await settle();
+  assert.equal(played.length, 0, "a Region that isn't a template plays nothing");
+  delete globalThis.canvas.dimensions;
 });

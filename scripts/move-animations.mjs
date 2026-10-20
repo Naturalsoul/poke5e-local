@@ -7,7 +7,8 @@ import { subscribeAttackOutcome } from "./attack-outcome-engine.mjs";
  * - attack Moves, once the roll is shown (after Dice So Nice): a projectile to the target, or when melee a strike
  *   (bite, claw, punch, kick, blade… from the words of its name or description) and then its element; a miss goes past;
  * - other Moves, when used: a burst around the user, a cone or line toward the target, an effect on each
- *   target, or a buff on the user. A Move that places its template on a point plays where it goes.
+ *   target, or a buff on the user. A Move that places a template plays over it, filling it, with or without
+ *   targets.
  * It reads the Move item's own data, so Moves imported before it (even with an old moveDefinition) animate too.
  * Only the user who rolls or uses it starts the animation; Sequencer shows it to everyone.
  * Without Sequencer and JB2A, or with the setting off, nothing is played.
@@ -139,12 +140,14 @@ function damageAnimation(item, fx, shape, definition) {
   return { file: fx.projectile, at: "from-user", tint: null };
 }
 
-// The JB2A file to play and how: { file, at: "target" | "user" | "from-user" | "template", tint, size }.
-// With a placed template: the type's burst, the template's size.
-export function moveAnimation(item, template = null) {
+const typeAnimations = item => TYPE_ANIMATIONS[item.getFlag(MODULE_ID, "moveType") ??
+  item.getFlag(MODULE_ID, "moveDefinition")?.type] ?? TYPE_ANIMATIONS.normal;
+const isCone = file => /\.cone(\.|$)/.test(file);
+
+// The JB2A file to play and how: { file, at: "target" | "user" | "from-user", tint, size }.
+export function moveAnimation(item) {
   const definition = item.getFlag(MODULE_ID, "moveDefinition") ?? {};
-  const fx = TYPE_ANIMATIONS[item.getFlag(MODULE_ID, "moveType") ?? definition.type] ?? TYPE_ANIMATIONS.normal;
-  if (template) {return { file: fx.burst, at: "template", tint: fx.color ?? null, size: Number(template.distance) || areaSize(definition) };}
+  const fx = typeAnimations(item);
   const shape = moveShape(definition);
   const kind = kindOf(definition);
   if (kind === "heal") {return { file: HEAL, at: "user" };}
@@ -161,11 +164,11 @@ function effect(sequence, { file, tint }) {
 const squares = feet => (feet * 2) / (canvas.scene?.grid?.distance ?? 5);
 const cells = token => Math.max(token?.document?.width ?? 1, token?.document?.height ?? 1);
 
-// Around the user's token or on the placed template, sized to the area when it has one. Around a token the
-// radius counts from its edge, so a big Pokémon's burst reaches as far past it as a small one's.
-function playAround(sequence, animation, place, onToken) {
-  const step = effect(sequence, animation).atLocation(place);
-  if (animation.size) {step.size(squares(animation.size) + (onToken ? cells(place) : 0), { gridUnits: true });}
+// Around the user's token, sized to the area when it has one. The radius counts from the token's edge, so a big
+// Pokémon's burst reaches as far past it as a small one's.
+function playAround(sequence, animation, token) {
+  const step = effect(sequence, animation).atLocation(token);
+  if (animation.size) {step.size(squares(animation.size) + cells(token), { gridUnits: true });}
   else {step.scaleToObject(2);}
 }
 
@@ -193,16 +196,63 @@ function playOnTargets(sequence, animation, source, { targets, missed }) {
   }
 }
 
-// Plays it from the user's token toward each target (or on them, or around the user).
-export function playMoveAnimation(item, targets, { missed = false, template = null } = {}) {
+// A placed template, whatever the Move's shape: its type's cone or line along cones and rays, its burst over
+// circles and squares (and over cones without a cone file). Each is drawn past the template's edge and masked to
+// it, so it fills the whole area without spilling out of it.
+const COVER = 1.3;
+export function templateAnimation(item, template) {
+  const fx = typeAnimations(item);
+  const feet = Number(template.distance) || 5;
+  const across = { circle: feet * 2, cone: feet * 2, rect: feet }[template.t] ?? feet * 2;
+  const burst = { file: fx.burst, tint: fx.color ?? null, stretch: false, size: (across * COVER) / (canvas.scene?.grid?.distance ?? 5) };
+  if (template.t === "cone") {return isCone(fx.spray) ? { file: fx.spray, tint: fx.sprayTint ?? null, stretch: true } : burst;}
+  if (template.t === "ray") {return { file: isCone(fx.spray) ? fx.projectile : fx.spray, tint: fx.sprayTint ?? null, stretch: true };}
+  return burst;
+}
+
+// Its points from its own data: when it is just created its placeable isn't drawn yet, and Sequencer's own
+// measuring of a cone, ray or square (from the drawn shape) fails, so nothing played.
+export function templatePoints(template) {
+  const origin = { x: Number(template.x) || 0, y: Number(template.y) || 0 };
+  const pixels = (Number(template.distance) || 0) * ((canvas.dimensions?.size ?? 100) / (canvas.dimensions?.distance ?? 5));
+  const angle = ((Number(template.direction) || 0) * Math.PI) / 180;
+  const end = { x: origin.x + Math.cos(angle) * pixels, y: origin.y + Math.sin(angle) * pixels };
+  const center = template.t === "rect" ? { x: (origin.x + end.x) / 2, y: (origin.y + end.y) / 2 } : origin;
+  return { origin, end, center };
+}
+
+// The template's placeable is drawn a few frames after it is created, and the mask needs its shape. A Region
+// (Foundry 14) masks from its document's shapes, so it doesn't wait.
+async function drawn(template) {
+  for (let frame = 0; frame < 120; frame++) {
+    if (template.object?.shape || template.shapes) {return true;}
+    await new Promise(resolve => requestAnimationFrame(resolve));
+  }
+  return false;
+}
+
+export async function playTemplateAnimation(item, template, area = template) {
   if (!canAnimate()) {return;}
-  const animation = moveAnimation(item, template);
+  const masked = await drawn(area);
+  const animation = templateAnimation(item, template);
+  const { origin, end, center } = templatePoints(template);
+  const sequence = new globalThis.Sequence();
+  const step = effect(sequence, animation).atLocation(animation.stretch ? origin : center);
+  if (animation.stretch) {step.stretchTo(end);}
+  else {step.size(animation.size, { gridUnits: true });}
+  if (masked) {step.mask(area);}
+  logged(sequence.play());
+}
+
+// Plays it from the user's token toward each target (or on them, or around the user).
+export function playMoveAnimation(item, targets, { missed = false } = {}) {
+  if (!canAnimate()) {return;}
+  const animation = moveAnimation(item);
   const source = tokenOf(item.actor);
   const sequence = new globalThis.Sequence();
-  if (animation.at === "user" || animation.at === "template") {
-    const place = template ?? source;
-    if (!place) {return;}
-    playAround(sequence, animation, place, !template);
+  if (animation.at === "user") {
+    if (!source) {return;}
+    playAround(sequence, animation, source);
   } else {
     playOnTargets(sequence, animation, source, { targets, missed });
   }
@@ -212,29 +262,53 @@ export function playMoveAnimation(item, targets, { missed = false, template = nu
 const targetTokens = () => Array.from(game.user?.targets ?? []);
 const isAttack = activity => activity?.type === "attack";
 const placesTemplate = activity => Boolean(activity?.target?.template?.type);
-// Shapes that play where the template is placed, not around the user.
-const onTemplate = item => ["point", "ranged"].includes(moveShape(item.getFlag(MODULE_ID, "moveDefinition")));
-
-// Attack Moves: after the roll is shown, against the target it was rolled on.
+// Attack Moves: after the roll is shown, against the target it was rolled on. One with an area plays on its
+// template instead, so it doesn't need a target.
 function onAttackOutcome(outcome, context) {
   const item = moveOf(context?.activity?.item);
-  if (!item) {return;}
+  if (!item || placesTemplate(context.activity)) {return;}
   const document = fromUuidSync(outcome.targetActorUuid ?? "", { strict: false });
   const target = tokenOf(document?.actor ?? document);
   playMoveAnimation(item, target ? [target] : [], { missed: outcome.hit === false });
 }
 
-// Other Moves: when used. Areas on a point wait for their template.
+// Other Moves: when used. Moves with an area wait for their template.
 function onPostUseActivity(activity) {
   const item = moveOf(activity?.item);
-  if (!item || isAttack(activity) || (placesTemplate(activity) && onTemplate(item))) {return;}
+  if (!item || isAttack(activity) || placesTemplate(activity)) {return;}
   playMoveAnimation(item, targetTokens());
 }
 
+// Its Move, by the item on the template or else by the activity that placed it.
+function templateMove(template) {
+  const flag = key => template.getFlag?.("dnd5e", key);
+  const found = uuid => (uuid ? fromUuidSync(uuid, { strict: false }) : null);
+  return moveOf(found(flag("item"))) ?? moveOf(found(flag("origin"))?.item);
+}
+
 function onCreateTemplate(template, _options, userId) {
-  const uuid = template.getFlag?.("dnd5e", "item");
-  const item = userId === game.user.id && uuid ? moveOf(fromUuidSync(uuid, { strict: false })) : null;
-  if (item && onTemplate(item)) {playMoveAnimation(item, [], { template });}
+  const item = userId === game.user.id ? templateMove(template) : null;
+  if (item) {logged(playTemplateAnimation(item, template));}
+}
+
+// Foundry 14 stores a placed template as a Region with one shape (in pixels): back to template data, in feet.
+export function regionTemplate(region) {
+  const shape = region.shapes?.[0];
+  const feet = pixels => pixels / ((canvas.dimensions?.size ?? 100) / (canvas.dimensions?.distance ?? 5));
+  if (!shape) {return null;}
+  if (shape.type === "rectangle") {
+    const direction = (Number(shape.rotation) || 0) + (Math.atan2(shape.height, shape.width) * 180) / Math.PI;
+    return { t: "rect", x: shape.x, y: shape.y, distance: feet(Math.hypot(shape.width, shape.height)), direction };
+  }
+  const t = { circle: "circle", cone: "cone", line: "ray" }[shape.type];
+  const length = shape.type === "line" ? shape.length : shape.radius;
+  return t ? { t, x: shape.x, y: shape.y, distance: feet(length), direction: Number(shape.rotation) || 0 } : null;
+}
+
+function onCreateRegion(region, _options, userId) {
+  const template = region.getFlag?.("core", "MeasuredTemplate") ? regionTemplate(region) : null;
+  const item = template && userId === game.user.id ? templateMove(region) : null;
+  if (item) {logged(playTemplateAnimation(item, template, region));}
 }
 
 let registered = false;
@@ -251,4 +325,6 @@ export function registerMoveAnimations() {
   subscribeAttackOutcome(onAttackOutcome);
   Hooks.on("dnd5e.postUseActivity", onPostUseActivity);
   Hooks.on("createMeasuredTemplate", onCreateTemplate);
+  // Foundry 14: placing a template creates a Region, and createMeasuredTemplate no longer fires.
+  Hooks.on("createRegion", onCreateRegion);
 }
