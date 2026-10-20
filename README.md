@@ -95,7 +95,8 @@ Sin ellos, el módulo funciona igual; solo se pierde la parte visual.
 - **Sonidos de Moves:** cada Move suena con su propio sonido de los juegos junto a su animación: 671 de los juegos
   (sobre todo de Sol y Luna), 150 de Gen 8 y 9 del pack de Essentials; los 9 restantes suenan como un Move de su
   tipo, y Growl, Roar, Howl y los de voz usan el grito del Pokémon. Van por el canal de
-  interfaz de Foundry, como los gritos, así que cada jugador regula su volumen con ese control.
+  interfaz de Foundry, como los gritos, así que cada jugador regula su volumen con ese control, y cada uno puede
+  silenciarlos solo para sí con el ajuste "Sonidos de Moves".
 - **Clima y terreno** por combate, con su panel en el registro de combate.
 - **Objetos equipados** y bayas.
 

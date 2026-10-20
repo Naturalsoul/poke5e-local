@@ -6,12 +6,16 @@ import { createFlagDocument, createHooks, installFoundryUtils } from "./helpers/
 installFoundryUtils();
 const hooks = createHooks();
 const MODULE_ID = "poke5e-local";
-const settings = { moveAnimations: true, language: "es" };
+const settings = { moveAnimations: true, moveSounds: true, language: "es" };
 const played = [];
 const heard = [];
 globalThis.fetch = async url => ({ ok: true, json: async () => JSON.parse(readFileSync(new URL(`../${url.replace("modules/poke5e-local/", "")}`, import.meta.url), "utf8")) });
+const sent = [];
+const socketHandlers = [];
 globalThis.game = { user: { id: "u1", targets: [] }, settings: { get: (_m, key) => settings[key], register() {} },
-  modules: { get: () => ({ active: true }) } };
+  modules: { get: () => ({ active: true }) },
+  socket: { emit: (channel, message) => sent.push([channel, message]), on: (_channel, handler) => socketHandlers.push(handler) } };
+globalThis.foundry = { ...globalThis.foundry, audio: { AudioHelper: { play: data => heard.push(data.src) } } };
 globalThis.canvas = { scene: { grid: { distance: 5 } } };
 globalThis.fromUuidSync = () => null;
 // Records each effect step and the calls made on it.
@@ -24,18 +28,11 @@ globalThis.Sequence = class {
     (this.steps ??= []).push(step);
     return step;
   }
-  sound() {
-    const sound = { calls: [] };
-    for (const name of ["file", "audioChannel", "volume"]) {
-      sound[name] = (...args) => { sound.calls.push([name, ...args]); return sound; };
-    }
-    (this.sounds ??= []).push(sound);
-    return sound;
-  }
-  async play() { played.push(this.steps ?? []); heard.push(...(this.sounds ?? []).map(sound => sound.calls[0][1])); }
+  async play() { played.push(this.steps ?? []); }
 };
 const animations = await import("../scripts/move-animations.mjs");
 animations.registerMoveAnimations();
+Hooks.callAll("ready");
 await animations.loadMoveSounds();
 const { moves } = JSON.parse(readFileSync(new URL("../data/normalized/moves.json", import.meta.url), "utf8"));
 
@@ -226,7 +223,7 @@ test("Foundry 14: a placed template is a Region, and its Move plays over it", as
   delete globalThis.canvas.dimensions;
 });
 
-test("each Move plays its own Pokémon sound with its animation; the rest sound like their type", () => {
+test("each Move plays its own Pokémon sound with its animation; the rest sound like their type", async () => {
   const root = "modules/poke5e-local/assets/audio/moves";
   assert.equal(animations.moveSound(move("ember")), `${root}/gen7-ember.ogg`);
   assert.equal(animations.moveSound(move("dragon-breath")), `${root}/gen7-dragon-breath.ogg`);
@@ -238,6 +235,27 @@ test("each Move plays its own Pokémon sound with its animation; the rest sound 
     assert.ok(readFileSync(new URL(`../assets/audio/moves/${file}`, import.meta.url)).length > 0, file);
   }
   heard.length = 0;
+  sent.length = 0;
   animations.playMoveAnimation(move("ember"), ["foe"], { missed: true });
+  await settle();
   assert.deepEqual(heard, [`${root}/gen7-ember.ogg`], "a miss still sounds");
+  assert.deepEqual(sent, [["module.poke5e-local", { type: "move-sound", src: `${root}/gen7-ember.ogg` }]], "sent to the others");
+});
+
+test("each player can mute Move sounds just for themselves", async () => {
+  const root = "modules/poke5e-local/assets/audio/moves";
+  const receive = message => socketHandlers.forEach(handler => handler(message));
+  heard.length = 0;
+  sent.length = 0;
+  settings.moveSounds = false;
+  animations.playMoveAnimation(move("ember"), ["foe"], {});
+  await settle();
+  assert.deepEqual(heard, [], "muted: this player doesn't hear it…");
+  assert.equal(sent.length, 1, "…but the others still get it");
+  receive({ type: "move-sound", src: `${root}/gen7-ember.ogg` });
+  assert.deepEqual(heard, [], "nor what the others play");
+  settings.moveSounds = true;
+  receive({ type: "move-sound", src: `${root}/gen7-ember.ogg` });
+  receive({ type: "move-sound", src: "https://example.com/anything.mp3" });
+  assert.deepEqual(heard, [`${root}/gen7-ember.ogg`], "only the module's own sounds");
 });

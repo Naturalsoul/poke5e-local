@@ -12,6 +12,8 @@ solo se corrige algo.
   Project (Pokémon Essentials): 150 más. Los 9 restantes suenan como un Move de su tipo, y Growl, Roar, Howl,
   Hyper Voice, Disarming Voice y Halo Song usan el grito del Pokémon.
 - Los sonidos van por el canal de interfaz de Foundry, como los gritos: cada jugador regula su volumen ahí.
+- Ajuste por jugador "Sonidos de Moves" para silenciarlos solo para uno mismo; los demás los siguen oyendo. Cada
+  sonido llega a los demás por el socket del módulo, que solo acepta sonidos del propio módulo.
 - `tools/build-move-sounds.py` busca cada Move por su nombre en la colección (o, si no está, el sonido de su
   animación en el pack de Essentials), lo convierte a .ogg (46 MB en total) y escribe `data/move-sounds.json`. Los
   archivos de la colección que están dañados se saltan y se usa otra generación.

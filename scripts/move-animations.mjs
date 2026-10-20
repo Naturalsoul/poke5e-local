@@ -1,5 +1,5 @@
 import { subscribeAttackOutcome } from "./attack-outcome-engine.mjs";
-import { playPokemonCry } from "./pokemon-cry-service.mjs";
+import { resolvePokemonCryPath } from "./pokemon-cry-service.mjs";
 
 /* ============================================================
  * MOVE ANIMATIONS (Sequencer + JB2A)
@@ -13,13 +13,17 @@ import { playPokemonCry } from "./pokemon-cry-service.mjs";
  * It reads the Move item's own data, so Moves imported before it (even with an old moveDefinition) animate too.
  * Each also plays its own sound, ripped from the games or else from the Gen 9 Move Animation Project
  * (data/move-sounds.json, built by tools/build-move-sounds.py), through Foundry's interface channel like the cries;
- * voice Moves play the user's cry.
+ * voice Moves play the user's cry. It goes to every client through the module's socket, and each plays it unless
+ * its own "Move sounds" setting is off.
  * Only the user who rolls or uses it starts the animation; Sequencer shows it to everyone.
  * Without Sequencer and JB2A, or with the setting off, nothing is played.
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
 const SETTING = "moveAnimations";
+const SOUND_SETTING = "moveSounds";
+const SOCKET_CHANNEL = `module.${MODULE_ID}`;
+const SOUND_MESSAGE = "move-sound";
 
 // projectile: ranged attacks · melee: how it hits when the Move doesn't say · burst: around the user or the template ·
 // spray: cones and lines · color: tints the strike (and files whose color doesn't match the type) ·
@@ -263,13 +267,23 @@ export function moveSound(item) {
   return file ? `${SOUND_ROOT}/${file}` : null;
 }
 
-function addSound(sequence, item) {
-  if (VOICE_MOVES.has(item.getFlag(MODULE_ID, "sourceId"))) {
-    logged(playPokemonCry(item.actor));
-    return;
-  }
-  const file = moveSound(item);
-  if (file) {sequence.sound().file(file).audioChannel("interface").volume(SOUND_VOLUME);}
+// Plays here unless this player muted Move sounds.
+function hearSound(src) {
+  if (!game.settings.get(MODULE_ID, SOUND_SETTING)) {return;}
+  logged(foundry.audio.AudioHelper.play({ src, channel: "interface", volume: SOUND_VOLUME, autoplay: true, loop: false }, false));
+}
+
+async function soundFor(item) {
+  return VOICE_MOVES.has(item.getFlag(MODULE_ID, "sourceId")) ? resolvePokemonCryPath(item.actor) : moveSound(item);
+}
+
+// Sent to every client, each one deciding whether to hear it.
+function playSound(item) {
+  logged(soundFor(item).then(src => {
+    if (!src) {return;}
+    game.socket?.emit(SOCKET_CHANNEL, { type: SOUND_MESSAGE, src });
+    hearSound(src);
+  }));
 }
 
 export async function playTemplateAnimation(item, template, area = template) {
@@ -278,7 +292,7 @@ export async function playTemplateAnimation(item, template, area = template) {
   const animation = templateAnimation(item, template);
   const { origin, end, center } = templatePoints(template);
   const sequence = new globalThis.Sequence();
-  addSound(sequence, item);
+  playSound(item);
   const step = effect(sequence, animation).atLocation(animation.stretch ? origin : center);
   if (animation.stretch) {step.stretchTo(end);}
   else {step.size(animation.size, { gridUnits: true });}
@@ -292,7 +306,7 @@ export function playMoveAnimation(item, targets, { missed = false } = {}) {
   const animation = moveAnimation(item);
   const source = tokenOf(item.actor);
   const sequence = new globalThis.Sequence();
-  addSound(sequence, item);
+  playSound(item);
   if (animation.at === "user") {
     if (!source) {return;}
     playAround(sequence, animation, source);
@@ -365,7 +379,18 @@ export function registerMoveAnimations() {
       : "Reproduce una animación de JB2A (con Sequencer) para cada Move, según su tipo y su forma.",
     scope: "client", config: true, type: Boolean, default: true
   });
+  game.settings.register(MODULE_ID, SOUND_SETTING, {
+    name: en() ? "Poke5e - Move sounds" : "Poke5e - Sonidos de Moves",
+    hint: en() ? "Plays each Move's sound with its animation. Off: you don't hear them; other players still do."
+      : "Reproduce el sonido de cada Move con su animación. Apagado: tú no los oyes; los demás jugadores sí.",
+    scope: "client", config: true, type: Boolean, default: true
+  });
   void loadMoveSounds();
+  Hooks.once("ready", () => game.socket?.on(SOCKET_CHANNEL, message => {
+    // Only the module's own Move sounds and cries, whoever sends it.
+    const ours = typeof message?.src === "string" && message.src.startsWith(`modules/${MODULE_ID}/assets/audio/`);
+    if (message?.type === SOUND_MESSAGE && ours) {hearSound(message.src);}
+  }));
   subscribeAttackOutcome(onAttackOutcome);
   Hooks.on("dnd5e.postUseActivity", onPostUseActivity);
   Hooks.on("createMeasuredTemplate", onCreateTemplate);
