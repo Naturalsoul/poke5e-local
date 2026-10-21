@@ -30,9 +30,6 @@ const pendingConsumableUses =
 const bypassConsumableCards =
   new Set();
 
-const rollListenerDocuments =
-  new WeakSet();
-
 let registered =
   false;
 
@@ -1335,40 +1332,6 @@ function createRollButton(
 }
 
 
-function ensureItemRollClickListener(
-  html
-) {
-
-  const ownerDocument =
-    html?.ownerDocument;
-
-
-  if (
-    !ownerDocument ||
-    rollListenerDocuments.has(
-      ownerDocument
-    )
-  ) {
-
-    return;
-  }
-
-
-  ownerDocument.addEventListener(
-    "click",
-    onItemRollButtonClick,
-    {
-      capture:
-        true
-    }
-  );
-
-
-  rollListenerDocuments.add(
-    ownerDocument
-  );
-}
-
 function onRenderChatMessage(
   message,
   html
@@ -1393,11 +1356,6 @@ function onRenderChatMessage(
 
     return;
   }
-
-
-  ensureItemRollClickListener(
-    html
-  );
 
 
   if (

@@ -8121,3 +8121,25 @@ select:focus {
   opacity:
     0.45;
 }
+
+
+/* Usage card of a Move the module does not fully resolve. */
+.poke5e-coverage-notice {
+  margin:
+    6px 0 0;
+
+  font-size:
+    12px;
+
+  font-style:
+    italic;
+
+  opacity:
+    0.85;
+}
+
+
+.poke5e-coverage-notice small {
+  display:
+    block;
+}

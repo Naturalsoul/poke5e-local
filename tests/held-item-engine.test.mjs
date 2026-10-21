@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { installFoundryUtils, MockRoll } from "./helpers/foundry-mocks.mjs";
+import { createHooks, installFoundryUtils, MockRoll, renderMockRollMessage } from "./helpers/foundry-mocks.mjs";
 import { HELD_ITEM_DAMAGE_TYPES, heldItemCriticalRange, heldItemDamageBonus, PUNCHING_MOVE_IDS } from "../scripts/held-item-rules.mjs";
 import {
   applyHeldItemRollBonuses, captureHeldItemAppliedDamage, processHeldItemAppliedDamage,
@@ -12,12 +12,18 @@ import {
 import { heldItemConfiguration } from "../scripts/held-item-config.mjs";
 
 installFoundryUtils();
+createHooks();
 const MODULE_ID = "poke5e-local";
 globalThis.CONST = { ACTIVE_EFFECT_MODES: { ADD: 2, MULTIPLY: 1 } };
 globalThis.game = { user: { id: "gm", isGM: true }, users: { activeGM: { id: "gm" } }, settings: { get: () => "es" } };
 globalThis.Roll = class extends MockRoll {
   async evaluate() { return this.evaluateSync(); }
+  async toMessage(data) { rolled.push(data); return renderMockRollMessage(data); }
 };
+const chat = [];
+const rolled = [];
+globalThis.ChatMessage = { getSpeaker: ({ actor }) => ({ actor }), create: async data => { chat.push(data.content); return data; } };
+const said = text => chat.some(content => content.includes(text));
 let sequence = 0;
 
 function pokemon(itemSourceId, { species = "pikachu", pb = 3, quantity = 1, types = ["electric"], itemType } = {}) {
@@ -99,6 +105,7 @@ test("Rocky Helmet retaliates once per target and usage, with no reaction to ran
   const options = { originatingMessage: messageFor(activity(attacker)) };
   await Promise.all([processHeldItemAppliedDamage(target, 5, options), processHeldItemAppliedDamage(target, 5, options)]);
   assert.deepEqual(attacker.damage, [4]);
+  assert.ok(said("recibe 4 de daño"));
   await processHeldItemAppliedDamage(pokemon("rocky-helmet"), 5, options);
   assert.deepEqual(attacker.damage, [4, 3]);
   for (const [item, scope, effective] of [["protective-pads", "melee", 5], ["punching-glove", "melee", 5], ["charcoal", "ranged", 5], ["charcoal", "melee", 0]]) {
@@ -121,6 +128,7 @@ test("Sticky Barb transfers intact only to an itemless contact attacker and deal
   assert.equal(target.items.length, 0);
   assert.equal(attacker.items[0].getFlag(MODULE_ID, "sourceId"), "sticky-barb");
   assert.deepEqual(attacker.damage, []);
+  assert.ok(said("se pega a"));
   await processHeldItemEndTurn(attacker);
   assert.deepEqual(attacker.damage, [3]);
   const occupied = pokemon("charcoal");
@@ -152,6 +160,7 @@ test("Focus Sash intercepts lethal damage once, includes temporary HP, and never
   assert.equal(concurrent["system.attributes.hp.value"], 0);
   await processHeldItemAppliedDamage(actor, 30, options);
   assert.equal(actor.items[0].system.uses.spent, 1);
+  assert.ok(said("aguanta con 1 PG"));
   const second = { "system.attributes.hp.value": 0 };
   captureHeldItemAppliedDamage(actor, 30, second, {});
   assert.equal(second["system.attributes.hp.value"], 0);
@@ -172,6 +181,7 @@ test("Air Balloon blocks Ground parts until actual damage pops it; rest repairs 
   assert.equal(actor.items[0].getFlag(MODULE_ID, "popped"), undefined);
   await processHeldItemAppliedDamage(actor, 2, { [MODULE_ID]: { heldItemDamageApplied: 2 } });
   assert.equal(actor.items[0].getFlag(MODULE_ID, "popped"), true);
+  assert.ok(said("el globo explota"));
   const popped = [{ type: "ground", value: 8 }]; popped.amount = 8;
   applyHeldItemDefenses(actor, popped);
   assert.equal(popped.amount, 8);
@@ -535,6 +545,7 @@ test("Flame Orb uses native status creation and Black Sludge damages only non-Po
   const sludge = pokemon("black-sludge");
   await processHeldItemEndTurn(sludge);
   assert.deepEqual(sludge.damage, [[{ type: "poison", value: 1 }]]);
+  assert.match(rolled.at(-1).flavor, /^black-sludge — /);
   const poison = pokemon("black-sludge", { types: ["poison"] });
   await processHeldItemEndTurn(poison);
   assert.deepEqual(poison.damage, []);

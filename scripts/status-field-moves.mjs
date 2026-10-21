@@ -1,4 +1,4 @@
-import { findStatusEffect } from "./status-runtime.mjs";
+import { findStatusEffect, removeStatusWithNotice } from "./status-runtime.mjs";
 import { isPokemonActor } from "./trainer-party-service.mjs";
 import { activeTerrain, distanceBetween, isGrounded } from "./battlefield-service.mjs";
 import { sufferArea } from "./lingering-area-moves.mjs";
@@ -57,8 +57,8 @@ export function fieldMoveBlocksStatus(actor, status) {
   return status === "asleep" && activeUproars().some(uproar => inUproar(actor, uproar)) ? "uproar" : null;
 }
 
-async function wake(actor) {
-  await findStatusEffect(actor, "asleep")?.delete();
+async function wake(actor, cause) {
+  await removeStatusWithNotice(actor, findStatusEffect(actor, "asleep"), cause);
 }
 
 async function safeguard(user) {
@@ -78,7 +78,7 @@ async function onMoveUsed(activity) {
   if (!authority() || !isPokemonActor(activity?.actor)) {return;}
   if (id === "safeguard") {await safeguard(activity.actor);}
   if (id === "uproar") {
-    for (const actor of combatActors()) {if (inUproar(actor, { user: activity.actor })) {await wake(actor);}}
+    for (const actor of combatActors()) {if (inUproar(actor, { user: activity.actor })) {await wake(actor, activity.item.name);}}
   }
 }
 
@@ -89,7 +89,7 @@ export async function processStatusFieldMovesStartTurn(actor) {
     if (effect.getFlag?.(MODULE_ID, "kind") === SAFEGUARD_KIND && !safeguarded(actor)) {await effect.delete();}
   }
   for (const uproar of activeUproars().filter(entry => inUproar(actor, entry))) {
-    await wake(actor);
+    await wake(actor, uproar.item?.name ?? "Uproar");
     await sufferArea(actor, { item: uproar.item, rule: UPROAR.rule });
   }
 }
@@ -109,7 +109,7 @@ async function takeHeart(effect, move) {
     content: `<p>${en() ? `${actor.name} gets ${effect.name}. Use ${move.name}?` : `${actor.name} recibe ${effect.name}. ¿Usar ${move.name}?`}</p>` });
   if (!answer) {return;}
   await move.update({ "system.uses.spent": Number(move.system?.uses?.spent ?? 0) + 1 });
-  await effect.delete();
+  await removeStatusWithNotice(actor, effect, move.name);
   const advantage = ["wis", "cha"].map(ability => ({ key: `system.abilities.${ability}.save.roll.mode`, mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "1" }));
   await actor.createEmbeddedDocuments("ActiveEffect", [{ name: move.name, img: move.img, origin: move.uuid, changes: advantage,
     flags: { [MODULE_ID]: { kind: TAKE_HEART_KIND, ...endOfNextTurnFlags() } } }]);
@@ -122,7 +122,8 @@ function onCreateEffect(effect, _options, userId) {
 
 async function onUpdateCombat() {
   if (!authority() || activeTerrain() !== "electric") {return;}
-  for (const actor of combatActors()) {if (isGrounded(actor)) {await wake(actor);}}
+  const terrain = en() ? "Electric Terrain" : "Terreno Eléctrico";
+  for (const actor of combatActors()) {if (isGrounded(actor)) {await wake(actor, terrain);}}
 }
 
 let registered = false;
