@@ -51,7 +51,9 @@ export class EncounterQueryService {
             metadata.type === "trainer"
               ? "trainer"
               : "wild",
-
+          optional:
+            metadata.optional ===
+              true,
           actorCount: 1,
 
           quantity:
@@ -185,9 +187,10 @@ function buildWildEncounter(
 
     type:
       "wild",
-
+    optional:
+      firstMetadata.optional ===
+        true,
     pokemon,
-
     trainers:
       []
   };
@@ -319,10 +322,11 @@ function buildTrainerEncounter(
 
     type:
       "trainer",
-
+    optional:
+      firstMetadata.optional ===
+        true,
     pokemon:
       [],
-
     trainers
   };
 }

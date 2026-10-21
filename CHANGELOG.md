@@ -4,6 +4,111 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.22.0] — 2026-10-20
+
+- **Repartir XP: Repartir Experiencia sin XP de más.** Su portador, si no combatió, cuenta como un participante más
+  (con la regla casera, solo entre los Pokémon de su Entrenador): la XP de los demás baja en lo que él recibe. Si
+  combatió y se marca, recibe solo su parte normal, calculada desde cero.
+- **Planificador: revisión visual.** El resumen inferior muestra cada etiqueta entera (arriba) y su valor (abajo),
+  sin cortes; el pie ya no se encoge con un encuentro largo, así que "Repartir XP" y "Generar" siempre se ven; la
+  tarjeta de Entrenador no se desborda; las mejoras del rival van en tres cajas parejas; los selectores de SR del
+  generador salvaje tienen espacio. El diseño responde al ancho de la ventana del planificador (no al de la
+  pantalla), los textos mínimos pasan de 6–7 px a 8 px, los controles muestran el foco del teclado y se respeta
+  "reducir movimiento" del sistema.
+- **Mejores Moves** para los rivales: en vez de 4 Moves al azar de su nivel, su mejor combinación entre los de
+  nivel, huevo y (en un paso aparte) MT: su ataque STAB más fuerte, uno súper eficaz contra el equipo de los
+  jugadores si puede, los más fuertes de otros tipos (uno por tipo) y uno de estado. Cada Move se valora por sus
+  dados al nivel del Pokémon, STAB, área y si lo potencia una de sus mejores características; curar no es daño.
+  En "Ajustar paso a paso" son dos pasos: "Mejores Moves" (nivel y huevo) y, después, "Moves de MT" (los más
+  fuertes: Trueno, Hidrobomba o Terremoto a nivel 8). Los Moves se eligen al aplicar el paso (también la cobertura
+  súper eficaz) y se ven ya en cada Pokémon de la composición; al crear las hojas se usan esos mismos, si la
+  especie puede aprenderlos.
+- **Ajustar paso a paso** (encuentros de Entrenador, bajo el generador): sobre el encuentro tal como está, sin
+  regenerarlo. "Subir a <dificultad>" aplica los cambios más suaves hasta la siguiente dificultad y "Bajar" deshace
+  el último. Cada cambio también se puede aplicar solo y muestra a qué dificultad lleva y cuánto suma: +1 Pokémon en
+  campo, características +1/+2, cobertura súper eficaz, objetos garantizados, +1 Pokémon al equipo (de su
+  arquetipo, al Entrenador con el equipo más corto), +1 Entrenador de apoyo (de ruta, del mismo arquetipo), y al final, porque inflan la campaña, el As +1
+  nivel (al Entrenador con el As más bajo, así que rota) y +1 nivel a todos. Se parte de un Entrenador de ruta, que es Fácil.
+  La composición lo refleja al momento: Pokémon y Entrenadores nuevos, niveles, "N en campo" en cada Entrenador,
+  los objetos garantizados ya elegidos en cada Pokémon, y las mejoras que se aplican al crear las hojas
+  (características y cobertura) como etiquetas sobre los Entrenadores.
+- **Planificador de encuentros: dificultad.** poke5e no tiene tabla de dificultad y su SR no es un CR ("Pokémon del
+  mismo nivel son igual de fuertes"). Como su combate es el de D&D 5e, la base es la de D&D:
+  - cada Pokémon pesa según su nivel con la curva de D&D (el umbral Medio por personaje de la DMG), que coincide con
+    PV × daño de poke5e (los dados de los Moves suben en 5, 10 y 17);
+  - el grupo es un Pokémon por jugador, al nivel de su Pokémon más fuerte, y en los combates de entrenador su equipo
+    entero. Se detecta de los entrenadores de los jugadores (su equipo o, si no tienen, todos sus Pokémon, con sus
+    tipos y Moves) y se puede cambiar a mano, o volver a detectar;
+  - un encuentro salvaje suma sus Pokémon y, si superan en número al grupo, se multiplica (2 contra 1 es ×1,5). Una
+    pelea pareja es Media;
+  - un combate de entrenador suma todos los Pokémon de todos los equipos, un 20 % más fuertes que los salvajes, por
+    (Pokémon rivales en campo ÷ Pokémon de los jugadores en campo)^0,6: los multiplicadores de D&D en los dos
+    sentidos (2 contra 1 ×1,5, 1 contra 4 ×0,43). Un combate parejo es Difícil;
+  - **y por los tipos**, como en los juegos: cada Pokémon rival compara sus tipos con los del equipo de los
+    jugadores, y los Moves de daño de ellos con sus tipos. La ventaja sube su peso hasta ×2 y la desventaja lo baja
+    hasta ×0,5;
+  - Fácil, Difícil y Mortal siguen las proporciones de D&D (½, 1½ y 2,2 veces Media).
+- El resumen del encuentro muestra su dificultad con su color (Fácil verde, Media dorado, Difícil naranja, Mortal
+  rojo) y, al pasar el ratón, la fuerza del encuentro, la del grupo y el factor de tipos.
+- El generador salvaje tiene una franja "Dificultad y grupo": la dificultad buscada, los jugadores, su nivel y
+  "Detectar grupo". Repite la tirada hasta que el encuentro caiga en ella y, si los filtros no lo permiten, deja el
+  más cercano y avisa.
+- **El generador de entrenadores elige por el rango del rival, como en los juegos,** y ya no pide niveles ni SR. El
+  rango fija el estilo y la dificultad a la que apunta; cuántos Pokémon trae y saca a la vez se adapta al grupo,
+  porque los juegos calibran un rival para un jugador y la mesa tiene varios. Los niveles quedan cerca de los del
+  grupo (N) para no inflar una campaña que sube por XP:
+
+  | Rango | Apunta a | Niveles | Ace del jefe | Extras |
+  |---|---|---|---|---|
+  | Entrenador de ruta | Fácil | N−3 a N−1 | — | — |
+  | Entrenador Guay | Media | N−2 a N | — | +1, cobertura |
+  | Líder de Gimnasio | Difícil | N−1 a N, de un tipo | N+1 | +1, cobertura, objetos |
+  | Alto Mando | Difícil | N a N+1, de un tipo | N+1 | +2, cobertura, objetos |
+  | Campeón | Mortal | N a N+1 | N+1 a N+2 | +2, cobertura, objetos |
+  | Pokémon Dominante | Difícil | N−1 a N (aliados) | N+1 a N+2 | +2, objetos |
+
+  En los rangos jefe, el rival empieza solo y suma ayudantes del gimnasio (con su mismo tipo) solo si solo no llega
+  a su dificultad; el Ace es siempre del jefe. "Entrenadores", "Pokémon / Entrenador" y "En campo / Entrenador"
+  pueden fijarse a mano, y los extras del rango se pueden cambiar. Si no llega, avisa. El arquetipo da el tema del
+  equipo. Las especies se limitan al SR máximo de poke5e para un entrenador de ese nivel. Volver a tirar un equipo
+  mantiene sus niveles.
+- **Extras de los rivales**, que también cuentan en la dificultad:
+  - "Características" +1 o +2 a todas las de los Pokémon creados (×1,1 / ×1,2), con su servicio de puntuaciones,
+    así que PV y Moves se ajustan; al regenerar no se suma dos veces y quitarlo lo devuelve;
+  - "Cobertura súper eficaz": un Move de daño súper eficaz contra algún Pokémon del equipo detectado de los
+    jugadores, si lo aprende a su nivel (×1,1);
+  - "Objetos garantizados": cada Pokémon sin objeto recibe un objeto equipado o una baya (×1,05).
+  Los pesos son estimaciones, para ajustar en partida.
+- Cada entrenador del encuentro tiene "En campo" (1 a 6) en su tarjeta: cuántos Pokémon saca a la vez el DM.
+- **Experiencia contra el power creep, por defecto: "Ritmo: N encuentros Medios por nivel"** (8 por defecto, en la
+  configuración del mundo). La regla de poke5e (200 × Nivel × SR por Pokémon derrotado) da casi un nivel por cada
+  Pokémon de nivel parecido derrotado, y paga por SR, que poke5e dice que no mide la fuerza. Con el ritmo, la XP
+  total del encuentro, dividida entre los Pokémon de los jugadores que participan y siguen en pie, da a cada uno
+  1/N de nivel en una pelea Media a su nivel; cada rival aporta su parte de la fuerza del encuentro (las peleas más
+  difíciles dan más) sin mirar el SR. Con 8 y un grupo de nivel 10, un rival parejo da 2.500 XP en vez de 16.000.
+  La regla de poke5e sigue disponible.
+- **Avance del Pokémon más fuerte**, en el resumen del encuentro: la XP total si se derrota a todos, dividida entre
+  "Pokémon que participan" (los de los jugadores que participan y siguen en pie; uno por jugador por defecto), como
+  % del nivel del Pokémon más fuerte de los jugadores (detectado con su XP actual). Al pasar el ratón, dónde queda y
+  cuántos encuentros así le faltan para subir: para planear rutas y mazmorras. La regla de poke5e (200 × Nivel × SR
+  por Pokémon derrotado) da casi un nivel por cada Pokémon de nivel parecido derrotado, y el avance lo hace visible.
+- **Encuentros obligatorios y opcionales:** botón "Obligatorio / Opcional" arriba del encuentro; en uno ya
+  guardado se guarda al momento, sin regenerarlo. En "Encuentros guardados", los opcionales se marcan y, con solo
+  elegir la ubicación, se muestra su ruta: cuántos obligatorios y
+  opcionales, lo que da cada grupo al Pokémon más fuerte y en qué nivel termina si hace todos.
+- **XP de recuperación en los opcionales:** cada Pokémon recibe su parte escalada por su propio nivel (Gen V), así
+  que los más débiles ganan más y el más fuerte menos: los opcionales sirven para ponerse al día, no para farmear.
+- **"Repartir XP"**, junto a Generar: marcas los Pokémon de los jugadores que participaron y siguen en pie, ves la
+  parte de cada uno (editable) y se entrega. Un mensaje al GM resume la XP, las subidas de nivel, el dinero de los
+  combates contra Entrenadores (poke5e: nivel más alto d4 × 100 por Entrenador) y, en los opcionales, un botín
+  sugerido (un objeto o baya y una MT que aprende alguna de las especies rivales).
+- **Repartir Experiencia** en "Repartir XP": el Pokémon que lo lleva recibe, aunque no combata, la mitad de la XP
+  ganada en el combate (poke5e), además de su parte si combatió. Opción del mundo "Repartir Experiencia: regla casera": solo la
+  mitad de la XP que ganaron los demás Pokémon de su mismo Entrenador.
+- **"Experiencia según la diferencia de nivel"** (Gen V), opcional en la configuración del mundo: ((2 × rival + 10) ÷ (rival +
+  grupo + 10))^2,5; dos niveles por debajo es ×0,83 y cinco, ×0,57. En el avance se mide contra el nivel del Pokémon
+  más fuerte, que es quien recibe la XP.
+
 ## [0.21.0] — 2026-10-20
 
 - **Sonidos de Moves:** cada Move suena junto a su animación con su sonido de los juegos, de la Pokemon SFX

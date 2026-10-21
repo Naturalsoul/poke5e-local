@@ -29,7 +29,7 @@ Módulo de Foundry VTT para jugar **Pokémon 5e** ([poke5e.app](https://poke5e.a
 Importa Pokémon, Moves, Abilities y objetos, da hojas propias a Pokémon y entrenadores, y automatiza la mayor
 parte de las reglas de combate: tipos, STAB, estados, Abilities, rasgos de entrenador, capturas y más.
 
-- **Versión:** 0.21.0
+- **Versión:** 0.22.0
 - **Requisitos:** Foundry VTT 13 (13.351 o superior) o 14 (probado en 14.365), y D&D5e 5.3.3 o superior.
 - **Idiomas:** español e inglés (ajuste del módulo `language`).
 
@@ -104,6 +104,28 @@ Lo que un Move automatizado aún deja al DM está en la nota de su entrada en `s
 
 ### Otras herramientas del DM
 - **Planificador de encuentros:** encuentros salvajes y de entrenadores con aleatorizado y XP.
+  - **Dificultad** (Fácil, Media, Difícil, Mortal) medida contra el grupo: uno por jugador, al nivel de su Pokémon
+    más fuerte, detectado de sus entrenadores y editable. La base es la de D&D 5e, porque el combate de poke5e es el
+    suyo: cada Pokémon pesa según su nivel y la cantidad en campo multiplica. En los combates de entrenador cuentan
+    los equipos enteros, los Pokémon en campo de cada lado y **los tipos**, como en los juegos.
+  - El generador salvaje busca una dificultad; el de entrenadores elige por **el rango del rival** (de ruta, Guay,
+    Líder de Gimnasio, Alto Mando, Campeón o Pokémon Dominante): el rango fija el estilo y la dificultad a la que
+    apunta, y cuántos Pokémon trae y saca a la vez se adapta al grupo (los jefes suman ayudantes del gimnasio solo si
+    hace falta). Los niveles quedan cerca de los del grupo para no inflar la campaña; los rangos altos traen +1/+2 a
+    las características, un Move súper eficaz contra el equipo de los jugadores y objetos o bayas.
+  - **Ajustar paso a paso:** desde un Entrenador de ruta (Fácil), sube la dificultad sobre el mismo encuentro con
+    "Subir a…" (los cambios más suaves primero; los niveles al final) o cambio a cambio, y "Bajar" deshace.
+  - **Mejores Moves:** los rivales pueden llevar su mejor combinación de Moves de nivel y huevo, y después de MT,
+    con cobertura súper eficaz; se ven en la composición antes de crear las hojas.
+  - **Experiencia contra el power creep:** por defecto, un ritmo de "N encuentros Medios por nivel" (la XP total,
+    dividida entre los Pokémon que participan, da a cada uno 1/N de nivel en una pelea Media), sin depender del SR.
+    La regla de poke5e (200 × Nivel × SR) sigue disponible (Configuración → Poke5e - Experiencia de los encuentros).
+  - **Obligatorios y opcionales:** cada encuentro puede ser opcional (XP de recuperación: más a los Pokémon más
+    débiles, y botín). Cada ubicación resume su ruta. "Repartir XP" entrega la parte de cada Pokémon que participó,
+    con el dinero de los Entrenadores.
+  - **Avance:** cuánto de un nivel le da el encuentro al Pokémon más fuerte de los jugadores, con la XP dividida
+    entre los Pokémon que participan, y cuántos encuentros así le faltan para subir. Opcional, la XP según
+    diferencia de nivel de la Gen V (Configuración → Poke5e - Experiencia según la diferencia de nivel).
 - **Fakemon Studio:** crea Pokémon propios con asistente, evoluciones, Moves y copia de seguridad.
 - Transiciones de batalla con sonido.
 

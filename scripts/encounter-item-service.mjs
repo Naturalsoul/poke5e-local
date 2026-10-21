@@ -69,8 +69,10 @@ export class EncounterItemService {
     entryKey,
     requestedItemId = null,
     requestedItemResolved = false,
-    reroll = false,
-    policy = null,
+    reroll: requestedReroll = false,
+    policy: requestedPolicy = null,
+    // Every Pokémon carries something: a held item or a berry, rolled when it has none.
+    guaranteed = false,
     random = Math.random
   }) {
 
@@ -96,6 +98,34 @@ export class EncounterItemService {
         "encounter"
       );
 
+
+    const forced =
+      guaranteed &&
+      !currentItemId;
+
+    const reroll =
+      requestedReroll ||
+      forced;
+
+    const policy =
+      forced
+        ? {
+        enabled:
+          true,
+        chancePercent:
+          100,
+        categoryWeights: {
+          berry:
+            1,
+          medicine:
+            0,
+          pokeball:
+            0,
+          "held-item":
+            1
+        }
+      }
+        : requestedPolicy;
 
     if (!reroll) {
 
