@@ -23,7 +23,7 @@
     var(--poke5e-ui-accent);
 
   --poke5e-manager-red-soft:
-    rgba(196, 61, 61, 0.14);
+    color-mix(in srgb, var(--poke5e-ui-accent) 14%, transparent);
 
   --poke5e-manager-gold:
     var(--poke5e-ui-brass);
@@ -93,12 +93,12 @@
   background:
     radial-gradient(
       circle at 92% 0,
-      rgba(196, 61, 61, 0.11),
+      color-mix(in srgb, var(--poke5e-ui-accent) 11%, transparent),
       transparent 260px
     ),
     linear-gradient(
       180deg,
-      #14191f,
+      var(--poke5e-ui-surface),
       var(--poke5e-manager-bg)
     );
 
@@ -151,17 +151,17 @@
 
   border-bottom:
     1px solid
-    rgba(196, 61, 61, 0.26);
+    color-mix(in srgb, var(--poke5e-ui-accent) 26%, transparent);
 
   background:
     radial-gradient(
       circle at 10% 50%,
-      rgba(196, 61, 61, 0.12),
+      color-mix(in srgb, var(--poke5e-ui-accent) 12%, transparent),
       transparent 180px
     ),
     linear-gradient(
       180deg,
-      rgba(22, 27, 34, 0.99),
+      color-mix(in srgb, var(--poke5e-ui-surface) 99%, transparent),
       rgba(12, 15, 20, 0.99)
     );
 
@@ -324,7 +324,7 @@ input[type="search"] {
     linear-gradient(
       180deg,
       #232a34,
-      #171c23
+      var(--poke5e-ui-panel)
     );
 
   color:
@@ -350,7 +350,7 @@ input[type="search"] {
 .poke5e-trainer-manager
 select option {
   background:
-    #171c23;
+    var(--poke5e-ui-panel);
 
   color:
     var(--poke5e-manager-ivory);
@@ -367,7 +367,7 @@ select option {
 
   box-shadow:
     0 0 0 1px
-    rgba(196, 61, 61, 0.2);
+    color-mix(in srgb, var(--poke5e-ui-accent) 20%, transparent);
 }
 
 
@@ -417,7 +417,7 @@ select option {
 
   border:
     1px solid
-    rgba(239, 232, 216, 0.08);
+    color-mix(in srgb, var(--poke5e-ui-cream) 8%, transparent);
 
   border-radius:
     6px;
@@ -512,10 +512,10 @@ i {
 
   border-bottom:
     1px solid
-    rgba(199, 175, 115, 0.12);
+    color-mix(in srgb, var(--poke5e-ui-brass) 12%, transparent);
 
   background:
-    rgba(8, 10, 14, 0.94);
+    color-mix(in srgb, var(--poke5e-ui-bg) 94%, transparent);
 }
 
 
@@ -545,7 +545,7 @@ i {
 
   border:
     1px solid
-    rgba(239, 232, 216, 0.09);
+    color-mix(in srgb, var(--poke5e-ui-cream) 9%, transparent);
 
   border-radius:
     7px;
@@ -554,7 +554,7 @@ i {
     linear-gradient(
       180deg,
       rgba(40, 47, 59, 0.92),
-      rgba(22, 27, 35, 0.96)
+      color-mix(in srgb, var(--poke5e-ui-surface) 96%, transparent)
     );
 
   color:
@@ -608,7 +608,7 @@ i {
 
 .poke5e-trainer-manager__nav-button:hover {
   border-color:
-    rgba(199, 175, 115, 0.32);
+    color-mix(in srgb, var(--poke5e-ui-brass) 32%, transparent);
 
   color:
     var(--poke5e-manager-ivory);
@@ -617,7 +617,7 @@ i {
 
 .poke5e-trainer-manager__nav-button.is-active {
   border-color:
-    rgba(196, 61, 61, 0.62);
+    color-mix(in srgb, var(--poke5e-ui-accent) 62%, transparent);
 
   background:
     linear-gradient(
@@ -720,8 +720,8 @@ i {
   background:
     linear-gradient(
       180deg,
-      rgba(29, 35, 43, 0.92),
-      rgba(18, 23, 29, 0.96)
+      color-mix(in srgb, var(--poke5e-ui-panel) 92%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 96%, transparent)
     );
 
   box-shadow:
@@ -750,7 +750,7 @@ i {
 
   border-bottom:
     1px solid
-    rgba(199, 175, 115, 0.12);
+    color-mix(in srgb, var(--poke5e-ui-brass) 12%, transparent);
 }
 
 
@@ -823,7 +823,7 @@ p {
 
   border:
     1px solid
-    rgba(196, 61, 61, 0.26);
+    color-mix(in srgb, var(--poke5e-ui-accent) 26%, transparent);
 
   border-radius:
     999px;
@@ -851,7 +851,7 @@ p {
 
 .poke5e-trainer-active {
   border-color:
-    rgba(196, 61, 61, 0.3);
+    color-mix(in srgb, var(--poke5e-ui-accent) 30%, transparent);
 }
 
 
@@ -888,13 +888,13 @@ p {
 
   border:
     1px dashed
-    rgba(196, 61, 61, 0.34);
+    color-mix(in srgb, var(--poke5e-ui-accent) 34%, transparent);
 
   border-radius:
     var(--poke5e-manager-radius-md);
 
   background:
-    rgba(196, 61, 61, 0.035);
+    color-mix(in srgb, var(--poke5e-ui-accent) 3.5%, transparent);
 }
 
 
@@ -1068,7 +1068,7 @@ label {
 
   border:
     1px dashed
-    rgba(199, 175, 115, 0.2);
+    color-mix(in srgb, var(--poke5e-ui-brass) 20%, transparent);
 
   border-radius:
     var(--poke5e-manager-radius-md);
@@ -1123,11 +1123,11 @@ i {
 
   border:
     1px solid
-    rgba(239, 232, 216, 0.08);
+    color-mix(in srgb, var(--poke5e-ui-cream) 8%, transparent);
 
   border-left:
     3px solid
-    rgba(199, 175, 115, 0.34);
+    color-mix(in srgb, var(--poke5e-ui-brass) 34%, transparent);
 
   border-radius:
     var(--poke5e-manager-radius-md);
@@ -1136,14 +1136,14 @@ i {
     linear-gradient(
       180deg,
       rgba(39, 45, 55, 0.72),
-      rgba(23, 28, 35, 0.86)
+      color-mix(in srgb, var(--poke5e-ui-panel) 86%, transparent)
     );
 }
 
 
 .poke5e-trainer-pokemon-card--active {
   border-color:
-    rgba(196, 61, 61, 0.48);
+    color-mix(in srgb, var(--poke5e-ui-accent) 48%, transparent);
 
   border-left-color:
     var(--poke5e-manager-red);
@@ -1151,8 +1151,8 @@ i {
   background:
     linear-gradient(
       135deg,
-      rgba(196, 61, 61, 0.11),
-      rgba(27, 32, 40, 0.92)
+      color-mix(in srgb, var(--poke5e-ui-accent) 11%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-panel) 92%, transparent)
     );
 }
 
@@ -1176,13 +1176,13 @@ i {
 .poke5e-trainer-pokemon-card__image {
   border:
     2px solid
-    rgba(199, 175, 115, 0.28);
+    color-mix(in srgb, var(--poke5e-ui-brass) 28%, transparent);
 
   border-radius:
     50%;
 
   background:
-    #090c11;
+    var(--poke5e-ui-bg);
 
   object-fit:
     cover;
@@ -1286,7 +1286,7 @@ button[data-trainer-action],
 
   border:
     1px solid
-    rgba(199, 175, 115, 0.3);
+    color-mix(in srgb, var(--poke5e-ui-brass) 30%, transparent);
 
   border-radius:
     6px;
@@ -1294,8 +1294,8 @@ button[data-trainer-action],
   background:
     linear-gradient(
       180deg,
-      rgba(49, 57, 69, 0.98),
-      rgba(28, 34, 42, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-panel) 99%, transparent)
     );
 
   color:
@@ -1317,7 +1317,7 @@ button[data-trainer-action]:hover:not(:disabled),
 .poke5e-trainer-manager
 .poke5e-trainer-pokemon-card__action:hover:not(:disabled) {
   border-color:
-    rgba(196, 61, 61, 0.62);
+    color-mix(in srgb, var(--poke5e-ui-accent) 62%, transparent);
 
   background:
     linear-gradient(
@@ -1400,7 +1400,7 @@ input {
 
   border:
     1px dashed
-    rgba(199, 175, 115, 0.2);
+    color-mix(in srgb, var(--poke5e-ui-brass) 20%, transparent);
 
   border-radius:
     var(--poke5e-manager-radius-md);
@@ -1419,7 +1419,7 @@ input {
 
 .poke5e-trainer-add-pokemon {
   border-color:
-    rgba(199, 175, 115, 0.16);
+    color-mix(in srgb, var(--poke5e-ui-brass) 16%, transparent);
 }
 
 
@@ -1449,7 +1449,7 @@ input {
 ):focus-visible {
   outline:
     2px solid
-    rgba(199, 175, 115, 0.86);
+    color-mix(in srgb, var(--poke5e-ui-brass) 86%, transparent);
 
   outline-offset:
     2px;

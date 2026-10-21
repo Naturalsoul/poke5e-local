@@ -4391,7 +4391,7 @@ input {
     linear-gradient(
       180deg,
       rgba(38, 45, 57, 0.96),
-      rgba(15, 19, 25, 0.98)
+      color-mix(in srgb, var(--poke5e-ui-surface) 98%, transparent)
     );
 
   color:
@@ -4480,13 +4480,13 @@ input {
 .sheet-header-buttons
 :is(button, a):hover {
   border-color:
-    rgba(196, 61, 61, 0.68);
+    color-mix(in srgb, var(--poke5e-ui-accent) 68%, transparent);
 
   background:
     linear-gradient(
       180deg,
       rgba(58, 35, 40, 0.98),
-      rgba(22, 19, 24, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-surface) 99%, transparent)
     );
 }
 
