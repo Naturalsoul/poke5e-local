@@ -2826,7 +2826,7 @@ input::-webkit-outer-spin-button {
     0;
 
   gap:
-    3px;
+    2px;
 
   color:
     var(--poke5e-fr-red);
@@ -2847,8 +2847,9 @@ input::-webkit-outer-spin-button {
   color:
     #d9a91c;
 
+  /* An icon, not text: at the text size it pushed into the score box. */
   font-size:
-    var(--poke5e-ui-text-2xs);
+    8px;
 
   filter:
     drop-shadow(

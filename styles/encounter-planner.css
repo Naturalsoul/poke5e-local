@@ -5568,13 +5568,13 @@ input[type="number"] {
   z-index:
     5;
 
+  /* The summary on its own row (its labels do not fit beside the buttons), the two actions under it. */
   display:
     grid;
 
   grid-template-columns:
-    minmax(0, 1fr)
     auto
-    auto;
+    minmax(0, 1fr);
 
   align-items:
     center;
@@ -5613,9 +5613,16 @@ input[type="number"] {
 
 
 .poke5e-encounter-planner__footer
+.poke5e-encounter-planner__statusbar {
+  grid-column:
+    1 / -1;
+}
+
+
+.poke5e-encounter-planner__footer
 button[data-action="generate"] {
-  min-width:
-    245px;
+  width:
+    100%;
 
   min-height:
     38px;
@@ -5839,34 +5846,6 @@ button[data-action="award-xp"]:hover:not(:disabled) {
 
     font-size:
       12px;
-  }
-}
-
-
-@container planner (max-width: 900px) {
-
-  /* The summary on its own row, the two actions side by side under it. */
-  .poke5e-encounter-planner__footer {
-    grid-template-columns:
-      auto
-      minmax(0, 1fr);
-  }
-
-
-  .poke5e-encounter-planner__footer
-  .poke5e-encounter-planner__statusbar {
-    grid-column:
-      1 / -1;
-  }
-
-
-  .poke5e-encounter-planner__footer
-  button[data-action="generate"] {
-    width:
-      100%;
-
-    min-width:
-      0;
   }
 }
 

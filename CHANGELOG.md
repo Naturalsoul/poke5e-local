@@ -11,6 +11,9 @@ solo se corrige algo.
   6–7,5 px pasa a 10, el de 8 a 11, el de 9 a 11,5 y el de 10–11 a 12. Cada tamaño sale de una escala en
   `styles/theme.css` (`--poke5e-ui-text-*`), así que se ajusta en un solo sitio. Se mantiene la micro-etiqueta
   "MOD" de 4 px del modificador, que no cabría en su píldora.
+- Con el texto más grande, el resumen inferior del planificador va siempre en su propia fila, con "Repartir XP" y
+  "Generar" debajo, para que sus etiquetas se lean enteras; la estrella de la característica principal de la ficha
+  de Pokémon vuelve a ser pequeña para no pisar el valor.
 
 ## [0.23.1] — 2026-10-21
 
