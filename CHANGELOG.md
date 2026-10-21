@@ -66,8 +66,9 @@ solo se corrige algo.
   % del nivel del Pokémon más fuerte de los jugadores (detectado con su XP actual). Al pasar el ratón, dónde queda y
   cuántos encuentros así le faltan para subir: para planear rutas y mazmorras. La regla de poke5e (200 × Nivel × SR
   por Pokémon derrotado) da casi un nivel por cada Pokémon de nivel parecido derrotado, y el avance lo hace visible.
-- **Encuentros obligatorios y opcionales:** casilla "Opcional" junto al nombre, guardada con el encuentro. En
-  "Encuentros guardados", los opcionales se marcan y la ubicación muestra su ruta: cuántos obligatorios y
+- **Encuentros obligatorios y opcionales:** botón "Obligatorio / Opcional" arriba del encuentro; en uno ya
+  guardado se guarda al momento, sin regenerarlo. En "Encuentros guardados", los opcionales se marcan y, con solo
+  elegir la ubicación, se muestra su ruta: cuántos obligatorios y
   opcionales, lo que da cada grupo al Pokémon más fuerte y en qué nivel termina si hace todos.
 - **XP de recuperación en los opcionales:** cada Pokémon recibe su parte escalada por su propio nivel (Gen V), así
   que los más débiles ganan más y el más fuerte menos: los opcionales sirven para ponerse al día, no para farmear.

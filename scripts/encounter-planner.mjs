@@ -1036,7 +1036,9 @@ export class PokemonEncounterPlanner
 
             </div>
 
-            ${this.#routeSummary(context.savedEncountersForLocation)}
+            <div data-role="route-summary">
+              ${this.#routeSummary(context.savedEncountersForLocation)}
+            </div>
 
           </section>
 
@@ -1121,23 +1123,6 @@ export class PokemonEncounterPlanner
 
               </label>
 
-
-              <label
-                class="poke5e-encounter-planner__toggle"
-                title="Un encuentro opcional no hace falta para avanzar: da XP de recuperación, más a los Pokémon más débiles del grupo, y sugiere un botín."
-              >
-                <input
-                  type="checkbox"
-                  data-role="encounter-optional"
-                  ${this._encounterState.optional ? " checked" : ""}
-                >
-
-                <span>
-                  <strong>Opcional</strong>
-                  <small>XP de recuperación y botín.</small>
-                </span>
-              </label>
-
             </div>
 
           </section>
@@ -1165,16 +1150,35 @@ export class PokemonEncounterPlanner
               </div>
 
 
-              <span class="poke5e-encounter-planner__workspace-counter">
+              <div class="poke5e-encounter-planner__workspace-actions">
 
-                <i
-                  class="fa-solid fa-paw"
-                  aria-hidden="true"
-                ></i>
+                <button
+                  type="button"
+                  class="poke5e-encounter-planner__optional-toggle${this._encounterState.optional ? " is-active" : ""}"
+                  data-action="toggle-optional"
+                  aria-pressed="${this._encounterState.optional ? "true" : "false"}"
+                  title="Un encuentro opcional no hace falta para avanzar: da XP de recuperación (más a los Pokémon más débiles) y sugiere un botín. En un encuentro guardado, se guarda al momento."
+                >
+                  <i
+                    class="fa-solid ${this._encounterState.optional ? "fa-route" : "fa-flag-checkered"}"
+                    aria-hidden="true"
+                  ></i>
 
-                ${context.rows.length} fila(s)
+                  ${this._encounterState.optional ? "Opcional" : "Obligatorio"}
+                </button>
 
-              </span>
+                <span class="poke5e-encounter-planner__workspace-counter">
+
+                  <i
+                    class="fa-solid fa-paw"
+                    aria-hidden="true"
+                  ></i>
+
+                  ${context.rows.length} fila(s)
+
+                </span>
+
+              </div>
 
             </header>
 
@@ -3305,17 +3309,13 @@ export class PokemonEncounterPlanner
 
 
     root.querySelector(
-      '[data-role="encounter-optional"]'
+      '[data-action="toggle-optional"]'
     )?.addEventListener(
-      "change",
+      "click",
 
-      event => {
-        this._encounterState.optional =
-          event.currentTarget.checked;
-
-        this.#refreshTotalsUi(
-          root
-        );
+      () => {
+        void this
+          .#toggleOptional();
       }
     );
 
@@ -4044,6 +4044,18 @@ export class PokemonEncounterPlanner
 
       encounterSelect.value =
         "";
+    }
+
+    const routeSummary =
+      root.querySelector(
+        '[data-role="route-summary"]'
+      );
+
+    if (routeSummary) {
+      routeSummary.innerHTML =
+        this.#routeSummary(
+          encounters
+        );
     }
 
 
@@ -5547,6 +5559,47 @@ export class PokemonEncounterPlanner
         ${totals.optional.count} opcional(es): +${percent(totals.optional.xp)} ·
         con todos, Nv. ${end.level} (${Math.round(end.progress * 100)} %)
       </p>`;
+  }
+
+  async #toggleOptional() {
+    const optional =
+      !this._encounterState.optional;
+
+    this._encounterState.optional =
+      optional;
+
+    const key =
+      this._encounterState
+        .encounterKey;
+
+    if (key) {
+      const updates =
+        game.actors
+          .filter(
+            actor =>
+              actor.getFlag(
+                MODULE_ID,
+                "encounter"
+              )?.key ===
+                key
+          )
+          .map(
+            actor => ({
+              _id:
+                actor.id,
+              [`flags.${MODULE_ID}.encounter.optional`]:
+                optional
+            })
+          );
+
+      if (updates.length) {
+        await Actor.updateDocuments(
+          updates
+        );
+      }
+    }
+
+    await this.render();
   }
 
   #xpRows(

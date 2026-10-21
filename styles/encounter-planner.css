@@ -5948,3 +5948,38 @@ button[data-action="award-xp"]:hover:not(:disabled) {
 .poke5e-xp-award__share input:disabled {
   pointer-events: none;
 }
+
+
+/* Obligatorio / Opcional, at the top of the encounter. */
+.poke5e-encounter-planner__workspace-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.poke5e-encounter-planner__optional-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  min-height: 30px;
+  padding: 4px 12px;
+  border: 1px solid var(--encounter-border);
+  border-radius: 999px;
+  background: var(--encounter-panel-alt);
+  color: var(--encounter-text);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.poke5e-encounter-planner__optional-toggle:hover {
+  border-color: var(--encounter-cream);
+}
+
+.poke5e-encounter-planner__optional-toggle.is-active {
+  border-color: rgba(217, 169, 28, 0.7);
+  background: rgba(217, 169, 28, 0.16);
+  color: var(--encounter-gold);
+}
