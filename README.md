@@ -130,7 +130,7 @@ parte, lo dice también, y el DM ve además la nota (en inglés).
   - **Avance:** cuánto de un nivel le da el encuentro al Pokémon más fuerte de los jugadores, con la XP dividida
     entre los Pokémon que participan, y cuántos encuentros así le faltan para subir. Opcional, la XP según
     diferencia de nivel de la Gen V (Configuración → Poke5e - Experiencia según la diferencia de nivel).
-- **Temas** (Configuración → Poke5e - Tema, por jugador): Pizarra, Team Rocket, Rojo Fuego y Esmeralda.
+- **Diseño de las hojas** (Configuración → Poke5e - Diseño de las hojas, por jugador): Team Rocket o D&D 5e.
 - **Fakemon Studio:** crea Pokémon propios con asistente, evoluciones, Moves y copia de seguridad.
 - Transiciones de batalla con sonido.
 

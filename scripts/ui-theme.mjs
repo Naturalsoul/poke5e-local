@@ -1,36 +1,36 @@
 /* ============================================================
- * UI THEME
+ * SHEET DESIGN
  *
- * Each player picks the look of the module's windows. A theme is
- * a class on <body> (poke5e-theme-<id>) that redefines the shared
- * colour tokens of styles/theme.css.
+ * Each player picks the design of the module's sheets, so the look
+ * can follow the campaign. A design is a class on <body>
+ * (poke5e-design-<id>): "rocket" is the module's own look, "dnd5e"
+ * gives back dnd5e's sheet and recolours the module's panels with
+ * its colours (styles/theme.css, styles/trainer.css).
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
-const SETTING = "uiTheme";
+const SETTING = "sheetDesign";
 
-export const UI_THEMES = Object.freeze({
-  slate: { es: "Pizarra (el de siempre)", en: "Slate (the usual one)" },
+export const SHEET_DESIGNS = Object.freeze({
   rocket: { es: "Team Rocket", en: "Team Rocket" },
-  firered: { es: "Rojo Fuego", en: "FireRed" },
-  emerald: { es: "Esmeralda", en: "Emerald" }
+  dnd5e: { es: "D&D 5e (el de la hoja por defecto)", en: "D&D 5e (the default sheet)" }
 });
 
-export function applyUiTheme(theme, body = document.body) {
-  const chosen = UI_THEMES[theme] ? theme : "slate";
-  for (const id of Object.keys(UI_THEMES)) {body.classList.toggle(`poke5e-theme-${id}`, id === chosen);}
+export function applySheetDesign(design, body = document.body) {
+  const chosen = SHEET_DESIGNS[design] ? design : "rocket";
+  for (const id of Object.keys(SHEET_DESIGNS)) {body.classList.toggle(`poke5e-design-${id}`, id === chosen);}
 }
 
-export function registerUiTheme() {
+export function registerSheetDesign() {
   const lang = game.settings.get(MODULE_ID, "language") === "en" ? "en" : "es";
   game.settings.register(MODULE_ID, SETTING, {
-    name: lang === "en" ? "Poke5e - Theme" : "Poke5e - Tema",
-    hint: lang === "en" ? "Colours of the module's windows (sheets, planner, Fakemon Studio). Only for you."
-      : "Colores de las ventanas del módulo (fichas, planificador, Fakemon Studio). Solo para ti.",
-    scope: "client", config: true, type: String, default: "slate",
-    choices: Object.fromEntries(Object.entries(UI_THEMES).map(([id, labels]) => [id, labels[lang]])),
+    name: lang === "en" ? "Poke5e - Sheet design" : "Poke5e - Diseño de las hojas",
+    hint: lang === "en" ? "Look of the module's sheets and windows. Only for you."
+      : "Aspecto de las hojas y ventanas del módulo. Solo para ti.",
+    scope: "client", config: true, type: String, default: "rocket",
+    choices: Object.fromEntries(Object.entries(SHEET_DESIGNS).map(([id, labels]) => [id, labels[lang]])),
     // Foundry passes (value, options): only the value is ours.
-    onChange: theme => applyUiTheme(theme)
+    onChange: design => applySheetDesign(design)
   });
-  applyUiTheme(game.settings.get(MODULE_ID, SETTING));
+  applySheetDesign(game.settings.get(MODULE_ID, SETTING));
 }

@@ -6,13 +6,12 @@ solo se corrige algo.
 
 ## [0.25.0] — 2026-10-21
 
-- **Temas.** Nuevo ajuste "Poke5e - Tema" (Configuración, por jugador): cambia los colores de las fichas, el
-  planificador, Fakemon Studio y el gestor del Entrenador. Cuatro temas oscuros: **Pizarra** (el de siempre, con las
-  ventanas de Entrenador en rojo Rocket), **Team Rocket** (negro nocturno, rojo Rocket y latón en todas las
-  ventanas), **Rojo Fuego** (brasas, el rojo de FireRed y el crema de sus cuadros de texto) y **Esmeralda** (verdes
-  de bosque, esmeralda y dorado de Hoenn). Cada tema solo redefine los colores comunes de `styles/theme.css`; los
-  colores de tipo y de PS no cambian. Un test comprueba que el texto se lee en todos (contraste 4,5:1, y 3:1 el
-  acento).
+- **Diseño de las hojas.** Nuevo ajuste "Poke5e - Diseño de las hojas" (Configuración, por jugador), pensado
+  para cambiar el estilo si cambia el tono de la campaña. Dos diseños: **Team Rocket** (el de siempre: ficha de
+  Pokémon en pizarra y hoja de Entrenador en rojo Rocket) y **D&D 5e**: la hoja de Entrenador vuelve al aspecto
+  de la hoja de personaje de dnd5e (cabecera, barra lateral y pestañas) y los paneles del módulo (centro de
+  mando, ficha de Pokémon, planificador, Fakemon Studio) toman sus colores: pergamino en el modo claro de
+  Foundry y azul vaquero en el oscuro. Todo sigue funcionando igual en los dos; solo cambia el aspecto.
 
 ## [0.24.0] — 2026-10-21
 
