@@ -6,6 +6,7 @@ import { heldItemCriticalRange, heldItemDamageBonus, PUNCHING_MOVE_IDS } from ".
 import { heldItemConfiguration, isHeldItemHealing } from "./held-item-config.mjs";
 import { registerBerryHealingChat } from "./berry-healing.mjs";
 import { applyBindingDamageBonus, captureBindingDamage, recordBindingDamage, synchronizeBindingMoves } from "./periodic-engine.mjs";
+import { publishRollBeforeDamage } from "./chat-roll-display.mjs";
 
 const MODULE_ID = "poke5e-local";
 const pendingActors = new Map();
@@ -27,6 +28,13 @@ function heldItem(actor) {
 
 function sourceId(item) {
   return item?.getFlag(MODULE_ID, "sourceId");
+}
+
+// Lo que el objeto hace por su cuenta (PG, cambio de portador) solo se ve en el token: se dice en el chat.
+function announce(actor, item, es, en) {
+  const text = game.settings.get(MODULE_ID, "language") === "en" ? en : es;
+  return ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }),
+    content: `<div class="poke5e-turn-message"><strong>${actor.name}</strong> (${item.name}): ${text}.</div>` });
 }
 
 function proficiency(actor) {
@@ -236,6 +244,7 @@ export async function processHeldItemAppliedDamage(_target, amount, options) {
       reservedSashes.delete(sash);
       delete options[MODULE_ID].focusSash;
     }
+    await announce(_target, sash, "aguanta con 1 PG", "hangs on with 1 HP");
   }
   if (!(amount > 0) || options?.[MODULE_ID]?.heldItemDamageApplied === 0) {
     return;
@@ -243,6 +252,7 @@ export async function processHeldItemAppliedDamage(_target, amount, options) {
   const defensiveItem = heldItem(_target);
   if (sourceId(defensiveItem) === "air-balloon" && !defensiveItem.getFlag(MODULE_ID, "popped")) {
     await defensiveItem.setFlag(MODULE_ID, "popped", true);
+    await announce(_target, defensiveItem, "el globo explota", "the balloon pops");
   }
   const { message, move } = originatingMove(options);
   const actor = move?.actor;
@@ -285,11 +295,14 @@ export async function processHeldItemAppliedDamage(_target, amount, options) {
     const bonus = id === "life-orb" ? boosted.bonus : proficiency(actor);
     if (id === "life-orb") {
       await actor.applyDamage(bonus); // Daño sin tipo, sin volver a activar el objeto.
+      await announce(actor, held, `pierde ${bonus} PG`, `loses ${bonus} HP`);
     } else {
       const hp = actor.system.attributes.hp;
       // Un objeto curativo no revive automáticamente a un Pokémon debilitado.
       if (hp.value > 0 && hp.value < hp.max) {
-        await actor.applyDamage(-Math.min(bonus, hp.max - hp.value));
+        const healed = Math.min(bonus, hp.max - hp.value);
+        await actor.applyDamage(-healed);
+        await announce(actor, held, `recupera ${healed} PG`, `recovers ${healed} HP`);
       }
     }
   });
@@ -304,7 +317,9 @@ async function processDefensiveHeldItem(target, attacker, move, message) {
     const use = message.getOriginatingMessage?.() ?? message;
     const key = use.uuid ?? use.id;
     if (id === "rocky-helmet" && await claimTrigger(target, item, key)) {
-      await attacker.applyDamage(proficiency(target));
+      const damage = proficiency(target);
+      await attacker.applyDamage(damage);
+      await announce(target, item, `${attacker.name} recibe ${damage} de daño`, `${attacker.name} takes ${damage} damage`);
     } else if (id === "sticky-barb" && !heldItem(attacker) &&
       await claimTrigger(target, item, key)) {
       // Crear primero: si el atacante no admite el objeto, el original se conserva.
@@ -321,6 +336,7 @@ async function processDefensiveHeldItem(target, attacker, move, message) {
         await attacker.unsetFlag(MODULE_ID, "heldItemId");
         throw error;
       }
+      await announce(target, item, `se pega a ${attacker.name}`, `sticks to ${attacker.name}`);
     }
   });
 }
@@ -332,11 +348,14 @@ export async function processHeldItemEndTurn(actor) {
   }
   const id = sourceId(held);
   if (id === "sticky-barb") {
-    await actor.applyDamage(proficiency(actor));
+    const damage = proficiency(actor);
+    await actor.applyDamage(damage);
+    await announce(actor, held, `recibe ${damage} de daño`, `takes ${damage} damage`);
     return;
   }
   if (id === "black-sludge" && !pokemonTypes(actor).includes("poison")) {
     const roll = await new Roll("1d6").evaluate();
+    await publishRollBeforeDamage(roll, { speaker: ChatMessage.getSpeaker({ actor }), flavor: `${held.name} — ${actor.name}` });
     await actor.applyDamage([{ type: "poison", value: roll.total }]);
     return;
   }

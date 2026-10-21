@@ -111,6 +111,7 @@ import {
   registerPokemonModifierEngine
 } from "./modifier-engine.mjs";
 import { registerMoveModifierAutomation } from "./modifier-automation.mjs";
+import { registerMoveCoverageNotice } from "./move-coverage-notice.mjs";
 
 import {
   registerPokemonTargetedModifierEngine
@@ -422,6 +423,7 @@ Hooks.once(
     registerHeldItemEngine();
     registerPokemonModifierEngine();
     registerMoveModifierAutomation();
+    registerMoveCoverageNotice();
     registerPokemonTargetedModifierEngine();
     registerPokemonPeriodicEngine();
     registerMultiTargetEngine();

@@ -407,3 +407,26 @@ test("a volatile status the Pokemon already has is not applied twice", () => {
   assert.equal(preCreateResult(actor, "confused"), false);
   assert.equal(preCreateResult(actor, "flinched"), undefined, "another volatile status still applies");
 });
+
+test("a new status is announced in chat unless a contact Ability already did; Burned keeps its reminder", async () => {
+  const sent = [];
+  const create = ChatMessage.create;
+  ChatMessage.create = async data => { sent.push(data.content); return data; };
+  try {
+    const actor = pokemonActor({ id: "told" });
+    await hooks.handler("createActiveEffect")(statusEffect(actor, "poisoned"));
+    assert.match(sent.at(-1), /<strong>told<\/strong> queda <strong>poisoned<\/strong>/);
+    const contact = statusEffect(actor, "burned");
+    contact._flags.sourceReason = "reactive-hit";
+    await hooks.handler("createActiveEffect")(contact);
+    assert.doesNotMatch(sent.at(-1), /queda/);
+    assert.match(sent.at(-1), /tirará automáticamente/);
+    const count = sent.length;
+    const outrage = statusEffect(actor, "confused", { volatile: true });
+    outrage._flags.sourceMove = "outrage";
+    await hooks.handler("createActiveEffect")(outrage);
+    assert.equal(sent.length, count);
+  } finally {
+    ChatMessage.create = create;
+  }
+});

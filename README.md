@@ -29,7 +29,7 @@ Módulo de Foundry VTT para jugar **Pokémon 5e** ([poke5e.app](https://poke5e.a
 Importa Pokémon, Moves, Abilities y objetos, da hojas propias a Pokémon y entrenadores, y automatiza la mayor
 parte de las reglas de combate: tipos, STAB, estados, Abilities, rasgos de entrenador, capturas y más.
 
-- **Versión:** 0.22.0
+- **Versión:** 0.23.0
 - **Requisitos:** Foundry VTT 13 (13.351 o superior) o 14 (probado en 14.365), y D&D5e 5.3.3 o superior.
 - **Idiomas:** español e inglés (ajuste del módulo `language`).
 
@@ -100,7 +100,9 @@ Sin ellos, el módulo funciona igual; solo se pierde la parte visual.
 - **Clima y terreno** por combate, con su panel en el registro de combate.
 - **Objetos equipados** y bayas.
 
-Lo que un Move automatizado aún deja al DM está en la nota de su entrada en `scripts/move-coverage.mjs`.
+Lo que un Move automatizado aún deja al DM está en la nota de su entrada en `scripts/move-coverage.mjs`. Al usar
+un Move pendiente o manual, su tarjeta avisa de que su efecto especial lo resuelve el DM; si está automatizado en
+parte, lo dice también, y el DM ve además la nota (en inglés).
 
 ### Otras herramientas del DM
 - **Planificador de encuentros:** encuentros salvajes y de entrenadores con aleatorizado y XP.

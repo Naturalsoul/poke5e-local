@@ -8,6 +8,8 @@ const MODULE_ID = "poke5e-local";
 globalThis.CONST = { ACTIVE_EFFECT_MODES: { ADD: 2, MULTIPLY: 1 } };
 globalThis.game = { user: { id: "gm", isGM: true }, users: { activeGM: { id: "gm" } }, settings: { get: () => "es" }, combat: null };
 const documents = new Map();
+const chat = [];
+globalThis.ChatMessage = { getSpeaker: () => ({}), create: async data => { chat.push(data.content); } };
 globalThis.fromUuidSync = uuid => documents.get(uuid) ?? null;
 const moves = await import("../scripts/self-status-moves.mjs");
 moves.registerSelfStatusMoves();
@@ -16,12 +18,12 @@ const tick = () => new Promise(resolve => setTimeout(resolve, 0));
 function pokemon(statuses = []) {
   const actor = createFlagDocument({ uuid: `Actor.${Math.random()}`, flags: { [MODULE_ID]: { kind: "pokemon" } } });
   actor.isOwner = true;
-  actor.effects = statuses.map(status => ({ deleted: false, flags: { [MODULE_ID]: { status } }, async delete() { this.deleted = true; } }));
+  actor.effects = statuses.map(status => ({ name: status, deleted: false, flags: { [MODULE_ID]: { status } }, async delete() { this.deleted = true; } }));
   return actor;
 }
 
 const move = id => {
-  const item = { uuid: `Item.${id}`, getFlag: (_module, key) => ({ kind: "move", sourceId: id })[key] };
+  const item = { uuid: `Item.${id}`, name: id, getFlag: (_module, key) => ({ kind: "move", sourceId: id })[key] };
   documents.set(item.uuid, item);
   return item;
 };
@@ -35,6 +37,7 @@ test("Refresh cures its own poison, paralysis or burn; Flame Wheel thaws it out"
   const actor = pokemon(["burned"]);
   await use(actor, "refresh");
   assert.equal(actor.effects[0].deleted, true);
+  assert.ok(chat.at(-1).includes("(refresh) se cura de burned"));
   const frozen = pokemon(["frozen"]);
   await use(frozen, "flame-wheel");
   assert.equal(frozen.effects[0].deleted, true);

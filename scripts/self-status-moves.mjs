@@ -1,4 +1,4 @@
-import { findStatusEffect } from "./status-runtime.mjs";
+import { findStatusEffect, removeStatusWithNotice } from "./status-runtime.mjs";
 import { applyPokemonStatus } from "./pokemon-status-service.mjs";
 import { isPokemonActor } from "./trainer-party-service.mjs";
 
@@ -41,7 +41,7 @@ async function onMoveUsed(activity) {
   const actor = activity?.actor;
   const id = moveId(activity?.item);
   if (!id || !isPokemonActor(actor) || !actor.isOwner) {return;}
-  for (const status of CURES[id] ?? []) {await findStatusEffect(actor, status)?.delete();}
+  for (const status of CURES[id] ?? []) {await removeStatusWithNotice(actor, findStatusEffect(actor, status), activity.item.name);}
   const round = game.combat?.started ? game.combat.round : 0;
   const status = endOfTurnStatus(actor, id, round);
   if (status) {await actor.setFlag(MODULE_ID, PENDING_FLAG, status);}

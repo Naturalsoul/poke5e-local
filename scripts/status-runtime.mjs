@@ -277,6 +277,15 @@ export function findStatusEffect(
   );
 }
 
+// Quita el estado y lo dice en el chat: sin el mensaje, solo desaparecía el icono del token.
+export async function removeStatusWithNotice(actor, effect, cause) {
+  if (!effect) {return;}
+  await effect.delete();
+  const cured = game.settings.get(MODULE_ID, "language") === "en" ? "is cured of" : "se cura de";
+  await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }),
+    content: `<div class="poke5e-turn-message"><strong>${actor.name}</strong> (${cause}) ${cured} ${effect.name}.</div>` });
+}
+
 
 /* ============================================================
  * HAS ACTUAL STATUS

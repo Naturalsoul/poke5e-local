@@ -1,4 +1,4 @@
-import { activePokemonAbilityId, findStatusEffect, hasPokemonAbility, hasPokemonStatus, pokemonTypes } from "./status-runtime.mjs";
+import { activePokemonAbilityId, findStatusEffect, hasPokemonAbility, hasPokemonStatus, pokemonTypes, removeStatusWithNotice } from "./status-runtime.mjs";
 import { fieldMoveBlocksStatus } from "./status-field-moves.mjs";
 import { auraBlocksStatus } from "./aura-ability-engine.mjs";
 import { isPokemonActor } from "./trainer-party-service.mjs";
@@ -225,7 +225,7 @@ async function onApplyDamage(actor, _amount, options) {
     const move = originatingMoveItem(options);
   if (move) {await onHitByMove(actor, move, options);}
     const cured = { "wake-up-slap": "asleep", "sparkling-aria": "burned" }[move?.getFlag(MODULE_ID, "sourceId")];
-  if (cured) {await findStatusEffect(actor, cured)?.delete();}
+  if (cured) {await removeStatusWithNotice(actor, findStatusEffect(actor, cured), move.name);}
   if (before > 0 && after <= 0) {await onFaint(actor, move?.actor ?? null, before - after, options);}
   else {
     await onHalfHp(actor, before, after);

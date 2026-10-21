@@ -158,7 +158,10 @@ const LABELS = {
         "continúa Congelado",
 
     burnedReminder:
-        "tirará automáticamente cada daño dos veces y conservará el resultado menor mientras esté Quemado"
+        "tirará automáticamente cada daño dos veces y conservará el resultado menor mientras esté Quemado",
+
+    gets:
+        "queda"
   },
 
 
@@ -225,7 +228,10 @@ const LABELS = {
         "remains Frozen",
 
     burnedReminder:
-        "will automatically roll each damage roll twice and keep the lower result while Burned"
+        "will automatically roll each damage roll twice and keep the lower result while Burned",
+
+    gets:
+        "becomes"
   }
 };
 
@@ -1766,18 +1772,44 @@ async function onCreateActiveEffect(
     );
 
 
+  if (!status) {
+
+    return;
+  }
+
+
+  /*
+   * Los estados llegan por muchas vías (objetos, Moves, reacciones)
+   * y solo se veía el icono del token. Las Abilities de contacto y
+   * el fin de Outrage ya lo anuncian por su cuenta.
+   */
+
+  const announced =
+    ["offensive-hit", "reactive-hit"].includes(effect.getFlag?.(MODULE_ID, "sourceReason")) ||
+    effect.getFlag?.(MODULE_ID, "sourceMove") === "outrage";
+
+  const lines =
+    announced
+      ? []
+      : [`<strong>${actor.name}</strong> ${label("gets")} <strong>${effect.name}</strong>.`];
+
+
   if (
     status ===
     "burned"
   ) {
 
+    lines.push(
+      `<strong>${actor.name}</strong>: ${label("burnedReminder")}.`
+    );
+  }
+
+
+  if (lines.length) {
+
     await chat(
       actor,
-
-      `
-        <strong>${actor.name}</strong>:
-        ${label("burnedReminder")}.
-      `
+      lines.join("<br>")
     );
   }
 }

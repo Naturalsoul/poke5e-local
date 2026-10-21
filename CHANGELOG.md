@@ -4,6 +4,24 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.23.0] — 2026-10-21
+
+- **Aviso en la tarjeta de los Moves sin automatizar.** Al usar uno de los 421 Moves pendientes o los 19 manuales,
+  su tarjeta dice "Su efecto especial no está automatizado: lo resuelve el DM". Los 99 automatizados en parte dicen
+  "Automatizado en parte: el resto lo resuelve el DM", y el DM ve también la nota de qué falta (en inglés).
+- **Estados en el chat.** Cuando un Pokémon recibe un estado, el chat lo dice ("Pikachu queda Envenenado"), venga
+  de donde venga: Flame Orb, Baneful Bunker, el fin de Thrash o Petal Dance, Magic Bounce, Psycho Shift, la tarjeta
+  del Move… Antes solo cambiaba el icono del token. No se repite con las Abilities de contacto ni con Outrage, que
+  ya lo anunciaban, y Burned mantiene su recordatorio. Las curas que eran silenciosas también se anuncian: Refresh,
+  Flame Wheel, Fusion Flare, Wake-Up Slap, Sparkling Aria, Take Heart y despertar por Uproar o Terreno Eléctrico.
+- **Objetos equipados en el chat:** Life Orb (PG perdidos), Shell Bell (PG recuperados), Rocky Helmet, Sticky
+  Barb (daño y cambio de portador), Focus Sash (aguanta con 1 PG) y Air Balloon (explota).
+- **Corregido:** Black Sludge tiraba su 1d6 sin mostrarlo; ahora la tirada sale en el chat y el daño espera a
+  Dice So Nice.
+- **Corregido:** los botones de tirada de los objetos (por ejemplo, la curación de una Poción) no aparecían en el
+  chat por un error de JavaScript.
+- **Corregido:** `npm test` no encontraba los tests en Windows.
+
 ## [0.22.0] — 2026-10-20
 
 - **Repartir XP: Repartir Experiencia sin XP de más.** Su portador, si no combatió, cuenta como un participante más
