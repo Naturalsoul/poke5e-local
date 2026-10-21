@@ -17,7 +17,10 @@ import {
 } from "./encounter-folder-service.mjs";
 
 import {
+  learnableMoveIds,
+  selectBestMoves,
   selectEncounterMoves
+
 } from "./encounter-move-selector.mjs";
 
 import {
@@ -125,7 +128,7 @@ export class EncounterGenerationService {
       hiddenAbilityChancePercent = 5,
       rerollItems = false,
       itemPolicy = null,
-      // Trainer battles only: { statBonus: 0–2, coverageTypes: [type], guaranteedItems: boolean }.
+      // Trainer battles only: { statBonus: 0–2, coverageTypes: [type], guaranteedItems, bestMoves, tmMoves: boolean }.
       boosts = {}
     } = {}
   ) {
@@ -426,7 +429,13 @@ export class EncounterGenerationService {
         entryKey,
         rerollMoves,
         coverageTypes:
-          boosts.coverageTypes
+          boosts.coverageTypes,
+        requestedMoveIds:
+          request.pokemon.moveIds,
+        bestMoves:
+          boosts.bestMoves,
+        tmMoves:
+          boosts.tmMoves
       });
 
     const abilityResult =
@@ -595,7 +604,10 @@ export class EncounterGenerationService {
     encounter,
     entryKey,
     rerollMoves,
-    coverageTypes = []
+    coverageTypes = [],
+    requestedMoveIds = [],
+    bestMoves = false,
+    tmMoves = false
   }) {
     const stored =
       actor.getFlag(
@@ -625,23 +637,40 @@ export class EncounterGenerationService {
         : null;
 
 
+    const planned =
+      rerollMoves
+        ? null
+        : plannedMoves(
+            pokemon,
+            level,
+            requestedMoveIds,
+            this.movesById
+          );
+
     const shouldSelect =
-      rerollMoves ||
-      storedMoveIds ===
-        null;
+      !planned &&
+      (
+        rerollMoves ||
+        storedMoveIds ===
+          null
+      );
 
 
     const selectedMoves =
-      shouldSelect
-
-        ? selectEncounterMoves({
+      planned ??
+      (
+        shouldSelect
+        ? (bestMoves ? selectBestMoves : selectEncounterMoves)({
             pokemon,
             moves:
               this.movesById,
             level,
-            coverageTypes
+            coverageTypes,
+            sources: {
+              tm:
+                tmMoves
+            }
           })
-
         : storedMoveIds
             .map(
               moveId =>
@@ -649,7 +678,8 @@ export class EncounterGenerationService {
                   moveId
                 )
             )
-            .filter(Boolean);
+            .filter(Boolean)
+      );
 
 
     const moveIds =
@@ -759,6 +789,36 @@ async function applyStatBonus(
     "encounterStatBonus",
     wanted
   );
+}
+
+// Moves chosen in the planner win over the sheet's, when this species can learn them all at this level.
+function plannedMoves(
+  pokemon,
+  level,
+  moveIds,
+  movesById
+) {
+  const learnable =
+    new Set(
+      learnableMoveIds(
+        pokemon,
+        level
+      )
+    );
+
+  return moveIds?.length &&
+    moveIds.every(
+      moveId =>
+        learnable.has(moveId) &&
+        movesById.has(moveId)
+    )
+    ? moveIds.map(
+        moveId =>
+          movesById.get(
+            moveId
+          )
+      )
+    : null;
 }
 
 function buildEncounterMetadata({

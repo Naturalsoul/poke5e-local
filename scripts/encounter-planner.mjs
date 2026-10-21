@@ -24,6 +24,11 @@ import {
 } from "./encounter-item-selector.mjs";
 
 import {
+  selectBestMoves,
+  selectEncounterMoves
+} from "./encounter-move-selector.mjs";
+
+import {
   encounterShare,
   getEncounterXpRules,
   levelProgress,
@@ -5255,6 +5260,16 @@ export class PokemonEncounterPlanner
       items:
         this._encounterState
           .boostItems ===
+          true,
+
+      bestMoves:
+        this._encounterState
+          .boostBestMoves ===
+          true,
+
+      tmMoves:
+        this._encounterState
+          .boostTmMoves ===
           true
     };
   }
@@ -5659,6 +5674,50 @@ export class PokemonEncounterPlanner
     };
   }
 
+  // A row's Moves with these extras: the best moveset (TMs if allowed), or the usual pick; a covering Move either way.
+  #pickMoves(
+    row,
+    boosts
+  ) {
+    const pokemon =
+      this.database.pokemon.find(
+        each =>
+          each.id ===
+            row.pokemonId
+      );
+
+    if (!pokemon) {
+      return row.moveIds;
+    }
+
+    const coverageTypes =
+      boosts.coverage
+        ? this._encounterState
+            .partyWeakTo ??
+          []
+        : [];
+
+    return (
+      boosts.bestMoves
+        ? selectBestMoves
+        : selectEncounterMoves
+    )({
+      pokemon,
+      moves:
+        this.database.moves,
+      level:
+        row.level,
+      coverageTypes,
+      sources: {
+        tm:
+          boosts.tmMoves
+      }
+    }).map(
+      move =>
+        move.id
+    );
+  }
+
   // What the steps need: new Pokémon and trainers of an archetype, and how high levels may go.
   #stepTools() {
     const party =
@@ -5670,6 +5729,15 @@ export class PokemonEncounterPlanner
           20,
           party.level +
             3
+        ),
+
+      pickMoves: (
+        row,
+        boosts
+      ) =>
+        this.#pickMoves(
+          row,
+          boosts
         ),
 
       rollItem: () =>
@@ -5918,6 +5986,12 @@ export class PokemonEncounterPlanner
 
     this._encounterState.boostItems =
       state.boosts.items;
+
+    this._encounterState.boostBestMoves =
+      state.boosts.bestMoves;
+
+    this._encounterState.boostTmMoves =
+      state.boosts.tmMoves;
   }
 
   async #applyStep(
@@ -8735,7 +8809,13 @@ export class PokemonEncounterPlanner
                   : [],
 
               guaranteedItems:
-                this.#boosts().items
+                this.#boosts().items,
+
+              bestMoves:
+                this.#boosts().bestMoves,
+
+              tmMoves:
+                this.#boosts().tmMoves
             }
           }
         );
@@ -11761,7 +11841,15 @@ function buildPokemonRequest(
         true ||
       Boolean(
         row.itemId
+      ),
+
+    // Chosen in the planner (best moveset, coverage); the sheet keeps its own when this is empty.
+    moveIds:
+      Array.isArray(
+        row.moveIds
       )
+        ? row.moveIds
+        : []
   };
 }
 
@@ -12276,6 +12364,9 @@ function renderTrainerBoosts(
       : "",
     boosts.items
       ? '<span><i class="fa-solid fa-box-archive" aria-hidden="true"></i> Objetos garantizados</span>'
+      : "",
+    boosts.bestMoves
+      ? `<span><i class="fa-solid fa-hand-fist" aria-hidden="true"></i> ${boosts.tmMoves ? "Mejores Moves con MT" : "Mejores Moves"}</span>`
       : ""
   ].filter(Boolean);
 
@@ -12283,7 +12374,7 @@ function renderTrainerBoosts(
     ? `
       <div
         class="poke5e-encounter-planner__trainer-boosts"
-        title="Las características y la cobertura se aplican al crear las hojas de los Pokémon."
+        title="Las características se aplican al crear las hojas. Los Moves y los objetos ya elegidos se ven en cada Pokémon."
       >
         <small>Mejoras del rival</small>
         ${tags.join("")}

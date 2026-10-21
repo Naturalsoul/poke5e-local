@@ -36,8 +36,10 @@ const EVEN_TRAINER_BATTLE = 1.5;
  * What the rivals' extras are worth, as a guess to tune at the table: +1 to every score is about +5% to hit, damage,
  * DCs and HP each; a super effective Move doubles one attack in four; an item or berry is a small edge.
  */
-export function boostMultiplier({ statBonus = 0, coverage = false, items = false } = {}) {
-  return (1 + 0.1 * Math.max(0, Math.min(2, Number(statBonus) || 0))) * (coverage ? 1.1 : 1) * (items ? 1.05 : 1);
+export function boostMultiplier({ statBonus = 0, coverage = false, items = false, bestMoves = false, tmMoves = false } = {}) {
+  return (1 + 0.1 * Math.max(0, Math.min(2, Number(statBonus) || 0))) * (coverage ? 1.1 : 1) * (items ? 1.05 : 1) *
+    // The best moveset hits harder than a random one; TMs, harder still.
+    (bestMoves ? 1.1 : 1) * (tmMoves ? 1.1 : 1);
 }
 
 // From the lowest: each tier starts at this many times the party's weight.

@@ -434,6 +434,12 @@ function normalizeEntries(
       );
 
 
+    // Moves chosen in the planner (the best moveset, coverage): the sheet gets them if it can learn them.
+    const moveIds =
+      normalizeMoveIds(
+        row?.moveIds
+      );
+
     const key =
       `${pokemonId}@${level}`;
 
@@ -525,7 +531,8 @@ function normalizeEntries(
         captured,
         abilityId,
         itemId,
-        itemResolved
+        itemResolved,
+        moveIds
       }
     );
   }
@@ -534,6 +541,19 @@ function normalizeEntries(
   return [
     ...merged.values()
   ];
+}
+
+function normalizeMoveIds(
+  value
+) {
+  return Array.isArray(
+    value
+  )
+    ? value
+        .map(String)
+        .filter(Boolean)
+        .slice(0, 4)
+    : [];
 }
 
 export function normalizeEncounterAbilityId(

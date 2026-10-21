@@ -92,3 +92,14 @@ test("the ace +1 goes to the trainer with the lowest ace, so repeated it rotates
   assert.equal(once.rows.find(r => r.id === "h1").level, 5, "the helper's ace (4) before the leader's (6)");
   assert.equal(once.rows.find(r => r.id === "r2").level, 6);
 });
+
+test("the Moves steps choose them now, TMs only after, and new Pokémon get theirs too", () => {
+  const picked = [];
+  const moveTools = { ...tools, pickMoves: (row, boosts) => { picked.push(boosts); return [boosts.tmMoves ? "tm" : "best"]; } };
+  const moves = TRAINER_STEPS.find(step => step.id === "moves").apply(structuredClone(base()), moveTools);
+  assert.ok(moves.boosts.bestMoves && moves.rows.every(row => row.moveIds[0] === "best"));
+  const tm = TRAINER_STEPS.find(step => step.id === "tm-moves").apply(structuredClone(moves), moveTools);
+  assert.ok(tm.boosts.tmMoves && tm.rows.every(row => row.moveIds[0] === "tm"));
+  const team = TRAINER_STEPS.find(step => step.id === "team").apply(structuredClone(moves), moveTools);
+  assert.equal(team.rows.at(-1).moveIds[0], "best", "the new Pokémon too");
+});

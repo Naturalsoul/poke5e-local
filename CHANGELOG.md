@@ -6,6 +6,14 @@ solo se corrige algo.
 
 ## [0.22.0] — 2026-10-20
 
+- **Mejores Moves** para los rivales: en vez de 4 Moves al azar de su nivel, su mejor combinación entre los de
+  nivel, huevo y (en un paso aparte) MT: su ataque STAB más fuerte, uno súper eficaz contra el equipo de los
+  jugadores si puede, los más fuertes de otros tipos (uno por tipo) y uno de estado. Cada Move se valora por sus
+  dados al nivel del Pokémon, STAB, área y si lo potencia una de sus mejores características; curar no es daño.
+  En "Ajustar paso a paso" son dos pasos: "Mejores Moves" (nivel y huevo) y, después, "Moves de MT" (los más
+  fuertes: Trueno, Hidrobomba o Terremoto a nivel 8). Los Moves se eligen al aplicar el paso (también la cobertura
+  súper eficaz) y se ven ya en cada Pokémon de la composición; al crear las hojas se usan esos mismos, si la
+  especie puede aprenderlos.
 - **Ajustar paso a paso** (encuentros de Entrenador, bajo el generador): sobre el encuentro tal como está, sin
   regenerarlo. "Subir a <dificultad>" aplica los cambios más suaves hasta la siguiente dificultad y "Bajar" deshace
   el último. Cada cambio también se puede aplicar solo y muestra a qué dificultad lleva y cuánto suma: +1 Pokémon en
