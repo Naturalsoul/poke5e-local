@@ -4,6 +4,14 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.23.3] — 2026-10-21
+
+- **Colores de la ficha de Pokémon y de la hoja de Entrenador, a la base común.** 292 colores escritos a mano
+  (fondos, degradados, bordes, brillos rojos, crema y dorados) usan ahora los colores de `styles/theme.css`; los
+  transparentes, con `color-mix()`. Se ve igual (los tonos que estaban a 1–6 unidades de un color común se
+  igualan a él). Quedan como estaban las sombras y brillos neutros (negro y blanco), los colores de tipo y de PS, y
+  los colores propios de los diálogos de Entrenador.
+
 ## [0.23.2] — 2026-10-21
 
 - **Texto más legible.** Las ventanas usaban etiquetas de 6 a 11 px (los botones Check/Save, la naturaleza, los

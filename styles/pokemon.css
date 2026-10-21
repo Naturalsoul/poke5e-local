@@ -98,12 +98,12 @@
   background:
     radial-gradient(
       circle at 86% 8%,
-      rgba(215, 91, 78, 0.1),
+      color-mix(in srgb, var(--poke5e-ui-accent) 10%, transparent),
       transparent 230px
     ),
     linear-gradient(
       180deg,
-      #20282b,
+      var(--poke5e-ui-surface),
       var(--poke5e-fr-surface)
     );
 
@@ -185,7 +185,7 @@
     linear-gradient(
       135deg,
       var(--poke5e-type-soft),
-      rgba(48, 56, 60, 0.94) 38%,
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 94%, transparent) 38%,
       var(--poke5e-fr-panel-deep)
     );
 
@@ -272,7 +272,7 @@
   border-radius: 5px;
 
   background:
-    rgba(27, 33, 36, 0.88);
+    color-mix(in srgb, var(--poke5e-ui-surface) 88%, transparent);
 
   color:
     var(--poke5e-fr-muted);
@@ -311,7 +311,7 @@
     var(--poke5e-fr-red);
 
   background:
-    rgba(215, 91, 78, 0.16);
+    color-mix(in srgb, var(--poke5e-ui-accent) 16%, transparent);
 
   color:
     var(--poke5e-fr-red);
@@ -456,7 +456,7 @@
 
   border-bottom:
     2px solid
-    rgba(233, 225, 189, 0.14);
+    color-mix(in srgb, var(--poke5e-ui-cream) 14%, transparent);
 
   border-radius:
     4px 4px 0 0;
@@ -598,12 +598,12 @@
 
 .poke5e-pokemon-nickname__field:hover {
   border-bottom-color:
-    rgba(215, 91, 78, 0.48);
+    color-mix(in srgb, var(--poke5e-ui-accent) 48%, transparent);
 
   background:
     linear-gradient(
       90deg,
-      rgba(215, 91, 78, 0.035),
+      color-mix(in srgb, var(--poke5e-ui-accent) 3.5%, transparent),
       transparent 78%
     );
 }
@@ -630,14 +630,14 @@
   background:
     linear-gradient(
       90deg,
-      rgba(215, 91, 78, 0.085),
-      rgba(215, 91, 78, 0.02) 58%,
+      color-mix(in srgb, var(--poke5e-ui-accent) 8.5%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-accent) 2%, transparent) 58%,
       transparent
     );
 
   box-shadow:
     inset 0 -1px 0
-      rgba(215, 91, 78, 0.28);
+      color-mix(in srgb, var(--poke5e-ui-accent) 28%, transparent);
 }
 
 
@@ -665,7 +665,7 @@
 
 .poke5e-pokemon-nickname__input::selection {
   background:
-    rgba(215, 91, 78, 0.36);
+    color-mix(in srgb, var(--poke5e-ui-accent) 36%, transparent);
 
   color:
     var(--poke5e-fr-cream);
@@ -788,10 +788,10 @@
 
 .poke5e-pokemon-gender {
   --poke5e-gender-color:
-    #8d979b;
+    var(--poke5e-ui-border-bright);
 
   --poke5e-gender-soft:
-    rgba(141, 151, 155, 0.12);
+    color-mix(in srgb, var(--poke5e-ui-border-bright) 12%, transparent);
 
   display:
     inline-flex;
@@ -1134,10 +1134,10 @@ option:disabled {
   data-gender="unresolved"
 ] {
   --poke5e-gender-color:
-    #c7af73;
+    var(--poke5e-ui-brass);
 
   --poke5e-gender-soft:
-    rgba(199, 175, 115, 0.1);
+    color-mix(in srgb, var(--poke5e-ui-brass) 10%, transparent);
 
   border-style:
     dashed;
@@ -1171,7 +1171,7 @@ option:disabled {
 
   border:
     1px solid
-    rgba(233, 225, 189, 0.13);
+    color-mix(in srgb, var(--poke5e-ui-cream) 13%, transparent);
 
   border-radius:
     7px;
@@ -1179,8 +1179,8 @@ option:disabled {
   background:
     linear-gradient(
       180deg,
-      rgba(27, 33, 36, 0.64),
-      rgba(23, 29, 32, 0.82)
+      color-mix(in srgb, var(--poke5e-ui-surface) 64%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-bg) 82%, transparent)
     );
 
   box-shadow:
@@ -1324,7 +1324,7 @@ i {
     linear-gradient(
       100deg,
       var(--poke5e-type-soft),
-      rgba(27, 33, 36, 0.92) 62%
+      color-mix(in srgb, var(--poke5e-ui-surface) 92%, transparent) 62%
     );
 
   box-shadow:
@@ -1469,7 +1469,7 @@ select:focus {
         22%,
         transparent
       ),
-      rgba(27, 33, 36, 0.95) 64%
+      color-mix(in srgb, var(--poke5e-ui-surface) 95%, transparent) 64%
     );
 }
 
@@ -1585,7 +1585,7 @@ select option:checked {
     linear-gradient(
       90deg,
       var(--poke5e-type-soft),
-      rgba(27, 33, 36, 0.76)
+      color-mix(in srgb, var(--poke5e-ui-surface) 76%, transparent)
     );
 
   box-shadow:
@@ -1797,10 +1797,10 @@ select:disabled {
 .poke5e-pokemon-nature__modifier--increase {
   border:
     1px solid
-    rgba(215, 91, 78, 0.42);
+    color-mix(in srgb, var(--poke5e-ui-accent) 42%, transparent);
 
   background:
-    rgba(215, 91, 78, 0.11);
+    color-mix(in srgb, var(--poke5e-ui-accent) 11%, transparent);
 
   color:
     #e47a6f;
@@ -2060,8 +2060,8 @@ select:disabled {
   background:
     linear-gradient(
       180deg,
-      #20272a,
-      #181e21
+      var(--poke5e-ui-surface),
+      var(--poke5e-ui-bg)
     );
 
   box-shadow:
@@ -2086,7 +2086,7 @@ select:disabled {
 
   border-bottom:
     1px solid
-    rgba(233, 225, 189, 0.14);
+    color-mix(in srgb, var(--poke5e-ui-cream) 14%, transparent);
 
   color:
     var(--poke5e-fr-cream);
@@ -2325,7 +2325,7 @@ select:disabled {
 
   border-top:
     1px solid
-    rgba(233, 225, 189, 0.16);
+    color-mix(in srgb, var(--poke5e-ui-cream) 16%, transparent);
 }
 
 
@@ -2499,7 +2499,7 @@ input::-webkit-outer-spin-button {
 ]
 .poke5e-pokemon-experience__track > span {
   background:
-    #d9a91c;
+    var(--poke5e-ui-gold);
 }
 
 
@@ -2541,7 +2541,7 @@ input::-webkit-outer-spin-button {
   gap: 4px;
 
   color:
-    #d9a91c;
+    var(--poke5e-ui-gold);
 
   font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
@@ -2614,7 +2614,7 @@ input::-webkit-outer-spin-button {
 
   border-bottom:
     2px solid
-    rgba(233, 225, 189, 0.16);
+    color-mix(in srgb, var(--poke5e-ui-cream) 16%, transparent);
 }
 
 
@@ -2698,7 +2698,7 @@ input::-webkit-outer-spin-button {
 
   border:
     1px solid
-    #536066;
+    var(--poke5e-ui-border);
 
   border-radius:
     7px;
@@ -2707,8 +2707,8 @@ input::-webkit-outer-spin-button {
     linear-gradient(
       145deg,
       rgba(255, 255, 255, 0.025),
-      rgba(48, 56, 60, 0.76) 46%,
-      rgba(27, 33, 36, 0.9)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 76%, transparent) 46%,
+      color-mix(in srgb, var(--poke5e-ui-surface) 90%, transparent)
     );
 
   box-shadow:
@@ -2764,7 +2764,7 @@ input::-webkit-outer-spin-button {
 
 .poke5e-pokemon-stat:hover {
   border-color:
-    rgba(215, 91, 78, 0.4);
+    color-mix(in srgb, var(--poke5e-ui-accent) 40%, transparent);
 }
 
 
@@ -2776,7 +2776,7 @@ input::-webkit-outer-spin-button {
   data-save-proficient="true"
 ] {
   border-color:
-    rgba(199, 175, 115, 0.34);
+    color-mix(in srgb, var(--poke5e-ui-brass) 34%, transparent);
 }
 
 
@@ -2787,7 +2787,7 @@ input::-webkit-outer-spin-button {
     linear-gradient(
       90deg,
       transparent,
-      #d9a91c,
+      var(--poke5e-ui-gold),
       transparent
     );
 
@@ -2845,7 +2845,7 @@ input::-webkit-outer-spin-button {
 .poke5e-pokemon-stat__label
 > i {
   color:
-    #d9a91c;
+    var(--poke5e-ui-gold);
 
   /* An icon, not text: at the text size it pushed into the score box. */
   font-size:
@@ -2854,7 +2854,7 @@ input::-webkit-outer-spin-button {
   filter:
     drop-shadow(
       0 0 2px
-      rgba(217, 169, 28, 0.36)
+      color-mix(in srgb, var(--poke5e-ui-gold) 36%, transparent)
     );
 }
 
@@ -2887,7 +2887,7 @@ input::-webkit-outer-spin-button {
 
   border:
     1px solid
-    rgba(233, 225, 189, 0.09);
+    color-mix(in srgb, var(--poke5e-ui-cream) 9%, transparent);
 
   border-radius:
     999px;
@@ -3014,7 +3014,7 @@ input::-webkit-outer-spin-button {
 
   border:
     1px solid
-    rgba(233, 225, 189, 0.07);
+    color-mix(in srgb, var(--poke5e-ui-cream) 7%, transparent);
 
   border-radius:
     6px;
@@ -3151,10 +3151,10 @@ input::-webkit-outer-spin-button {
 
 .poke5e-pokemon-stat__score-editor:hover {
   border-color:
-    rgba(215, 91, 78, 0.4);
+    color-mix(in srgb, var(--poke5e-ui-accent) 40%, transparent);
 
   background:
-    rgba(215, 91, 78, 0.03);
+    color-mix(in srgb, var(--poke5e-ui-accent) 3%, transparent);
 }
 
 
@@ -3173,11 +3173,11 @@ input::-webkit-outer-spin-button {
     var(--poke5e-fr-red);
 
   background:
-    rgba(215, 91, 78, 0.055);
+    color-mix(in srgb, var(--poke5e-ui-accent) 5.5%, transparent);
 
   box-shadow:
     0 0 0 1px
-    rgba(215, 91, 78, 0.16);
+    color-mix(in srgb, var(--poke5e-ui-accent) 16%, transparent);
 }
 
 
@@ -3216,7 +3216,7 @@ input::-webkit-outer-spin-button {
 
   border-top:
     1px solid
-    rgba(233, 225, 189, 0.07);
+    color-mix(in srgb, var(--poke5e-ui-cream) 7%, transparent);
 }
 
 
@@ -3248,7 +3248,7 @@ input::-webkit-outer-spin-button {
 
   border:
     1px solid
-    rgba(101, 112, 118, 0.68);
+    color-mix(in srgb, var(--poke5e-ui-border-strong) 68%, transparent);
 
   border-radius:
     4px;
@@ -3309,10 +3309,10 @@ span {
 .poke5e-pokemon-stat__actions
 > button:hover:not(:disabled) {
   border-color:
-    rgba(215, 91, 78, 0.55);
+    color-mix(in srgb, var(--poke5e-ui-accent) 55%, transparent);
 
   background:
-    rgba(215, 91, 78, 0.065);
+    color-mix(in srgb, var(--poke5e-ui-accent) 6.5%, transparent);
 
   color:
     var(--poke5e-fr-cream);
@@ -3326,10 +3326,10 @@ span {
 .poke5e-pokemon-stat__actions
 > button.is-proficient {
   border-color:
-    rgba(217, 169, 28, 0.4);
+    color-mix(in srgb, var(--poke5e-ui-gold) 40%, transparent);
 
   background:
-    rgba(217, 169, 28, 0.04);
+    color-mix(in srgb, var(--poke5e-ui-gold) 4%, transparent);
 
   color:
     #dfc774;
@@ -3340,17 +3340,17 @@ span {
 > button.is-proficient
 i {
   color:
-    #d9a91c;
+    var(--poke5e-ui-gold);
 }
 
 
 .poke5e-pokemon-stat__actions
 > button.is-proficient:hover:not(:disabled) {
   border-color:
-    rgba(217, 169, 28, 0.72);
+    color-mix(in srgb, var(--poke5e-ui-gold) 72%, transparent);
 
   background:
-    rgba(217, 169, 28, 0.085);
+    color-mix(in srgb, var(--poke5e-ui-gold) 8.5%, transparent);
 
   color:
     #f0d77e;
@@ -3368,7 +3368,7 @@ i {
 ):focus-visible {
   outline:
     2px solid
-    rgba(199, 175, 115, 0.82);
+    color-mix(in srgb, var(--poke5e-ui-brass) 82%, transparent);
 
   outline-offset:
     1px;
@@ -3710,13 +3710,13 @@ strong {
 
   border:
     1px solid
-    rgba(215, 91, 78, 0.34);
+    color-mix(in srgb, var(--poke5e-ui-accent) 34%, transparent);
 
   border-radius:
     999px;
 
   background:
-    rgba(215, 91, 78, 0.08);
+    color-mix(in srgb, var(--poke5e-ui-accent) 8%, transparent);
 
   color:
     var(--poke5e-fr-red);
@@ -3776,13 +3776,13 @@ small {
 
   border:
     1px solid
-    rgba(215, 91, 78, 0.34);
+    color-mix(in srgb, var(--poke5e-ui-accent) 34%, transparent);
 
   border-radius:
     5px;
 
   background:
-    rgba(215, 91, 78, 0.055);
+    color-mix(in srgb, var(--poke5e-ui-accent) 5.5%, transparent);
 
   color:
     var(--poke5e-fr-red);
@@ -3796,10 +3796,10 @@ small {
 
 .poke5e-pokemon-status-add:hover {
   border-color:
-    rgba(215, 91, 78, 0.68);
+    color-mix(in srgb, var(--poke5e-ui-accent) 68%, transparent);
 
   background:
-    rgba(215, 91, 78, 0.09);
+    color-mix(in srgb, var(--poke5e-ui-accent) 9%, transparent);
 }
 
 
@@ -3809,7 +3809,7 @@ small {
 
   box-shadow:
     0 0 0 1px
-    rgba(215, 91, 78, 0.2);
+    color-mix(in srgb, var(--poke5e-ui-accent) 20%, transparent);
 }
 
 
@@ -4288,10 +4288,10 @@ img {
 
 .poke5e-pokemon-status__remove:hover:not(:disabled) {
   border-color:
-    rgba(215, 91, 78, 0.56);
+    color-mix(in srgb, var(--poke5e-ui-accent) 56%, transparent);
 
   background:
-    rgba(215, 91, 78, 0.09);
+    color-mix(in srgb, var(--poke5e-ui-accent) 9%, transparent);
 
   color:
     var(--poke5e-fr-red);
@@ -4376,7 +4376,7 @@ i {
   data-status-id="paralysis"
 ] {
   --poke5e-status-color:
-    #d9a91c;
+    var(--poke5e-ui-gold);
 }
 
 
@@ -4408,7 +4408,7 @@ i {
   data-status-id="flinched"
 ] {
   --poke5e-status-color:
-    #d75b4e;
+    var(--poke5e-ui-accent);
 }
 
 
@@ -4467,7 +4467,7 @@ i {
     50%;
 
   background:
-    rgba(215, 91, 78, 0.08);
+    color-mix(in srgb, var(--poke5e-ui-accent) 8%, transparent);
 
   color:
     var(--poke5e-fr-red);
@@ -4676,29 +4676,29 @@ small {
 
 .poke5e-pokemon-skill--expertise {
   border-color:
-    rgba(217, 169, 28, 0.58);
+    color-mix(in srgb, var(--poke5e-ui-gold) 58%, transparent);
 }
 
 
 .poke5e-pokemon-skill--expertise
 .poke5e-pokemon-skill__name > i {
   color:
-    #d9a91c;
+    var(--poke5e-ui-gold);
 
   filter:
     drop-shadow(
       0 0 2px
-      rgba(217, 169, 28, 0.35)
+      color-mix(in srgb, var(--poke5e-ui-gold) 35%, transparent)
     );
 }
 
 
 .poke5e-pokemon-skill--expertise:hover {
   border-color:
-    #d9a91c;
+    var(--poke5e-ui-gold);
 
   background:
-    rgba(217, 169, 28, 0.08);
+    color-mix(in srgb, var(--poke5e-ui-gold) 8%, transparent);
 }
 
 /* ============================================================
@@ -5069,7 +5069,7 @@ small {
     var(--poke5e-ui-brass);
 
   --poke5e-held-item-soft:
-    rgba(199, 175, 115, 0.1);
+    color-mix(in srgb, var(--poke5e-ui-brass) 10%, transparent);
 }
 
 .poke5e-pokemon-panel--held-item {
@@ -5124,7 +5124,7 @@ small {
     linear-gradient(
       135deg,
       var(--poke5e-held-item-soft),
-      rgba(48, 56, 60, 0.92) 34%,
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 92%, transparent) 34%,
       var(--poke5e-fr-panel-deep)
     );
 
@@ -5157,7 +5157,7 @@ small {
 
   border:
     8px solid
-    rgba(199, 175, 115, 0.045);
+    color-mix(in srgb, var(--poke5e-ui-brass) 4.5%, transparent);
 
   border-radius:
     50%;
@@ -5232,7 +5232,7 @@ small {
   background:
     radial-gradient(
       circle,
-      rgba(199, 175, 115, 0.1),
+      color-mix(in srgb, var(--poke5e-ui-brass) 10%, transparent),
       var(--poke5e-fr-panel-deep) 68%
     );
 
@@ -5459,11 +5459,11 @@ i {
 
   border-top:
     1px solid
-    rgba(233, 225, 189, 0.1);
+    color-mix(in srgb, var(--poke5e-ui-cream) 10%, transparent);
 
   border-bottom:
     1px solid
-    rgba(233, 225, 189, 0.08);
+    color-mix(in srgb, var(--poke5e-ui-cream) 8%, transparent);
 
   background:
     rgba(0, 0, 0, 0.08);
@@ -5554,10 +5554,10 @@ i {
 
 .poke5e-pokemon-held-item__remove:hover:not(:disabled) {
   border-color:
-    rgba(215, 91, 78, 0.55);
+    color-mix(in srgb, var(--poke5e-ui-accent) 55%, transparent);
 
   background:
-    rgba(215, 91, 78, 0.1);
+    color-mix(in srgb, var(--poke5e-ui-accent) 10%, transparent);
 
   color:
     var(--poke5e-fr-red);
@@ -5646,7 +5646,7 @@ i {
   min-height: 24px;
   margin: 0;
   padding: 0;
-  border: 1px solid rgba(199, 175, 115, 0.4);
+  border: 1px solid color-mix(in srgb, var(--poke5e-ui-brass) 40%, transparent);
   border-radius: 5px;
   background: var(--poke5e-held-item-soft);
   color: var(--poke5e-fr-cream);
@@ -5670,7 +5670,7 @@ i {
 
 .poke5e-pokemon-held-item__use:hover:not(:disabled),
 .poke5e-pokemon-held-item__use:focus-visible {
-  background: rgba(199, 175, 115, 0.18);
+  background: color-mix(in srgb, var(--poke5e-ui-brass) 18%, transparent);
   box-shadow: 0 0 0 1px var(--poke5e-held-item-accent);
 }
 
@@ -5709,7 +5709,7 @@ i {
 
   border:
     1px solid
-    rgba(199, 175, 115, 0.48);
+    color-mix(in srgb, var(--poke5e-ui-brass) 48%, transparent);
 
   border-radius:
     6px;
@@ -5717,8 +5717,8 @@ i {
   background:
     linear-gradient(
       180deg,
-      rgba(199, 175, 115, 0.1),
-      rgba(26, 30, 33, 0.92)
+      color-mix(in srgb, var(--poke5e-ui-brass) 10%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 92%, transparent)
     );
 
   color:
@@ -5798,7 +5798,7 @@ span {
   background:
     linear-gradient(
       180deg,
-      rgba(199, 175, 115, 0.17),
+      color-mix(in srgb, var(--poke5e-ui-brass) 17%, transparent),
       rgba(39, 36, 29, 0.92)
     );
 
@@ -5863,7 +5863,7 @@ span {
 
   border:
     1px dashed
-    rgba(199, 175, 115, 0.28);
+    color-mix(in srgb, var(--poke5e-ui-brass) 28%, transparent);
 
   border-radius:
     8px;
@@ -5871,7 +5871,7 @@ span {
   background:
     linear-gradient(
       180deg,
-      rgba(199, 175, 115, 0.025),
+      color-mix(in srgb, var(--poke5e-ui-brass) 2.5%, transparent),
       rgba(255, 255, 255, 0.012)
     );
 
@@ -5980,10 +5980,10 @@ span {
     var(--poke5e-fr-red);
 
   border-color:
-    rgba(215, 91, 78, 0.55);
+    color-mix(in srgb, var(--poke5e-ui-accent) 55%, transparent);
 
   background:
-    rgba(215, 91, 78, 0.08);
+    color-mix(in srgb, var(--poke5e-ui-accent) 8%, transparent);
 }
 
 
@@ -6172,8 +6172,8 @@ span {
   background:
     linear-gradient(
       180deg,
-      #323b3f,
-      #292f33
+      var(--poke5e-ui-panel-alt),
+      var(--poke5e-ui-panel)
     );
 
   color:
@@ -6324,13 +6324,13 @@ span {
 
   border:
     1px solid
-    rgba(199, 175, 115, 0.26);
+    color-mix(in srgb, var(--poke5e-ui-brass) 26%, transparent);
 
   border-radius:
     999px;
 
   background:
-    rgba(199, 175, 115, 0.055);
+    color-mix(in srgb, var(--poke5e-ui-brass) 5.5%, transparent);
 
   color:
     var(--poke5e-fr-muted);
@@ -6619,7 +6619,7 @@ input:focus {
     var(--poke5e-type-color);
 
   background:
-    #20272a;
+    var(--poke5e-ui-surface);
 
   box-shadow:
     0 0 0 1px
@@ -6706,7 +6706,7 @@ input:disabled {
     linear-gradient(
       180deg,
       #485359,
-      #343d41
+      var(--poke5e-ui-panel-alt)
     );
 
   transform:
@@ -6797,7 +6797,7 @@ input:disabled {
 
   border:
     2px dashed
-    #566166;
+    var(--poke5e-ui-border);
 
   border-radius: 6px;
 
@@ -6941,8 +6941,8 @@ input:disabled {
 .poke5e-pokemon-summary[data-pokemon-type="electric"],
 .poke5e-pokemon-summary [data-type="electric"],
 .poke5e-pokemon-summary [data-move-type="electric"] {
-  --poke5e-type-color: #d9a91c;
-  --poke5e-type-soft: rgba(217, 169, 28, 0.2);
+  --poke5e-type-color: var(--poke5e-ui-gold);
+  --poke5e-type-soft: color-mix(in srgb, var(--poke5e-ui-gold) 20%, transparent);
 }
 
 
@@ -7076,13 +7076,13 @@ input:disabled {
     var(--poke5e-ui-muted);
 
   --poke5e-evolution-panel:
-    rgba(25, 30, 34, 0.82);
+    color-mix(in srgb, var(--poke5e-ui-surface) 82%, transparent);
 
   --poke5e-level-up-accent:
     var(--poke5e-evolution-accent);
 
   --poke5e-level-up-soft:
-    rgba(215, 91, 78, 0.11);
+    color-mix(in srgb, var(--poke5e-ui-accent) 11%, transparent);
 }
 
 
@@ -7092,12 +7092,12 @@ input:disabled {
 
 .poke5e-pokemon-evolution__requirements-section {
   border-color:
-    rgba(215, 91, 78, 0.28);
+    color-mix(in srgb, var(--poke5e-ui-accent) 28%, transparent);
 
   background:
     linear-gradient(
       145deg,
-      rgba(215, 91, 78, 0.07),
+      color-mix(in srgb, var(--poke5e-ui-accent) 7%, transparent),
       rgba(255, 255, 255, 0.018) 48%,
       rgba(0, 0, 0, 0.035)
     );
@@ -7141,7 +7141,7 @@ input:disabled {
 
   border:
     1px solid
-    rgba(215, 91, 78, 0.17);
+    color-mix(in srgb, var(--poke5e-ui-accent) 17%, transparent);
 
   border-radius:
     7px;
@@ -7449,12 +7449,12 @@ strong {
 
 .poke5e-pokemon-evolution__ability-section {
   border-color:
-    rgba(199, 175, 115, 0.25);
+    color-mix(in srgb, var(--poke5e-ui-brass) 25%, transparent);
 
   background:
     linear-gradient(
       145deg,
-      rgba(199, 175, 115, 0.055),
+      color-mix(in srgb, var(--poke5e-ui-brass) 5.5%, transparent),
       rgba(255, 255, 255, 0.015) 50%,
       rgba(0, 0, 0, 0.03)
     );
@@ -7465,7 +7465,7 @@ strong {
 > header
 > i {
   background:
-    rgba(199, 175, 115, 0.12);
+    color-mix(in srgb, var(--poke5e-ui-brass) 12%, transparent);
 
   color:
     var(--poke5e-evolution-gold);
@@ -7495,7 +7495,7 @@ strong {
 
   border:
     1px solid
-    rgba(199, 175, 115, 0.32);
+    color-mix(in srgb, var(--poke5e-ui-brass) 32%, transparent);
 
   border-left:
     3px solid
@@ -7507,7 +7507,7 @@ strong {
   background:
     linear-gradient(
       125deg,
-      rgba(199, 175, 115, 0.085),
+      color-mix(in srgb, var(--poke5e-ui-brass) 8.5%, transparent),
       rgba(0, 0, 0, 0.075) 55%
     );
 }
@@ -7528,13 +7528,13 @@ strong {
 
   border:
     1px solid
-    rgba(199, 175, 115, 0.35);
+    color-mix(in srgb, var(--poke5e-ui-brass) 35%, transparent);
 
   border-radius:
     50%;
 
   background:
-    rgba(199, 175, 115, 0.1);
+    color-mix(in srgb, var(--poke5e-ui-brass) 10%, transparent);
 
   color:
     var(--poke5e-evolution-gold);
@@ -7600,7 +7600,7 @@ small {
 
   border:
     1px solid
-    rgba(199, 175, 115, 0.28);
+    color-mix(in srgb, var(--poke5e-ui-brass) 28%, transparent);
 
   border-radius:
     999px;
@@ -7704,13 +7704,13 @@ select {
 
   border:
     1px solid
-    rgba(199, 175, 115, 0.3);
+    color-mix(in srgb, var(--poke5e-ui-brass) 30%, transparent);
 
   border-radius:
     7px;
 
   background:
-    rgba(20, 24, 28, 0.92);
+    color-mix(in srgb, var(--poke5e-ui-bg) 92%, transparent);
 
   color:
     var(--poke5e-evolution-text);
@@ -7727,7 +7727,7 @@ select:focus {
 
   box-shadow:
     0 0 0 1px
-    rgba(199, 175, 115, 0.2);
+    color-mix(in srgb, var(--poke5e-ui-brass) 20%, transparent);
 }
 
 /* ============================================================
@@ -8066,10 +8066,10 @@ select:focus {
 .poke5e-pokemon-bond__points {
   border:
     1px solid
-    rgba(199, 175, 115, 0.32);
+    color-mix(in srgb, var(--poke5e-ui-brass) 32%, transparent);
 
   background:
-    rgba(199, 175, 115, 0.08);
+    color-mix(in srgb, var(--poke5e-ui-brass) 8%, transparent);
 
   color:
     var(--poke5e-fr-cream);
