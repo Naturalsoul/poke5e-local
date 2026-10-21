@@ -6,6 +6,15 @@ solo se corrige algo.
 
 ## [0.22.0] — 2026-10-20
 
+- **Repartir XP: Repartir Experiencia sin XP de más.** Su portador, si no combatió, cuenta como un participante más
+  (con la regla casera, solo entre los Pokémon de su Entrenador): la XP de los demás baja en lo que él recibe. Si
+  combatió y se marca, recibe solo su parte normal, calculada desde cero.
+- **Planificador: revisión visual.** El resumen inferior muestra cada etiqueta entera (arriba) y su valor (abajo),
+  sin cortes; el pie ya no se encoge con un encuentro largo, así que "Repartir XP" y "Generar" siempre se ven; la
+  tarjeta de Entrenador no se desborda; las mejoras del rival van en tres cajas parejas; los selectores de SR del
+  generador salvaje tienen espacio. El diseño responde al ancho de la ventana del planificador (no al de la
+  pantalla), los textos mínimos pasan de 6–7 px a 8 px, los controles muestran el foco del teclado y se respeta
+  "reducir movimiento" del sistema.
 - **Mejores Moves** para los rivales: en vez de 4 Moves al azar de su nivel, su mejor combinación entre los de
   nivel, huevo y (en un paso aparte) MT: su ataque STAB más fuerte, uno súper eficaz contra el equipo de los
   jugadores si puede, los más fuertes de otros tipos (uno por tipo) y uno de estado. Cada Move se valora por sus

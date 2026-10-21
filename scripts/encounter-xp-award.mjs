@@ -1,5 +1,5 @@
 import { playerTeams, pokemonLevel } from "./encounter-difficulty.mjs";
-import { encounterShare, expShareXp, getEncounterXpRules } from "./encounter-xp-service.mjs";
+import { encounterShare, getEncounterXpRules, poolExpShare } from "./encounter-xp-service.mjs";
 import { addPokemonExperience } from "./pokemon-experience-service.mjs";
 import { getPokemonHeldItem } from "./pokemon-held-item-service.mjs";
 
@@ -23,9 +23,9 @@ function renderContent(teams, optional, expShareTrainerOnly) {
     ${teams.some(({ pokemon }) => pokemon.some(holdsExpShare)) ? `
     <p class="poke5e-xp-award__hint">
       <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
-      Repartir Experiencia: recibe, aunque no combata, la mitad de la XP ${expShareTrainerOnly
-        ? "que ganan los demás Pokémon de su Entrenador (regla casera)"
-        : "ganada en el combate por los demás Pokémon"}.
+      Repartir Experiencia: aunque no combata, cuenta como un participante más ${expShareTrainerOnly
+        ? "entre los Pokémon de su Entrenador (regla casera)"
+        : "del combate"}. Si combatió, márcalo: recibe su parte normal.
     </p>` : ""}
     <div class="poke5e-xp-award__list">
       ${teams.map(({ trainer, pokemon }) => `
@@ -44,7 +44,7 @@ function renderContent(teams, optional, expShareTrainerOnly) {
                     : ""}</small>
                 </span>
                 <span class="poke5e-xp-award__share">
-                  <input type="number" data-share="${actor.uuid}" min="0" step="1" value="0"${holdsExpShare(actor) ? "" : " disabled"}
+                  <input type="number" data-share="${actor.uuid}" min="0" step="1" value="0" disabled
                     aria-label="XP para ${escape(actor.name)}">
                   <small>XP</small>
                 </span>
@@ -73,38 +73,29 @@ export async function awardEncounterXp({ rows, context, optional, name, trainers
 
   const content = renderContent(teams, optional, expShareTrainerOnly);
 
-  // The Exp. Share holders: their own share, if they fought, plus half of the others' (as they stand, edits too).
-  const refreshHolders = element => {
-    const shares = [...element.querySelectorAll("input[type=checkbox]")]
-      .map(box => {
-        const input = element.querySelector(`[data-share="${box.dataset.uuid}"]`);
-        const holder = box.hasAttribute("data-exp-share");
-        return { holder, input, trainer: box.dataset.trainer,
-          xp: box.checked ? Number(holder ? input.dataset.own : input.value) || 0 : 0 };
-      });
-    for (const share of shares.filter(each => each.holder)) {
-      share.input.value = share.xp + expShareXp(shares, share, { trainerOnly: expShareTrainerOnly });
-    }
-    const given = shares.filter(share => Number(share.input.value) > 0);
+  const summarize = element => {
+    const given = [...element.querySelectorAll("[data-share]")].filter(input => !input.disabled && Number(input.value) > 0);
     element.querySelector('[data-role="summary"]').textContent = given.length
-      ? `${given.length} Pokémon · ${given.reduce((sum, share) => sum + Number(share.input.value), 0).toLocaleString()} XP en total`
+      ? `${given.length} Pokémon · ${given.reduce((sum, input) => sum + Number(input.value), 0).toLocaleString()} XP en total`
       : "Ningún Pokémon marcado.";
   };
 
+  // Every share from zero: the fighters, and the Exp. Share holders that didn't fight as one more participant.
   const refresh = element => {
     const boxes = [...element.querySelectorAll("input[type=checkbox]")];
-    const checked = boxes.filter(box => box.checked);
+    const fighters = boxes.filter(box => box.checked);
+    const idle = fighters.length ? boxes.filter(box => !box.checked && box.hasAttribute("data-exp-share")) : [];
+    const participants = fighters.length + (expShareTrainerOnly ? 0 : idle.length);
+    const shares = [...fighters, ...idle].map(box => ({ box, trainer: box.dataset.trainer, holder: !box.checked,
+      xp: encounterShare(rows, Number(box.dataset.level), participants, { context, optional }) }));
+    const xps = expShareTrainerOnly ? poolExpShare(shares) : shares.map(share => share.xp);
     for (const box of boxes) {
-      const share = element.querySelector(`[data-share="${box.dataset.uuid}"]`);
-      const own = box.checked ? encounterShare(rows, Number(box.dataset.level), checked.length, { context, optional }) : 0;
-      if (box.hasAttribute("data-exp-share")) {
-        share.dataset.own = own;
-      } else {
-        share.disabled = !box.checked;
-        share.value = own;
-      }
+      const input = element.querySelector(`[data-share="${box.dataset.uuid}"]`);
+      const index = shares.findIndex(share => share.box === box);
+      input.disabled = index < 0;
+      input.value = index < 0 ? 0 : xps[index];
     }
-    refreshHolders(element);
+    summarize(element);
   };
 
   const awarded = await foundry.applications.api.DialogV2.wait({
@@ -115,10 +106,8 @@ export async function awardEncounterXp({ rows, context, optional, name, trainers
     render: (event, dialog) => {
       const element = dialog.element;
       element.querySelectorAll("input[type=checkbox]").forEach(box => box.addEventListener("change", () => refresh(element)));
-      // A share edited by hand changes what the Exp. Share holders get; theirs, edited, stays as typed.
-      element.querySelectorAll("[data-share]").forEach(input => input.addEventListener("input", () => {
-        if (!element.querySelector(`[data-uuid="${input.dataset.share}"]`).hasAttribute("data-exp-share")) {refreshHolders(element);}
-      }));
+      // A share edited by hand stays as typed.
+      element.querySelectorAll("[data-share]").forEach(input => input.addEventListener("input", () => summarize(element)));
     },
     buttons: [
       {
@@ -126,12 +115,12 @@ export async function awardEncounterXp({ rows, context, optional, name, trainers
         label: "Entregar",
         icon: "fa-solid fa-gift",
         default: true,
-        // Those ticked, and the Exp. Share holders even if they didn't fight.
+        // Those ticked, and the Exp. Share holders that didn't fight.
         callback: (event, button) => [...button.form.querySelectorAll("input[type=checkbox]")]
-          .filter(box => box.checked || box.hasAttribute("data-exp-share"))
+          .filter(box => !button.form.querySelector(`[data-share="${box.dataset.uuid}"]`).disabled)
           .map(box => ({
             uuid: box.dataset.uuid,
-            expShare: box.hasAttribute("data-exp-share"),
+            expShare: !box.checked,
             xp: Math.max(0, Math.trunc(Number(button.form.querySelector(`[data-share="${box.dataset.uuid}"]`).value) || 0))
           }))
       },

@@ -68,7 +68,7 @@ export function registerEncounterXpSettings() {
   });
   game.settings.register(MODULE_ID, "encounterXpExpShareTrainerOnly", {
     name: "Poke5e - Repartir Experiencia: regla casera",
-    hint: "Desactivada (regla de poke5e): el Pokémon con Repartir Experiencia recibe la mitad de la experiencia total ganada en el combate. Activada: recibe la mitad de la experiencia que ganaron los demás Pokémon de su mismo Entrenador.",
+    hint: "El Pokémon con Repartir Experiencia, aunque no combata, cuenta como un participante más: la experiencia se divide también con él, sin sumar de más. Desactivada: entre todos los participantes del combate. Activada: solo entre los Pokémon de su mismo Entrenador.",
     scope: "world",
     config: true,
     type: new BooleanField({ initial: false }),
@@ -130,16 +130,21 @@ export function encounterShare(rows, receiverLevel, participants, { context = nu
 }
 
 /**
- * Exp. Share (poke5e): its holder gets half of the XP gained in the combat, that is, the shares of the Pokémon that
- * took part other than itself. With the house rule, only those of its own trainer's Pokémon.
+ * Exp. Share, house rule: a holder that didn't fight shares its trainer's Pokémon's XP evenly with them, as one
+ * more participant (so nothing is added: 600 + 400 among three is 333 each). Without the house rule it's just
+ * one more participant in the whole split, which the caller does with the participant count.
  *
- * @param {{ trainer: string, xp: number }[]} shares  the participants' shares, the holder's among them
+ * @param {{ trainer: string, xp: number, holder?: boolean }[]} shares  fighters, and holders that didn't fight
+ * @returns {number[]} each share's XP, in order
  */
-export function expShareXp(shares, holder, { trainerOnly = false } = {}) {
-  const base = shares
-    .filter(share => share !== holder && (!trainerOnly || share.trainer === holder.trainer))
-    .reduce((sum, share) => sum + share.xp, 0);
-  return Math.floor(base / 2);
+export function poolExpShare(shares) {
+  const xps = shares.map(share => share.xp);
+  for (const trainer of new Set(shares.filter(share => share.holder).map(share => share.trainer))) {
+    const team = shares.map((share, index) => ({ share, index })).filter(({ share }) => share.trainer === trainer);
+    const pool = team.filter(({ share }) => !share.holder).reduce((sum, { share }) => sum + share.xp, 0);
+    for (const { index } of team) {xps[index] = Math.floor(pool / team.length);}
+  }
+  return xps;
 }
 
 // Gen V's level factor: ((2 × rival + 10) ÷ (rival + party + 10))^2.5. Two levels below at 10 is ×0.83; five, ×0.57.

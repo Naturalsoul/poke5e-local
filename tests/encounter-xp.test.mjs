@@ -3,7 +3,7 @@ import test from "node:test";
 import { installFoundryUtils } from "./helpers/foundry-mocks.mjs";
 
 installFoundryUtils();
-const { calculatePokemonEncounterXp, encounterShare, expShareXp, levelProgress, levelScaling } = await import("../scripts/encounter-xp-service.mjs");
+const { calculatePokemonEncounterXp, encounterShare, levelProgress, poolExpShare, levelScaling } = await import("../scripts/encounter-xp-service.mjs");
 
 test("without rules it is poke5e's: 200 × Level × SR, capture a fifth", () => {
   assert.deepEqual(calculatePokemonEncounterXp({ level: 10, sr: 8 }), { defeated: 16000, captured: 3200 });
@@ -54,10 +54,12 @@ test("shares: an even split, but in an optional encounter the weaker Pokémon ge
   assert.equal(encounterShare([{ level: 10, sr: 1, quantity: 2 }], 10, 2, { context: pace }), 2500, "the pace, split");
 });
 
-test("Exp. Share: half of the combat's XP, or with the house rule, half of its own trainer's Pokémon's", () => {
-  // Ash's two Pokémon got 1 000 of the combat's 5 000; the holder (Ash's, not fighting) gets 0.
-  const holder = { trainer: "ash", xp: 0 };
-  const shares = [{ trainer: "ash", xp: 600 }, { trainer: "ash", xp: 400 }, { trainer: "misty", xp: 4000 }, holder];
-  assert.equal(expShareXp(shares, holder), 2500, "poke5e: half of 5 000");
-  assert.equal(expShareXp(shares, holder, { trainerOnly: true }), 500, "house rule: half of Ash's 1 000");
+test("Exp. Share, house rule: the holder pools its trainer's XP as one more participant, nothing added", () => {
+  const shares = [{ trainer: "ash", xp: 600 }, { trainer: "ash", xp: 400 }, { trainer: "misty", xp: 4000 },
+    { trainer: "ash", xp: 0, holder: true }];
+  assert.deepEqual(poolExpShare(shares), [333, 333, 4000, 333]);
+  // Its trainer's Pokémon didn't fight: nothing to share.
+  assert.deepEqual(poolExpShare([{ trainer: "misty", xp: 900 }, { trainer: "ash", xp: 0, holder: true }]), [900, 0]);
+  // Holding it and fighting: just a fighter.
+  assert.deepEqual(poolExpShare([{ trainer: "ash", xp: 500 }, { trainer: "ash", xp: 500 }]), [500, 500]);
 });
