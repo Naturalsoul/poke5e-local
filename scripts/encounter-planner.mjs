@@ -15,6 +15,11 @@ import {
 } from "./encounter-xp-award.mjs";
 
 import {
+  climbToNextTier,
+  previewSteps
+} from "./encounter-difficulty-steps.mjs";
+
+import {
   selectEncounterItem
 } from "./encounter-item-selector.mjs";
 
@@ -835,7 +840,10 @@ export class PokemonEncounterPlanner
 
         collapsedTrainerIds:
           this._encounterState
-            .collapsedTrainerIds
+            .collapsedTrainerIds,
+
+        boosts:
+          this.#boosts()
       });
 
     return `
@@ -1415,6 +1423,8 @@ export class PokemonEncounterPlanner
                   .partyWeakTo ??
                 []
             })}
+
+            ${trainerEncounter ? this.#stepPanel() : ""}
 
           </section>
 
@@ -3770,6 +3780,35 @@ export class PokemonEncounterPlanner
       }
     );
 
+    for (
+      const button
+      of root.querySelectorAll(
+        '[data-action="apply-step"]'
+      )
+    ) {
+      button.addEventListener(
+        "click",
+
+        () => {
+          void this
+            .#applyStep(
+              button.dataset.step
+            );
+        }
+      );
+    }
+
+    root.querySelector(
+      '[data-action="undo-step"]'
+    )?.addEventListener(
+      "click",
+
+      () => {
+        void this
+          .#undoStep();
+      }
+    );
+
     root.querySelector(
       '[data-action="award-xp"]'
     )?.addEventListener(
@@ -4528,6 +4567,9 @@ export class PokemonEncounterPlanner
 
     this._encounterState.optional =
       false;
+
+    this._encounterState.stepHistory =
+      [];
 
     this._encounterState.encounterKey =
       null;
@@ -5328,7 +5370,8 @@ export class PokemonEncounterPlanner
         {
           boosts:
             encounter
-              ? {}
+              ? encounter.boosts ??
+                {}
               : this.#boosts(),
 
           onField:
@@ -5559,6 +5602,390 @@ export class PokemonEncounterPlanner
         ${totals.optional.count} opcional(es): +${percent(totals.optional.xp)} ·
         con todos, Nv. ${end.level} (${Math.round(end.progress * 100)} %)
       </p>`;
+  }
+
+  // One trainer of an archetype, with this many Pokémon between these levels (null if none fits).
+  #generateTrainer(
+    archetypeId,
+    pokemonPerTrainer,
+    minLevel,
+    maxLevel
+  ) {
+    try {
+      return generateRandomTrainerEncounter({
+        candidates:
+          this.randomCatalog
+            .trainerCandidates(
+              this.#trainerPool(
+                maxLevel
+              )
+            ),
+        trainerCount:
+          1,
+        pokemonPerTrainer:
+          String(
+            pokemonPerTrainer
+          ),
+        minLevel,
+        maxLevel,
+        archetypeId:
+          archetypeId ??
+          "generic"
+      })[0] ??
+      null;
+    } catch {
+      return null;
+    }
+  }
+
+  #newTrainerRow(
+    trainerId,
+    pokemon
+  ) {
+    this.rowSequence +=
+      1;
+
+    return {
+      id:
+        `row-${this.rowSequence}`,
+      trainerId,
+      ...pokemon,
+      abilityId:
+        null,
+      itemId:
+        null,
+      itemResolved:
+        false
+    };
+  }
+
+  // What the steps need: new Pokémon and trainers of an archetype, and how high levels may go.
+  #stepTools() {
+    const party =
+      this.#party();
+
+    return {
+      maxAceLevel:
+        Math.min(
+          20,
+          party.level +
+            3
+        ),
+
+      rollItem: () =>
+        selectEncounterItem({
+          items:
+            this.database.items,
+          chancePercent:
+            100,
+          categoryWeights: {
+            berry:
+              1,
+            "held-item":
+              1,
+            medicine:
+              0,
+            pokeball:
+              0
+          }
+        })?.id ??
+        null,
+
+      maxLevel:
+        Math.min(
+          20,
+          party.level +
+            2
+        ),
+
+      // shortcut: a Gym Leader's new Pokémon follows its archetype, not its single type; pick by type if it matters.
+      addPokemon: (
+        trainer,
+        team
+      ) => {
+        const lowest =
+          Math.min(
+            ...team.map(
+              row =>
+                row.level
+            )
+          );
+
+        const generated =
+          this.#generateTrainer(
+            trainer.archetypeId,
+            1,
+            lowest,
+            lowest + 1
+          );
+
+        return generated?.pokemon[0]
+          ? this.#newTrainerRow(
+              trainer.id,
+              generated.pokemon[0]
+            )
+          : null;
+      },
+
+      addTrainer: main => {
+        const levels =
+          rankLevels(
+            party.level,
+            getTrainerRank(
+              "route"
+            )
+          );
+
+        const generated =
+          this.#generateTrainer(
+            main.archetypeId,
+            2,
+            levels.min,
+            levels.max
+          );
+
+        if (!generated?.pokemon.length) {
+          return null;
+        }
+
+        const id =
+          this.#allocateTrainerId();
+
+        const archetype =
+          getTrainerArchetype(
+            main.archetypeId
+          );
+
+        return {
+          trainer: {
+            id,
+            name:
+              `${getTrainerArchetypeLabel(archetype, getWorldLanguage())} (apoyo)`,
+            archetypeId:
+              archetype.id,
+            teamSize:
+              "auto",
+            onField:
+              1
+          },
+          rows:
+            generated.pokemon.map(
+              pokemon =>
+                this.#newTrainerRow(
+                  id,
+                  pokemon
+                )
+            )
+        };
+      }
+    };
+  }
+
+  #measureStep(
+    state
+  ) {
+    return this.#difficulty(
+      state.rows.map(
+        row => ({
+          ...row,
+          level:
+            clampInteger(
+              row.level,
+              1,
+              20,
+              1
+            ),
+          quantity:
+            clampInteger(
+              row.quantity,
+              1,
+              999,
+              1
+            )
+        })
+      ),
+      {
+        trainerBattle:
+          true,
+        boosts:
+          state.boosts,
+        onField:
+          Math.max(
+            1,
+            state.trainers.reduce(
+              (
+                total,
+                trainer
+              ) =>
+                total +
+                Math.min(
+                  trainer.onField ??
+                    1,
+                  countTrainerRowQuantity(
+                    state.rows.filter(
+                      row =>
+                        row.trainerId ===
+                          trainer.id
+                    )
+                  )
+                ),
+              0
+            )
+          )
+      }
+    );
+  }
+
+  // The current encounter and each step's outcome; kept, so a step applies exactly what it previewed.
+  #stepPanel() {
+    if (
+      this._encounterState.type !==
+        "trainer" ||
+      !this._encounterState.trainers.length ||
+      !this._encounterState.rows.length
+    ) {
+      this._stepPreviews =
+        [];
+
+      return renderStepPanel({
+        current:
+          null
+      });
+    }
+
+    const state = {
+      trainers:
+        this._encounterState.trainers,
+      rows:
+        this._encounterState.rows,
+      boosts:
+        this.#boosts()
+    };
+
+    const current =
+      this.#measureStep(
+        state
+      );
+
+    const measure = next =>
+      this.#measureStep(
+        next
+      );
+
+    this._stepPreviews =
+      previewSteps(
+        state,
+        this.#stepTools(),
+        measure
+      );
+
+    this._stepClimb =
+      climbToNextTier(
+        state,
+        this.#stepTools(),
+        measure
+      );
+
+    return renderStepPanel({
+      current,
+      previews:
+        this._stepPreviews,
+      climb:
+        this._stepClimb,
+      canUndo:
+        Boolean(
+          this._encounterState
+            .stepHistory
+            ?.length
+        )
+    });
+  }
+
+  #setStepState(
+    state
+  ) {
+    this._encounterState.trainers =
+      state.trainers;
+
+    this._encounterState.rows =
+      state.rows;
+
+    this._encounterState.boostStats =
+      state.boosts.statBonus;
+
+    this._encounterState.boostCoverage =
+      state.boosts.coverage;
+
+    this._encounterState.boostItems =
+      state.boosts.items;
+  }
+
+  async #applyStep(
+    stepId
+  ) {
+    const preview =
+      stepId ===
+        "next"
+        ? this._stepClimb
+        : (
+            this._stepPreviews ??
+            []
+          ).find(
+            each =>
+              each.step.id ===
+                stepId
+          );
+
+    if (!preview?.state) {
+      return;
+    }
+
+    this._encounterState.stepHistory = [
+      ...(
+        this._encounterState
+          .stepHistory ??
+        []
+      ),
+      structuredClone({
+        trainers:
+          this._encounterState.trainers,
+        rows:
+          this._encounterState.rows,
+        boosts:
+          this.#boosts()
+      })
+    ];
+
+    this.#setStepState(
+      preview.state
+    );
+
+    await this.render();
+  }
+
+  async #undoStep() {
+    const history =
+      this._encounterState
+        .stepHistory ??
+      [];
+
+    if (!history.length) {
+      return;
+    }
+
+    this.#setStepState(
+      history.at(
+        -1
+      )
+    );
+
+    this._encounterState.stepHistory =
+      history.slice(
+        0,
+        -1
+      );
+
+    await this.render();
   }
 
   async #toggleOptional() {
@@ -7889,10 +8316,10 @@ export class PokemonEncounterPlanner
 
       this._encounterState.trainers =
         trainers;
-
       this._encounterState.rows =
         rows;
-
+      this._encounterState.stepHistory =
+        [];
       this._encounterState.selectedTrainerId =
         trainers[0]?.id ??
         "";
@@ -9528,6 +9955,102 @@ function optionalNumber(
   )
     ? numeric
     : null;
+}
+
+// "Ajustar paso a paso": where the encounter stands, the next step up, undo, and every step with where it leads.
+function renderStepPanel({
+  current,
+  previews = [],
+  climb = null,
+  canUndo = false
+}) {
+  if (!current) {
+    return `
+      <section class="poke5e-encounter-planner__panel poke5e-encounter-planner__steps">
+        <header class="poke5e-encounter-planner__panel-header">
+          <i class="fa-solid fa-stairs" aria-hidden="true"></i>
+          <h3>Ajustar paso a paso</h3>
+        </header>
+        <p class="poke5e-encounter-planner__steps-empty">
+          Genera un Entrenador (con el rango Ruta, la base es Fácil) y sube la dificultad desde aquí sin regenerarlo.
+        </p>
+      </section>`;
+  }
+
+  const buttons =
+    previews
+      .map(
+        ({
+          step,
+          state,
+          tier,
+          ratio
+        }) => `
+          <button
+            type="button"
+            class="poke5e-encounter-planner__step${step.creep ? " is-creep" : ""}"
+            data-action="apply-step"
+            data-step="${step.id}"
+            data-tier="${tier?.id ?? ""}"
+            title="${escapeAttribute(step.hint)}"
+            ${state ? "" : " disabled"}
+          >
+            <strong>${escapeHtml(step.label)}</strong>
+            <small>${
+              state
+                ? `→ ${escapeHtml(tier.label)} · +${Math.max(0, Math.round((ratio / current.ratio - 1) * 100))} %`
+                : "No aplica"
+            }</small>
+          </button>`
+      )
+      .join("");
+
+  return `
+    <section class="poke5e-encounter-planner__panel poke5e-encounter-planner__steps">
+      <header class="poke5e-encounter-planner__panel-header">
+        <i class="fa-solid fa-stairs" aria-hidden="true"></i>
+        <h3>Ajustar paso a paso</h3>
+        <small>Sobre el encuentro actual, sin regenerarlo</small>
+      </header>
+
+      <div class="poke5e-encounter-planner__steps-bar">
+        <span class="poke5e-encounter-planner__steps-current" data-tier="${current.tier.id}">
+          <small>Ahora</small>
+          <strong>${escapeHtml(current.tier.label)}</strong>
+        </span>
+
+        <button
+          type="button"
+          data-action="undo-step"
+          title="Deshace el último cambio hecho desde aquí."
+          ${canUndo ? "" : " disabled"}
+        >
+          <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+          Bajar
+        </button>
+
+        <button
+          type="button"
+          class="is-primary"
+          data-action="apply-step"
+          data-step="next"
+          title="${escapeAttribute(
+            climb
+              ? `Con lo más suave primero: ${climb.steps.map(step => step.label).join(", ")}.`
+              : "Ya no quedan cambios que suban la dificultad."
+          )}"
+          ${climb ? "" : " disabled"}
+        >
+          <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+          ${climb ? `Subir a ${escapeHtml(climb.tier.label)}` : "Subir"}
+          ${climb ? `<small>(${climb.steps.length} cambio${climb.steps.length === 1 ? "" : "s"})</small>` : ""}
+        </button>
+      </div>
+
+      <div class="poke5e-encounter-planner__steps-grid">
+        ${buttons}
+      </div>
+    </section>`;
 }
 
 function renderTrainerRandomControls({
@@ -11682,7 +12205,8 @@ function renderEncounterComposition({
   encounterType,
   trainers,
   compositionView,
-  collapsedTrainerIds
+  collapsedTrainerIds,
+  boosts = {}
 }) {
 
   const view =
@@ -11695,13 +12219,14 @@ function renderEncounterComposition({
     encounterType ===
       "trainer"
   ) {
-    return renderTrainerEncounterComposition({
+    return renderTrainerBoosts(
+      boosts
+    ) +
+    renderTrainerEncounterComposition({
       rows,
       trainers,
-
       compositionView:
         view,
-
       collapsedTrainerIds
     });
   }
@@ -11738,20 +12263,46 @@ function renderEncounterComposition({
   `;
 }
 
+// The rivals' extras that only show on the sheets (applied when they're created), as tags over the composition.
+function renderTrainerBoosts(
+  boosts
+) {
+  const tags = [
+    boosts.statBonus
+      ? `<span><i class="fa-solid fa-dumbbell" aria-hidden="true"></i> Características +${boosts.statBonus}</span>`
+      : "",
+    boosts.coverage
+      ? '<span><i class="fa-solid fa-bullseye" aria-hidden="true"></i> Cobertura súper eficaz</span>'
+      : "",
+    boosts.items
+      ? '<span><i class="fa-solid fa-box-archive" aria-hidden="true"></i> Objetos garantizados</span>'
+      : ""
+  ].filter(Boolean);
+
+  return tags.length
+    ? `
+      <div
+        class="poke5e-encounter-planner__trainer-boosts"
+        title="Las características y la cobertura se aplican al crear las hojas de los Pokémon."
+      >
+        <small>Mejoras del rival</small>
+        ${tags.join("")}
+      </div>`
+    : "";
+}
+
 function renderTrainerEncounterComposition({
   rows,
   trainers,
   compositionView,
   collapsedTrainerIds
 }) {
-
   const trainerList =
     Array.isArray(
       trainers
     )
       ? trainers
       : [];
-
 
   const rowsByTrainer =
     new Map();
@@ -11775,9 +12326,7 @@ function renderTrainerEncounterComposition({
       [];
 
 
-    trainerRows.push(
-      row
-    );
+    trainerRows.push(row);
 
 
     rowsByTrainer.set(
@@ -11829,7 +12378,7 @@ function renderTrainerEncounterComposition({
               trainerId
             ) ??
             [],
-
+          onField: trainer.onField ?? 1,
           trainers:
             trainerList,
 
@@ -11896,10 +12445,21 @@ function renderTrainerEncounterComposition({
 }
 
 
+// "3 entrada(s) · 2 en campo": how many it brings and sends out at once.
+function trainerCompositionCount(
+  count,
+  onField
+) {
+  return onField
+    ? `${count} entrada(s) · ${Math.min(onField, count)} en campo`
+    : `${count} entrada(s)`;
+}
+
 function renderTrainerCompositionGroup({
   trainerId,
   trainerName,
   rows,
+  onField,
   trainers,
   compositionView,
   unassigned = false,
@@ -11996,7 +12556,7 @@ function renderTrainerCompositionGroup({
         <div class="poke5e-encounter-planner__trainer-composition-actions">
 
           <span class="poke5e-encounter-planner__trainer-composition-count">
-            ${rows.length} entrada(s)
+            ${trainerCompositionCount(rows.length, unassigned ? null : onField)}
           </span>
 
           ${

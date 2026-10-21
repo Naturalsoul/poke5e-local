@@ -6,6 +6,15 @@ solo se corrige algo.
 
 ## [0.22.0] — 2026-10-20
 
+- **Ajustar paso a paso** (encuentros de Entrenador, bajo el generador): sobre el encuentro tal como está, sin
+  regenerarlo. "Subir a <dificultad>" aplica los cambios más suaves hasta la siguiente dificultad y "Bajar" deshace
+  el último. Cada cambio también se puede aplicar solo y muestra a qué dificultad lleva y cuánto suma: +1 Pokémon en
+  campo, características +1/+2, cobertura súper eficaz, objetos garantizados, +1 Pokémon al equipo (de su
+  arquetipo, al Entrenador con el equipo más corto), +1 Entrenador de apoyo (de ruta, del mismo arquetipo), y al final, porque inflan la campaña, el As +1
+  nivel (al Entrenador con el As más bajo, así que rota) y +1 nivel a todos. Se parte de un Entrenador de ruta, que es Fácil.
+  La composición lo refleja al momento: Pokémon y Entrenadores nuevos, niveles, "N en campo" en cada Entrenador,
+  los objetos garantizados ya elegidos en cada Pokémon, y las mejoras que se aplican al crear las hojas
+  (características y cobertura) como etiquetas sobre los Entrenadores.
 - **Planificador de encuentros: dificultad.** poke5e no tiene tabla de dificultad y su SR no es un CR ("Pokémon del
   mismo nivel son igual de fuertes"). Como su combate es el de D&D 5e, la base es la de D&D:
   - cada Pokémon pesa según su nivel con la curva de D&D (el umbral Medio por personaje de la DMG), que coincide con

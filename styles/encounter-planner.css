@@ -5995,3 +5995,315 @@ button[data-action="award-xp"]:hover:not(:disabled) {
 .poke5e-xp-award__hint i {
   color: #8fb3e8;
 }
+
+/* ============================================================
+ * AJUSTAR PASO A PASO
+ * ============================================================ */
+
+.poke5e-encounter-planner__steps {
+  margin-top:
+    10px;
+}
+
+.poke5e-encounter-planner__steps-empty {
+  margin:
+    0;
+
+  color:
+    var(--encounter-muted);
+
+  font-size:
+    10px;
+}
+
+.poke5e-encounter-planner__steps-bar {
+  display:
+    flex;
+
+  flex-wrap:
+    wrap;
+
+  align-items:
+    center;
+
+  gap:
+    8px;
+
+  margin-bottom:
+    9px;
+
+  padding:
+    8px;
+
+  border:
+    1px solid
+    rgba(215, 91, 78, 0.2);
+
+  border-radius:
+    6px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(215, 91, 78, 0.07),
+      rgba(215, 91, 78, 0.02)
+    );
+}
+
+.poke5e-encounter-planner__steps-current {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  margin-right:
+    auto;
+
+  line-height:
+    1.1;
+}
+
+.poke5e-encounter-planner__steps-current small {
+  color:
+    var(--encounter-muted);
+
+  font-size:
+    8px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    0.055em;
+
+  text-transform:
+    uppercase;
+}
+
+.poke5e-encounter-planner__steps-current strong {
+  color:
+    var(--encounter-cream);
+
+  font-size:
+    14px;
+}
+
+.poke5e-encounter-planner__steps-current[data-tier="easy"] strong {
+  color:
+    var(--encounter-green);
+}
+
+.poke5e-encounter-planner__steps-current[data-tier="medium"] strong {
+  color:
+    var(--encounter-gold);
+}
+
+.poke5e-encounter-planner__steps-current[data-tier="hard"] strong,
+.poke5e-encounter-planner__steps-current[data-tier="deadly"] strong {
+  color:
+    var(--encounter-red);
+}
+
+.poke5e-encounter-planner__steps-bar
+button {
+  min-height:
+    32px;
+
+  padding:
+    4px 12px;
+
+  font-size:
+    9px;
+}
+
+.poke5e-encounter-planner__steps-bar
+button small {
+  color:
+    inherit;
+
+  font-size:
+    8px;
+
+  opacity:
+    0.8;
+}
+
+/* Subir: the panel's main action, like Generar. */
+.poke5e-encounter-planner__steps-bar
+button.is-primary {
+  border-color:
+    rgba(215, 91, 78, 0.72);
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--encounter-red),
+      var(--encounter-red-dark)
+    );
+
+  color:
+    white;
+
+  box-shadow:
+    0 4px 10px
+      rgba(0, 0, 0, 0.28);
+}
+
+.poke5e-encounter-planner__steps-grid {
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fill,
+      minmax(150px, 1fr)
+    );
+
+  gap:
+    6px;
+}
+
+/* Two classes, so the planner's base button style doesn't win over these. */
+.poke5e-encounter-planner__steps
+.poke5e-encounter-planner__step {
+  flex-direction:
+    column;
+
+  align-items:
+    flex-start;
+
+  justify-content:
+    center;
+
+  gap:
+    3px;
+
+  min-height:
+    44px;
+
+  padding:
+    6px 9px;
+
+  text-align:
+    left;
+}
+
+.poke5e-encounter-planner__steps
+.poke5e-encounter-planner__step strong {
+  font-size:
+    10px;
+}
+
+.poke5e-encounter-planner__steps
+.poke5e-encounter-planner__step small {
+  color:
+    var(--encounter-muted);
+
+  font-size:
+    9px;
+
+  font-weight:
+    700;
+}
+
+.poke5e-encounter-planner__steps
+.poke5e-encounter-planner__step[data-tier="medium"] small {
+  color:
+    var(--encounter-gold);
+}
+
+.poke5e-encounter-planner__steps
+.poke5e-encounter-planner__step[data-tier="hard"] small,
+.poke5e-encounter-planner__steps
+.poke5e-encounter-planner__step[data-tier="deadly"] small {
+  color:
+    #ed9288;
+}
+
+/* Levels: the power creep, set apart. */
+.poke5e-encounter-planner__steps
+.poke5e-encounter-planner__step.is-creep {
+  border-style:
+    dashed;
+
+  border-color:
+    rgba(215, 91, 78, 0.5);
+}
+
+/* The rivals' extras, over the trainers in the composition. */
+.poke5e-encounter-planner__trainer-boosts {
+  display:
+    flex;
+
+  flex-wrap:
+    wrap;
+
+  align-items:
+    center;
+
+  gap:
+    6px;
+
+  margin-bottom:
+    10px;
+
+  padding:
+    6px 8px;
+
+  border:
+    1px solid
+    rgba(217, 169, 28, 0.25);
+
+  border-radius:
+    6px;
+
+  background:
+    rgba(217, 169, 28, 0.06);
+}
+
+.poke5e-encounter-planner__trainer-boosts small {
+  color:
+    var(--encounter-muted);
+
+  font-size:
+    8px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    0.055em;
+
+  text-transform:
+    uppercase;
+}
+
+.poke5e-encounter-planner__trainer-boosts span {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    4px;
+
+  padding:
+    2px 8px;
+
+  border-radius:
+    999px;
+
+  background:
+    rgba(217, 169, 28, 0.14);
+
+  color:
+    var(--encounter-gold);
+
+  font-size:
+    9px;
+
+  font-weight:
+    900;
+}

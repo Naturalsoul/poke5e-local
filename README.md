@@ -113,6 +113,8 @@ Lo que un Move automatizado aún deja al DM está en la nota de su entrada en `s
     apunta, y cuántos Pokémon trae y saca a la vez se adapta al grupo (los jefes suman ayudantes del gimnasio solo si
     hace falta). Los niveles quedan cerca de los del grupo para no inflar la campaña; los rangos altos traen +1/+2 a
     las características, un Move súper eficaz contra el equipo de los jugadores y objetos o bayas.
+  - **Ajustar paso a paso:** desde un Entrenador de ruta (Fácil), sube la dificultad sobre el mismo encuentro con
+    "Subir a…" (los cambios más suaves primero; los niveles al final) o cambio a cambio, y "Bajar" deshace.
   - **Experiencia contra el power creep:** por defecto, un ritmo de "N encuentros Medios por nivel" (la XP total,
     dividida entre los Pokémon que participan, da a cada uno 1/N de nivel en una pelea Media), sin depender del SR.
     La regla de poke5e (200 × Nivel × SR) sigue disponible (Configuración → Poke5e - Experiencia de los encuentros).
