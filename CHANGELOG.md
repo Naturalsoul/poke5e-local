@@ -14,6 +14,8 @@ solo se corrige algo.
 - Con el texto más grande, el resumen inferior del planificador va siempre en su propia fila, con "Repartir XP" y
   "Generar" debajo, para que sus etiquetas se lean enteras; la estrella de la característica principal de la ficha
   de Pokémon vuelve a ser pequeña para no pisar el valor.
+- En el gestor del Entrenador, el nombre de cada Pokémon con su nivel pasa a una segunda línea en vez de cortarse
+  ("Megabyte (Lv.…").
 
 ## [0.23.1] — 2026-10-21
 

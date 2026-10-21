@@ -1221,11 +1221,12 @@ strong {
   font-size:
     12px;
 
-  text-overflow:
-    ellipsis;
+  /* A nickname plus its level does not fit one line of the card: wrap instead of cutting it. */
+  line-height:
+    1.2;
 
-  white-space:
-    nowrap;
+  overflow-wrap:
+    anywhere;
 }
 
 
