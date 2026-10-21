@@ -7,6 +7,8 @@ export function selectEncounterMoves({
   moves,
   level,
   maxMoves = MAX_MOVES,
+  // Attacking types that are super effective against the players' Pokémon: one damaging Move of them, if it can.
+  coverageTypes = [],
   random = Math.random
 }) {
   if (!pokemon?.id) {
@@ -41,17 +43,48 @@ export function selectEncounterMoves({
       )
       .filter(Boolean);
 
-  return shuffle(
-    candidates,
-    random
-  ).slice(
-    0,
+  const selected =
+    shuffle(
+      candidates,
+      random
+    );
+
+  const count =
     clampInteger(
       maxMoves,
       0,
       MAX_MOVES,
       MAX_MOVES
-    )
+    );
+
+  const covers = move =>
+    move.damage &&
+    coverageTypes.includes(
+      move.type
+    );
+
+  const coverage =
+    selected.findIndex(
+      covers
+    );
+
+  // Brings the first covering Move into the last slot when none made it.
+  if (
+    count > 0 &&
+    coverage >= count
+  ) {
+    [
+      selected[count - 1],
+      selected[coverage]
+    ] = [
+      selected[coverage],
+      selected[count - 1]
+    ];
+  }
+
+  return selected.slice(
+    0,
+    count
   );
 }
 

@@ -99,6 +99,10 @@ export function normalizeEncounterDefinition(
     name,
     location,
     type,
+    // Optional encounters (not needed to move on) give catch-up XP: more to the party's weaker Pokémon.
+    optional:
+      source.optional ===
+        true,
     pokemon,
     trainers
   };

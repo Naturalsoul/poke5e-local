@@ -104,15 +104,24 @@ Lo que un Move automatizado aún deja al DM está en la nota de su entrada en `s
 
 ### Otras herramientas del DM
 - **Planificador de encuentros:** encuentros salvajes y de entrenadores con aleatorizado y XP.
-  - **Dificultad al estilo D&D 5e** (Fácil, Media, Difícil, Mortal), medida contra el grupo: uno por jugador, al
-    nivel de su Pokémon más fuerte, detectado de sus entrenadores y editable. Cada Pokémon pesa según su nivel con la
-    curva de D&D (poke5e: "Pokémon del mismo nivel son igual de fuertes"; el SR no es un CR), y superar en número
-    al grupo multiplica como en D&D. Una pelea pareja es Media.
-  - En los combates de entrenador cuentan los equipos enteros de los dos lados, un Pokémon por entrenador en el
-    campo a la vez, y los Pokémon de entrenador pesan un 20 % más (poke5e les da una dote, una especialización y
-    mejores stats).
-  - Los dos generadores aleatorios, el salvaje y el de entrenadores, pueden buscar una dificultad, y cualquier
-    encuentro muestra la suya en el resumen, con su color.
+  - **Dificultad** (Fácil, Media, Difícil, Mortal) medida contra el grupo: uno por jugador, al nivel de su Pokémon
+    más fuerte, detectado de sus entrenadores y editable. La base es la de D&D 5e, porque el combate de poke5e es el
+    suyo: cada Pokémon pesa según su nivel y la cantidad en campo multiplica. En los combates de entrenador cuentan
+    los equipos enteros, los Pokémon en campo de cada lado y **los tipos**, como en los juegos.
+  - El generador salvaje busca una dificultad; el de entrenadores elige por **el rango del rival** (de ruta, Guay,
+    Líder de Gimnasio, Alto Mando, Campeón o Pokémon Dominante): el rango fija el estilo y la dificultad a la que
+    apunta, y cuántos Pokémon trae y saca a la vez se adapta al grupo (los jefes suman ayudantes del gimnasio solo si
+    hace falta). Los niveles quedan cerca de los del grupo para no inflar la campaña; los rangos altos traen +1/+2 a
+    las características, un Move súper eficaz contra el equipo de los jugadores y objetos o bayas.
+  - **Experiencia contra el power creep:** por defecto, un ritmo de "N encuentros Medios por nivel" (la XP total,
+    dividida entre los Pokémon que participan, da a cada uno 1/N de nivel en una pelea Media), sin depender del SR.
+    La regla de poke5e (200 × Nivel × SR) sigue disponible (Configuración → Poke5e - Experiencia de encuentros).
+  - **Obligatorios y opcionales:** cada encuentro puede ser opcional (XP de recuperación: más a los Pokémon más
+    débiles, y botín). Cada ubicación resume su ruta. "Repartir XP" entrega la parte de cada Pokémon que participó,
+    con el dinero de los Entrenadores.
+  - **Avance:** cuánto de un nivel le da el encuentro al Pokémon más fuerte de los jugadores, con la XP dividida
+    entre los Pokémon que participan, y cuántos encuentros así le faltan para subir. Opcional, la XP según
+    diferencia de nivel de la Gen V (Configuración → Poke5e - XP según diferencia de nivel).
 - **Fakemon Studio:** crea Pokémon propios con asistente, evoluciones, Moves y copia de seguridad.
 - Transiciones de batalla con sonido.
 

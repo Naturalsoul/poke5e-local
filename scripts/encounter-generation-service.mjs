@@ -32,6 +32,11 @@ import {
   calculatePokemonEncounterXp
 } from "./encounter-xp-service.mjs";
 
+import {
+  getPokemonPermanentAbilityScores,
+  setPokemonAbilityScore
+} from "./pokemon-ability-score-service.mjs";
+
 
 const MODULE_ID =
   "poke5e-local";
@@ -119,7 +124,9 @@ export class EncounterGenerationService {
       allowHiddenAbilities = false,
       hiddenAbilityChancePercent = 5,
       rerollItems = false,
-      itemPolicy = null
+      itemPolicy = null,
+      // Trainer battles only: { statBonus: 0–2, coverageTypes: [type], guaranteedItems: boolean }.
+      boosts = {}
     } = {}
   ) {
     if (
@@ -177,6 +184,11 @@ export class EncounterGenerationService {
         hiddenAbilityChancePercent,
         rerollItems,
         itemPolicy,
+        boosts:
+          encounter.type ===
+            "trainer"
+            ? boosts
+            : {},
         desiredEntryKeys,
         results
       });
@@ -316,6 +328,7 @@ export class EncounterGenerationService {
     hiddenAbilityChancePercent,
     rerollItems,
     itemPolicy,
+    boosts,
     desiredEntryKeys,
     results
   }) {
@@ -398,6 +411,11 @@ export class EncounterGenerationService {
     const actor =
       importResult.actor;
 
+    await applyStatBonus(
+      actor,
+      boosts.statBonus
+    );
+
 
     const moveResult =
       await this.#prepareMoves({
@@ -406,7 +424,9 @@ export class EncounterGenerationService {
         level,
         encounter,
         entryKey,
-        rerollMoves
+        rerollMoves,
+        coverageTypes:
+          boosts.coverageTypes
       });
 
     const abilityResult =
@@ -449,9 +469,11 @@ export class EncounterGenerationService {
 
         reroll:
           rerollItems,
-
         policy:
-          itemPolicy
+          itemPolicy,
+        guaranteed:
+          boosts.guaranteedItems ===
+            true
       });
 
     const xp =
@@ -572,7 +594,8 @@ export class EncounterGenerationService {
     level,
     encounter,
     entryKey,
-    rerollMoves
+    rerollMoves,
+    coverageTypes = []
   }) {
     const stored =
       actor.getFlag(
@@ -615,7 +638,8 @@ export class EncounterGenerationService {
             pokemon,
             moves:
               this.movesById,
-            level
+            level,
+            coverageTypes
           })
 
         : storedMoveIds
@@ -665,6 +689,78 @@ export class EncounterGenerationService {
   }
 }
 
+/*
+ * The encounter's +1/+2 to every ability score, through the Pokémon's own score service (so HP and Moves follow).
+ * Re-imports keep the scores, so the flag remembers what was added and only the difference is applied: turning it
+ * off takes it back.
+ */
+async function applyStatBonus(
+  actor,
+  statBonus = 0
+) {
+  const wanted =
+    Math.max(
+      0,
+      Math.min(
+        2,
+        Math.trunc(
+          Number(
+            statBonus
+          )
+        ) || 0
+      )
+    );
+
+  const applied =
+    Number(
+      actor.getFlag(
+        MODULE_ID,
+        "encounterStatBonus"
+      )
+    ) || 0;
+
+  const delta =
+    wanted -
+    applied;
+
+  if (!delta) {
+    return;
+  }
+
+  const scores =
+    getPokemonPermanentAbilityScores(
+      actor
+    );
+
+  for (
+    const [
+      abilityId,
+      score
+    ]
+    of Object.entries(
+      scores
+    )
+  ) {
+    await setPokemonAbilityScore(
+      actor,
+      abilityId,
+      Math.max(
+        1,
+        Math.min(
+          30,
+          score + delta
+        )
+      )
+    );
+  }
+
+  await actor.setFlag(
+    MODULE_ID,
+    "encounterStatBonus",
+    wanted
+  );
+}
+
 function buildEncounterMetadata({
   encounter,
   request,
@@ -702,10 +798,11 @@ function buildEncounterMetadata({
 
     location:
       encounter.location,
-
     type:
       encounter.type,
-
+    optional:
+      encounter.optional ===
+        true,
     trainer:
       request.trainer
 

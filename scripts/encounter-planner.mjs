@@ -11,6 +11,17 @@ import {
 } from "./encounter-query-service.mjs";
 
 import {
+  awardEncounterXp
+} from "./encounter-xp-award.mjs";
+
+import {
+  selectEncounterItem
+} from "./encounter-item-selector.mjs";
+
+import {
+  encounterShare,
+  getEncounterXpRules,
+  levelProgress,
   calculatePokemonEncounterXp
 } from "./encounter-xp-service.mjs";
 
@@ -26,10 +37,17 @@ import {
 } from "./encounter-randomizer.mjs";
 
 import {
+  getTrainerLevelRule
+} from "./trainer-rules.mjs";
+
+import {
   DIFFICULTIES,
   detectEncounterParty,
   encounterDifficulty,
-  generateForDifficulty
+  generateForDifficulty,
+  getTrainerRank,
+  rankLevels,
+  TRAINER_RANKS
 } from "./encounter-difficulty.mjs";
 
 import {
@@ -76,7 +94,8 @@ function prepareEncounterRow({
   row,
   database,
   language,
-  encounterType
+  encounterType,
+  xpContext = null
 }) {
 
   const pokemon =
@@ -135,9 +154,10 @@ function prepareEncounterRow({
   const xp =
     calculatePokemonEncounterXp({
       level,
-
       sr:
-        pokemon.sr
+        pokemon.sr,
+      context:
+        xpContext
     });
 
 
@@ -455,22 +475,17 @@ export class PokemonEncounterPlanner
         "",
 
       trainerRandomCount:
-        1,
+        "auto",
+
+      trainerRandomOnField:
+        "auto",
+
 
       trainerRandomPokemonCount:
         "auto",
 
-      trainerRandomMinLevel:
-        1,
-
-      trainerRandomMaxLevel:
-        5,
-
-      trainerRandomMinSr:
-        "",
-
-      trainerRandomMaxSr:
-        "",
+      trainerRandomRank:
+        "route",
 
       trainerRandomArchetype:
         "generic",
@@ -570,6 +585,9 @@ export class PokemonEncounterPlanner
       );
 
 
+    const xpContext =
+      this.#xpContext();
+
     const rows =
       this._encounterState.rows
         .map(
@@ -580,7 +598,8 @@ export class PokemonEncounterPlanner
                 this.database,
               language,
               encounterType:
-                this._encounterState.type
+                this._encounterState.type,
+              xpContext
             })
         )
         .filter(Boolean);
@@ -651,21 +670,7 @@ export class PokemonEncounterPlanner
         catalog:
           this.randomCatalog,
 
-        region:
-          this._encounterState
-            .trainerRandomRegion,
-
-        maxLevel:
-          this._encounterState
-            .trainerRandomMaxLevel,
-
-        minSr:
-          this._encounterState
-            .trainerRandomMinSr,
-
-        maxSr:
-          this._encounterState
-            .trainerRandomMaxSr
+        ...this.#trainerPool()
       });
 
     const trainerArchetypeGroups =
@@ -1031,6 +1036,8 @@ export class PokemonEncounterPlanner
 
             </div>
 
+            ${this.#routeSummary(context.savedEncountersForLocation)}
+
           </section>
 
 
@@ -1112,6 +1119,23 @@ export class PokemonEncounterPlanner
                   )}"
                 >
 
+              </label>
+
+
+              <label
+                class="poke5e-encounter-planner__toggle"
+                title="Un encuentro opcional no hace falta para avanzar: da XP de recuperación, más a los Pokémon más débiles del grupo, y sugiere un botín."
+              >
+                <input
+                  type="checkbox"
+                  data-role="encounter-optional"
+                  ${this._encounterState.optional ? " checked" : ""}
+                >
+
+                <span>
+                  <strong>Opcional</strong>
+                  <small>XP de recuperación y botín.</small>
+                </span>
               </label>
 
             </div>
@@ -1346,28 +1370,13 @@ export class PokemonEncounterPlanner
                 this._encounterState
                   .trainerRandomCount,
 
+              onField:
+                this._encounterState
+                  .trainerRandomOnField,
+
               pokemonCount:
                 this._encounterState
                   .trainerRandomPokemonCount,
-
-              minLevel:
-                this._encounterState
-                  .trainerRandomMinLevel,
-
-              maxLevel:
-                this._encounterState
-                  .trainerRandomMaxLevel,
-
-              srValues:
-                context.randomSrValues,
-
-              minSr:
-                this._encounterState
-                  .trainerRandomMinSr,
-
-              maxSr:
-                this._encounterState
-                  .trainerRandomMaxSr,
 
               candidateCount:
                 context.trainerRandomCandidateCount,
@@ -1390,11 +1399,17 @@ export class PokemonEncounterPlanner
 
               language:
                 context.language,
-              difficulty:
+              rank:
                 this._encounterState
-                  .trainerRandomDifficulty,
+                  .trainerRandomRank,
               party:
-                this.#party()
+                this.#party(),
+              boosts:
+                this.#boosts(),
+              weakTo:
+                this._encounterState
+                  .partyWeakTo ??
+                []
             })}
 
           </section>
@@ -2048,7 +2063,45 @@ export class PokemonEncounterPlanner
 
               </div>
 
+
+              <div
+                class="
+                  poke5e-encounter-planner__status-item
+                  poke5e-encounter-planner__status-item--progress
+                "
+                data-role="progress-status"
+                title="${escapeAttribute(this.#describeProgress(context.rows).title)}"
+              >
+
+                <i
+                  class="fa-solid fa-arrow-trend-up"
+                  aria-hidden="true"
+                ></i>
+
+                <span>
+                  Avance
+                </span>
+
+                <strong data-total="progress">
+                  ${this.#describeProgress(context.rows).label}
+                </strong>
+
+              </div>
+
             </div>
+            <button
+              type="button"
+              data-action="award-xp"
+              title="Tras el combate: marca los Pokémon que participaron y siguen en pie, y se les entrega su XP."
+              ${context.rows.length ? "" : " disabled"}
+            >
+              <i
+                class="fa-solid fa-gift"
+                aria-hidden="true"
+              ></i>
+              Repartir XP
+            </button>
+
             <button
               type="button"
               data-action="generate"
@@ -2612,8 +2665,7 @@ export class PokemonEncounterPlanner
         key
       ]
       of [
-        ["random-difficulty", "randomDifficulty"],
-        ["trainer-random-difficulty", "trainerRandomDifficulty"]
+        ["random-difficulty", "randomDifficulty"]
       ]
     ) {
       root.querySelector(
@@ -2640,7 +2692,8 @@ export class PokemonEncounterPlanner
       of [
         ["party-size", "partySize", 12],
         ["party-level", "partyLevel", 20],
-        ["party-team", "partyTeam", 6]
+        ["party-team", "partyTeam", 6],
+        ["party-participants", "partyParticipants", 24]
       ]
     ) {
       const inputs =
@@ -2671,10 +2724,82 @@ export class PokemonEncounterPlanner
             this.#refreshTotalsUi(
               root
             );
+
+            this.#refreshTrainerRandomCandidateCountUi(
+              root
+            );
           }
         );
       }
     }
+
+    for (
+      const [
+        role,
+        key
+      ]
+      of [
+        ["boost-stats", "boostStats"],
+        ["boost-coverage", "boostCoverage"],
+        ["boost-items", "boostItems"]
+      ]
+    ) {
+      root.querySelector(
+        `[data-role="${role}"]`
+      )?.addEventListener(
+        "change",
+
+        event => {
+          this._encounterState[key] =
+            event.currentTarget.type ===
+              "checkbox"
+              ? event.currentTarget.checked
+              : Number(
+                  event.currentTarget.value
+                );
+
+          this.#refreshTotalsUi(
+            root
+          );
+        }
+      );
+    }
+
+    // A rank brings its extras; they can still be changed by hand.
+    root.querySelector(
+      '[data-role="trainer-random-rank"]'
+    )?.addEventListener(
+      "change",
+
+      event => {
+        const rank =
+          getTrainerRank(
+            event.currentTarget.value
+          );
+
+        Object.assign(
+          this._encounterState,
+          {
+            trainerRandomRank:
+              rank.id,
+            boostStats:
+              rank.extras.statBonus ??
+              0,
+            boostCoverage:
+              rank.extras.coverage ===
+                true,
+            boostItems:
+              rank.extras.items ===
+                true
+          }
+        );
+
+        void this.render({
+          force:
+            true
+        });
+      }
+    );
 
     for (
       const button
@@ -2697,7 +2822,13 @@ export class PokemonEncounterPlanner
               partyLevel:
                 party.level,
               partyTeam:
-                party.team
+                party.team,
+              partyWeakTo:
+                party.weakTo,
+              partyPokemon:
+                party.pokemon,
+              partyStrongest:
+                party.strongest
             }
           );
 
@@ -2735,31 +2866,29 @@ export class PokemonEncounterPlanner
     );
 
 
-    root.querySelector(
-      '[data-role="trainer-random-count"]'
-    )?.addEventListener(
-      "change",
+    for (
+      const [
+        role,
+        key
+      ]
+      of [
+        ["trainer-random-count", "trainerRandomCount"],
+        ["trainer-random-on-field", "trainerRandomOnField"]
+      ]
+    ) {
+      root.querySelector(
+        `[data-role="${role}"]`
+      )?.addEventListener(
+        "change",
 
-      event => {
-        const value =
-          clampInteger(
-            event.currentTarget.value,
-            1,
-            6,
-            1
-          );
-
-
-        this._encounterState.trainerRandomCount =
-          value;
-
-
-        event.currentTarget.value =
-          String(
-            value
-          );
-      }
-    );
+        event => {
+          this._encounterState[key] =
+            normalizeTrainerTeamSize(
+              event.currentTarget.value
+            );
+        }
+      );
+    }
 
 
     root.querySelector(
@@ -2781,177 +2910,6 @@ export class PokemonEncounterPlanner
       }
     );
 
-
-    root.querySelector(
-      '[data-role="trainer-random-min-level"]'
-    )?.addEventListener(
-      "change",
-
-      event => {
-        this._encounterState.trainerRandomMinLevel =
-          clampInteger(
-            event.currentTarget.value,
-            1,
-            20,
-            1
-          );
-
-
-        if (
-          this._encounterState.trainerRandomMinLevel >
-          this._encounterState.trainerRandomMaxLevel
-        ) {
-          this._encounterState.trainerRandomMaxLevel =
-            this._encounterState.trainerRandomMinLevel;
-        }
-
-
-        this.#refreshTrainerRandomLevelInputsUi(
-          root
-        );
-
-
-        this.#refreshTrainerRandomCandidateCountUi(
-          root
-        );
-      }
-    );
-
-
-    root.querySelector(
-      '[data-role="trainer-random-max-level"]'
-    )?.addEventListener(
-      "change",
-
-      event => {
-        this._encounterState.trainerRandomMaxLevel =
-          clampInteger(
-            event.currentTarget.value,
-            1,
-            20,
-            5
-          );
-
-
-        if (
-          this._encounterState.trainerRandomMaxLevel <
-          this._encounterState.trainerRandomMinLevel
-        ) {
-          this._encounterState.trainerRandomMinLevel =
-            this._encounterState.trainerRandomMaxLevel;
-        }
-
-
-        this.#refreshTrainerRandomLevelInputsUi(
-          root
-        );
-
-
-        this.#refreshTrainerRandomCandidateCountUi(
-          root
-        );
-      }
-    );
-
-
-    root.querySelector(
-      '[data-role="trainer-random-min-sr"]'
-    )?.addEventListener(
-      "change",
-
-      event => {
-        this._encounterState.trainerRandomMinSr =
-          normalizeOptionalNumberInput(
-            event.currentTarget.value
-          );
-
-
-        const minSr =
-          optionalNumber(
-            this._encounterState
-              .trainerRandomMinSr
-          );
-
-
-        const maxSr =
-          optionalNumber(
-            this._encounterState
-              .trainerRandomMaxSr
-          );
-
-
-        if (
-          minSr != null &&
-          maxSr != null &&
-          minSr >
-            maxSr
-        ) {
-          this._encounterState.trainerRandomMaxSr =
-            this._encounterState
-              .trainerRandomMinSr;
-        }
-
-
-        this.#refreshTrainerRandomSrInputsUi(
-          root
-        );
-
-
-        this.#refreshTrainerRandomCandidateCountUi(
-          root
-        );
-      }
-    );
-
-
-    root.querySelector(
-      '[data-role="trainer-random-max-sr"]'
-    )?.addEventListener(
-      "change",
-
-      event => {
-        this._encounterState.trainerRandomMaxSr =
-          normalizeOptionalNumberInput(
-            event.currentTarget.value
-          );
-
-
-        const minSr =
-          optionalNumber(
-            this._encounterState
-              .trainerRandomMinSr
-          );
-
-
-        const maxSr =
-          optionalNumber(
-            this._encounterState
-              .trainerRandomMaxSr
-          );
-
-
-        if (
-          minSr != null &&
-          maxSr != null &&
-          maxSr <
-            minSr
-        ) {
-          this._encounterState.trainerRandomMinSr =
-            this._encounterState
-              .trainerRandomMaxSr;
-        }
-
-
-        this.#refreshTrainerRandomSrInputsUi(
-          root
-        );
-
-
-        this.#refreshTrainerRandomCandidateCountUi(
-          root
-        );
-      }
-    );
 
     root.querySelector(
       '[data-role="trainer-random-archetype"]'
@@ -3205,6 +3163,40 @@ export class PokemonEncounterPlanner
 
 
     root.querySelectorAll(
+      '[data-role="trainer-on-field"]'
+    ).forEach(
+      select => {
+        select.addEventListener(
+          "change",
+
+          () => {
+            const trainer =
+              this.#getTrainer(
+                select.dataset
+                  .trainerId
+              );
+
+            if (!trainer) {
+              return;
+            }
+
+            trainer.onField =
+              clampInteger(
+                select.value,
+                1,
+                6,
+                1
+              );
+
+            this.#refreshTotalsUi(
+              root
+            );
+          }
+        );
+      }
+    );
+
+    root.querySelectorAll(
       '[data-role="trainer-team-size"]'
     ).forEach(
       select => {
@@ -3311,6 +3303,21 @@ export class PokemonEncounterPlanner
       }
     );
 
+
+    root.querySelector(
+      '[data-role="encounter-optional"]'
+    )?.addEventListener(
+      "change",
+
+      event => {
+        this._encounterState.optional =
+          event.currentTarget.checked;
+
+        this.#refreshTotalsUi(
+          root
+        );
+      }
+    );
 
     root.querySelector(
       '[data-role="encounter-name"]'
@@ -3760,6 +3767,17 @@ export class PokemonEncounterPlanner
           String(
             value
           );
+      }
+    );
+
+    root.querySelector(
+      '[data-action="award-xp"]'
+    )?.addEventListener(
+      "click",
+
+      () => {
+        void this
+          .#awardXp();
       }
     );
 
@@ -4319,9 +4337,11 @@ export class PokemonEncounterPlanner
         "generic",
 
       teamSize:
-        "auto"
-    };
+        "auto",
 
+      onField:
+        1
+    };
 
     this._encounterState.trainers.push(
       trainer
@@ -4494,6 +4514,9 @@ export class PokemonEncounterPlanner
     this._encounterState.name =
       "";
 
+    this._encounterState.optional =
+      false;
+
     this._encounterState.encounterKey =
       null;
 
@@ -4548,7 +4571,10 @@ export class PokemonEncounterPlanner
                     teamSize:
                       normalizeTrainerTeamSize(
                         trainer.teamSize
-                      )
+                      ),
+
+                    onField:
+                      trainer.onField
                   }
                 ]
               )
@@ -4575,6 +4601,10 @@ export class PokemonEncounterPlanner
 
     this._encounterState.name =
       encounter.name;
+
+    this._encounterState.optional =
+      encounter.optional ===
+        true;
 
     this._encounterState.encounterKey =
       encounter.key;
@@ -4635,6 +4665,17 @@ export class PokemonEncounterPlanner
                   existingPreference
                     ?.teamSize ??
                   "auto"
+                ),
+
+              // shortcut: kept for this session like the team size, not saved with the encounter; save it if a
+              // reopened encounter's difficulty matters.
+              onField:
+                clampInteger(
+                  existingPreference
+                    ?.onField,
+                  1,
+                  6,
+                  1
                 )
             };
           }
@@ -4841,15 +4882,14 @@ export class PokemonEncounterPlanner
 
     return prepareEncounterRow({
       row,
-
       database:
         this.database,
-
       language:
         getWorldLanguage(),
-
       encounterType:
-        this._encounterState.type
+        this._encounterState.type,
+      xpContext:
+        this.#xpContext()
     });
   }
 
@@ -5115,6 +5155,81 @@ export class PokemonEncounterPlanner
 
 
   // The party random encounters are measured against: detected when first needed, then editable.
+
+
+  // The species a rival can bring up to a level: their region's, within poke5e's SR cap for a trainer of that level.
+  #trainerPool(
+    maxLevel = rankLevels(
+      this.#party().level,
+      getTrainerRank(
+        this._encounterState
+          .trainerRandomRank
+      )
+    ).max
+  ) {
+    return {
+      region:
+        this._encounterState
+          .trainerRandomRegion,
+
+      maxLevel,
+
+      minSr:
+        null,
+
+      maxSr:
+        getTrainerLevelRule(
+          maxLevel
+        ).maxSr
+    };
+  }
+
+  // The trainer rivals' extras: +1/+2 to their scores, a super effective Move, an item or berry each.
+  #boosts() {
+    return {
+      statBonus:
+        Number(
+          this._encounterState
+            .boostStats
+        ) || 0,
+
+      coverage:
+        this._encounterState
+          .boostCoverage ===
+          true,
+
+      items:
+        this._encounterState
+          .boostItems ===
+          true
+    };
+  }
+
+  #pokemonTypes(
+    pokemonId
+  ) {
+    this._typesById ??=
+      new Map(
+        this.database
+          .pokemon
+          .map(
+            pokemon => [
+              String(
+                pokemon.id
+              ),
+              pokemon.types ??
+                []
+            ]
+          )
+      );
+
+    return this._typesById.get(
+      String(
+        pokemonId
+      )
+    ) ?? [];
+  }
+
   #party() {
     if (!this._encounterState.partySize) {
       const party =
@@ -5128,6 +5243,15 @@ export class PokemonEncounterPlanner
 
       this._encounterState.partyTeam =
         party.team;
+
+      this._encounterState.partyWeakTo =
+        party.weakTo;
+
+      this._encounterState.partyPokemon =
+        party.pokemon;
+
+      this._encounterState.partyStrongest =
+        party.strongest;
     }
 
     return {
@@ -5141,7 +5265,504 @@ export class PokemonEncounterPlanner
 
       team:
         this._encounterState
-          .partyTeam
+          .partyTeam,
+
+      pokemon:
+        this._encounterState
+          .partyPokemon ??
+        [],
+
+      strongest:
+        this._encounterState
+          .partyStrongest ??
+        null,
+
+      // One per player unless changed: those that take part and stay standing share the XP.
+      participants:
+        this._encounterState
+          .partyParticipants ??
+        this._encounterState
+          .partySize
+    };
+  }
+
+  // The rows' difficulty against the party: trainer rivals with their types, Pokémon on the field and extras.
+  #difficulty(
+    rows,
+    encounter = null
+  ) {
+    const party =
+      this.#party();
+
+    const trainerBattle =
+      encounter
+        ? encounter.trainerBattle
+        : this._encounterState.type ===
+          "trainer";
+
+    return encounterDifficulty(
+        party,
+        trainerBattle
+          ? rows.map(
+              row => ({
+                ...row,
+                types:
+                  this.#pokemonTypes(
+                    row.pokemonId
+                  )
+              })
+            )
+          : rows,
+        {
+          boosts:
+            encounter
+              ? {}
+              : this.#boosts(),
+
+          onField:
+            encounter?.onField ??
+            (
+              trainerBattle
+              ? this._encounterState
+                  .trainers
+                  .reduce(
+                    (
+                      total,
+                      trainer
+                    ) =>
+                      total +
+                      Math.min(
+                        trainer.onField ??
+                          1,
+                        countTrainerRowQuantity(
+                          rows.filter(
+                            row =>
+                              row.trainerId ===
+                                trainer.id
+                          )
+                        )
+                      ),
+                    0
+                  )
+              : 0
+            )
+        }
+      );
+  }
+
+  /*
+   * What each Pokémon's XP needs from the whole encounter (null for poke5e's rule as written): with the pace, the
+   * encounter's strength against the party and how many Pokémon share it; with level scaling, the party's level.
+   */
+  #xpContext(
+    rows = null,
+    encounter = null
+  ) {
+    const rules =
+      getEncounterXpRules();
+
+    if (
+      rules.style !==
+        "pace" &&
+      !rules.scaling
+    ) {
+      return null;
+    }
+
+    const party =
+      this.#party();
+
+    const {
+      power,
+      partyPower,
+      weight
+    } =
+      this.#difficulty(
+        rows ??
+        this._encounterState
+          .rows
+          .map(
+            row => ({
+              ...row,
+              level:
+                clampInteger(
+                  row.level,
+                  1,
+                  20,
+                  1
+                ),
+              quantity:
+                clampInteger(
+                  row.quantity,
+                  1,
+                  999,
+                  1
+                )
+            })
+          ),
+        encounter
+      );
+
+    return {
+      ...rules,
+      partyLevel:
+        party.level,
+      participants:
+        party.participants,
+      // A Medium encounter is the party's own strength: one Pokémon per player, or their teams against trainers.
+      partyPower,
+      // Crowd, trainer bonus, types and extras: each Pokémon's XP is its share of the encounter's strength.
+      multiplier:
+        weight
+          ? power / weight
+          : 1
+    };
+  }
+
+  /*
+   * The selected location's saved encounters, as a route: how many are mandatory and optional, and what each kind
+   * gives the players' strongest Pokémon (if it fights all of them, with the party's participants).
+   * shortcut: a saved trainer encounter counts one Pokémon on the field per trainer and no extras (neither is
+   * saved); save them if the route's numbers must match the planner's exactly.
+   */
+  #routeSummary(
+    encounters
+  ) {
+    const party =
+      this.#party();
+
+    if (
+      !encounters.length ||
+      !party.strongest
+    ) {
+      return "";
+    }
+
+    const query =
+      new EncounterQueryService();
+
+    const totals = {
+      mandatory: {
+        count: 0,
+        xp: 0
+      },
+      optional: {
+        count: 0,
+        xp: 0
+      }
+    };
+
+    for (const summary of encounters) {
+      const encounter =
+        query.get(
+          summary.key
+        );
+
+      if (!encounter) {
+        continue;
+      }
+
+      const trainerBattle =
+        encounter.type ===
+          "trainer";
+
+      const rows =
+        (
+          trainerBattle
+            ? encounter.trainers.flatMap(
+                trainer =>
+                  trainer.pokemon.map(
+                    entry => ({
+                      ...entry,
+                      trainerId:
+                        trainer.id
+                    })
+                  )
+              )
+            : encounter.pokemon
+        )
+          .map(
+            row =>
+              prepareEncounterRow({
+                row,
+                database:
+                  this.database,
+                language:
+                  getWorldLanguage(),
+                encounterType:
+                  encounter.type
+              })
+          )
+          .filter(Boolean);
+
+      const kind =
+        encounter.optional
+          ? totals.optional
+          : totals.mandatory;
+
+      kind.count += 1;
+
+      kind.xp +=
+        encounterShare(
+          this.#xpRows(
+            rows
+          ),
+          party.strongest.level,
+          party.participants,
+          {
+            context:
+              this.#xpContext(
+                rows,
+                {
+                  trainerBattle,
+                  onField:
+                    trainerBattle
+                      ? encounter.trainers.length
+                      : 0
+                }
+              ),
+            optional:
+              encounter.optional
+          }
+        );
+    }
+
+    const percent = xp =>
+      `${Math.round(levelProgress(party.strongest.xp, xp).share * 100)} %`;
+
+    const end =
+      levelProgress(
+        party.strongest.xp,
+        totals.mandatory.xp +
+          totals.optional.xp
+      ).after;
+
+    return `
+      <p
+        class="poke5e-encounter-planner__route-summary"
+        title="Lo que gana ${escapeAttribute(party.strongest.name)} (Nv. ${party.strongest.level}) si combate en todos, con ${party.participants} Pokémon que participan."
+      >
+        <i class="fa-solid fa-route" aria-hidden="true"></i>
+        ${totals.mandatory.count} obligatorio(s): +${percent(totals.mandatory.xp)} ·
+        ${totals.optional.count} opcional(es): +${percent(totals.optional.xp)} ·
+        con todos, Nv. ${end.level} (${Math.round(end.progress * 100)} %)
+      </p>`;
+  }
+
+  #xpRows(
+    rows
+  ) {
+    return rows.map(
+      row => ({
+        level:
+          row.level,
+        sr:
+          row.pokemon.sr,
+        quantity:
+          row.quantity
+      })
+    );
+  }
+
+  // An optional encounter's suggested loot: an item or berry, and a TM one of the rivals' species can learn.
+  #suggestLoot(
+    rows
+  ) {
+    const language =
+      getWorldLanguage();
+
+    const item =
+      selectEncounterItem({
+        items:
+          this.database.items,
+        chancePercent:
+          100,
+        categoryWeights: {
+          berry:
+            1,
+          "held-item":
+            1,
+          medicine:
+            1,
+          pokeball:
+            0
+        }
+      });
+
+    const tms =
+      rows.flatMap(
+        row =>
+          row.pokemon
+            .learnset
+            ?.tms ??
+          []
+      );
+
+    const tm =
+      tms[
+        Math.floor(
+          Math.random() *
+          tms.length
+        )
+      ];
+
+    return [
+      item &&
+        localized(
+          item.name,
+          language,
+          item.id
+        ),
+      tm &&
+        `MT ${tm.id}: ${resolveMoveNames([tm.moveId], this.database.moves, language)[0] ?? tm.moveId}`
+    ].filter(Boolean);
+  }
+
+  async #awardXp() {
+    const rows =
+      this._encounterState.rows
+        .map(
+          row =>
+            this.#prepareRow(
+              row
+            )
+        )
+        .filter(Boolean);
+
+    if (!rows.length) {
+      return;
+    }
+
+    const optional =
+      this._encounterState
+        .optional ===
+        true;
+
+    await awardEncounterXp({
+      rows:
+        this.#xpRows(
+          rows
+        ),
+      context:
+        this.#xpContext(),
+      optional,
+      name:
+        this._encounterState.name.trim() ||
+        "Encuentro",
+      trainers:
+        this._encounterState.type ===
+          "trainer"
+          ? this._encounterState
+              .trainers
+              .length
+          : 0,
+      loot:
+        optional
+          ? this.#suggestLoot(
+              rows
+            )
+          : []
+    });
+  }
+
+  /*
+   * What the encounter is worth to the players' strongest Pokémon, if they defeat every rival: its total XP divided
+   * among the Pokémon that take part (and stay standing), as a share of a level, and how many like it make a level.
+   */
+  #describeProgress(
+    rows
+  ) {
+    const party =
+      this.#party();
+
+    if (!rows.length) {
+      return {
+        label:
+          "—",
+        title:
+          "Añade Pokémon para ver cuánto avanza el Pokémon más fuerte de los jugadores."
+      };
+    }
+
+    if (!party.strongest) {
+      return {
+        label:
+          "—",
+        title:
+          "Detecta el grupo para conocer al Pokémon más fuerte de los jugadores."
+      };
+    }
+
+    const context =
+      this.#xpContext();
+
+    const total =
+      rows.reduce(
+        (
+          sum,
+          row
+        ) =>
+          sum +
+          calculatePokemonEncounterXp({
+            level:
+              row.level,
+            sr:
+              row.pokemon.sr,
+            context
+          }).defeated *
+          row.quantity,
+        0
+      );
+
+    // Its own share: in an optional encounter (catch-up XP), less than an even split.
+    const gained =
+      encounterShare(
+        this.#xpRows(
+          rows
+        ),
+        party.strongest.level,
+        party.participants,
+        {
+          context,
+          optional:
+            this._encounterState
+              .optional ===
+              true
+        }
+      );
+
+    const {
+      before,
+      after,
+      share,
+      toLevel
+    } =
+      levelProgress(
+        party.strongest.xp,
+        gained
+      );
+
+    const percent = value =>
+      `${Math.round(value * 100)} %`;
+
+    return {
+      label:
+        `+${percent(share)}`,
+      title:
+        `${party.strongest.name} (Nv. ${before.level}, ${percent(before.progress)}): ` +
+        `${formatNumber(total)} XP si se derrota a todos ÷ ${party.participants} Pokémon que participan = ` +
+        `${formatNumber(gained)} XP` +
+        (
+          this._encounterState.optional
+            ? " (opcional: XP de recuperación según su nivel)"
+            : ""
+        ) +
+        ` → Nv. ${after.level}, ${percent(after.progress)}.` +
+        (
+          toLevel
+            ? ` Con ${toLevel} encuentro(s) así sube de nivel.`
+            : ""
+        )
     };
   }
 
@@ -5172,30 +5793,21 @@ export class PokemonEncounterPlanner
     const {
       tier,
       power,
-      partyPower
+      partyPower,
+      matchup
     } =
-      encounterDifficulty(
-        party,
-        rows,
-        {
-          trainers:
-            trainerBattle
-              ? Math.max(
-                  1,
-                  new Set(
-                    rows.map(
-                      row =>
-                        row.trainerId
-                    )
-                  ).size
-                )
-              : 0
-        }
+      this.#difficulty(
+        rows
       );
 
     const group =
       trainerBattle
-        ? `${party.size} jugador(es), nivel ${party.level}, ${party.team} Pokémon cada uno`
+        ? `${party.size} jugador(es), nivel ${party.level}, ${party.team} Pokémon cada uno` +
+          (
+            party.pokemon.length
+              ? `; tipos ×${matchup.toFixed(2)}`
+              : "; detecta el grupo para contar los tipos"
+          )
         : `${party.size} jugador(es), nivel ${party.level}`;
 
     return {
@@ -5206,7 +5818,12 @@ export class PokemonEncounterPlanner
         tier.label,
 
       title:
-        `Fuerza ${formatNumber(power)} contra ${formatNumber(partyPower)} del grupo (${group}). Una pelea pareja es Media.`
+        `Fuerza ${formatNumber(power)} contra ${formatNumber(partyPower)} del grupo (${group}). ` +
+        (
+          trainerBattle
+            ? "Un combate parejo, con tantos Pokémon en campo como los jugadores, es Difícil."
+            : "Una pelea pareja es Media."
+        )
     };
   }
 
@@ -5276,6 +5893,26 @@ export class PokemonEncounterPlanner
       this.#describeDifficulty(
         rows
       );
+
+    const progress =
+      this.#describeProgress(
+        rows
+      );
+
+    const progressStatus =
+      root.querySelector(
+        '[data-role="progress-status"]'
+      );
+
+    if (progressStatus) {
+      progressStatus.title =
+        progress.title;
+
+      progressStatus.querySelector(
+        '[data-total="progress"]'
+      ).textContent =
+        progress.label;
+    }
 
     const difficultyStatus =
       root.querySelector(
@@ -6206,69 +6843,6 @@ export class PokemonEncounterPlanner
     });
   }
 
-  #refreshTrainerRandomLevelInputsUi(
-    root
-  ) {
-    const minInput =
-      root.querySelector(
-        '[data-role="trainer-random-min-level"]'
-      );
-
-
-    const maxInput =
-      root.querySelector(
-        '[data-role="trainer-random-max-level"]'
-      );
-
-
-    if (minInput) {
-      minInput.value =
-        String(
-          this._encounterState
-            .trainerRandomMinLevel
-        );
-    }
-
-
-    if (maxInput) {
-      maxInput.value =
-        String(
-          this._encounterState
-            .trainerRandomMaxLevel
-        );
-    }
-  }
-
-
-  #refreshTrainerRandomSrInputsUi(
-    root
-  ) {
-    const minSelect =
-      root.querySelector(
-        '[data-role="trainer-random-min-sr"]'
-      );
-
-
-    const maxSelect =
-      root.querySelector(
-        '[data-role="trainer-random-max-sr"]'
-      );
-
-
-    if (minSelect) {
-      minSelect.value =
-        this._encounterState
-          .trainerRandomMinSr;
-    }
-
-
-    if (maxSelect) {
-      maxSelect.value =
-        this._encounterState
-          .trainerRandomMaxSr;
-    }
-  }
-
   #setTrainerMixedArchetypes(
     root,
     archetypeIds
@@ -6427,15 +7001,7 @@ export class PokemonEncounterPlanner
 
     if (metaElement) {
       metaElement.textContent =
-        (
-          `Equipo automático: ` +
-          `${archetype.teamSize.min}–${archetype.teamSize.max} Pokémon.` +
-          (
-            archetype.ace
-              ? " Incluye un Ace."
-              : ""
-          )
-        );
+        "";
     }
   }
 
@@ -6448,21 +7014,7 @@ export class PokemonEncounterPlanner
         catalog:
           this.randomCatalog,
 
-        region:
-          this._encounterState
-            .trainerRandomRegion,
-
-        maxLevel:
-          this._encounterState
-            .trainerRandomMaxLevel,
-
-        minSr:
-          this._encounterState
-            .trainerRandomMinSr,
-
-        maxSr:
-          this._encounterState
-            .trainerRandomMaxSr
+        ...this.#trainerPool()
       });
 
 
@@ -6515,21 +7067,7 @@ export class PokemonEncounterPlanner
         catalog:
           this.randomCatalog,
 
-        region:
-          this._encounterState
-            .trainerRandomRegion,
-
-        maxLevel:
-          this._encounterState
-            .trainerRandomMaxLevel,
-
-        minSr:
-          this._encounterState
-            .trainerRandomMinSr,
-
-        maxSr:
-          this._encounterState
-            .trainerRandomMaxSr
+        ...this.#trainerPool()
       });
 
 
@@ -6646,57 +7184,50 @@ export class PokemonEncounterPlanner
     }
 
 
-    const minLevel =
-      clampInteger(
-        this._encounterState
-          .trainerRandomMinLevel,
-        1,
-        20,
-        1
-      );
-
+    // A reroll keeps the team's strength: its levels, or the party's when it has none.
+    const levels =
+      this._encounterState
+        .rows
+        .filter(
+          row =>
+            row.trainerId ===
+              trainer.id
+        )
+        .map(
+          row =>
+            clampInteger(
+              row.level,
+              1,
+              20,
+              1
+            )
+        );
 
     const maxLevel =
-      clampInteger(
-        this._encounterState
-          .trainerRandomMaxLevel,
-        1,
-        20,
-        5
-      );
+      levels.length
+        ? Math.max(
+            ...levels
+          )
+        : this.#party().level;
 
-
-    if (
-      minLevel >
-        maxLevel
-    ) {
-      ui.notifications.warn(
-        "El nivel mínimo no puede ser mayor que el nivel máximo."
-      );
-
-      return;
-    }
-
+    const minLevel =
+      levels.length
+        ? Math.min(
+            ...levels
+          )
+        : Math.max(
+            1,
+            maxLevel - 3
+          );
 
     try {
       const candidates =
         this.randomCatalog
-          .trainerCandidates({
-            region:
-              this._encounterState
-                .trainerRandomRegion,
-
-            maxLevel,
-
-            minSr:
-              this._encounterState
-                .trainerRandomMinSr,
-
-            maxSr:
-              this._encounterState
-                .trainerRandomMaxSr
-          });
-
+          .trainerCandidates(
+            this.#trainerPool(
+              maxLevel
+            )
+          );
 
       const currentRows =
         this._encounterState
@@ -6912,76 +7443,83 @@ export class PokemonEncounterPlanner
     }
 
 
-    const minLevel =
-      clampInteger(
+    const party =
+      this.#party();
+
+    const rank =
+      getTrainerRank(
         this._encounterState
-          .trainerRandomMinLevel,
-        1,
-        20,
-        1
+          .trainerRandomRank
       );
 
-
-    const maxLevel =
-      clampInteger(
-        this._encounterState
-          .trainerRandomMaxLevel,
-        1,
-        20,
-        5
+    const levels =
+      rankLevels(
+        party.level,
+        rank
       );
 
+    const boosts =
+      this.#boosts();
 
-    if (
-      minLevel >
-        maxLevel
-    ) {
-      ui.notifications.warn(
-        "El nivel mínimo no puede ser mayor que el nivel máximo."
+    const pick = (
+      [
+        min,
+        max
+      ]
+    ) =>
+      min +
+      Math.floor(
+        Math.random() *
+        (max - min + 1)
       );
 
-      return;
-    }
+    // "auto" takes the rank's range; otherwise the number chosen.
+    const chosen = (
+      value,
+      range
+    ) =>
+      value === "auto"
+        ? pick(
+            range
+          )
+        : clampInteger(
+            value,
+            1,
+            6,
+            1
+          );
 
+    let failure =
+      null;
 
     try {
       const candidates =
         this.randomCatalog
-          .trainerCandidates({
-            region:
-              this._encounterState
-                .trainerRandomRegion,
+          .trainerCandidates(
+            this.#trainerPool(
+              levels.max
+            )
+          );
 
-            maxLevel,
-
-            minSr:
-              this._encounterState
-                .trainerRandomMinSr,
-
-            maxSr:
-              this._encounterState
-                .trainerRandomMaxSr
-          });
-
-
-      const trainerOptions = {
-          candidates,
-
-          trainerCount:
-            this._encounterState
-              .trainerRandomCount,
-
+      // One roll: team, Pokémon on the field and (for Gym Leaders and the Elite Four) one type for every trainer.
+      const roll = trainerCount => {
+        const options = {
+          trainerCount,
           pokemonPerTrainer:
-            this._encounterState
-              .trainerRandomPokemonCount,
-
-          minLevel,
-          maxLevel,
-
+            String(
+              chosen(
+                this._encounterState
+                  .trainerRandomPokemonCount,
+                rank.team
+              )
+            ),
+          minLevel:
+            levels.min,
+          maxLevel:
+            levels.max,
           archetypeId:
             this._encounterState
               .trainerRandomArchetype,
-
           archetypeIds:
             this._encounterState
               .trainerRandomArchetype ===
@@ -6989,34 +7527,194 @@ export class PokemonEncounterPlanner
               ? this._encounterState
                   .trainerRandomMixedArchetypes
               : []
+        };
+
+        const typed =
+          rank.monotype
+            ? monotypePool(
+                candidates,
+                Number(
+                  options.pokemonPerTrainer
+                )
+              )
+            : candidates;
+
+        let generated;
+
+        try {
+          generated =
+            generateRandomTrainerEncounter({
+              ...options,
+              candidates:
+                typed
+            });
+        } catch (
+          error
+        ) {
+          failure =
+            error;
+
+          if (typed === candidates) {
+            return [];
+          }
+
+          try {
+            generated =
+              generateRandomTrainerEncounter({
+                ...options,
+                candidates
+              });
+          } catch (
+            fallbackError
+          ) {
+            failure =
+              fallbackError;
+
+            return [];
+          }
+        }
+
+        const onField =
+          chosen(
+            this._encounterState
+              .trainerRandomOnField,
+            rank.onField
+          );
+
+        return generated.map(
+          (
+            trainer,
+            trainerIndex
+          ) => withAce(
+            {
+              ...trainer,
+              onField:
+                Math.min(
+                  onField,
+                  trainer.pokemon.length
+                )
+            },
+            // The boss's ace only: the others are their gym helpers.
+            trainerIndex === 0
+              ? levels.ace
+              : null,
+            pick
+          )
+        );
       };
 
-      const party =
-        this.#party();
+      const measure = generated =>
+        encounterDifficulty(
+          party,
+          generated.flatMap(
+            trainer =>
+              trainer.pokemon.map(
+                pokemon => ({
+                  ...pokemon,
+                  types:
+                    this.#pokemonTypes(
+                      pokemon.pokemonId
+                    )
+                })
+              )
+          ),
+          {
+            boosts,
 
-      const generatedTrainers =
-        rollForDifficulty(
-          () =>
-            generateRandomTrainerEncounter(
-              trainerOptions
-            ),
-          generated =>
-            encounterDifficulty(
-              party,
-              generated.flatMap(
-                trainer =>
-                  trainer.pokemon
-              ),
-              {
-                trainers:
-                  generated.length
-              }
-            ),
-          this._encounterState
-            .trainerRandomDifficulty,
-          "Prueba otro rango de niveles, más Entrenadores o más Pokémon por Entrenador."
+            onField:
+              Math.max(
+                1,
+                generated.reduce(
+                  (
+                    total,
+                    trainer
+                  ) =>
+                    total +
+                    trainer.onField,
+                  0
+                )
+              )
+          }
         );
 
+      // Fewest trainers first: helpers join only when the rival alone can't reach the rank's difficulty.
+      const trainerCounts =
+        this._encounterState
+          .trainerRandomCount ===
+          "auto"
+          ? Array.from(
+              {
+                length:
+                  rank.trainers[1] -
+                  rank.trainers[0] +
+                  1
+              },
+              (
+                _,
+                index
+              ) =>
+                rank.trainers[0] +
+                index
+            )
+          : [
+              chosen(
+                this._encounterState
+                  .trainerRandomCount,
+                rank.trainers
+              )
+            ];
+
+      let best =
+        null;
+
+      for (const trainerCount of trainerCounts) {
+        const attempt =
+          generateForDifficulty(
+            () =>
+              roll(
+                trainerCount
+              ),
+            measure,
+            rank.target,
+            100
+          );
+
+        if (
+          !best ||
+          attempt.distance <
+            best.distance
+        ) {
+          best =
+            attempt;
+        }
+
+        if (best.distance === 0) {
+          break;
+        }
+      }
+
+      const generatedTrainers =
+        best.result;
+
+      if (!generatedTrainers.length) {
+        throw failure ??
+          new Error(
+            "No hay especies compatibles para estos Entrenadores."
+          );
+      }
+
+      if (best.distance > 0) {
+        const wanted =
+          DIFFICULTIES.find(
+            entry =>
+              entry.id ===
+                rank.target
+          )?.label;
+
+        ui.notifications.warn(
+          `${rank.label} apunta a ${wanted} y con este grupo queda ${best.tier.label}. Prueba fijar más o menos Pokémon por Entrenador o en campo.`
+        );
+      }
 
       /*
       * Conservamos también los IDs actuales como
@@ -7101,7 +7799,9 @@ export class PokemonEncounterPlanner
               normalizeTrainerTeamSize(
                 this._encounterState
                   .trainerRandomPokemonCount
-              )
+              ),
+            onField:
+              generatedTrainer.onField
           });
 
 
@@ -7541,7 +8241,22 @@ export class PokemonEncounterPlanner
             itemPolicy:
               getPlannerItemPolicy(
                 this._encounterState
-              )
+              ),
+
+            boosts: {
+              statBonus:
+                this.#boosts().statBonus,
+
+              coverageTypes:
+                this.#boosts().coverage
+                  ? this._encounterState
+                      .partyWeakTo ??
+                    []
+                  : [],
+
+              guaranteedItems:
+                this.#boosts().items
+            }
           }
         );
 
@@ -7818,6 +8533,7 @@ function renderSavedEncounterOptions(
           `value="${escapeAttribute(encounter.key)}"` +
           `${selected}>` +
           `${escapeHtml(encounter.name)}` +
+          `${encounter.optional ? " (opcional)" : ""}` +
           `</option>`
         );
       }
@@ -8320,18 +9036,29 @@ function renderDifficultyControls({
   role,
   difficulty,
   party,
-  trainerBattle
+  trainerBattle,
+  boosts = {},
+  weakTo = []
 }) {
+  // Trainer battles pick the rival's rank (and show the difficulty it aims at); wild ones a difficulty.
+  const targetLabel = entry =>
+    entry.target
+      ? ` · ${DIFFICULTIES.find(tier => tier.id === entry.target)?.label}`
+      : "";
+
   const options =
-    DIFFICULTIES
-      .filter(
-        entry =>
-          entry.id !==
-            "trivial"
-      )
+    (
+      trainerBattle
+        ? TRAINER_RANKS
+        : DIFFICULTIES.filter(
+            entry =>
+              entry.id !==
+                "trivial"
+          )
+    )
       .map(
         entry =>
-          `<option value="${entry.id}"${entry.id === difficulty ? " selected" : ""}>${entry.label}</option>`
+          `<option value="${entry.id}"${entry.id === difficulty ? " selected" : ""}>${entry.label}${targetLabel(entry)}</option>`
       )
       .join("");
 
@@ -8354,6 +9081,8 @@ function renderDifficultyControls({
           >
         </label>`;
 
+
+
   return `
     <div
       class="
@@ -8365,16 +9094,18 @@ function renderDifficultyControls({
       <label class="poke5e-encounter-planner__difficulty-select">
         <span>
           <i
-            class="fa-solid fa-skull"
+            class="fa-solid ${trainerBattle ? "fa-ranking-star" : "fa-skull"}"
             aria-hidden="true"
           ></i>
-          Dificultad
+          ${trainerBattle ? "Rango del rival" : "Dificultad"}
         </span>
 
         <select data-role="${role}">
-          <option value=""${difficulty ? "" : " selected"}>
-            Cualquiera
-          </option>
+          ${
+            trainerBattle
+              ? ""
+              : `<option value=""${difficulty ? "" : " selected"}>Cualquiera</option>`
+          }
           ${options}
         </select>
       </label>
@@ -8382,6 +9113,7 @@ function renderDifficultyControls({
       ${number("party-size", "Jugadores", party.size, 12)}
       ${number("party-level", "Nivel del grupo", party.level, 20)}
       ${trainerBattle ? number("party-team", "Pokémon / jugador", party.team, 6) : ""}
+      ${number("party-participants", "Pokémon que participan", party.participants, 24)}
 
       <button
         type="button"
@@ -8397,7 +9129,160 @@ function renderDifficultyControls({
         Detectar grupo
       </button>
 
+      ${trainerBattle ? renderTrainerExtras({ boosts, weakTo }) : ""}
+
     </div>`;
+}
+
+// The trainer's ace, at the rank's ace level: the one the archetype chose, or else its last Pokémon.
+function withAce(
+  trainer,
+  aceLevels,
+  pick
+) {
+  if (!aceLevels) {
+    return trainer;
+  }
+
+  const marked =
+    trainer.pokemon.findIndex(
+      pokemon =>
+        pokemon.ace
+    );
+
+  const aceIndex =
+    marked >= 0
+      ? marked
+      : trainer.pokemon.length - 1;
+
+  return {
+    ...trainer,
+    pokemon:
+      trainer.pokemon.map(
+        (
+          pokemon,
+          index
+        ) =>
+          index ===
+            aceIndex
+            ? {
+                ...pokemon,
+                level:
+                  pick(
+                    aceLevels
+                  ),
+                ace:
+                  true
+              }
+            : pokemon
+      )
+  };
+}
+
+// Candidates of one type with enough species for a team: a random one of those types, or all when none has.
+function monotypePool(
+  candidates,
+  teamSize
+) {
+  const counts =
+    new Map();
+
+  for (const pokemon of candidates) {
+    for (const type of pokemon.types ?? []) {
+      counts.set(
+        type,
+        (counts.get(type) ?? 0) + 1
+      );
+    }
+  }
+
+  const types =
+    [
+      ...counts
+    ]
+      .filter(
+        ([, count]) =>
+          count >=
+            teamSize
+      )
+      .map(
+        ([type]) =>
+          type
+      );
+
+  if (!types.length) {
+    return candidates;
+  }
+
+  const type =
+    types[
+      Math.floor(
+        Math.random() *
+        types.length
+      )
+    ];
+
+  return candidates.filter(
+    pokemon =>
+      (pokemon.types ?? [])
+        .includes(
+          type
+        )
+  );
+}
+
+// The trainer strip's second row: a special encounter and the rivals' extras.
+function renderTrainerExtras({
+  boosts,
+  weakTo
+}) {
+  const toggle = (
+    toggleRole,
+    checked,
+    label,
+    hint
+  ) => `
+        <label class="poke5e-encounter-planner__toggle">
+          <input
+            type="checkbox"
+            data-role="${toggleRole}"
+            ${checked ? " checked" : ""}
+          >
+
+          <span>
+            <strong>${label}</strong>
+            <small>${hint}</small>
+          </span>
+        </label>`;
+
+  return `
+      <div class="poke5e-encounter-planner__difficulty-extras">
+
+
+        <label class="poke5e-encounter-planner__difficulty-stats">
+          Características
+
+          <select data-role="boost-stats">
+            ${[0, 1, 2].map(bonus => `<option value="${bonus}"${bonus === boosts.statBonus ? " selected" : ""}>+${bonus}</option>`).join("")}
+          </select>
+        </label>
+
+        ${toggle(
+          "boost-coverage",
+          boosts.coverage,
+          "Cobertura súper eficaz",
+          weakTo.length
+            ? "Un Move súper eficaz contra el equipo de los jugadores, si lo aprende."
+            : "Detecta el grupo para conocer los tipos de sus Pokémon."
+        )}
+
+        ${toggle(
+          "boost-items",
+          boosts.items,
+          "Objetos garantizados",
+          "Cada Pokémon lleva un objeto equipado o una baya."
+        )}
+      </div>`;
 }
 
 // The players' party, or 4 players at level 5 with 3 Pokémon when there are no player trainers with Pokémon yet.
@@ -8431,6 +9316,15 @@ function detectPartyOrDefault() {
 
     team:
       3,
+
+    weakTo:
+      [],
+
+    pokemon:
+      [],
+
+    strongest:
+      null,
 
     detected:
       false
@@ -8587,20 +9481,18 @@ function renderTrainerRandomControls({
   regions,
   region,
   trainerCount,
+  onField,
   pokemonCount,
-  minLevel,
-  maxLevel,
-  srValues,
-  minSr,
-  maxSr,
   candidateCount,
   archetypeGroups,
   archetype,
   archetypeId,
   mixedArchetypeIds,
   language,
-  difficulty,
+  rank,
   party,
+  boosts,
+  weakTo,
   visible
 }) {
   const regionOptions =
@@ -8623,21 +9515,6 @@ function renderTrainerRandomControls({
       pokemonCount
     );
 
-
-  const minSrOptions =
-    renderRandomSrOptions(
-      srValues,
-      minSr,
-      "Sin mínimo"
-    );
-
-
-  const maxSrOptions =
-    renderRandomSrOptions(
-      srValues,
-      maxSr,
-      "Sin máximo"
-    );
 
   const isMixed =
     archetypeId ===
@@ -8665,10 +9542,7 @@ function renderTrainerRandomControls({
         );
 
 
-  const automaticSize =
-    isMixed
-      ? "según arquetipo"
-      : `${archetype.teamSize.min}–${archetype.teamSize.max}`;
+
 
 
   return `
@@ -8722,14 +9596,18 @@ function renderTrainerRandomControls({
         <label>
           Entrenadores
 
-          <input
-            type="number"
-            data-role="trainer-random-count"
-            min="1"
-            max="6"
-            step="1"
-            value="${trainerCount}"
-          >
+          <select data-role="trainer-random-count">
+            ${renderTrainerPokemonCountOptions(trainerCount)}
+          </select>
+        </label>
+
+
+        <label title="Pokémon que cada Entrenador tiene a la vez en el campo. Automático: 1 o 2, o de 2 a 6 en un encuentro especial.">
+          En campo / Entrenador
+
+          <select data-role="trainer-random-on-field">
+            ${renderTrainerPokemonCountOptions(onField)}
+          </select>
         </label>
 
 
@@ -8738,52 +9616,6 @@ function renderTrainerRandomControls({
 
           <select data-role="trainer-random-pokemon-count">
             ${pokemonCountOptions}
-          </select>
-        </label>
-
-
-        <label>
-          Nivel mínimo
-
-          <input
-            type="number"
-            data-role="trainer-random-min-level"
-            min="1"
-            max="20"
-            step="1"
-            value="${minLevel}"
-          >
-        </label>
-
-
-        <label>
-          Nivel máximo
-
-          <input
-            type="number"
-            data-role="trainer-random-max-level"
-            min="1"
-            max="20"
-            step="1"
-            value="${maxLevel}"
-          >
-        </label>
-
-
-        <label>
-          SR mínimo
-
-          <select data-role="trainer-random-min-sr">
-            ${minSrOptions}
-          </select>
-        </label>
-
-
-        <label>
-          SR máximo
-
-          <select data-role="trainer-random-max-sr">
-            ${maxSrOptions}
           </select>
         </label>
 
@@ -8817,11 +9649,14 @@ function renderTrainerRandomControls({
 
       ${renderDifficultyControls({
         role:
-          "trainer-random-difficulty",
-        difficulty,
+          "trainer-random-rank",
+        difficulty:
+          rank,
         party,
         trainerBattle:
-          true
+          true,
+        boosts,
+        weakTo
       })}
 
       <div
@@ -8903,15 +9738,7 @@ function renderTrainerRandomControls({
                     ? `${mixedArchetypeIds.length} arquetipo(s) permitido(s).`
                     : ""
                 )
-              : (
-                  `Equipo automático: ` +
-                  `${escapeHtml(automaticSize)} Pokémon.` +
-                  (
-                    archetype.ace
-                      ? " Incluye un Ace."
-                      : ""
-                  )
-                )
+              : ""
           }
         </span>
       </div>
@@ -9643,6 +10470,28 @@ function renderTrainerControls({
                       </label>
 
 
+                      <label title="Pokémon que este Entrenador tiene a la vez en el campo.">
+                        En campo
+
+                        <select
+                          data-role="trainer-on-field"
+                          data-trainer-id="${escapeAttribute(
+                            trainer.id
+                          )}"
+                        >
+                          ${
+                            [1, 2, 3, 4, 5, 6]
+                              .map(
+                                count =>
+                                  `<option value="${count}"${count === (trainer.onField ?? 1) ? " selected" : ""}>${count}</option>`
+                              )
+                              .join("")
+                          }
+                        </select>
+                      </label>
+
+
+
                       <button
                         type="button"
                         class="poke5e-encounter-planner__trainer-reroll"
@@ -10236,10 +11085,11 @@ function buildEncounterDefinition(
   const base = {
     key:
       state.encounterKey,
-
     type:
       state.type,
-
+    optional:
+      state.optional ===
+        true,
     location,
     name
   };

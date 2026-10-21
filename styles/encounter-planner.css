@@ -1369,6 +1369,7 @@ input[type="number"] {
     minmax(140px, 1.4fr)
     82px
     105px
+    120px
     auto;
 
   align-items:
@@ -1404,12 +1405,52 @@ input[type="number"] {
     82px
     105px
     120px
+    120px
     auto;
 }
 
 .poke5e-encounter-planner__difficulty-bar
 input[type="number"],
 .poke5e-encounter-planner__difficulty-bar
+select {
+  width:
+    100%;
+}
+
+/* Trainer battles: a special encounter and the rivals' extras, under the party. */
+.poke5e-encounter-planner__difficulty-extras {
+  display:
+    grid;
+
+  grid-column:
+    1 / -1;
+
+  grid-template-columns:
+    minmax(0, 1.3fr)
+    90px
+    minmax(0, 1.3fr)
+    minmax(0, 1.1fr);
+
+  align-items:
+    stretch;
+
+  gap:
+    8px;
+
+  padding-top:
+    8px;
+
+  border-top:
+    1px dashed
+    rgba(215, 91, 78, 0.2);
+}
+
+.poke5e-encounter-planner__difficulty-stats {
+  justify-content:
+    end;
+}
+
+.poke5e-encounter-planner__difficulty-stats
 select {
   width:
     100%;
@@ -1483,9 +1524,20 @@ span {
   }
 }
 
+@media (max-width: 900px) {
+  .poke5e-encounter-planner__difficulty-extras {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+}
+
 @media (max-width: 620px) {
   .poke5e-encounter-planner__difficulty-bar,
-  .poke5e-encounter-planner__difficulty-bar--trainer {
+  .poke5e-encounter-planner__difficulty-bar--trainer,
+  .poke5e-encounter-planner__difficulty-extras {
     grid-template-columns:
       1fr;
   }
@@ -1510,7 +1562,7 @@ span {
 
   grid-template-columns:
     repeat(
-      4,
+      5,
       minmax(0, 1fr)
     );
 
@@ -2245,6 +2297,7 @@ i {
   grid-template-columns:
     minmax(130px, 1fr)
     105px
+    64px
     auto;
 
   align-items:
@@ -4784,7 +4837,7 @@ i {
 
   grid-template-columns:
     repeat(
-      5,
+      6,
       minmax(0, 1fr)
     );
 
@@ -4920,6 +4973,15 @@ i,
 strong {
   color:
     var(--encounter-gold);
+}
+
+/* The strongest player Pokémon's progress from the encounter. */
+.poke5e-encounter-planner__status-item--progress
+i,
+.poke5e-encounter-planner__status-item--progress
+strong {
+  color:
+    var(--encounter-blue);
 }
 
 /* The difficulty, coloured by tier: trivial and easy calm, medium gold, hard and deadly red. */
@@ -5467,6 +5529,7 @@ input[type="number"] {
 
   grid-template-columns:
     minmax(0, 1fr)
+    auto
     auto;
 
   align-items:
@@ -5512,6 +5575,34 @@ button[data-action="generate"] {
 
   min-height:
     38px;
+}
+
+/* Repartir XP: next to Generar, gold like the rewards, quieter than the main action. */
+.poke5e-encounter-planner__footer
+button[data-action="award-xp"] {
+  min-height:
+    38px;
+
+  padding:
+    7px 14px;
+
+  border-color:
+    rgba(217, 169, 28, 0.6);
+
+  background:
+    rgba(217, 169, 28, 0.14);
+
+  color:
+    var(--encounter-gold);
+
+  white-space:
+    nowrap;
+}
+
+.poke5e-encounter-planner__footer
+button[data-action="award-xp"]:hover:not(:disabled) {
+  background:
+    rgba(217, 169, 28, 0.26);
 }
 
 /* ============================================================
@@ -5681,11 +5772,6 @@ button[data-action="generate"] {
         minmax(0, 1fr)
       );
   }
-
-  .poke5e-encounter-planner__status-item--difficulty {
-    grid-column:
-      1 / -1;
-  }
 }
 
 
@@ -5698,7 +5784,9 @@ button[data-action="generate"] {
 
 
   .poke5e-encounter-planner__footer
-  button[data-action="generate"] {
+  button[data-action="generate"],
+  .poke5e-encounter-planner__footer
+  button[data-action="award-xp"] {
     width:
       100%;
   }
@@ -5711,4 +5799,152 @@ button[data-action="generate"] {
     grid-template-columns:
       1fr;
   }
+}
+
+/* The selected location's route: mandatory and optional encounters, and what they give the strongest Pokémon. */
+.poke5e-encounter-planner__route-summary {
+  margin:
+    8px 0 0;
+
+  font-size:
+    12px;
+
+  color:
+    var(--encounter-muted);
+}
+
+
+/* ============================================================
+ * REPARTIR XP (diálogo)
+ * ============================================================ */
+
+.poke5e-xp-award {
+  --award-panel: #242d31;
+  --award-panel-alt: #303a3f;
+  --award-border: rgba(233, 225, 189, 0.16);
+  --award-text: #edf0e8;
+  --award-muted: #aeb6b7;
+  --award-accent: #d9a91c;
+}
+
+/* The list scrolls inside the window, so every Pokémon can be reached however many there are. */
+.poke5e-xp-award .dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: min(70vh, 640px);
+  overflow: hidden;
+}
+
+.poke5e-xp-award__hint,
+.poke5e-xp-award__summary {
+  margin: 0;
+  font-size: 12px;
+  color: var(--award-muted);
+}
+
+.poke5e-xp-award__summary {
+  padding-top: 8px;
+  border-top: 1px solid var(--award-border);
+  color: var(--award-text);
+  font-weight: 600;
+}
+
+.poke5e-xp-award__list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.poke5e-xp-award__trainer h4 {
+  margin: 0 0 6px;
+  padding: 0;
+  border: none;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--award-accent);
+}
+
+.poke5e-xp-award__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 6px;
+}
+
+.poke5e-xp-award__pokemon {
+  display: grid;
+  grid-template-columns: auto 36px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid var(--award-border);
+  border-radius: 8px;
+  background: var(--award-panel);
+  color: var(--award-text);
+  cursor: pointer;
+  transition: border-color 120ms ease, background-color 120ms ease;
+}
+
+.poke5e-xp-award__pokemon:hover {
+  background: var(--award-panel-alt);
+}
+
+.poke5e-xp-award__pokemon:has(input[type="checkbox"]:checked) {
+  border-color: var(--award-accent);
+  background: color-mix(in srgb, var(--award-accent) 14%, var(--award-panel));
+}
+
+.poke5e-xp-award__pokemon input[type="checkbox"] {
+  margin: 0;
+}
+
+.poke5e-xp-award__pokemon img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border: none;
+}
+
+.poke5e-xp-award__name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.poke5e-xp-award__name strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.poke5e-xp-award__name small,
+.poke5e-xp-award__share small {
+  color: var(--award-muted);
+  font-size: 11px;
+}
+
+.poke5e-xp-award__share {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.poke5e-xp-award__share input {
+  width: 76px;
+  height: 26px;
+  text-align: right;
+}
+
+.poke5e-xp-award__share input:disabled {
+  opacity: 0.45;
+}
+
+/* A disabled share lets the click through to its card, which ticks the Pokémon. */
+.poke5e-xp-award__share input:disabled {
+  pointer-events: none;
 }

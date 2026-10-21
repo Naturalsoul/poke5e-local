@@ -40,7 +40,11 @@ test("the party is each player's trainer, at their strongest team Pokémon's lev
     getFlag: (_scope, key) => ({ kind: "trainer", trainerParty: { pokemonUuids: team } })[key] });
   globalThis.fromUuidSync = uuid => all[uuid] ?? null;
   globalThis.game = { actors: [trainer("ash", ["a1", "a2"]), trainer("misty", ["b1"]), trainer("rival", ["a1"], false)] };
-  assert.deepEqual(detectEncounterParty(), { size: 2, level: 7, team: 2 }, "9 and 4, teams of 2 and 1: the NPC rival doesn't count");
+  const { weakTo, pokemon: matchups, strongest, ...party } = detectEncounterParty();
+  assert.equal(strongest.level, 9, "the strongest Pokémon, for the progress");
+  assert.deepEqual(party, { size: 2, level: 7, team: 2 }, "9 and 4, teams of 2 and 1: the NPC rival doesn't count");
+  assert.ok(Array.isArray(weakTo));
+  assert.equal(matchups.length, 3, "every team Pokémon, for the type matchup");
   globalThis.game = { actors: [] };
   assert.equal(detectEncounterParty(), null);
 });
@@ -59,15 +63,93 @@ test("generating by difficulty rerolls until it lands in the tier, or keeps the 
   assert.ok(deadly.distance > 0);
 });
 
-test("trainer battles: whole teams, one Pokémon per trainer on the field, trainer Pokémon a bit stronger", () => {
-  const party = { size: 1, level: 5, team: 6 };
-  const team = count => Array.from({ length: count }, () => ({ level: 5 }));
-  const battle = (rows, trainers) => encounterDifficulty(party, rows, { trainers }).tier.id;
-  assert.equal(battle(team(6), 1), "medium", "6 against 6, same level: 1.2");
-  assert.equal(battle(team(3), 1), "easy", "half a team: 0.6");
-  assert.equal(battle(team(6), 2), "hard", "two trainers at once: ×1.5 more");
-  assert.equal(battle(team(6).map(() => ({ level: 8 })), 1), "hard", "three levels higher: 2.16, just short of Deadly");
-  assert.equal(battle(team(6).map(() => ({ level: 9 })), 1), "deadly", "four levels higher: 1100 × 1.2 against 500");
-  assert.equal(encounterDifficulty({ size: 1, level: 5, team: 6 }, team(6)).tier.id, "deadly",
-    "the same 6 as wild Pokémon all at once: crowd ×3.5 against one");
+test("trainer battles: whole teams, Pokémon on the field both ways, an even battle is Hard", async () => {
+  const party = { size: 4, level: 8, team: 3 };
+  const trainers = (count, size, level, onField = 1) => ({
+    rows: Array.from({ length: count * size }, () => ({ level })), onField: count * onField });
+  const battle = ({ rows, onField }) => encounterDifficulty(party, rows, { onField }).tier.id;
+  assert.equal(battle(trainers(4, 3, 8)), "hard", "4 against 4, same teams and level");
+  assert.equal(battle(trainers(4, 3, 7)), "hard", "a level below: 1.0");
+  assert.equal(battle(trainers(4, 3, 6)), "medium", "two below: 0.8");
+  assert.equal(battle(trainers(4, 3, 9)), "deadly", "a level above: 2.2");
+  assert.equal(battle(trainers(1, 3, 8)), "trivial", "a lone trainer against four: one Pokémon facing four");
+  assert.equal(battle(trainers(2, 6, 7)), "easy", "two trainers of 6, one each on the field");
+  assert.equal(battle(trainers(2, 6, 7, 2)), "hard", "the same two in a double battle");
+  assert.equal(battle(trainers(3, 6, 7, 2)), "deadly", "three of them in a double battle");
+});
+
+test("rival extras raise a trainer battle's difficulty without levels", async () => {
+  const { boostMultiplier } = await import("../scripts/encounter-difficulty.mjs");
+  assert.equal(boostMultiplier(), 1);
+  assert.equal(boostMultiplier({ statBonus: 2, coverage: true, items: true }).toFixed(3), "1.386");
+  const party = { size: 4, level: 8, team: 3 };
+  const rows = Array.from({ length: 12 }, () => ({ level: 6 }));
+  assert.equal(encounterDifficulty(party, rows, { onField: 4 }).tier.id, "medium", "two levels below: 0.8");
+  assert.equal(encounterDifficulty(party, rows, { onField: 4, boosts: { statBonus: 2, coverage: true, items: true } }).tier.id,
+    "hard", "the same Pokémon with every extra: 1.11");
+});
+
+test("coverage brings a super effective damaging Move into the four", async () => {
+  const { selectEncounterMoves } = await import("../scripts/encounter-move-selector.mjs");
+  const move = (id, type, damage = true) => ({ id, type, damage: damage ? { dice: { 1: "1d6" } } : null });
+  const moves = [move("a", "normal"), move("b", "normal"), move("c", "normal"), move("d", "normal"), move("e", "normal"),
+    move("growl", "fire", false), move("ember", "fire")];
+  const pokemon = { id: "x", learnset: { level: [{ level: 1, moveIds: moves.map(each => each.id) }] } };
+  for (let seed = 0; seed < 20; seed++) {
+    let n = seed;
+    const random = () => ((n = (n * 9301 + 49297) % 233280) / 233280);
+    const ids = selectEncounterMoves({ pokemon, moves, level: 5, coverageTypes: ["fire"], random }).map(each => each.id);
+    assert.equal(ids.length, 4);
+    assert.ok(ids.includes("ember"), `ember with seed ${seed}: ${ids}`);
+  }
+  const without = selectEncounterMoves({ pokemon, moves: moves.filter(each => each.id !== "ember"), level: 5, coverageTypes: ["fire"] });
+  assert.equal(without.length, 4, "nothing covers: four Moves as before");
+});
+
+test("ranks keep levels near the party's and put the ace above", async () => {
+  const { getTrainerRank, rankLevels } = await import("../scripts/encounter-difficulty.mjs");
+  assert.deepEqual(rankLevels(8, getTrainerRank("route")), { min: 5, max: 7, ace: null });
+  assert.deepEqual(rankLevels(8, getTrainerRank("gym-leader")), { min: 7, max: 8, ace: [9, 9] });
+  assert.deepEqual(rankLevels(8, getTrainerRank("champion")), { min: 8, max: 9, ace: [9, 10] });
+  assert.deepEqual(rankLevels(1, getTrainerRank("route")), { min: 1, max: 1, ace: null }, "never below 1");
+  assert.deepEqual(rankLevels(20, getTrainerRank("champion")).ace, [20, 20], "never above 20");
+  assert.equal(getTrainerRank("nope").id, "route");
+});
+
+test("types tilt a trainer battle: advantage up, disadvantage down, unknown neutral", async () => {
+  const { typeMatchup } = await import("../scripts/encounter-difficulty.mjs");
+  const grass = [{ types: ["grass"], moveTypes: ["grass"] }];
+  assert.ok(typeMatchup(["fire"], grass) > 1.5, "Fire against Grass");
+  assert.ok(typeMatchup(["water"], grass) < 0.7, "Water against Grass");
+  assert.equal(typeMatchup(["normal"], [{ types: ["normal"], moveTypes: ["normal"] }]), 1);
+  assert.equal(typeMatchup([], grass), 1);
+  assert.equal(typeMatchup(["fire"], []), 1);
+  const party = { size: 1, level: 8, team: 1, pokemon: grass };
+  const fight = types => encounterDifficulty(party, [{ level: 8, types }], { onField: 1 });
+  assert.ok(fight(["fire"]).power > fight(["water"]).power);
+  assert.ok(fight(["fire"]).matchup > 1);
+});
+
+test("every rank reaches its difficulty for parties of 2 to 6, adding helpers only when needed", async () => {
+  const { TRAINER_RANKS, generateForDifficulty, rankLevels } = await import("../scripts/encounter-difficulty.mjs");
+  const pick = ([min, max]) => min + Math.floor(Math.random() * (max - min + 1));
+  for (const party of [{ size: 2, level: 8, team: 3 }, { size: 4, level: 8, team: 3 }, { size: 6, level: 8, team: 4 }]) {
+    for (const rank of TRAINER_RANKS) {
+      const levels = rankLevels(party.level, rank);
+      let best = null;
+      for (let trainers = rank.trainers[0]; trainers <= rank.trainers[1] && best?.distance !== 0; trainers++) {
+        const roll = () => {
+          const team = pick(rank.team);
+          const rows = Array.from({ length: trainers * team }, (_, index) => ({
+            level: levels.ace && index === team - 1 ? pick(levels.ace) : pick([levels.min, levels.max]) }));
+          return { rows, onField: trainers * Math.min(team, pick(rank.onField)) };
+        };
+        const attempt = generateForDifficulty(roll, ({ rows, onField }) =>
+          encounterDifficulty(party, rows, { onField, boosts: rank.extras }), rank.target, 300);
+        if (!best || attempt.distance < best.distance) {best = attempt;}
+      }
+      assert.equal(best.distance, 0, `${rank.id} for ${party.size} players: ${best.tier.id}`);
+      assert.ok(best.result.rows.every(row => row.level <= (levels.ace?.[1] ?? levels.max)), "levels stay in the rank's band");
+    }
+  }
 });
