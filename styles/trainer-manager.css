@@ -162,7 +162,7 @@
     linear-gradient(
       180deg,
       color-mix(in srgb, var(--poke5e-ui-surface) 99%, transparent),
-      rgba(12, 15, 20, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-bg) 99%, transparent)
     );
 
   box-shadow:
@@ -323,7 +323,7 @@ input[type="search"] {
   background:
     linear-gradient(
       180deg,
-      #232a34,
+      var(--poke5e-ui-panel-alt),
       var(--poke5e-ui-panel)
     );
 
@@ -553,7 +553,7 @@ i {
   background:
     linear-gradient(
       180deg,
-      rgba(40, 47, 59, 0.92),
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 92%, transparent),
       color-mix(in srgb, var(--poke5e-ui-surface) 96%, transparent)
     );
 
@@ -622,12 +622,12 @@ i {
   background:
     linear-gradient(
       180deg,
-      rgba(87, 36, 42, 0.96),
-      rgba(47, 23, 29, 0.98)
+      color-mix(in srgb, var(--poke5e-ui-accent-dark) 96%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-panel) 98%, transparent)
     );
 
   color:
-    var(--poke5e-manager-ivory);
+    var(--poke5e-ui-on-accent);
 
   box-shadow:
     inset 3px 0 0
@@ -1135,7 +1135,7 @@ i {
   background:
     linear-gradient(
       180deg,
-      rgba(39, 45, 55, 0.72),
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 72%, transparent),
       color-mix(in srgb, var(--poke5e-ui-panel) 86%, transparent)
     );
 }
@@ -1322,8 +1322,8 @@ button[data-trainer-action]:hover:not(:disabled),
   background:
     linear-gradient(
       180deg,
-      rgba(70, 44, 49, 0.98),
-      rgba(38, 28, 33, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-panel) 99%, transparent)
     );
 }
 

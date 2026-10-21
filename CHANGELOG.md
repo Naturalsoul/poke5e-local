@@ -12,6 +12,11 @@ solo se corrige algo.
   de la hoja de personaje de dnd5e (cabecera, barra lateral y pestañas) y los paneles del módulo (centro de
   mando, ficha de Pokémon, planificador, Fakemon Studio) toman sus colores: pergamino en el modo claro de
   Foundry y azul vaquero en el oscuro. Todo sigue funcionando igual en los dos; solo cambia el aspecto.
+- Para que el modo claro se lea bien, 131 colores fijos pensados para fondos oscuros pasan a los colores comunes:
+  fondos oscuros de botones y buscadores (Desplegar, acciones de movimiento, buscador del planificador), texto
+  claro (PS de la party) y los verdes, azules, rojos y dorados pastel de los estados. En el diseño Team Rocket se
+  ven casi igual. Nuevo color común `--poke5e-ui-on-accent` para el texto sobre botones rojos; el rango del Team
+  Rocket se lee sobre la cabecera de dnd5e.
 
 ## [0.24.0] — 2026-10-21
 

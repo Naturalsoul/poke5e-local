@@ -946,7 +946,7 @@ i {
     color-mix(in srgb, var(--poke5e-ui-success) 50%, transparent);
 
   color:
-    #8ed099;
+    color-mix(in srgb, var(--poke5e-ui-success) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -1270,7 +1270,7 @@ input[type="number"] {
     ) !important;
 
   color:
-    #e6c85e !important;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text)) !important;
 }
 
 
@@ -1299,7 +1299,7 @@ input[type="number"] {
     color-mix(in srgb, var(--poke5e-ui-info) 6%, transparent) !important;
 
   color:
-    #8db2e6 !important;
+    color-mix(in srgb, var(--poke5e-ui-info) 65%, var(--poke5e-ui-text)) !important;
 }
 
 
@@ -1320,7 +1320,7 @@ input[type="number"] {
     var(--encounter-gold) !important;
 
   color:
-    #f0d979 !important;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text)) !important;
 }
 
 .poke5e-encounter-planner__random-hint {
@@ -1494,7 +1494,7 @@ span {
     4px;
 
   color:
-    #ed9288;
+    color-mix(in srgb, var(--poke5e-ui-accent) 65%, var(--poke5e-ui-text));
 }
 
 .poke5e-encounter-planner__content
@@ -1512,7 +1512,7 @@ span {
     color-mix(in srgb, var(--poke5e-ui-info) 6%, transparent);
 
   color:
-    #a9c5ec;
+    color-mix(in srgb, var(--poke5e-ui-info) 65%, var(--poke5e-ui-text));
 
   box-shadow:
     none;
@@ -1527,7 +1527,7 @@ span {
     color-mix(in srgb, var(--poke5e-ui-info) 12%, transparent);
 
   color:
-    #c9dcf5;
+    var(--poke5e-ui-muted);
 
   transform:
     none;
@@ -1636,7 +1636,7 @@ select {
     ) !important;
 
   color:
-    #ed9288 !important;
+    color-mix(in srgb, var(--poke5e-ui-accent) 65%, var(--poke5e-ui-text)) !important;
 }
 
 
@@ -1648,7 +1648,7 @@ select {
     color-mix(in srgb, var(--poke5e-ui-accent) 22%, transparent) !important;
 
   color:
-    #ffaaa1 !important;
+    color-mix(in srgb, var(--poke5e-ui-accent) 65%, var(--poke5e-ui-text)) !important;
 }
 
 @container planner (max-width: 900px) {
@@ -1702,7 +1702,7 @@ select {
 .poke5e-encounter-planner__trainer-archetype-hint
 span {
   color:
-    #d9b7b3;
+    var(--poke5e-ui-cream);
 
   font-weight:
     800;
@@ -1779,7 +1779,7 @@ span {
     1;
 
   color:
-    #8fb0dd;
+    color-mix(in srgb, var(--poke5e-ui-info) 65%, var(--poke5e-ui-text));
 
   font-size:
     var(--poke5e-ui-text-sm);
@@ -1804,7 +1804,7 @@ input {
     color-mix(in srgb, var(--poke5e-ui-info) 28%, transparent) !important;
 
   background:
-    rgba(8, 13, 15, 0.62) !important;
+    color-mix(in srgb, var(--poke5e-ui-bg) 62%, transparent) !important;
 }
 
 
@@ -1844,7 +1844,7 @@ button {
     color-mix(in srgb, var(--poke5e-ui-info) 5%, transparent);
 
   color:
-    #a9c5ec;
+    color-mix(in srgb, var(--poke5e-ui-info) 65%, var(--poke5e-ui-text));
 
   box-shadow:
     none;
@@ -1861,7 +1861,7 @@ button:hover:not(:disabled) {
     color-mix(in srgb, var(--poke5e-ui-info) 12%, transparent);
 
   color:
-    #c9dcf5;
+    var(--poke5e-ui-muted);
 
   transform:
     none;
@@ -1956,7 +1956,7 @@ strong {
     hidden;
 
   color:
-    #b8cef0;
+    var(--poke5e-ui-muted);
 
   font-size:
     var(--poke5e-ui-text-xs);
@@ -2000,7 +2000,7 @@ small {
     color-mix(in srgb, var(--poke5e-ui-info) 6%, transparent);
 
   color:
-    #8fb0dd;
+    color-mix(in srgb, var(--poke5e-ui-info) 65%, var(--poke5e-ui-text));
 
   font-size:
     var(--poke5e-ui-text-xs);
@@ -2360,7 +2360,7 @@ select {
     color-mix(in srgb, var(--poke5e-ui-info) 7%, transparent) !important;
 
   color:
-    #9abbe8 !important;
+    color-mix(in srgb, var(--poke5e-ui-info) 65%, var(--poke5e-ui-text)) !important;
 }
 
 
@@ -2372,7 +2372,7 @@ select {
     color-mix(in srgb, var(--poke5e-ui-info) 15%, transparent) !important;
 
   color:
-    #c1d6f2 !important;
+    var(--poke5e-ui-muted) !important;
 }
 
 .poke5e-encounter-planner__trainer-remove {
@@ -2421,7 +2421,7 @@ select {
     color-mix(in srgb, var(--poke5e-ui-info) 42%, transparent);
 
   color:
-    #8db2e6;
+    color-mix(in srgb, var(--poke5e-ui-info) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -2511,7 +2511,7 @@ button {
   background:
     linear-gradient(
       180deg,
-      #394348,
+      var(--poke5e-ui-panel-alt),
       var(--poke5e-ui-panel)
     );
 
@@ -2544,7 +2544,7 @@ button:hover:not(:disabled) {
     var(--encounter-red);
 
   background:
-    #414c51;
+    var(--poke5e-ui-panel-alt);
 
   color:
     var(--encounter-cream);
@@ -2577,7 +2577,7 @@ button[data-action="add-pokemon"] {
     color-mix(in srgb, var(--poke5e-ui-success) 40%, transparent);
 
   color:
-    #89cb93;
+    color-mix(in srgb, var(--poke5e-ui-success) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -2624,7 +2624,7 @@ button[data-action="delete-encounter"]:hover:not(:disabled) {
     color-mix(in srgb, var(--poke5e-ui-accent) 18%, transparent);
 
   color:
-    #ff9c92;
+    color-mix(in srgb, var(--poke5e-ui-accent) 65%, var(--poke5e-ui-text));
 } 
 
 .poke5e-encounter-planner__content
@@ -2775,7 +2775,7 @@ button[data-action="generate"] {
     color-mix(in srgb, var(--poke5e-ui-success) 8%, transparent);
 
   color:
-    #89cb93;
+    color-mix(in srgb, var(--poke5e-ui-success) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -2788,7 +2788,7 @@ small {
     2px;
 
   color:
-    #89cb93;
+    color-mix(in srgb, var(--poke5e-ui-success) 65%, var(--poke5e-ui-text));
 
   font-size:
     var(--poke5e-ui-text-xs);
@@ -2971,7 +2971,7 @@ h3 + span {
     color-mix(in srgb, var(--poke5e-ui-success) 10%, transparent);
 
   color:
-    #a8dcb0;
+    var(--poke5e-ui-muted);
 }
 
 
@@ -3042,7 +3042,7 @@ input {
     color-mix(in srgb, var(--poke5e-ui-success) 30%, transparent) !important;
 
   background:
-    rgba(8, 13, 15, 0.72) !important;
+    color-mix(in srgb, var(--poke5e-ui-bg) 72%, transparent) !important;
 }
 
 
@@ -3111,7 +3111,7 @@ input:focus {
     7px;
 
   background:
-    rgba(10, 15, 17, 0.96);
+    color-mix(in srgb, var(--poke5e-ui-bg) 96%, transparent);
 
   box-shadow:
     0 8px 18px
@@ -3557,7 +3557,7 @@ strong {
     color-mix(in srgb, var(--poke5e-ui-accent) 12%, transparent);
 
   color:
-    #ffaaa1;
+    color-mix(in srgb, var(--poke5e-ui-accent) 65%, var(--poke5e-ui-text));
 
   transform:
     none;
@@ -4604,7 +4604,7 @@ strong {
     color-mix(in srgb, var(--poke5e-ui-gold) 5.5%, transparent);
 
   color:
-    #e3c35c;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text));
 
   font-size:
     var(--poke5e-ui-text-xs);
@@ -4703,7 +4703,7 @@ i {
 
 .poke5e-encounter-planner__xp {
   color:
-    #d4bc67;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text));
 
   font-weight:
     900;
@@ -5138,7 +5138,7 @@ strong {
     color-mix(in srgb, var(--poke5e-ui-info) 8%, transparent);
 
   color:
-    #9abbe8;
+    color-mix(in srgb, var(--poke5e-ui-info) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -5257,7 +5257,7 @@ legend {
 .poke5e-encounter-planner__option-group--reroll
 legend {
   color:
-    #a9c5ec;
+    color-mix(in srgb, var(--poke5e-ui-info) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -5270,7 +5270,7 @@ legend {
 .poke5e-encounter-planner__option-group--items
 legend {
   color:
-    #e4c65e;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -6052,7 +6052,7 @@ button[data-action="award-xp"]:hover:not(:disabled) {
 
 .poke5e-xp-award__pokemon.is-exp-share .poke5e-xp-award__name small,
 .poke5e-xp-award__hint i {
-  color: #8fb3e8;
+  color: color-mix(in srgb, var(--poke5e-ui-info) 65%, var(--poke5e-ui-text));
 }
 
 /* ============================================================
@@ -6277,7 +6277,7 @@ button.is-primary {
 .poke5e-encounter-planner__steps
 .poke5e-encounter-planner__step[data-tier="deadly"] small {
   color:
-    #ed9288;
+    color-mix(in srgb, var(--poke5e-ui-accent) 65%, var(--poke5e-ui-text));
 }
 
 /* Levels: the power creep, set apart. */

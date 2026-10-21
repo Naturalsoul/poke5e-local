@@ -1729,7 +1729,7 @@ button.primary {
   border-color:
     color-mix(in srgb, var(--poke5e-ui-success) 60%, transparent);
 
-  color: #8ed099;
+  color: color-mix(in srgb, var(--poke5e-ui-success) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -1749,7 +1749,7 @@ button.primary {
   border-color:
     color-mix(in srgb, var(--poke5e-ui-info) 58%, transparent);
 
-  color: #8db2e6;
+  color: color-mix(in srgb, var(--poke5e-ui-info) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -2986,7 +2986,7 @@ strong {
     color-mix(in srgb, var(--poke5e-ui-success) 45%, transparent);
 
   color:
-    #8ed099;
+    color-mix(in srgb, var(--poke5e-ui-success) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -2998,7 +2998,7 @@ strong {
     color-mix(in srgb, var(--poke5e-ui-gold) 45%, transparent);
 
   color:
-    #dfc262;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -4166,7 +4166,7 @@ input {
 ]
 .fakemon-studio__reference-feedback {
   color:
-    #8ed099;
+    color-mix(in srgb, var(--poke5e-ui-success) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -4236,7 +4236,7 @@ textarea {
 ]
 .fakemon-studio__egg-reference-feedback {
   color:
-    #8ed099;
+    color-mix(in srgb, var(--poke5e-ui-success) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -4352,7 +4352,7 @@ span {
   data-kind="valid"
 ] {
   color:
-    #8ed099;
+    color-mix(in srgb, var(--poke5e-ui-success) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -4393,7 +4393,7 @@ span {
   data-kind="warning"
 ] {
   color:
-    #dfc262;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -4526,7 +4526,7 @@ span {
     color-mix(in srgb, var(--poke5e-ui-gold) 5.5%, transparent);
 
   color:
-    #dfc262;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text));
 
   font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
@@ -4996,7 +4996,7 @@ input[type="file"]::file-selector-button {
     color-mix(in srgb, var(--poke5e-ui-info) 8%, transparent);
 
   color:
-    #8db2e6;
+    color-mix(in srgb, var(--poke5e-ui-info) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -5385,7 +5385,7 @@ span {
 .fakemon-studio__evolution-points-badge
 i {
   color:
-    #8ed099;
+    color-mix(in srgb, var(--poke5e-ui-success) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -6994,7 +6994,7 @@ span {
     );
 
   color:
-    #c2b8f2;
+    var(--poke5e-ui-muted);
 }
 
 
@@ -7007,7 +7007,7 @@ span {
     rgba(141, 121, 221, 0.16);
 
   color:
-    #d7d0fa;
+    var(--poke5e-ui-muted);
 }
 
 .poke5e-fakemon-wizard-dialog {
@@ -7503,7 +7503,7 @@ h3 {
     color-mix(in srgb, var(--poke5e-ui-success) 52%, transparent);
 
   color:
-    #8ed099;
+    color-mix(in srgb, var(--poke5e-ui-success) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -7514,7 +7514,7 @@ h3 {
     color-mix(in srgb, var(--poke5e-ui-gold) 55%, transparent);
 
   color:
-    #dfc262;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -7703,7 +7703,7 @@ span {
 .fakemon-wizard__comparable
 > span {
   color:
-    #8ed099;
+    color-mix(in srgb, var(--poke5e-ui-success) 65%, var(--poke5e-ui-text));
 
   font-size: var(--poke5e-ui-text-sm);
   font-weight: 900;
@@ -8036,7 +8036,7 @@ em {
   margin-left: auto;
 
   color:
-    #8ed099;
+    color-mix(in srgb, var(--poke5e-ui-success) 65%, var(--poke5e-ui-text));
 
   font-size: var(--poke5e-ui-text-xs);
   font-weight: 900;
@@ -8254,7 +8254,7 @@ em {
   border-radius: 999px;
 
   color:
-    #8ed099;
+    color-mix(in srgb, var(--poke5e-ui-success) 65%, var(--poke5e-ui-text));
 
   font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
@@ -8268,7 +8268,7 @@ em {
     color-mix(in srgb, var(--poke5e-ui-gold) 58%, transparent);
 
   color:
-    #dfc262;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -8606,7 +8606,7 @@ em {
     rgba(141, 121, 221, 0.05);
 
   color:
-    #c2b8f2;
+    var(--poke5e-ui-muted);
 
   font-size: var(--poke5e-ui-text-2xs);
   font-weight: 800;
@@ -8719,7 +8719,7 @@ em {
   place-items: center;
 
   color:
-    #8db2e6;
+    color-mix(in srgb, var(--poke5e-ui-info) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -8763,7 +8763,7 @@ em {
 ]
 > i {
   color:
-    #dfc262;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -8780,7 +8780,7 @@ em {
 ]
 > i {
   color:
-    #8ed099;
+    color-mix(in srgb, var(--poke5e-ui-success) 65%, var(--poke5e-ui-text));
 }
 
 

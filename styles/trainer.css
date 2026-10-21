@@ -3450,7 +3450,7 @@ output {
     rgba(74, 167, 100, 0.1);
 
   color:
-    #69c47f;
+    color-mix(in srgb, var(--poke5e-ui-success) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -4038,7 +4038,7 @@ button:hover {
       180deg,
       rgba(255, 255, 255, 0.02),
       rgba(0, 0, 0, 0.14) 50%,
-      rgba(0, 0, 0, 0.26)
+      color-mix(in srgb, var(--poke5e-ui-bg) 26%, transparent)
     ),
     radial-gradient(
       circle at 50% 14%,
@@ -4071,7 +4071,7 @@ button:hover {
       180deg,
       transparent 0,
       rgba(0, 0, 0, 0.14) 28%,
-      rgba(0, 0, 0, 0.4) 100%
+      color-mix(in srgb, var(--poke5e-ui-bg) 40%, transparent) 100%
     ),
     radial-gradient(
       circle at 50% 18%,
@@ -4306,6 +4306,17 @@ input {
 }
 
 
+/* With the dnd5e design the rank sits on dnd5e's own header, dark in both modes. */
+body.poke5e-design-dnd5e .dnd5e2.sheet.actor.character.poke5e-trainer-sheet .poke5e-trainer-rocket-rank {
+  border-color:
+    rgba(255, 255, 255, 0.28);
+  background:
+    rgba(0, 0, 0, 0.28);
+  color:
+    var(--poke5e-ui-on-accent);
+}
+
+
 /* The GM's select reads as part of the label: same font, a small caret. */
 .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .poke5e-trainer-rocket-rank
@@ -4449,7 +4460,7 @@ option {
   background:
     linear-gradient(
       180deg,
-      rgba(38, 45, 57, 0.96),
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 96%, transparent),
       color-mix(in srgb, var(--poke5e-ui-surface) 98%, transparent)
     );
 
@@ -4544,7 +4555,7 @@ option {
   background:
     linear-gradient(
       180deg,
-      rgba(58, 35, 40, 0.98),
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
       color-mix(in srgb, var(--poke5e-ui-surface) 99%, transparent)
     );
 }
@@ -4821,9 +4832,9 @@ option {
   background:
     linear-gradient(
       180deg,
-      rgba(117, 38, 43, 0.98)
+      color-mix(in srgb, var(--poke5e-ui-accent-dark) 98%, transparent)
         0 43%,
-      rgba(12, 15, 20, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-bg) 99%, transparent)
         43% 100%
     )
     !important;
@@ -5016,7 +5027,7 @@ option {
   background:
     linear-gradient(
       180deg,
-      #2a303c,
+      var(--poke5e-ui-panel-alt),
       var(--poke5e-ui-surface)
     );
 
@@ -5052,7 +5063,7 @@ option {
   background:
     linear-gradient(
       180deg,
-      rgba(31, 37, 47, 0.9),
+      color-mix(in srgb, var(--poke5e-ui-panel) 90%, transparent),
       color-mix(in srgb, var(--poke5e-ui-surface) 98%, transparent)
     );
 
@@ -5191,8 +5202,8 @@ option {
   background:
     linear-gradient(
       180deg,
-      rgba(39, 49, 66, 0.98),
-      rgba(20, 27, 38, 0.98)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 98%, transparent)
     )
     !important;
 
@@ -5212,7 +5223,7 @@ option {
 ]
 .value {
   color:
-    #9ebde5;
+    color-mix(in srgb, var(--poke5e-ui-info) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -5224,7 +5235,7 @@ option {
 ]
 .label {
   color:
-    #a9b9cf;
+    var(--poke5e-ui-muted);
 }
 
 :where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
@@ -5239,8 +5250,8 @@ option {
   background:
     linear-gradient(
       180deg,
-      rgba(49, 46, 41, 0.98),
-      rgba(26, 25, 24, 0.98)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 98%, transparent)
     )
     !important;
 
@@ -5358,8 +5369,8 @@ option {
   background:
     linear-gradient(
       180deg,
-      rgba(57, 37, 42, 0.98),
-      rgba(25, 24, 30, 0.98)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 98%, transparent)
     )
     !important;
 
@@ -5385,7 +5396,7 @@ option {
 ]
 .value {
   color:
-    #e6bc3e;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -5477,7 +5488,7 @@ option {
     5px;
 
   color:
-    #e6bc3e;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text));
 
   font-family:
     "Roboto Condensed",
@@ -5599,7 +5610,7 @@ option {
   [data-field="tmp"]
 ) {
   color:
-    #9ebde5;
+    color-mix(in srgb, var(--poke5e-ui-info) 65%, var(--poke5e-ui-text));
 
   opacity:
     0.9;
@@ -6008,7 +6019,7 @@ img {
       color-mix(in srgb, var(--poke5e-ui-accent) 26%, transparent),
       color-mix(in srgb, var(--poke5e-ui-accent) 8%, transparent) 70%
     ),
-    rgba(14, 17, 22, 0.98);
+    color-mix(in srgb, var(--poke5e-ui-bg) 98%, transparent);
 
   color:
     var(--poke5e-fr-ivory);
@@ -6433,7 +6444,7 @@ img {
   background:
     linear-gradient(
       180deg,
-      rgba(43, 50, 64, 0.74),
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 74%, transparent),
       color-mix(in srgb, var(--poke5e-ui-panel) 92%, transparent)
     );
 
@@ -6476,12 +6487,12 @@ img {
   background:
     linear-gradient(
       180deg,
-      rgba(103, 48, 48, 0.94),
-      rgba(60, 30, 33, 0.98)
+      color-mix(in srgb, var(--poke5e-ui-accent-dark) 94%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-panel) 98%, transparent)
     );
 
   color:
-    var(--poke5e-fr-ivory);
+    var(--poke5e-ui-on-accent);
 
   font-family:
     var(--poke5e-display-font);
@@ -6557,7 +6568,7 @@ img {
   background:
     linear-gradient(
       180deg,
-      rgba(39, 45, 56, 0.92),
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 92%, transparent),
       color-mix(in srgb, var(--poke5e-ui-panel) 96%, transparent)
     );
 
@@ -6666,8 +6677,8 @@ strong {
   background:
     linear-gradient(
       180deg,
-      rgba(55, 64, 80, 0.98),
-      rgba(34, 41, 52, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-panel) 99%, transparent)
     );
 }
 
@@ -6734,7 +6745,7 @@ select {
   background:
     linear-gradient(
       180deg,
-      rgba(39, 45, 56, 0.98),
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
       color-mix(in srgb, var(--poke5e-ui-surface) 99%, transparent)
     );
 
@@ -7450,7 +7461,7 @@ strong {
 .poke5e-trainer-pokemon-exp__meta
 > span {
   color:
-    #e6bc3e;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text));
 
   font-size:
     var(--poke5e-ui-text-2xs);
@@ -7502,7 +7513,7 @@ strong {
     2px;
 
   background:
-    #07101d;
+    var(--poke5e-ui-bg);
 
   box-shadow:
     inset 0 1px 2px
@@ -7862,8 +7873,8 @@ img {
   background:
     linear-gradient(
       180deg,
-      rgba(55, 64, 80, 0.98),
-      rgba(34, 41, 52, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-panel) 99%, transparent)
     );
 }
 
@@ -7888,12 +7899,12 @@ i {
   background:
     linear-gradient(
       180deg,
-      rgba(100, 35, 40, 0.96),
-      rgba(58, 23, 28, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-accent-dark) 96%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-accent-dark) 99%, transparent)
     );
 
   color:
-    var(--poke5e-fr-ivory);
+    var(--poke5e-ui-on-accent);
 
   box-shadow:
     inset 0 1px 0
@@ -7911,8 +7922,8 @@ i {
   background:
     linear-gradient(
       180deg,
-      rgba(124, 40, 46, 0.98),
-      rgba(70, 25, 31, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-accent-dark) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-accent-dark) 99%, transparent)
     );
 
   box-shadow:
@@ -8019,7 +8030,7 @@ i {
   background:
     linear-gradient(
       180deg,
-      rgba(43, 50, 71, 0.96),
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 96%, transparent),
       color-mix(in srgb, var(--poke5e-ui-panel) 98%, transparent)
     );
 }
@@ -8119,7 +8130,7 @@ i {
   background:
     linear-gradient(
       180deg,
-      rgba(32, 38, 47, 0.92),
+      color-mix(in srgb, var(--poke5e-ui-panel) 92%, transparent),
       color-mix(in srgb, var(--poke5e-ui-surface) 96%, transparent)
     );
 }
@@ -8256,7 +8267,7 @@ i {
     4px;
 
   color:
-    #d9dbe0;
+    var(--poke5e-ui-muted);
 }
 
 
@@ -8352,7 +8363,7 @@ strong {
     6px;
 
   color:
-    #e1e3e7;
+    var(--poke5e-ui-text);
 
   font-size:
     var(--poke5e-ui-text-sm);
@@ -8588,7 +8599,7 @@ button {
       90deg,
       color-mix(in srgb, var(--poke5e-ui-accent) 7.5%, transparent),
       color-mix(in srgb, var(--poke5e-ui-panel) 42%, transparent) 55%,
-      rgba(12, 15, 20, 0.72)
+      color-mix(in srgb, var(--poke5e-ui-bg) 72%, transparent)
     );
 
   color:
@@ -8618,8 +8629,8 @@ button {
     linear-gradient(
       90deg,
       color-mix(in srgb, var(--poke5e-ui-accent) 12%, transparent),
-      rgba(34, 40, 50, 0.52) 55%,
-      rgba(14, 17, 22, 0.76)
+      color-mix(in srgb, var(--poke5e-ui-panel) 52%, transparent) 55%,
+      color-mix(in srgb, var(--poke5e-ui-bg) 76%, transparent)
     );
 }
 
@@ -9208,7 +9219,7 @@ strong {
 .poke5e-trainer-battle-event
 i {
   color:
-    #f2c94c;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -9250,7 +9261,7 @@ span {
     var(--poke5e-fainted);
 
   background:
-    rgba(70, 24, 24, 0.96);
+    color-mix(in srgb, var(--poke5e-ui-accent-dark) 96%, transparent);
 }
 
 
@@ -9258,7 +9269,7 @@ span {
 .poke5e-trainer-battle-event[data-reason="fainted"]
 i {
   color:
-    #ff8585;
+    color-mix(in srgb, var(--poke5e-ui-accent) 65%, var(--poke5e-ui-text));
 }
 
 

@@ -72,6 +72,10 @@
   --poke5e-ui-shadow:
     rgba(0, 0, 0, 0.4);
 
+  /* Text on accent / accent-dark fills (red buttons, badges). */
+  --poke5e-ui-on-accent:
+    #e9e1bd;
+
   /*
    * Small text. The windows were drawn with 6–11 px labels,
    * too small at the table: each old size points to one of these.
@@ -123,6 +127,10 @@
 
   --poke5e-ui-info:
     #83a9dc;
+
+  /* Text on accent / accent-dark fills (red buttons, badges). */
+  --poke5e-ui-on-accent:
+    #efe8d8;
 }
 
 
@@ -201,6 +209,10 @@ body.poke5e-design-dnd5e .poke5e-trainer-party-dialog {
 
   --poke5e-ui-shadow:
     rgba(0, 0, 0, 0.18);
+
+  /* Text on accent / accent-dark fills (red buttons, badges). */
+  --poke5e-ui-on-accent:
+    #ffffff;
 }
 
 
@@ -268,4 +280,8 @@ body.poke5e-design-dnd5e.theme-dark .poke5e-trainer-party-dialog {
 
   --poke5e-ui-shadow:
     rgba(0, 0, 0, 0.45);
+
+  /* Text on accent / accent-dark fills (red buttons, badges). */
+  --poke5e-ui-on-accent:
+    #ffffff;
 }

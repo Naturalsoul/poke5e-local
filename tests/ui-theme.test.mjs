@@ -47,6 +47,13 @@ test("text stays readable on the panels of every design", () => {
   }
 });
 
+test("text on red buttons stays readable in every design", () => {
+  for (const [id, set] of Object.entries(palettes)) {
+    const ratio = contrast(set["on-accent"], set["accent-dark"]);
+    assert.ok(ratio >= 4.5, `${id}: on-accent on accent-dark is ${ratio.toFixed(2)}:1`);
+  }
+});
+
 test("the trainer sheet's Rocket skin of dnd5e's own parts is off in the dnd5e design", () => {
   const trainer = read("trainer.css");
   const skin = [...trainer.matchAll(/([^{}]*)\{[^{}]*\}/g)].map(([, selector]) => selector.trim())
