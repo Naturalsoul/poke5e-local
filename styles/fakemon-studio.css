@@ -4,18 +4,18 @@
  * ============================================================ */
 
 .poke5e-fakemon-studio {
-  --fakemon-bg: #141a1d;
-  --fakemon-surface: #1b2226;
-  --fakemon-panel: #242d31;
-  --fakemon-border: #566268;
-  --fakemon-border-soft: rgba(233, 225, 189, 0.12);
-  --fakemon-text: #edf0e8;
-  --fakemon-muted: #aeb6b7;
-  --fakemon-cream: #e9e1bd;
-  --fakemon-red: #d75b4e;
-  --fakemon-red-dark: #a83e35;
+  --fakemon-bg: var(--poke5e-ui-bg);
+  --fakemon-surface: var(--poke5e-ui-surface);
+  --fakemon-panel: var(--poke5e-ui-panel);
+  --fakemon-border: var(--poke5e-ui-border);
+  --fakemon-border-soft: var(--poke5e-ui-border-soft);
+  --fakemon-text: var(--poke5e-ui-text);
+  --fakemon-muted: var(--poke5e-ui-muted);
+  --fakemon-cream: var(--poke5e-ui-cream);
+  --fakemon-red: var(--poke5e-ui-accent);
+  --fakemon-red-dark: var(--poke5e-ui-accent-dark);
   --fakemon-purple: #8d79dd;
-  --fakemon-shadow: rgba(0, 0, 0, 0.38);
+  --fakemon-shadow: var(--poke5e-ui-shadow);
 }
 
 /* ============================================================
@@ -4593,15 +4593,15 @@ i {
  * ============================================================ */
 
 .poke5e-fakemon-template-dialog {
-  --fakemon-bg: #141a1d;
-  --fakemon-surface: #1b2226;
-  --fakemon-panel: #242d31;
-  --fakemon-border: #566268;
-  --fakemon-border-soft: rgba(233, 225, 189, 0.12);
-  --fakemon-text: #edf0e8;
-  --fakemon-muted: #aeb6b7;
-  --fakemon-cream: #e9e1bd;
-  --fakemon-red: #d75b4e;
+  --fakemon-bg: var(--poke5e-ui-bg);
+  --fakemon-surface: var(--poke5e-ui-surface);
+  --fakemon-panel: var(--poke5e-ui-panel);
+  --fakemon-border: var(--poke5e-ui-border);
+  --fakemon-border-soft: var(--poke5e-ui-border-soft);
+  --fakemon-text: var(--poke5e-ui-text);
+  --fakemon-muted: var(--poke5e-ui-muted);
+  --fakemon-cream: var(--poke5e-ui-cream);
+  --fakemon-red: var(--poke5e-ui-accent);
 }
 
 
@@ -4838,15 +4838,15 @@ button:hover:not(:disabled) {
  * ============================================================ */
 
 .poke5e-fakemon-backup-dialog {
-  --fakemon-bg: #141a1d;
-  --fakemon-panel: #242d31;
-  --fakemon-border: #566268;
+  --fakemon-bg: var(--poke5e-ui-bg);
+  --fakemon-panel: var(--poke5e-ui-panel);
+  --fakemon-border: var(--poke5e-ui-border);
   --fakemon-border-soft:
-    rgba(233, 225, 189, 0.12);
-  --fakemon-text: #edf0e8;
-  --fakemon-muted: #aeb6b7;
-  --fakemon-cream: #e9e1bd;
-  --fakemon-red: #d75b4e;
+    var(--poke5e-ui-border-soft);
+  --fakemon-text: var(--poke5e-ui-text);
+  --fakemon-muted: var(--poke5e-ui-muted);
+  --fakemon-cream: var(--poke5e-ui-cream);
+  --fakemon-red: var(--poke5e-ui-accent);
 }
 
 
@@ -7011,15 +7011,15 @@ span {
 }
 
 .poke5e-fakemon-wizard-dialog {
-  --fakemon-bg: #141a1d;
-  --fakemon-panel: #242d31;
-  --fakemon-border: #566268;
+  --fakemon-bg: var(--poke5e-ui-bg);
+  --fakemon-panel: var(--poke5e-ui-panel);
+  --fakemon-border: var(--poke5e-ui-border);
   --fakemon-border-soft:
-    rgba(233, 225, 189, 0.12);
-  --fakemon-text: #edf0e8;
-  --fakemon-muted: #aeb6b7;
-  --fakemon-cream: #e9e1bd;
-  --fakemon-red: #d75b4e;
+    var(--poke5e-ui-border-soft);
+  --fakemon-text: var(--poke5e-ui-text);
+  --fakemon-muted: var(--poke5e-ui-muted);
+  --fakemon-cream: var(--poke5e-ui-cream);
+  --fakemon-red: var(--poke5e-ui-accent);
   --fakemon-purple: #8d79dd;
 }
 

@@ -1,0 +1,108 @@
+/* ============================================================
+ * POKE5E — THEME TOKENS
+ *
+ * The shared colours of every window of the module. Each window's
+ * own palette (--poke5e-fr-*, --encounter-*, --fakemon-*,
+ * --poke5e-manager-*) points here, so a theme only has to
+ * redefine these.
+ *
+ * Default look: the slate windows (Pokémon sheet, encounter
+ * planner, Fakemon Studio) use :root; the trainer windows keep
+ * the Team Rocket colours they always had.
+ * ============================================================ */
+
+:root {
+  --poke5e-ui-bg:
+    #141a1d;
+
+  --poke5e-ui-surface:
+    #1b2226;
+
+  --poke5e-ui-panel:
+    #242d31;
+
+  --poke5e-ui-panel-alt:
+    #303a3f;
+
+  --poke5e-ui-border:
+    #566268;
+
+  --poke5e-ui-border-strong:
+    #657076;
+
+  --poke5e-ui-border-bright:
+    #88949a;
+
+  --poke5e-ui-border-soft:
+    rgba(233, 225, 189, 0.12);
+
+  --poke5e-ui-text:
+    #edf0e8;
+
+  --poke5e-ui-muted:
+    #aeb6b7;
+
+  --poke5e-ui-cream:
+    #e9e1bd;
+
+  --poke5e-ui-cream-dark:
+    #bcb58f;
+
+  --poke5e-ui-accent:
+    #d75b4e;
+
+  --poke5e-ui-accent-dark:
+    #a83e35;
+
+  --poke5e-ui-success:
+    #63b66d;
+
+  --poke5e-ui-success-dark:
+    #36884b;
+
+  --poke5e-ui-info:
+    #6395db;
+
+  --poke5e-ui-gold:
+    #d9a91c;
+
+  --poke5e-ui-brass:
+    #c7af73;
+
+  --poke5e-ui-shadow:
+    rgba(0, 0, 0, 0.4);
+}
+
+
+.poke5e-trainer-sheet,
+.poke5e-trainer-party-dialog {
+  --poke5e-ui-bg:
+    #07090d;
+
+  --poke5e-ui-surface:
+    #11161d;
+
+  --poke5e-ui-panel:
+    #1b2128;
+
+  --poke5e-ui-border-strong:
+    rgba(199, 175, 115, 0.38);
+
+  --poke5e-ui-border-soft:
+    rgba(199, 175, 115, 0.2);
+
+  --poke5e-ui-text:
+    #e8e1d2;
+
+  --poke5e-ui-muted:
+    #b7bcc5;
+
+  --poke5e-ui-cream:
+    #efe8d8;
+
+  --poke5e-ui-accent:
+    #c43d3d;
+
+  --poke5e-ui-info:
+    #83a9dc;
+}

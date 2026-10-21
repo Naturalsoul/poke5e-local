@@ -3854,10 +3854,10 @@ button:hover {
 
 .dnd5e2.sheet.actor.character.poke5e-trainer-sheet {
   --poke5e-fr-bg-1:
-    #07090d;
+    var(--poke5e-ui-bg);
 
   --poke5e-fr-bg-2:
-    #11161d;
+    var(--poke5e-ui-surface);
 
   --poke5e-fr-panel:
     rgba(15, 19, 25, 0.9);
@@ -3869,7 +3869,7 @@ button:hover {
     rgba(35, 16, 16, 0.34);
 
   --poke5e-fr-red:
-    #c43d3d;
+    var(--poke5e-ui-accent);
 
   --poke5e-fr-red-soft:
     rgba(196, 61, 61, 0.16);
@@ -3878,23 +3878,23 @@ button:hover {
     rgba(196, 61, 61, 0.34);
 
   --poke5e-fr-gold:
-    #c7af73;
+    var(--poke5e-ui-brass);
 
   --poke5e-fr-gold-soft:
     rgba(199, 175, 115, 0.18);
 
   --poke5e-fr-ivory:
-    #efe8d8;
+    var(--poke5e-ui-cream);
 
   --poke5e-fr-text:
-    #e8e1d2;
+    var(--poke5e-ui-text);
 
   /*
    * Valor final V6.1.
    * Sustituye el antiguo #a6acb6.
    */
   --poke5e-fr-muted:
-    #b7bcc5;
+    var(--poke5e-ui-muted);
 
   --poke5e-fr-blue-dark:
     #202733;

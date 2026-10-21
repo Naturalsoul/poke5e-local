@@ -5,49 +5,49 @@
 
 .poke5e-encounter-planner {
   --encounter-bg:
-    #141a1d;
+    var(--poke5e-ui-bg);
 
   --encounter-surface:
-    #1b2226;
+    var(--poke5e-ui-surface);
 
   --encounter-panel:
-    #242d31;
+    var(--poke5e-ui-panel);
 
   --encounter-panel-alt:
-    #303a3f;
+    var(--poke5e-ui-panel-alt);
 
   --encounter-border:
-    #566268;
+    var(--poke5e-ui-border);
 
   --encounter-border-soft:
-    rgba(233, 225, 189, 0.12);
+    var(--poke5e-ui-border-soft);
 
   --encounter-text:
-    #edf0e8;
+    var(--poke5e-ui-text);
 
   --encounter-muted:
-    #aeb6b7;
+    var(--poke5e-ui-muted);
 
   --encounter-cream:
-    #e9e1bd;
+    var(--poke5e-ui-cream);
 
   --encounter-red:
-    #d75b4e;
+    var(--poke5e-ui-accent);
 
   --encounter-red-dark:
-    #a83e35;
+    var(--poke5e-ui-accent-dark);
 
   --encounter-gold:
-    #d9a91c;
+    var(--poke5e-ui-gold);
 
   --encounter-green:
-    #63b66d;
+    var(--poke5e-ui-success);
 
   --encounter-blue:
-    #6395db;
+    var(--poke5e-ui-info);
 
   --encounter-shadow:
-    rgba(0, 0, 0, 0.38);
+    var(--poke5e-ui-shadow);
 }
 
 
@@ -5899,12 +5899,12 @@ button[data-action="award-xp"]:hover:not(:disabled) {
  * ============================================================ */
 
 .poke5e-xp-award {
-  --award-panel: #242d31;
-  --award-panel-alt: #303a3f;
+  --award-panel: var(--poke5e-ui-panel);
+  --award-panel-alt: var(--poke5e-ui-panel-alt);
   --award-border: rgba(233, 225, 189, 0.16);
-  --award-text: #edf0e8;
-  --award-muted: #aeb6b7;
-  --award-accent: #d9a91c;
+  --award-text: var(--poke5e-ui-text);
+  --award-muted: var(--poke5e-ui-muted);
+  --award-accent: var(--poke5e-ui-gold);
 }
 
 /* The list scrolls inside the window, so every Pokémon can be reached however many there are. */

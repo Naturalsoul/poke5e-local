@@ -4,6 +4,15 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.23.1] — 2026-10-21
+
+- **Base común de colores para los temas.** `styles/theme.css` reúne los colores de todas las ventanas (fondo,
+  paneles, bordes, texto, acento…) y las paletas propias de la ficha de Pokémon, el planificador, Fakemon Studio, la
+  hoja de Entrenador y su gestor apuntan a ella. Se ve igual que antes (las ventanas de Entrenador conservan sus
+  colores Team Rocket; algunos tonos cambian en 1–4 unidades al unificarse). Es el paso previo a poder elegir un
+  tema en la configuración.
+- Se borra `styles/trainer.backup-pre-refactor.css` (11.000 líneas que no se cargaban).
+
 ## [0.23.0] — 2026-10-21
 
 - **Aviso en la tarjeta de los Moves sin automatizar.** Al usar uno de los 421 Moves pendientes o los 19 manuales,

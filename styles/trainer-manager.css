@@ -5,40 +5,40 @@
 
 .poke5e-trainer-party-dialog {
   --poke5e-manager-bg:
-    #0b0e12;
+    var(--poke5e-ui-bg);
 
   --poke5e-manager-surface:
-    #14191f;
+    var(--poke5e-ui-surface);
 
   --poke5e-manager-panel:
-    #1b2128;
+    var(--poke5e-ui-panel);
 
   --poke5e-manager-border:
-    rgba(199, 175, 115, 0.2);
+    var(--poke5e-ui-border-soft);
 
   --poke5e-manager-border-strong:
-    rgba(199, 175, 115, 0.38);
+    var(--poke5e-ui-border-strong);
 
   --poke5e-manager-red:
-    #c43d3d;
+    var(--poke5e-ui-accent);
 
   --poke5e-manager-red-soft:
     rgba(196, 61, 61, 0.14);
 
   --poke5e-manager-gold:
-    #c7af73;
+    var(--poke5e-ui-brass);
 
   --poke5e-manager-ivory:
-    #efe8d8;
+    var(--poke5e-ui-cream);
 
   --poke5e-manager-text:
-    #e8e1d2;
+    var(--poke5e-ui-text);
 
   --poke5e-manager-muted:
-    #b7bcc5;
+    var(--poke5e-ui-muted);
 
   --poke5e-manager-blue:
-    #83a9dc;
+    var(--poke5e-ui-info);
 
   --poke5e-manager-radius-md:
     8px;

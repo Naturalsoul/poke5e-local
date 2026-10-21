@@ -5,49 +5,49 @@
 
 .poke5e-pokemon-sheet {
   --poke5e-fr-red:
-    #d75b4e;
+    var(--poke5e-ui-accent);
 
   --poke5e-fr-red-dark:
-    #a83e35;
+    var(--poke5e-ui-accent-dark);
 
   --poke5e-fr-green:
-    #63b66d;
+    var(--poke5e-ui-success);
 
   --poke5e-fr-green-dark:
-    #36884b;
+    var(--poke5e-ui-success-dark);
 
   --poke5e-fr-cream:
-    #e9e1bd;
+    var(--poke5e-ui-cream);
 
   --poke5e-fr-cream-dark:
-    #bcb58f;
+    var(--poke5e-ui-cream-dark);
 
   --poke5e-fr-ink:
-    #eef0e7;
+    var(--poke5e-ui-text);
 
   --poke5e-fr-muted:
-    #aeb5ad;
+    var(--poke5e-ui-muted);
 
   --poke5e-fr-border:
-    #657076;
+    var(--poke5e-ui-border-strong);
 
   --poke5e-fr-border-bright:
-    #88949a;
+    var(--poke5e-ui-border-bright);
 
   --poke5e-fr-panel:
-    #252c30;
+    var(--poke5e-ui-panel);
 
   --poke5e-fr-panel-alt:
-    #30383c;
+    var(--poke5e-ui-panel-alt);
 
   --poke5e-fr-panel-deep:
-    #1b2124;
+    var(--poke5e-ui-surface);
 
   --poke5e-fr-surface:
-    #171d20;
+    var(--poke5e-ui-bg);
 
   --poke5e-fr-shadow:
-    rgba(0, 0, 0, 0.42);
+    var(--poke5e-ui-shadow);
 
   --poke5e-fr-exp:
     #4f87d9;
@@ -5065,7 +5065,7 @@ small {
 .poke5e-pokemon-panel--ability,
 .poke5e-pokemon-panel--held-item {
   --poke5e-held-item-accent:
-    #c7af73;
+    var(--poke5e-ui-brass);
 
   --poke5e-held-item-soft:
     rgba(199, 175, 115, 0.1);
@@ -7057,22 +7057,22 @@ input:disabled {
 .poke5e-pokemon-level-up-window
 [data-evolution-config] {
   --poke5e-evolution-accent:
-    #d75b4e;
+    var(--poke5e-ui-accent);
 
   --poke5e-evolution-green:
-    #63b66d;
+    var(--poke5e-ui-success);
 
   --poke5e-evolution-gold:
-    #c7af73;
+    var(--poke5e-ui-brass);
 
   --poke5e-evolution-blue:
     #6faae5;
 
   --poke5e-evolution-text:
-    #eef0e7;
+    var(--poke5e-ui-text);
 
   --poke5e-evolution-muted:
-    #aeb5ad;
+    var(--poke5e-ui-muted);
 
   --poke5e-evolution-panel:
     rgba(25, 30, 34, 0.82);
