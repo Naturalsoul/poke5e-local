@@ -115,13 +115,13 @@ Lo que un Move automatizado aún deja al DM está en la nota de su entrada en `s
     las características, un Move súper eficaz contra el equipo de los jugadores y objetos o bayas.
   - **Experiencia contra el power creep:** por defecto, un ritmo de "N encuentros Medios por nivel" (la XP total,
     dividida entre los Pokémon que participan, da a cada uno 1/N de nivel en una pelea Media), sin depender del SR.
-    La regla de poke5e (200 × Nivel × SR) sigue disponible (Configuración → Poke5e - Experiencia de encuentros).
+    La regla de poke5e (200 × Nivel × SR) sigue disponible (Configuración → Poke5e - Experiencia de los encuentros).
   - **Obligatorios y opcionales:** cada encuentro puede ser opcional (XP de recuperación: más a los Pokémon más
     débiles, y botín). Cada ubicación resume su ruta. "Repartir XP" entrega la parte de cada Pokémon que participó,
     con el dinero de los Entrenadores.
   - **Avance:** cuánto de un nivel le da el encuentro al Pokémon más fuerte de los jugadores, con la XP dividida
     entre los Pokémon que participan, y cuántos encuentros así le faltan para subir. Opcional, la XP según
-    diferencia de nivel de la Gen V (Configuración → Poke5e - XP según diferencia de nivel).
+    diferencia de nivel de la Gen V (Configuración → Poke5e - Experiencia según la diferencia de nivel).
 - **Fakemon Studio:** crea Pokémon propios con asistente, evoluciones, Moves y copia de seguridad.
 - Transiciones de batalla con sonido.
 

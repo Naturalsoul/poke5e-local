@@ -5983,3 +5983,15 @@ button[data-action="award-xp"]:hover:not(:disabled) {
   background: rgba(217, 169, 28, 0.16);
   color: var(--encounter-gold);
 }
+
+
+/* The Exp. Share holder: it always gets its part, so its XP is never greyed out. */
+.poke5e-xp-award__pokemon.is-exp-share {
+  border-style: dashed;
+  border-color: rgba(99, 149, 219, 0.7);
+}
+
+.poke5e-xp-award__pokemon.is-exp-share .poke5e-xp-award__name small,
+.poke5e-xp-award__hint i {
+  color: #8fb3e8;
+}

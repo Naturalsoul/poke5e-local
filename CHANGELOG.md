@@ -76,7 +76,10 @@ solo se corrige algo.
   parte de cada uno (editable) y se entrega. Un mensaje al GM resume la XP, las subidas de nivel, el dinero de los
   combates contra Entrenadores (poke5e: nivel más alto d4 × 100 por Entrenador) y, en los opcionales, un botín
   sugerido (un objeto o baya y una MT que aprende alguna de las especies rivales).
-- **"XP según diferencia de nivel"** (Gen V), opcional en la configuración del mundo: ((2 × rival + 10) ÷ (rival +
+- **Repartir Experiencia** en "Repartir XP": el Pokémon que lo lleva recibe, aunque no combata, la mitad de la XP
+  ganada en el combate (poke5e), además de su parte si combatió. Opción del mundo "Repartir Experiencia: regla casera": solo la
+  mitad de la XP que ganaron los demás Pokémon de su mismo Entrenador.
+- **"Experiencia según la diferencia de nivel"** (Gen V), opcional en la configuración del mundo: ((2 × rival + 10) ÷ (rival +
   grupo + 10))^2,5; dos niveles por debajo es ×0,83 y cinco, ×0,57. En el avance se mide contra el nivel del Pokémon
   más fuerte, que es quien recibe la XP.
 

@@ -26,35 +26,52 @@ const MODULE_ID =
  * ============================================================ */
 
 export const XP_STYLES = Object.freeze({
-  pace: "Ritmo: N encuentros Medios por nivel (contra el power creep)",
+  pace: "Ritmo: N encuentros de dificultad Media por nivel (recomendado)",
   poke5e: "Regla de poke5e: 200 × Nivel × SR"
 });
 
+// An open planner shows the new XP at once.
+const refreshPlanners = () => {
+  for (const app of foundry.applications.instances?.values?.() ?? []) {
+    if (app.constructor?.name === "PokemonEncounterPlanner") {app.render();}
+  }
+};
+
 export function registerEncounterXpSettings() {
+  const { BooleanField, NumberField, StringField } = foundry.data.fields;
   game.settings.register(MODULE_ID, "encounterXpStyle", {
-    name: "Poke5e - Experiencia de encuentros",
-    hint: "Cómo calcula el planificador la XP. El ritmo la ajusta para que, dividida entre los Pokémon que participan, una pelea Media dé a cada uno 1/N de nivel, sin depender del SR. La regla de poke5e da casi un nivel por Pokémon de nivel parecido derrotado.",
+    name: "Poke5e - Experiencia de los encuentros",
+    hint: "Cómo calcula el planificador la experiencia. Con el ritmo, la experiencia total, dividida entre los Pokémon que participan, da a cada uno 1/N de nivel en un encuentro de dificultad Media, sin depender del SR. Con la regla de poke5e, derrotar a un Pokémon de nivel parecido da casi un nivel completo.",
     scope: "world",
     config: true,
-    type: String,
-    choices: XP_STYLES,
-    default: "pace"
+    type: new StringField({ required: true, blank: false, choices: XP_STYLES, initial: "pace" }),
+    default: "pace",
+    onChange: refreshPlanners
   });
   game.settings.register(MODULE_ID, "encounterXpPace", {
-    name: "Poke5e - Encuentros Medios por nivel",
-    hint: "Con el ritmo: cuántos encuentros Medios necesita cada Pokémon que participa para subir un nivel.",
+    name: "Poke5e - Encuentros de dificultad Media por nivel",
+    hint: "Solo con el ritmo: cuántos encuentros de dificultad Media necesita cada Pokémon que participa para subir un nivel.",
     scope: "world",
     config: true,
-    type: Number,
-    range: { min: 1, max: 30, step: 1 },
-    default: 8
+    type: new NumberField({ required: true, nullable: false, integer: true, min: 1, max: 30, step: 1, initial: 8 }),
+    default: 8,
+    onChange: refreshPlanners
   });
   game.settings.register(MODULE_ID, "encounterXpLevelScaling", {
-    name: "Poke5e - XP según diferencia de nivel",
-    hint: "Como en la Gen V: derrotar Pokémon de menor nivel que el grupo da mucha menos XP, y de mayor nivel, más.",
+    name: "Poke5e - Experiencia según la diferencia de nivel",
+    hint: "Como en la quinta generación: derrotar a Pokémon de menor nivel que el grupo da mucha menos experiencia, y a Pokémon de mayor nivel, más.",
     scope: "world",
     config: true,
-    type: Boolean,
+    type: new BooleanField({ initial: false }),
+    default: false,
+    onChange: refreshPlanners
+  });
+  game.settings.register(MODULE_ID, "encounterXpExpShareTrainerOnly", {
+    name: "Poke5e - Repartir Experiencia: regla casera",
+    hint: "Desactivada (regla de poke5e): el Pokémon con Repartir Experiencia recibe la mitad de la experiencia total ganada en el combate. Activada: recibe la mitad de la experiencia que ganaron los demás Pokémon de su mismo Entrenador.",
+    scope: "world",
+    config: true,
+    type: new BooleanField({ initial: false }),
     default: false
   });
 }
@@ -64,10 +81,11 @@ export function getEncounterXpRules() {
     return {
       style: game.settings.get(MODULE_ID, "encounterXpStyle"),
       pace: game.settings.get(MODULE_ID, "encounterXpPace"),
-      scaling: game.settings.get(MODULE_ID, "encounterXpLevelScaling")
+      scaling: game.settings.get(MODULE_ID, "encounterXpLevelScaling"),
+      expShareTrainerOnly: game.settings.get(MODULE_ID, "encounterXpExpShareTrainerOnly")
     };
   } catch {
-    return { style: "pace", pace: 8, scaling: false };
+    return { style: "pace", pace: 8, scaling: false, expShareTrainerOnly: false };
   }
 }
 
@@ -109,6 +127,19 @@ export function encounterShare(rows, receiverLevel, participants, { context = nu
     calculatePokemonEncounterXp({ level: row.level, sr: row.sr, context: context && { ...context, scaling: false } }).defeated *
     (scaled ? levelScaling(row.level, receiverLevel) : 1) * row.quantity, 0);
   return Math.round(total / Math.max(1, participants));
+}
+
+/**
+ * Exp. Share (poke5e): its holder gets half of the XP gained in the combat, that is, the shares of the Pokémon that
+ * took part other than itself. With the house rule, only those of its own trainer's Pokémon.
+ *
+ * @param {{ trainer: string, xp: number }[]} shares  the participants' shares, the holder's among them
+ */
+export function expShareXp(shares, holder, { trainerOnly = false } = {}) {
+  const base = shares
+    .filter(share => share !== holder && (!trainerOnly || share.trainer === holder.trainer))
+    .reduce((sum, share) => sum + share.xp, 0);
+  return Math.floor(base / 2);
 }
 
 // Gen V's level factor: ((2 × rival + 10) ÷ (rival + party + 10))^2.5. Two levels below at 10 is ×0.83; five, ×0.57.
