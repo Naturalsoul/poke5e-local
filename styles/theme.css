@@ -71,6 +71,24 @@
 
   --poke5e-ui-shadow:
     rgba(0, 0, 0, 0.4);
+
+  /*
+   * Small text. The windows were drawn with 6–11 px labels,
+   * too small at the table: each old size points to one of these.
+   * 2xs was 6–7.5 px, xs 8–8.5 px, sm 9 px, md 10–11 px.
+   */
+
+  --poke5e-ui-text-2xs:
+    10px;
+
+  --poke5e-ui-text-xs:
+    11px;
+
+  --poke5e-ui-text-sm:
+    11.5px;
+
+  --poke5e-ui-text-md:
+    12px;
 }
 
 

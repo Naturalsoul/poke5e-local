@@ -455,7 +455,7 @@ small {
     var(--encounter-red);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -496,7 +496,7 @@ h2 + span {
     var(--encounter-muted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     700;
@@ -531,7 +531,7 @@ h2 + span {
     var(--encounter-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -606,7 +606,7 @@ i {
     var(--encounter-muted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   white-space:
     nowrap;
@@ -835,7 +835,7 @@ i {
     var(--encounter-red);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     900;
@@ -889,7 +889,7 @@ i {
     var(--encounter-muted);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -926,7 +926,7 @@ i {
     var(--encounter-cream);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     900;
@@ -1057,7 +1057,7 @@ small {
     var(--encounter-muted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -1118,7 +1118,7 @@ label {
     var(--encounter-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     800;
@@ -1161,7 +1161,7 @@ label {
     inherit;
 
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     700;
@@ -1331,7 +1331,7 @@ input[type="number"] {
     var(--encounter-muted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -1695,7 +1695,7 @@ select {
     var(--encounter-muted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -1782,7 +1782,7 @@ span {
     #8fb0dd;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   transform:
     translateY(-50%);
@@ -1959,7 +1959,7 @@ strong {
     #b8cef0;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -2003,7 +2003,7 @@ small {
     #8fb0dd;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -2102,7 +2102,7 @@ span {
     hidden;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     800;
@@ -2300,7 +2300,7 @@ span {
     var(--encounter-muted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     800;
@@ -2313,7 +2313,7 @@ i {
     var(--encounter-red);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 }
 
 .poke5e-encounter-planner__trainer-settings {
@@ -2458,7 +2458,7 @@ select {
     var(--encounter-muted);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   text-align:
     center;
@@ -2522,7 +2522,7 @@ button {
     inherit;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -2649,7 +2649,7 @@ button[data-action="generate"] {
     white;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   box-shadow:
     0 4px 10px
@@ -2791,7 +2791,7 @@ small {
     #89cb93;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -2835,7 +2835,7 @@ h3 + span {
     var(--encounter-muted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   text-overflow:
     ellipsis;
@@ -2866,7 +2866,7 @@ h3 + span {
     var(--encounter-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -2939,7 +2939,7 @@ h3 + span {
     var(--encounter-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   box-shadow:
     none;
@@ -2978,7 +2978,7 @@ h3 + span {
 .poke5e-encounter-planner__composition-view-button
 i {
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 }
 
 .poke5e-encounter-planner__composition-search {
@@ -3014,7 +3014,7 @@ i {
     var(--encounter-muted);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   transform:
     translateY(-50%);
@@ -3071,7 +3071,7 @@ input:focus {
     var(--encounter-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -3177,7 +3177,7 @@ input:focus {
     var(--encounter-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -3208,7 +3208,7 @@ strong {
     var(--encounter-text);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   text-overflow:
     ellipsis;
@@ -3227,7 +3227,7 @@ span {
     var(--encounter-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   text-overflow:
     ellipsis;
@@ -3257,7 +3257,7 @@ span {
     var(--encounter-muted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 .poke5e-encounter-planner__trainer-composition-groups {
@@ -3385,7 +3385,7 @@ small {
     var(--encounter-red);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -3415,7 +3415,7 @@ strong {
     var(--encounter-cream);
 
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 
   text-overflow:
     ellipsis;
@@ -3455,7 +3455,7 @@ strong {
     var(--encounter-red);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -3493,7 +3493,7 @@ strong {
     var(--encounter-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -3567,7 +3567,7 @@ strong {
 .poke5e-encounter-planner__trainer-collapse
 i {
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 }
 
 
@@ -3622,7 +3622,7 @@ i {
     var(--encounter-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   text-align:
     center;
@@ -3699,14 +3699,14 @@ strong {
     var(--encounter-cream);
 
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 }
 
 
 .poke5e-encounter-planner__composition-empty
 span {
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -3853,7 +3853,7 @@ span {
     var(--encounter-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 }
 
 
@@ -3887,7 +3887,7 @@ span {
     var(--encounter-blue);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -3969,7 +3969,7 @@ span {
     var(--encounter-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -4001,7 +4001,7 @@ input[type="number"] {
 .poke5e-encounter-planner__encounter-metric
 strong {
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 
   line-height:
     1.1;
@@ -4086,7 +4086,7 @@ strong {
     var(--encounter-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -4109,7 +4109,7 @@ i {
     var(--encounter-blue);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 }
 
 
@@ -4125,7 +4125,7 @@ i {
     var(--encounter-text);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   line-height:
     1.2;
@@ -4150,7 +4150,7 @@ i {
     var(--encounter-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   text-overflow:
     ellipsis;
@@ -4220,7 +4220,7 @@ i {
     24px;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 }
 
 
@@ -4236,7 +4236,7 @@ i {
 > div
 > strong {
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -4321,7 +4321,7 @@ input[type="number"] {
 .poke5e-encounter-planner__encounter-metric
 strong {
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -4361,7 +4361,7 @@ strong {
 .poke5e-encounter-planner__encounter-detail
 > strong {
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 }
 
 
@@ -4419,7 +4419,7 @@ strong {
     var(--pokemon-type-fg);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -4607,7 +4607,7 @@ strong {
     #e3c35c;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -4631,7 +4631,7 @@ strong {
     1px 5px;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 }
 
 
@@ -4668,7 +4668,7 @@ strong {
     #e78379;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -4678,7 +4678,7 @@ strong {
 .poke5e-encounter-planner__pokemon-trainer
 i {
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   opacity:
     0.8;
@@ -4691,7 +4691,7 @@ i {
     var(--encounter-muted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-style:
     normal;
@@ -4715,7 +4715,7 @@ i {
     var(--encounter-gold);
 
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     900;
@@ -4931,7 +4931,7 @@ i {
 .poke5e-encounter-planner__status-item
 i {
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -4940,7 +4940,7 @@ i {
     hidden;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -5164,7 +5164,7 @@ strong {
     var(--encounter-cream);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     900;
@@ -5235,7 +5235,7 @@ legend {
     var(--encounter-cream);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     900;
@@ -5391,7 +5391,7 @@ strong {
     var(--encounter-text);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   line-height:
     1.2;
@@ -5404,7 +5404,7 @@ small {
     var(--encounter-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     700;
@@ -5464,7 +5464,7 @@ small {
     var(--encounter-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 }
 
 
@@ -5482,7 +5482,7 @@ small {
     var(--encounter-cream);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     900;
@@ -5543,7 +5543,7 @@ input[type="number"] {
     var(--encounter-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 }
 
 
@@ -6005,7 +6005,7 @@ button[data-action="award-xp"]:hover:not(:disabled) {
 .poke5e-xp-award__name small,
 .poke5e-xp-award__share small {
   color: var(--award-muted);
-  font-size: 11px;
+  font-size: var(--poke5e-ui-text-md);
 }
 
 .poke5e-xp-award__share {
@@ -6093,7 +6093,7 @@ button[data-action="award-xp"]:hover:not(:disabled) {
     var(--encounter-muted);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 .poke5e-encounter-planner__steps-bar {
@@ -6149,7 +6149,7 @@ button[data-action="award-xp"]:hover:not(:disabled) {
     var(--encounter-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -6194,7 +6194,7 @@ button {
     4px 12px;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 .poke5e-encounter-planner__steps-bar
@@ -6203,7 +6203,7 @@ button small {
     inherit;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   opacity:
     0.8;
@@ -6272,7 +6272,7 @@ button.is-primary {
 .poke5e-encounter-planner__steps
 .poke5e-encounter-planner__step strong {
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 .poke5e-encounter-planner__steps
@@ -6281,7 +6281,7 @@ button.is-primary {
     var(--encounter-muted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     700;
@@ -6347,7 +6347,7 @@ button.is-primary {
     var(--encounter-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -6382,7 +6382,7 @@ button.is-primary {
     var(--encounter-gold);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     900;

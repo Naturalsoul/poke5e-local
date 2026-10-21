@@ -113,7 +113,7 @@
     var(--poke5e-trainer-radius-md);
 
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     600;
@@ -293,7 +293,7 @@ button {
   color:
     var(--poke5e-trainer-accent);
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 700;
 
   letter-spacing: 0.08em;
@@ -370,7 +370,7 @@ button {
 
   opacity: 0.55;
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 700;
 
   white-space: nowrap;
@@ -392,7 +392,7 @@ button {
   background:
     rgba(0, 0, 0, 0.1);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
 }
 
 
@@ -509,7 +509,7 @@ button {
 
   opacity: 0.62;
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   line-height: 1.35;
 }
 
@@ -545,7 +545,7 @@ button {
 > strong,
 .poke5e-trainer-create__selection-summary
 > strong {
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 750;
 
   letter-spacing: 0.025em;
@@ -575,7 +575,7 @@ select {
 small {
   opacity: 0.55;
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   line-height: 1.35;
 }
 
@@ -625,7 +625,7 @@ small {
   color:
     var(--poke5e-trainer-accent);
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 800;
 
   letter-spacing: 0.05em;
@@ -713,7 +713,7 @@ small {
   background:
     rgba(255, 255, 255, 0.025);
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 650;
 
   transition:
@@ -860,7 +860,7 @@ strong {
 
   overflow: hidden;
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
 
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -875,7 +875,7 @@ small {
       var(--poke5e-trainer-accent)
     );
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 700;
 
   text-transform: uppercase;
@@ -948,7 +948,7 @@ small {
   background:
     rgba(255, 255, 255, 0.045);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
 }
 
 
@@ -957,7 +957,7 @@ strong {
   color:
     var(--poke5e-trainer-accent);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
 
   text-transform: uppercase;
 }
@@ -984,7 +984,7 @@ strong {
   color:
     var(--poke5e-trainer-accent);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
 }
 
 
@@ -1023,7 +1023,7 @@ strong {
   background:
     rgba(255, 255, 255, 0.025);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 600;
 
   text-align: center;
@@ -1073,7 +1073,7 @@ strong {
 
   opacity: 0.9;
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
 }
 
 
@@ -1212,7 +1212,7 @@ span {
   color:
     var(--poke5e-trainer-accent);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 800;
 
   letter-spacing: 0.08em;
@@ -1271,7 +1271,7 @@ dl
 dt {
   opacity: 0.55;
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 700;
 
   text-transform: uppercase;
@@ -1283,7 +1283,7 @@ dd {
   margin:
     2px 0 0;
 
-  font-size: 11px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 650;
 }
 
@@ -1326,7 +1326,7 @@ dd {
 
 .poke5e-trainer-create__summary-limits
 small {
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 700;
 
   text-transform: uppercase;
@@ -1365,7 +1365,7 @@ strong {
   color:
     #b64040;
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 650;
 }
 
@@ -1398,7 +1398,7 @@ button {
   border-radius:
     var(--poke5e-trainer-radius-md);
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 700;
 }
 
@@ -1416,7 +1416,7 @@ button {
 > span {
   opacity: 0.55;
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 700;
 
   text-align: center;
@@ -1853,7 +1853,7 @@ small {
     var(--poke5e-level-up-accent);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     800;
@@ -1912,7 +1912,7 @@ strong {
     999px;
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -1942,7 +1942,7 @@ i {
     var(--poke5e-level-up-accent);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -2048,7 +2048,7 @@ p,
     0.62;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   line-height:
     1.35;
@@ -2077,7 +2077,7 @@ p,
 .poke5e-level-up-dialog__field
 > span {
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     750;
@@ -2203,7 +2203,7 @@ select {
 .poke5e-level-up-dialog__limits
 small {
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     750;
@@ -2261,7 +2261,7 @@ strong {
     0.68;
 
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 
   line-height:
     1.4;
@@ -2374,7 +2374,7 @@ small {
     0.72;
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   line-height:
     1.35;
@@ -2416,7 +2416,7 @@ p {
     0.68;
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   line-height:
     1.35;
@@ -2633,7 +2633,7 @@ strong {
     var(--poke5e-trainer-accent);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     700;
@@ -2695,7 +2695,7 @@ small {
     0.68;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     700;
@@ -2711,7 +2711,7 @@ small {
 .poke5e-level-up-move-card__metric
 strong {
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 
   line-height:
     1.25;
@@ -2889,7 +2889,7 @@ small {
     0.62;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     750;
@@ -2953,7 +2953,7 @@ small {
     0.62;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 }
 
 
@@ -3017,7 +3017,7 @@ small {
     0.62;
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     750;
@@ -3163,7 +3163,7 @@ small {
     0.48;
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   text-transform:
     uppercase;
@@ -3225,7 +3225,7 @@ small {
     0.55;
 
   font-size:
-    6px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     700;
@@ -3254,7 +3254,7 @@ strong {
     0.7;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -3429,7 +3429,7 @@ output {
     var(--poke5e-level-up-accent);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     750;
@@ -3576,7 +3576,7 @@ button:disabled {
 .poke5e-pokemon-level-up__progress-card
 strong {
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -3586,7 +3586,7 @@ small {
     0.62;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   line-height:
     1.3;
@@ -3649,7 +3649,7 @@ small {
     rgba(0, 0, 0, 0.025);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     650;
@@ -3666,7 +3666,7 @@ small {
     var(--poke5e-level-up-accent);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -3694,7 +3694,7 @@ button {
     var(--poke5e-level-up-soft);
 
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     750;
@@ -4216,7 +4216,7 @@ input {
     sans-serif;
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     700;
@@ -4279,7 +4279,7 @@ input {
     sans-serif;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     800;
@@ -4516,7 +4516,7 @@ input {
     sans-serif;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     700;
@@ -4637,7 +4637,7 @@ input {
     sans-serif;
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     800;
@@ -4872,7 +4872,7 @@ input {
     sans-serif;
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     900;
@@ -5268,7 +5268,7 @@ input {
     var(--poke5e-fr-gold);
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     800;
@@ -5426,7 +5426,7 @@ input {
     sans-serif;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -5600,7 +5600,7 @@ input {
     sans-serif;
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     800;
@@ -5631,7 +5631,7 @@ input {
     var(--poke5e-fr-ivory);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     800;
@@ -5748,7 +5748,7 @@ input {
     #b7bcc5;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -6382,7 +6382,7 @@ img {
     var(--poke5e-fr-ivory);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -6428,7 +6428,7 @@ img {
     var(--poke5e-display-font);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     700;
@@ -6506,7 +6506,7 @@ img {
     #b7bcc5;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     600;
@@ -6573,7 +6573,7 @@ strong {
     var(--poke5e-fr-text);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     700;
@@ -6643,7 +6643,7 @@ i {
     #b7bcc5;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     700;
@@ -6683,7 +6683,7 @@ select {
     var(--poke5e-fr-ivory);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   box-shadow:
     inset 0 1px 0
@@ -6813,7 +6813,7 @@ h3 {
     var(--poke5e-display-font);
 
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     800;
@@ -6916,7 +6916,7 @@ strong {
     rgba(239, 232, 216, 0.82);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     700;
@@ -6930,7 +6930,7 @@ span {
     rgba(183, 188, 197, 0.82);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -7171,7 +7171,7 @@ span {
     0.8;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -7219,7 +7219,7 @@ span {
     white;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     700;
@@ -7252,7 +7252,7 @@ span {
     var(--poke5e-fr-muted);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -7383,7 +7383,7 @@ strong {
     8px;
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 }
 
 
@@ -7394,7 +7394,7 @@ strong {
     #e6bc3e;
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     900;
@@ -7414,7 +7414,7 @@ strong {
     rgba(232, 225, 211, 0.9);
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     700;
@@ -7598,7 +7598,7 @@ img {
     0.55;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -7704,7 +7704,7 @@ img {
 .poke5e-trainer-command-card--empty
 > strong {
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -7715,7 +7715,7 @@ img {
     220px;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   line-height:
     1.4;
@@ -7770,7 +7770,7 @@ img {
     var(--poke5e-fr-text);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     750;
@@ -7900,7 +7900,7 @@ i {
     0;
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -8214,7 +8214,7 @@ strong {
     var(--poke5e-fr-ivory);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     750;
@@ -8264,7 +8264,7 @@ strong {
     white;
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     700;
@@ -8296,7 +8296,7 @@ strong {
     #e1e3e7;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     650;
@@ -8449,7 +8449,7 @@ strong {
     var(--poke5e-fr-red-soft);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -8477,7 +8477,7 @@ button {
     0;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -8536,7 +8536,7 @@ button {
     var(--poke5e-fr-text);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     700;
@@ -8804,7 +8804,7 @@ strong {
     var(--poke5e-fr-ivory);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   text-overflow:
     ellipsis;
@@ -8829,7 +8829,7 @@ strong {
     0.8;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 }
 
 
@@ -8872,7 +8872,7 @@ strong {
     0.72;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   text-align:
     center;
@@ -9112,7 +9112,7 @@ strong {
     rgba(0, 0, 0, 0.24);
 
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     700;
@@ -9328,7 +9328,7 @@ i {
     var(--poke5e-fainted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     800;
@@ -9425,7 +9425,7 @@ strong {
     white;
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     800;
@@ -9497,7 +9497,7 @@ strong {
     var(--poke5e-fainted);
 
   font-size:
-    7px !important;
+    var(--poke5e-ui-text-2xs) !important;
 
   font-weight:
     800;
@@ -9823,7 +9823,7 @@ strong {
   display: grid;
   gap: 2px;
   min-width: 0;
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   text-transform: uppercase;
   opacity: 0.85;
 }
@@ -9831,6 +9831,6 @@ strong {
 .poke5e-battlefield__field select {
   min-width: 0;
   height: 22px;
-  font-size: 11px;
+  font-size: var(--poke5e-ui-text-md);
   text-transform: none;
 }

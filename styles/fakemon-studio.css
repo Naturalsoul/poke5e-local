@@ -211,7 +211,7 @@
 
   color: var(--fakemon-red);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 900;
 
   letter-spacing: 0.11em;
@@ -295,7 +295,7 @@ button {
   color: var(--fakemon-red);
 
   text-align: center;
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
 }
 
 
@@ -318,7 +318,7 @@ button {
   color:
     var(--fakemon-muted);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 800;
 
   text-align: center;
@@ -495,7 +495,7 @@ button {
   color:
     var(--fakemon-cream);
 
-  font-size: 11px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 900;
 
   line-height: 1.08;
@@ -515,7 +515,7 @@ button {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 700;
 
   line-height: 1.05;
@@ -537,7 +537,7 @@ button {
   color:
     var(--fakemon-muted);
 
-  font-size: 8.5px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 800;
 
   line-height: 1.1;
@@ -576,7 +576,7 @@ button {
   color:
     var(--fakemon-muted) !important;
 
-  font-size: 8px !important;
+  font-size: var(--poke5e-ui-text-xs) !important;
 
   box-shadow:
     none !important;
@@ -708,7 +708,7 @@ button:hover:not(:disabled) {
   color:
     var(--fakemon-muted);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 700;
 }
 
@@ -786,7 +786,7 @@ button:hover:not(:disabled) {
   color:
     var(--fakemon-muted) !important;
 
-  font-size: 9px !important;
+  font-size: var(--poke5e-ui-text-sm) !important;
   font-weight: 900 !important;
 
   white-space: nowrap;
@@ -924,7 +924,7 @@ button:hover:not(:disabled) {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
 }
 
 .fakemon-studio__section-label {
@@ -948,7 +948,7 @@ button:hover:not(:disabled) {
   color:
     var(--fakemon-cream);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 900;
 
   letter-spacing: 0.055em;
@@ -1011,7 +1011,7 @@ button:hover:not(:disabled) {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 800;
 }
 
@@ -1020,7 +1020,7 @@ button:hover:not(:disabled) {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 800;
 }
 
@@ -1032,7 +1032,7 @@ button:hover:not(:disabled) {
 
   opacity: 0.72;
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 600;
 }
 
@@ -1063,7 +1063,7 @@ button:hover:not(:disabled) {
 
   font-family: inherit;
 
-  font-size: 11px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 700;
 
   box-sizing:
@@ -1152,7 +1152,7 @@ input[readonly] {
   color:
     var(--fakemon-muted);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 800;
 }
 
@@ -1226,7 +1226,7 @@ strong {
   color:
     var(--fakemon-cream);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 900;
 
   letter-spacing: 0.04em;
@@ -1239,7 +1239,7 @@ small {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
 }
 
 
@@ -1302,7 +1302,7 @@ small {
   color:
     var(--fakemon-red);
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
 }
 
 
@@ -1322,7 +1322,7 @@ strong {
   color:
     var(--fakemon-cream);
 
-  font-size: 11px;
+  font-size: var(--poke5e-ui-text-md);
   line-height: 1;
 }
 
@@ -1336,7 +1336,7 @@ small {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
 
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1392,7 +1392,7 @@ strong {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
 }
 
 .fakemon-studio__metric-card {
@@ -1471,7 +1471,7 @@ strong {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 800;
 
   text-overflow: ellipsis;
@@ -1533,7 +1533,7 @@ strong {
   color:
     var(--fakemon-cream);
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
 }
 
 
@@ -1661,7 +1661,7 @@ button {
 
   font-family: inherit;
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 900;
 
   cursor: pointer;
@@ -1718,7 +1718,7 @@ button.primary {
   color:
     var(--fakemon-muted);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 700;
 }
 
@@ -1818,7 +1818,7 @@ button.primary {
   color:
     var(--fakemon-cream);
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
 }
 
 
@@ -1836,7 +1836,7 @@ span {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
 }
 
 
@@ -1861,7 +1861,7 @@ span {
   color:
     var(--fakemon-muted);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
 
   text-align: center;
 }
@@ -1909,7 +1909,7 @@ strong {
   color:
     var(--fakemon-cream);
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
 }
 
 
@@ -1922,7 +1922,7 @@ span {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
 
   text-overflow: ellipsis;
 }
@@ -1942,7 +1942,7 @@ span {
 
   border-radius: 999px;
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 }
 
@@ -2019,7 +2019,7 @@ small {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 900;
 
   letter-spacing: 0.06em;
@@ -2086,7 +2086,7 @@ strong {
   color:
     var(--fakemon-muted);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 800;
 }
 
@@ -2253,7 +2253,7 @@ strong {
   color:
     var(--fakemon-red);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
 }
 
 
@@ -2262,7 +2262,7 @@ span {
   color:
     var(--fakemon-cream);
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 900;
 
   letter-spacing: 0.035em;
@@ -2278,7 +2278,7 @@ button {
     3px
     7px;
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
 }
 
 
@@ -2299,7 +2299,7 @@ button {
   color:
     var(--fakemon-muted) !important;
 
-  font-size: 8px !important;
+  font-size: var(--poke5e-ui-text-xs) !important;
 }
 
 
@@ -2344,7 +2344,7 @@ button {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 
   letter-spacing: 0.06em;
@@ -2475,7 +2475,7 @@ small {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 700;
 
   text-overflow: ellipsis;
@@ -2503,7 +2503,7 @@ span {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 }
 
@@ -2550,7 +2550,7 @@ input {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 800;
 }
 
@@ -2576,7 +2576,7 @@ i {
   color:
     var(--fakemon-purple);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
 }
 
 
@@ -2598,7 +2598,7 @@ i {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 800;
 }
 
@@ -2619,7 +2619,7 @@ small {
 
   opacity: 0.72;
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
 }
 
 
@@ -2652,7 +2652,7 @@ small {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 700;
 
   text-align: center;
@@ -2805,7 +2805,7 @@ i {
   color:
     var(--fakemon-red);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
 }
 
 
@@ -2827,7 +2827,7 @@ strong {
   color:
     var(--fakemon-cream);
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 900;
 
   letter-spacing: 0.05em;
@@ -2924,7 +2924,7 @@ strong {
   color:
     var(--fakemon-red);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
 }
 
 
@@ -2945,7 +2945,7 @@ strong {
   color:
     var(--fakemon-cream);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 900;
 
   text-overflow: ellipsis;
@@ -2971,7 +2971,7 @@ strong {
   color:
     var(--fakemon-muted);
 
-  font-size: 6.5px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 
   white-space: nowrap;
@@ -3112,7 +3112,7 @@ img[hidden] {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 700;
 
   text-align: center;
@@ -3161,7 +3161,7 @@ i {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 
   text-transform: uppercase;
@@ -3172,7 +3172,7 @@ i {
 input {
   width: 100%;
 
-  font-size: 9px !important;
+  font-size: var(--poke5e-ui-text-sm) !important;
 }
 
 
@@ -3185,7 +3185,7 @@ small {
 
   opacity: 0.72;
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
 
   line-height: 1.25;
 }
@@ -3212,7 +3212,7 @@ small {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   line-height: 1.4;
 }
 
@@ -3242,7 +3242,7 @@ code {
   color:
     var(--fakemon-cream);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
 }
 
 
@@ -3416,7 +3416,7 @@ h2 {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 800;
 
   line-height: 1.2;
@@ -3477,7 +3477,7 @@ h2 {
   color:
     var(--fakemon-type-color);
 
-  font-size: 6.5px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 
   letter-spacing: 0.045em;
@@ -3636,7 +3636,7 @@ h2 {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 800;
 }
 
@@ -3836,7 +3836,7 @@ i {
   color:
     var(--fakemon-red);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
 }
 
 
@@ -3845,7 +3845,7 @@ strong {
   color:
     var(--fakemon-cream);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 900;
 
   letter-spacing: 0.04em;
@@ -3871,7 +3871,7 @@ strong {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 }
 
@@ -3971,7 +3971,7 @@ strong {
   color:
     var(--fakemon-text);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 900;
 
   text-overflow: ellipsis;
@@ -3986,7 +3986,7 @@ small {
   color:
     var(--fakemon-muted);
 
-  font-size: 6.5px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 700;
 
   text-overflow: ellipsis;
@@ -4027,7 +4027,7 @@ strong {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 
   text-transform: uppercase;
@@ -4041,7 +4041,7 @@ small {
 
   opacity: 0.68;
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
 }
 
 
@@ -4113,7 +4113,7 @@ select[
 
   padding-left: 2px;
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 800;
 
   line-height: 1.2;
@@ -4124,7 +4124,7 @@ select[
 i {
   flex: 0 0 auto;
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
 }
 
 
@@ -4207,7 +4207,7 @@ input {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 800;
 
   line-height: 1.3;
@@ -4293,7 +4293,7 @@ textarea:focus {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 800;
 
   line-height: 1.25;
@@ -4306,7 +4306,7 @@ i,
 i {
   flex: 0 0 auto;
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
 }
 
 
@@ -4528,7 +4528,7 @@ span {
   color:
     #dfc262;
 
-  font-size: 7.5px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 
   white-space: nowrap;
@@ -4544,7 +4544,7 @@ span {
 
 .fakemon-studio__dirty-indicator
 i {
-  font-size: 6px;
+  font-size: var(--poke5e-ui-text-2xs);
 }
 
 
@@ -4638,7 +4638,7 @@ i {
   color:
     var(--fakemon-muted);
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   line-height: 1.4;
 }
 
@@ -4657,7 +4657,7 @@ i {
   color:
     var(--fakemon-cream);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 900;
 }
 
@@ -4686,7 +4686,7 @@ input {
   color:
     var(--fakemon-text);
 
-  font-size: 11px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 700;
 }
 
@@ -4763,7 +4763,7 @@ strong {
   color:
     var(--fakemon-cream);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
 }
 
 
@@ -4772,7 +4772,7 @@ span {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   line-height: 1.4;
 }
 
@@ -4821,7 +4821,7 @@ button {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
 }
 
 
@@ -4886,7 +4886,7 @@ button:hover:not(:disabled) {
   color:
     var(--fakemon-muted);
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   line-height: 1.4;
 }
 
@@ -4905,7 +4905,7 @@ button:hover:not(:disabled) {
   color:
     var(--fakemon-cream);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 900;
 }
 
@@ -4928,7 +4928,7 @@ input[type="file"] {
   color:
     var(--fakemon-text);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
 }
 
 
@@ -5017,7 +5017,7 @@ strong {
   color:
     var(--fakemon-cream);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
 }
 
 
@@ -5026,7 +5026,7 @@ span {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   line-height: 1.4;
 }
 
@@ -5073,7 +5073,7 @@ span {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 800;
 
   text-align: center;
@@ -5111,7 +5111,7 @@ strong {
   color:
     #e78379;
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 900;
 }
 
@@ -5229,7 +5229,7 @@ small {
   color:
     var(--fakemon-muted);
 
-  font-size: 6.5px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 
   letter-spacing: 0.05em;
@@ -5244,7 +5244,7 @@ strong {
   color:
     var(--fakemon-cream);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 900;
 
   text-overflow: ellipsis;
@@ -5259,7 +5259,7 @@ em {
   color:
     var(--fakemon-muted);
 
-  font-size: 6.5px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-style: normal;
 
   text-overflow: ellipsis;
@@ -5275,7 +5275,7 @@ em {
   color:
     var(--fakemon-purple);
 
-  font-size: 11px;
+  font-size: var(--poke5e-ui-text-md);
 }
 
 
@@ -5317,7 +5317,7 @@ em {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
 }
 
 
@@ -5337,7 +5337,7 @@ strong {
   color:
     var(--fakemon-cream);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
 }
 
 
@@ -5375,7 +5375,7 @@ span {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 
   white-space: nowrap;
@@ -5463,7 +5463,7 @@ i {
   color:
     var(--fakemon-purple);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
 }
 
 
@@ -5511,7 +5511,7 @@ small {
 
   opacity: 0.78;
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   line-height: 1.3;
 }
 
@@ -5731,7 +5731,7 @@ small {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 700;
 
   text-overflow: ellipsis;
@@ -5746,7 +5746,7 @@ p {
   color:
     var(--fakemon-muted);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   line-height: 1.35;
 }
 
@@ -5836,7 +5836,7 @@ p {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 700;
 }
 
@@ -5914,7 +5914,7 @@ strong {
   color:
     var(--fakemon-cream);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 900;
 }
 
@@ -5924,7 +5924,7 @@ span {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   line-height: 1.3;
 }
 
@@ -6141,7 +6141,7 @@ strong {
   color:
     var(--fakemon-cream);
 
-  font-size: 11px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 800;
 
   text-overflow: ellipsis;
@@ -6156,7 +6156,7 @@ small {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 700;
 
   opacity: 0.72;
@@ -6216,7 +6216,7 @@ small {
   color:
     var(--fakemon-move-type-color);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 
   letter-spacing: 0.04em;
@@ -6241,7 +6241,7 @@ small {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 800;
 }
 
@@ -6251,7 +6251,7 @@ strong {
   color:
     var(--fakemon-text);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 900;
 }
 
@@ -6281,7 +6281,7 @@ strong {
 
   opacity: 0.58;
 
-  font-size: 6px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 
   letter-spacing: 0.055em;
@@ -6338,7 +6338,7 @@ strong {
   color:
     var(--fakemon-move-ability-color);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 
   letter-spacing: 0.025em;
@@ -6420,7 +6420,7 @@ strong {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 }
 
@@ -6529,7 +6529,7 @@ input {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 700;
 }
 
@@ -6652,7 +6652,7 @@ small {
 
 .fakemon-studio__move-card-heading
 strong {
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
 }
 
 
@@ -6673,7 +6673,7 @@ strong {
     1px
     5px;
 
-  font-size: 6.5px;
+  font-size: var(--poke5e-ui-text-2xs);
 }
 
 
@@ -6699,7 +6699,7 @@ strong {
     1px
     3px;
 
-  font-size: 6.5px;
+  font-size: var(--poke5e-ui-text-2xs);
 }
 
 
@@ -6908,21 +6908,21 @@ input {
   width: 25px;
   height: 25px;
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
 }
 
 
 .fakemon-studio__move-drop-zone
 .fakemon-studio__catalog-drop-hint
 strong {
-  font-size: 7.5px;
+  font-size: var(--poke5e-ui-text-2xs);
 }
 
 
 .fakemon-studio__move-drop-zone
 .fakemon-studio__catalog-drop-hint
 span {
-  font-size: 6.5px;
+  font-size: var(--poke5e-ui-text-2xs);
 }
 
 
@@ -7083,7 +7083,7 @@ span {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 900;
 
   letter-spacing: 0.07em;
@@ -7182,7 +7182,7 @@ strong {
   color:
     var(--fakemon-cream);
 
-  font-size: 11px;
+  font-size: var(--poke5e-ui-text-md);
 }
 
 
@@ -7191,7 +7191,7 @@ span {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   line-height: 1.4;
 }
 
@@ -7231,7 +7231,7 @@ span {
   color:
     var(--fakemon-cream);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 900;
 }
 
@@ -7243,7 +7243,7 @@ small {
 
   opacity: 0.75;
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   line-height: 1.35;
 }
 
@@ -7275,7 +7275,7 @@ small {
 
   font-family: inherit;
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 700;
 }
 
@@ -7374,7 +7374,7 @@ strong {
   color:
     var(--fakemon-cream);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
 }
 
 
@@ -7383,7 +7383,7 @@ small {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   line-height: 1.35;
 }
 
@@ -7491,7 +7491,7 @@ h3 {
 
   border-radius: 999px;
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 }
 
@@ -7638,7 +7638,7 @@ strong {
   color:
     var(--fakemon-purple);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
 }
 
 
@@ -7705,7 +7705,7 @@ span {
   color:
     #8ed099;
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 900;
 }
 
@@ -7733,7 +7733,7 @@ span {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   line-height: 1.4;
 }
 
@@ -7856,7 +7856,7 @@ span {
   color:
     var(--fakemon-cream);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 900;
 
   letter-spacing: 0.04em;
@@ -7883,7 +7883,7 @@ span {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 }
 
@@ -7995,7 +7995,7 @@ strong {
   color:
     var(--fakemon-cream);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 900;
 
   text-overflow: ellipsis;
@@ -8024,7 +8024,7 @@ em {
   color:
     #b8acf4;
 
-  font-size: 6.5px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-style: normal;
   font-weight: 900;
 }
@@ -8038,7 +8038,7 @@ em {
   color:
     #8ed099;
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 900;
 }
 
@@ -8050,7 +8050,7 @@ em {
 
   opacity: 0.8;
 
-  font-size: 6.5px;
+  font-size: var(--poke5e-ui-text-2xs);
   line-height: 1.35;
 }
 
@@ -8090,7 +8090,7 @@ em {
   color:
     var(--fakemon-muted);
 
-  font-size: 6.5px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-style: normal;
   font-weight: 800;
 }
@@ -8133,7 +8133,7 @@ em {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
 
   text-align: center;
 }
@@ -8195,7 +8195,7 @@ em {
   color:
     var(--fakemon-purple);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 
   letter-spacing: 0.06em;
@@ -8219,7 +8219,7 @@ em {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 800;
 }
 
@@ -8256,7 +8256,7 @@ em {
   color:
     #8ed099;
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 }
 
@@ -8333,7 +8333,7 @@ em {
   color:
     var(--fakemon-purple);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
 }
 
 
@@ -8343,7 +8343,7 @@ em {
   color:
     var(--fakemon-muted);
 
-  font-size: 6.5px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 800;
 
   text-overflow: ellipsis;
@@ -8444,7 +8444,7 @@ em {
   color:
     var(--fakemon-cream);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 900;
 
   letter-spacing: 0.04em;
@@ -8463,7 +8463,7 @@ em {
   color:
     var(--fakemon-muted);
 
-  font-size: 6.5px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 
   text-transform: uppercase;
@@ -8552,7 +8552,7 @@ em {
   color:
     var(--fakemon-cream);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
 
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -8608,7 +8608,7 @@ em {
   color:
     #c2b8f2;
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 800;
 }
 
@@ -8663,7 +8663,7 @@ em {
   color:
     var(--fakemon-purple);
 
-  font-size: 6.5px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 }
 
@@ -8674,7 +8674,7 @@ em {
   color:
     var(--fakemon-text);
 
-  font-size: 7.5px;
+  font-size: var(--poke5e-ui-text-2xs);
 
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -8729,7 +8729,7 @@ em {
   color:
     var(--fakemon-text);
 
-  font-size: 7.5px;
+  font-size: var(--poke5e-ui-text-2xs);
 
   line-height: 1.35;
 }
@@ -8743,7 +8743,7 @@ em {
   color:
     var(--fakemon-muted);
 
-  font-size: 6.5px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 800;
 
   text-transform: uppercase;
@@ -8904,7 +8904,7 @@ em {
   color:
     var(--fakemon-cream);
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
 }
 
 
@@ -8912,7 +8912,7 @@ em {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   line-height: 1.35;
 }
 
@@ -8989,7 +8989,7 @@ em {
   color:
     var(--fakemon-cream);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 900;
 
   text-transform: uppercase;
@@ -9000,7 +9000,7 @@ em {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
 }
 
 
@@ -9046,7 +9046,7 @@ em {
   color:
     var(--fakemon-muted);
 
-  font-size: 6.5px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 
   text-transform: uppercase;
@@ -9060,7 +9060,7 @@ em {
   color:
     var(--fakemon-cream);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
 
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -9071,7 +9071,7 @@ em {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-style: normal;
 }
 
@@ -9128,7 +9128,7 @@ em {
   color:
     var(--fakemon-text);
 
-  font-size: 7.5px;
+  font-size: var(--poke5e-ui-text-2xs);
 }
 
 
@@ -9142,7 +9142,7 @@ em {
   color:
     var(--fakemon-muted);
 
-  font-size: 6.5px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 
   text-transform: uppercase;
@@ -9162,7 +9162,7 @@ em {
   color:
     var(--fakemon-muted);
 
-  font-size: 6.5px;
+  font-size: var(--poke5e-ui-text-2xs);
   font-weight: 900;
 
   text-transform: uppercase;
@@ -9208,7 +9208,7 @@ em {
   color:
     var(--fakemon-text);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
 }
 
 
@@ -9302,7 +9302,7 @@ em {
   color:
     var(--fakemon-muted);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   line-height: 1.35;
 }
 
@@ -9363,7 +9363,7 @@ em {
   color:
     var(--fakemon-cream);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
 }
 
 
@@ -9371,7 +9371,7 @@ em {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
 }
 
 
@@ -9415,7 +9415,7 @@ em {
   color:
     var(--fakemon-muted);
 
-  font-size: 7px;
+  font-size: var(--poke5e-ui-text-2xs);
 }
 
 

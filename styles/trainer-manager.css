@@ -192,7 +192,7 @@
     var(--poke5e-manager-red);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -278,7 +278,7 @@
     var(--poke5e-manager-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     800;
@@ -334,7 +334,7 @@ input[type="search"] {
     inherit;
 
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     700;
@@ -429,7 +429,7 @@ select option {
     var(--poke5e-manager-muted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     800;
@@ -452,7 +452,7 @@ strong {
     var(--poke5e-manager-gold);
 
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -476,7 +476,7 @@ strong {
     0.68;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -561,7 +561,7 @@ i {
     var(--poke5e-manager-muted);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     850;
@@ -599,7 +599,7 @@ i {
     var(--poke5e-manager-muted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   text-align:
     center;
@@ -807,7 +807,7 @@ p {
     var(--poke5e-manager-muted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   line-height:
     1.35;
@@ -835,7 +835,7 @@ p {
     var(--poke5e-manager-red);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     900;
@@ -937,7 +937,7 @@ small {
     var(--poke5e-manager-muted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -990,7 +990,7 @@ label {
     var(--poke5e-manager-muted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     800;
@@ -1080,7 +1080,7 @@ label {
     0.7;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -1235,7 +1235,7 @@ small {
     var(--poke5e-manager-muted);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 }
 
 
@@ -1301,7 +1301,7 @@ button[data-trainer-action],
     var(--poke5e-manager-ivory);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     800;
@@ -1408,7 +1408,7 @@ input {
     var(--poke5e-manager-muted);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 

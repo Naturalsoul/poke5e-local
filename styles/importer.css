@@ -207,7 +207,7 @@
   padding: 3px 7px;
   border-radius: var(--poke5e-radius-sm);
   background: rgba(0, 0, 0, 0.08);
-  font-size: 11px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 600;
   white-space: nowrap;
 }
@@ -249,7 +249,7 @@
   border: 0;
   border-bottom: 1px solid var(--poke5e-border);
   background: var(--color-bg-option, rgba(35, 35, 35, 0.92));
-  font-size: 11px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 700;
   text-align: left;
   text-transform: uppercase;
@@ -330,7 +330,7 @@
   margin-top: 1px;
   opacity: 0.55;
   overflow: hidden;
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   line-height: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;

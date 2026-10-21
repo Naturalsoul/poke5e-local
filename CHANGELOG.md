@@ -4,6 +4,14 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.23.2] — 2026-10-21
+
+- **Texto más legible.** Las ventanas usaban etiquetas de 6 a 11 px (los botones Check/Save, la naturaleza, los
+  estados, la EXP del equipo, la potencia de los Moves…). Ahora el texto pequeño mide de 10 a 12 px: lo que era de
+  6–7,5 px pasa a 10, el de 8 a 11, el de 9 a 11,5 y el de 10–11 a 12. Cada tamaño sale de una escala en
+  `styles/theme.css` (`--poke5e-ui-text-*`), así que se ajusta en un solo sitio. Se mantiene la micro-etiqueta
+  "MOD" de 4 px del modificador, que no cabría en su píldora.
+
 ## [0.23.1] — 2026-10-21
 
 - **Base común de colores para los temas.** `styles/theme.css` reúne los colores de todas las ventanas (fondo,
