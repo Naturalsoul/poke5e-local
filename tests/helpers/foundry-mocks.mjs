@@ -33,6 +33,7 @@ export function installFoundryUtils() {
     utils: {
       deepClone,
       getProperty,
+      hasProperty: (object, key) => key in object || getProperty(object, key) !== undefined,
       setProperty
     }
   };

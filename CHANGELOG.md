@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.24.0] — 2026-10-21
+
+- **Rango en el Team Rocket.** La línea bajo el nombre del entrenador ("TEAM ROCKET // RECLUTA") ya no es fija: el DM
+  elige el rango en un desplegable de la propia línea (Recluta, Alto Rango Recluta, Ejecutivo, Administrador o
+  Administrador Jefe), y el jugador solo ve el texto. El cambio se rechaza si no viene de un DM, aunque el jugador sea
+  dueño del actor. Sin elegir, sigue siendo Recluta.
+
 ## [0.23.3] — 2026-10-21
 
 - **Colores escritos a mano, a la base común.** En la ficha de Pokémon, la hoja de Entrenador y su gestor, el

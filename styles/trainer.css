@@ -4228,16 +4228,20 @@ input {
 
 /* ============================================================
  * ROCKET TRAINER IDENTIFIER
+ *
+ * "TEAM ROCKET // <rank>": text for players, a select for the GM
+ * (trainer-rocket-rank.mjs).
  * ============================================================ */
 
 .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header
-> .left::after {
-  content:
-    "TEAM ROCKET // RECLUTA";
-
+> .left
+.poke5e-trainer-rocket-rank {
   display:
-    block;
+    flex;
+
+  align-items:
+    center;
 
   width:
     max-content;
@@ -4293,8 +4297,59 @@ input {
   text-transform:
     uppercase;
 
-  pointer-events:
+  white-space:
+    pre;
+}
+
+
+/* The GM's select reads as part of the label: same font, a small caret. */
+.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+.poke5e-trainer-rocket-rank
+select {
+  width:
+    auto;
+
+  height:
+    auto;
+
+  margin:
+    0;
+
+  padding:
+    0 14px 0 0;
+
+  border:
     none;
+
+  background:
+    transparent;
+
+  color:
+    inherit;
+
+  font:
+    inherit;
+
+  letter-spacing:
+    inherit;
+
+  text-transform:
+    inherit;
+
+  cursor:
+    pointer;
+}
+
+
+.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+.poke5e-trainer-rocket-rank
+select
+option {
+  background:
+    var(--poke5e-ui-surface);
+
+  color:
+    var(--poke5e-ui-text);
 }
 
 
