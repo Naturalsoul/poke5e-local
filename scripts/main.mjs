@@ -1,6 +1,7 @@
 import { registerPokemonBondService } from "./pokemon-bond-service.mjs";
 import { registerMoveAnimations } from "./move-animations.mjs";
 import { registerEncounterXpSettings } from "./encounter-xp-service.mjs";
+import { registerUiTheme } from "./ui-theme.mjs";
 import { registerBattleHotbar, useBattleHotbarMacro } from "./battle-hotbar.mjs";
 import { registerPassiveAbilityEngine } from "./passive-ability-engine.mjs";
 import { registerActiveAbilityService } from "./active-ability-service.mjs";
@@ -346,6 +347,7 @@ Hooks.once(
     registerFakemonRepositorySettings();
     registerPoke5eItemCatalogSettings();
     registerEncounterXpSettings();
+    registerUiTheme();
     registerPoke5eItemConsumptionService();
     registerBattleTransitionService();
 

@@ -4,6 +4,16 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.25.0] — 2026-10-21
+
+- **Temas.** Nuevo ajuste "Poke5e - Tema" (Configuración, por jugador): cambia los colores de las fichas, el
+  planificador, Fakemon Studio y el gestor del Entrenador. Cuatro temas oscuros: **Pizarra** (el de siempre, con las
+  ventanas de Entrenador en rojo Rocket), **Team Rocket** (negro nocturno, rojo Rocket y latón en todas las
+  ventanas), **Rojo Fuego** (brasas, el rojo de FireRed y el crema de sus cuadros de texto) y **Esmeralda** (verdes
+  de bosque, esmeralda y dorado de Hoenn). Cada tema solo redefine los colores comunes de `styles/theme.css`; los
+  colores de tipo y de PS no cambian. Un test comprueba que el texto se lee en todos (contraste 4,5:1, y 3:1 el
+  acento).
+
 ## [0.24.0] — 2026-10-21
 
 - **Rango en el Team Rocket.** La línea bajo el nombre del entrenador ("TEAM ROCKET // RECLUTA") ya no es fija: el DM

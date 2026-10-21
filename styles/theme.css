@@ -124,3 +124,209 @@
   --poke5e-ui-info:
     #83a9dc;
 }
+
+
+/* ============================================================
+ * THEMES (setting "Poke5e - Tema", scripts/ui-theme.mjs)
+ *
+ * Each one also covers the trainer windows, which otherwise keep
+ * their own Rocket colours. "slate" is the default above.
+ * ============================================================ */
+
+
+/* Team Rocket: night black, Rocket red (a touch lighter, to read on its panels) and brass, in every window. */
+body.poke5e-theme-rocket,
+body.poke5e-theme-rocket .poke5e-trainer-sheet,
+body.poke5e-theme-rocket .poke5e-trainer-party-dialog {
+  --poke5e-ui-bg:
+    #07090d;
+
+  --poke5e-ui-surface:
+    #11161d;
+
+  --poke5e-ui-panel:
+    #1b2128;
+
+  --poke5e-ui-panel-alt:
+    #262d37;
+
+  --poke5e-ui-border:
+    #3a4250;
+
+  --poke5e-ui-border-strong:
+    rgba(199, 175, 115, 0.38);
+
+  --poke5e-ui-border-bright:
+    #8f8466;
+
+  --poke5e-ui-border-soft:
+    rgba(199, 175, 115, 0.2);
+
+  --poke5e-ui-text:
+    #e8e1d2;
+
+  --poke5e-ui-muted:
+    #b7bcc5;
+
+  --poke5e-ui-cream:
+    #efe8d8;
+
+  --poke5e-ui-cream-dark:
+    #c9bfa6;
+
+  --poke5e-ui-accent:
+    #cf4646;
+
+  --poke5e-ui-accent-dark:
+    #8f2a2a;
+
+  --poke5e-ui-success:
+    #4aa764;
+
+  --poke5e-ui-success-dark:
+    #2f7a47;
+
+  --poke5e-ui-info:
+    #83a9dc;
+
+  --poke5e-ui-gold:
+    #d9a91c;
+
+  --poke5e-ui-brass:
+    #c7af73;
+
+  --poke5e-ui-shadow:
+    rgba(0, 0, 0, 0.5);
+}
+
+
+/* Rojo Fuego: warm embers, the fire red of FireRed and the cream of its text boxes. */
+body.poke5e-theme-firered,
+body.poke5e-theme-firered .poke5e-trainer-sheet,
+body.poke5e-theme-firered .poke5e-trainer-party-dialog {
+  --poke5e-ui-bg:
+    #1a1312;
+
+  --poke5e-ui-surface:
+    #231a18;
+
+  --poke5e-ui-panel:
+    #2e2220;
+
+  --poke5e-ui-panel-alt:
+    #3a2b28;
+
+  --poke5e-ui-border:
+    #6a4e47;
+
+  --poke5e-ui-border-strong:
+    #7d5d55;
+
+  --poke5e-ui-border-bright:
+    #a88a7f;
+
+  --poke5e-ui-border-soft:
+    rgba(248, 216, 152, 0.14);
+
+  --poke5e-ui-text:
+    #f6ede0;
+
+  --poke5e-ui-muted:
+    #c7b4a6;
+
+  --poke5e-ui-cream:
+    #f8d898;
+
+  --poke5e-ui-cream-dark:
+    #c9a868;
+
+  --poke5e-ui-accent:
+    #e8442e;
+
+  --poke5e-ui-accent-dark:
+    #b02a1a;
+
+  --poke5e-ui-success:
+    #58c058;
+
+  --poke5e-ui-success-dark:
+    #368836;
+
+  --poke5e-ui-info:
+    #58a0f0;
+
+  --poke5e-ui-gold:
+    #f8b830;
+
+  --poke5e-ui-brass:
+    #d8a860;
+
+  --poke5e-ui-shadow:
+    rgba(0, 0, 0, 0.45);
+}
+
+
+/* Esmeralda: deep forest greens, emerald accents and Hoenn gold. */
+body.poke5e-theme-emerald,
+body.poke5e-theme-emerald .poke5e-trainer-sheet,
+body.poke5e-theme-emerald .poke5e-trainer-party-dialog {
+  --poke5e-ui-bg:
+    #0e1714;
+
+  --poke5e-ui-surface:
+    #13201b;
+
+  --poke5e-ui-panel:
+    #1a2b24;
+
+  --poke5e-ui-panel-alt:
+    #23372e;
+
+  --poke5e-ui-border:
+    #3f6052;
+
+  --poke5e-ui-border-strong:
+    #4d7262;
+
+  --poke5e-ui-border-bright:
+    #7fa595;
+
+  --poke5e-ui-border-soft:
+    rgba(200, 236, 200, 0.12);
+
+  --poke5e-ui-text:
+    #eaf4ec;
+
+  --poke5e-ui-muted:
+    #a9c2b6;
+
+  --poke5e-ui-cream:
+    #d8f0c0;
+
+  --poke5e-ui-cream-dark:
+    #a8c890;
+
+  --poke5e-ui-accent:
+    #2fb36d;
+
+  --poke5e-ui-accent-dark:
+    #1f7e4b;
+
+  --poke5e-ui-success:
+    #7ccf5a;
+
+  --poke5e-ui-success-dark:
+    #4f9a38;
+
+  --poke5e-ui-info:
+    #4ab0d8;
+
+  --poke5e-ui-gold:
+    #e8c040;
+
+  --poke5e-ui-brass:
+    #c8b070;
+
+  --poke5e-ui-shadow:
+    rgba(0, 0, 0, 0.42);
+}
