@@ -29,7 +29,8 @@ export function registerUiTheme() {
       : "Colores de las ventanas del módulo (fichas, planificador, Fakemon Studio). Solo para ti.",
     scope: "client", config: true, type: String, default: "slate",
     choices: Object.fromEntries(Object.entries(UI_THEMES).map(([id, labels]) => [id, labels[lang]])),
-    onChange: applyUiTheme
+    // Foundry passes (value, options): only the value is ours.
+    onChange: theme => applyUiTheme(theme)
   });
   applyUiTheme(game.settings.get(MODULE_ID, SETTING));
 }

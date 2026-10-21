@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { applyUiTheme, UI_THEMES } from "../scripts/ui-theme.mjs";
+import { applyUiTheme, registerUiTheme, UI_THEMES } from "../scripts/ui-theme.mjs";
 
 const css = readFileSync(new URL("../styles/theme.css", import.meta.url), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
 const tokens = selector => {
@@ -51,4 +51,18 @@ test("the setting puts exactly one theme class on <body>, slate for an unknown o
   assert.deepEqual([...classes].sort(), ["foundry", "poke5e-theme-emerald"]);
   applyUiTheme("neon", body);
   assert.deepEqual([...classes].sort(), ["foundry", "poke5e-theme-slate"]);
+});
+
+test("changing the setting applies the theme: Foundry calls onChange(value, options)", () => {
+  const classes = new Set();
+  globalThis.document = { body: { classList: { toggle: (name, on) => (on ? classes.add(name) : classes.delete(name)) } } };
+  const registered = {};
+  globalThis.game = { settings: {
+    get: (_module, key) => (key === "language" ? "es" : "slate"),
+    register: (_module, key, config) => { registered[key] = config; }
+  } };
+  registerUiTheme();
+  registered.uiTheme.onChange("rocket", { render: true });
+  assert.ok(classes.has("poke5e-theme-rocket"));
+  assert.ok(!classes.has("poke5e-theme-slate"));
 });
