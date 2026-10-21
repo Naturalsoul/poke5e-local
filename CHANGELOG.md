@@ -7,7 +7,7 @@ solo se corrige algo.
 ## [0.23.3] — 2026-10-21
 
 - **Colores escritos a mano, a la base común.** En la ficha de Pokémon, la hoja de Entrenador y su gestor, el
-  planificador y Fakemon Studio, 629 colores fijos (fondos, degradados, bordes, brillos rojos, crema y dorados) usan
+  planificador y Fakemon Studio, 626 colores fijos (fondos, degradados, bordes, brillos rojos, crema y dorados) usan
   ahora los colores de `styles/theme.css`; los transparentes, con `color-mix()`. Se ve igual: los tonos que estaban
   a 1–6 unidades de un color común se igualan a él, y las ventanas de Entrenador conservan su paleta Rocket. Quedan
   como estaban las sombras y brillos neutros (negro y blanco), los colores de tipo y de PS, y los colores propios
