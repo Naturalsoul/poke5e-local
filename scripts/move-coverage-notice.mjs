@@ -5,7 +5,7 @@ import { MOVE_COVERAGE } from "./move-coverage.mjs";
  *
  * The usage card of a Move the module does not fully resolve says so, so nobody waits for an effect
  * that never comes: pending and manual Moves are "not automated", automated ones with a GM note are
- * "partly automated". The note itself (English, from move-coverage.mjs) is shown only to the GM.
+ * "partly automated", with the note (English, from move-coverage.mjs). Only the GM sees it.
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
@@ -26,14 +26,14 @@ export function coverageNotice(moveId) {
 }
 
 function onRenderChatMessage(message, html) {
-  if (message.type !== "usage" || !html?.append || html.querySelector?.(`.${NOTICE_CLASS}`)) {return;}
+  if (!game.user.isGM || message.type !== "usage" || !html?.append || html.querySelector?.(`.${NOTICE_CLASS}`)) {return;}
   const item = message.getAssociatedItem?.();
   const notice = item?.getFlag?.(MODULE_ID, "kind") === "move" ? coverageNotice(item.getFlag(MODULE_ID, "sourceId")) : null;
   if (!notice) {return;}
   const element = document.createElement("p");
   element.className = NOTICE_CLASS;
   element.textContent = LABELS[game.settings.get(MODULE_ID, "language") === "en" ? "en" : "es"][notice.kind];
-  if (notice.note && game.user.isGM) {
+  if (notice.note) {
     const note = document.createElement("small");
     note.textContent = notice.note;
     element.append(note);
