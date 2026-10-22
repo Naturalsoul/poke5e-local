@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { applySheetDesign, registerSheetDesign } from "../scripts/ui-theme.mjs";
 
-const read = file => readFileSync(new URL(`../styles/${file}`, import.meta.url), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+const read = file => readFileSync(new URL(`../styles/${file}`, import.meta.url), "utf8").replace(/\r\n/g, "\n").replace(/\/\*[\s\S]*?\*\//g, "");
 const css = read("theme.css");
 const tokens = selector => {
   const start = css.indexOf(selector);
