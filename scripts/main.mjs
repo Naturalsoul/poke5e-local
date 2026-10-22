@@ -10,6 +10,8 @@ import { registerBerryAbilityEngine } from "./berry-ability-engine.mjs";
 import { registerRiderAbilityEngine } from "./rider-ability-engine.mjs";
 import { registerEventAbilityEngine } from "./event-ability-engine.mjs";
 import { registerSelfStatusMoves } from "./self-status-moves.mjs";
+import { registerConditionRiders } from "./condition-riders.mjs";
+import { registerMoveRiders } from "./move-riders.mjs";
 import { registerLingeringAreaMoves } from "./lingering-area-moves.mjs";
 import { registerStatusFieldMoves } from "./status-field-moves.mjs";
 import { registerSleepMoves } from "./sleep-moves.mjs";
@@ -450,6 +452,8 @@ Hooks.once(
     registerRiderAbilityEngine();
         registerEventAbilityEngine();
         registerSelfStatusMoves();
+    registerConditionRiders();
+    registerMoveRiders();
     registerLingeringAreaMoves();
     registerStatusFieldMoves();
     registerSleepMoves();

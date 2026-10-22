@@ -20,7 +20,7 @@ test("only the GM sees the notice on the card", () => {
   globalThis.game = { user: { isGM: false }, settings: { get: () => "es" } };
   globalThis.document = { createElement: () => ({ append() {} }) };
   registerMoveCoverageNotice();
-  const move = { getFlag: (_m, key) => ({ kind: "move", sourceId: "salt-cure" })[key] };
+  const move = { getFlag: (_m, key) => ({ kind: "move", sourceId: "aerial-ace" })[key] };
   const message = { type: "usage", getAssociatedItem: () => move };
   const card = () => { const appended = []; return { appended, append: node => appended.push(node), querySelector: () => null }; };
   const player = card();

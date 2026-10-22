@@ -4,6 +4,17 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.31.0] — 2026-10-22
+
+- **Más Moves de estado automatizados (tanda 3):**
+  - **Mean Look:** al fallar la salvación de WIS, el objetivo no puede ser cambiado ni retirado durante 3 rondas
+    (un Pokémon debilitado sí puede volver). Huir de un combate sigue siendo del DM.
+  - **Salt Cure:** al fallar la salvación de DES, 1d4 de daño de roca al inicio de cada uno de sus turnos (el doble
+    a tipos Agua y Acero) hasta que se le cure o salga del campo.
+  - **Clear Smog:** al acertar, el objetivo pierde todos sus cambios de estadísticas.
+  - **Incinerate:** al acertar, la baya que lleva el objetivo se reduce a cenizas.
+  - **Eternabeam:** el usuario queda incapacitado hasta el final de su siguiente turno.
+
 ## [0.30.0] — 2026-10-22
 
 - **Más Moves de estado automatizados (tanda 2):**

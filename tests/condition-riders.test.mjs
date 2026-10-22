@@ -62,3 +62,30 @@ test("a successful save at the end of its turn ends the fear; a failed one keeps
   await processConditionRidersEndTurn(failed);
   assert.equal(failed.deleted, false);
 });
+
+const { assertCanLeaveField, processConditionRidersStartTurn } = await import("../scripts/condition-riders.mjs");
+const marked = (condition, hp = 20, types = []) => {
+  const [template] = buildConditionEffects(move(condition === "trapped" ? "mean-look" : "salt-cure"));
+  const effect = Object.assign(createFlagDocument({ uuid: "Actor.p.ActiveEffect.e", name: template.name, flags: template.flags }), { disabled: false });
+  const applied = [];
+  return { name: "Gastly", effects: [effect], applied, system: { attributes: { hp: { value: hp } } },
+    getFlag: (_m, key) => (key === "types" ? types : undefined), applyDamage: async parts => applied.push(...parts) };
+};
+
+test("Mean Look keeps the Pokémon from being switched out or recalled, unless it fainted", () => {
+  assert.equal(buildConditionEffects(move("mean-look"))[0].duration.rounds, 3);
+  assert.deepEqual(buildConditionEffects(move("mean-look"))[0].statuses, []);
+  assert.throws(() => assertCanLeaveField(marked("trapped")), /Mean Look/);
+  assert.doesNotThrow(() => assertCanLeaveField(marked("trapped", 0)));
+  assert.doesNotThrow(() => assertCanLeaveField({ name: "Abra", effects: [], system: { attributes: { hp: { value: 9 } } } }));
+});
+
+test("Salt Cure deals 1d4 rock at the start of each turn, double to Water and Steel", async () => {
+  globalThis.Roll = class { constructor(formula) { this.formula = formula; } async evaluate() { this.total = 3; return this; } async toMessage() { return { id: "m" }; } };
+  const plain = marked("salted");
+  await processConditionRidersStartTurn(plain);
+  assert.deepEqual(plain.applied, [{ value: 3, type: "rock" }]);
+  const water = marked("salted", 20, ["water"]);
+  await processConditionRidersStartTurn(water);
+  assert.deepEqual(water.applied, [{ value: 6, type: "rock" }]);
+});

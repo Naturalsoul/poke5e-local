@@ -1,4 +1,4 @@
-import { processConditionRidersEndTurn } from "./condition-riders.mjs";
+import { processConditionRidersEndTurn, processConditionRidersStartTurn } from "./condition-riders.mjs";
 import { publishRollBeforeDamage } from "./chat-roll-display.mjs";
 import {
   processPokemonPeriodicEndTurn
@@ -1915,6 +1915,7 @@ async function processStartTurn(
   await processBattlefieldStartTurn(
     actor
   );
+  await processConditionRidersStartTurn(actor);
 
   // Schooling, Ice Face in the hail, Hunger Switch.
   await processFormAbilitiesStartTurn(
