@@ -1,3 +1,4 @@
+import { messageRollShown } from "./chat-roll-display.mjs";
 import { subscribeAttackOutcome } from "./attack-outcome-engine.mjs";
 import { resolvePokemonCryPath } from "./pokemon-cry-service.mjs";
 
@@ -331,14 +332,15 @@ export function playMoveAnimation(item, targets, { missed = false } = {}) {
 const targetTokens = () => Array.from(game.user?.targets ?? []);
 const isAttack = activity => activity?.type === "attack";
 const placesTemplate = activity => Boolean(activity?.target?.template?.type);
-// Attack Moves: after the roll is shown, against the target it was rolled on. One with an area plays on its
-// template instead, so it doesn't need a target.
-function onAttackOutcome(outcome, context) {
+// Attack Moves: once Dice So Nice has shown the roll in chat (the animation and sound give away a hit or a
+// miss), against the target it was rolled on. One with an area plays on its template instead.
+export function onAttackOutcome(outcome, context) {
   const item = moveOf(context?.activity?.item);
   if (!item || placesTemplate(context.activity)) {return;}
   const document = fromUuidSync(outcome.targetActorUuid ?? "", { strict: false });
   const target = tokenOf(document?.actor ?? document);
-  playMoveAnimation(item, target ? [target] : [], { missed: outcome.hit === false });
+  logged(messageRollShown(context.roll?.parent)
+    .then(() => playMoveAnimation(item, target ? [target] : [], { missed: outcome.hit === false })));
 }
 
 // Other Moves: when used. Moves with an area wait for their template.
