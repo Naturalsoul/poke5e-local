@@ -4383,11 +4383,25 @@ function resolveMoveDc(
   );
 }
 
-function resolveOnSaveMode(
+// Table rulings: damage halved on a successful save although the text doesn't say so.
+const HALF_ON_SAVE_MOVES =
+  new Set([
+    "poison-gas"
+  ]);
+
+export function resolveOnSaveMode(
   move
 ) {
   if (!move.damage) {
     return "none";
+  }
+
+  if (
+    HALF_ON_SAVE_MOVES.has(
+      move.id
+    )
+  ) {
+    return "half";
   }
 
   const english =

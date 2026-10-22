@@ -8,7 +8,8 @@ import { publishRollBeforeDamage, trackRollDisplay } from "./chat-roll-display.m
  * AREAS THAT LINGER (the area is the Move's placed template)
  *
  * At the start of the turn of a Pokémon inside it:
- * - Poison Gas: its damage, then a CON save or poisoned; it dissipates at the start of its user's next turn;
+ * - Poison Gas: a CON save, its damage on a fail or half on a success (table rule: as written the damage is always
+ *   full), poisoned on a fail; it dissipates at the start of its user's next turn;
  * - Smog: a CON save, its damage on a fail or half on a success, poisoned on a fail by 5; it lasts while
  *   its user concentrates (dnd5e removes the template with the concentration);
  * - Sludge Bomb: on a hit, a 5 ft area around its target; a CON save or poisoned; it ends at the start
@@ -19,7 +20,7 @@ import { publishRollBeforeDamage, trackRollDisplay } from "./chat-roll-display.m
 const MODULE_ID = "poke5e-local";
 
 export const LINGERING_AREAS = Object.freeze({
-  "poison-gas": { damage: "always", status: "poisoned", endsOnUserTurn: true },
+  "poison-gas": { damage: "half-on-save", status: "poisoned", endsOnUserTurn: true },
   smog: { damage: "half-on-save", statusBy5: "poisoned" },
   "sludge-bomb": { status: "poisoned", endsOnUserTurn: true }
 });
@@ -87,7 +88,6 @@ export async function areaDamage(actor, item, half) {
 
 export async function sufferArea(actor, { item, rule }) {
   const dc = moveDc(item);
-  if (rule.damage === "always") {await areaDamage(actor, item, false);}
   const total = await areaSave(actor, item, dc);
   if (total === null) {return;}
   const failed = total < dc;

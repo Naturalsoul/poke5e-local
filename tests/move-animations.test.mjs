@@ -57,6 +57,19 @@ test("every Move gets a JB2A animation from its type and shape", () => {
   assert.equal(animations.moveAnimation(move("growl")).at, "target", "a debuff on the target");
 });
 
+test("a Move that helps an ally plays a buff (or a heal) on it, never the curse", () => {
+  const ids = new Set(moves.map(entry => entry.id));
+  for (const id of animations.SUPPORT_MOVES) {
+    assert.ok(ids.has(id), `${id} is a Move`);
+    assert.doesNotMatch(animations.moveAnimation(move(id)).file, /curse/, id);
+  }
+  assert.deepEqual(animations.moveAnimation(move("helping-hand")),
+    { file: "jb2a.on_token_buff.001.001.orangeyellow", at: "target", tint: animations.TYPE_ANIMATIONS.normal.color });
+  assert.equal(animations.moveAnimation(move("floral-healing")).file, "jb2a.healing_generic.burst.greenorange");
+  assert.equal(animations.moveAnimation(move("tailwind")).at, "user", "an aura around the user");
+  assert.match(animations.moveAnimation(move("leer")).file, /curse/, "hindering an enemy still curses");
+});
+
 test("an attack plays toward its target once shown, and a miss goes past it", () => {
   const item = move("ember");
   played.length = 0;
