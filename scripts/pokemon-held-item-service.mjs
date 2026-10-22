@@ -788,7 +788,9 @@ async function onCreateItem(
     item.parent;
 
 
+  // Only the client that made the change writes: the others lack permission.
   if (
+    userId !== game.user.id ||
     !isPokemonActor(
       pokemon
     ) ||
@@ -808,7 +810,7 @@ async function onCreateItem(
       item
     );
 
-    if (!options[LOAN_SYNC_OPTION] && userId === game.user.id) {
+    if (!options[LOAN_SYNC_OPTION]) {
       await reconcilePokemonHeldItemLoan(pokemon);
     }
 
@@ -829,7 +831,8 @@ async function onCreateItem(
 
 
 async function onDeleteItem(
-  item
+  item,
+  userId
 ) {
 
   const pokemon =
@@ -837,6 +840,7 @@ async function onDeleteItem(
 
 
   if (
+    userId !== game.user.id ||
     !isPokemonActor(
       pokemon
     )
@@ -919,10 +923,10 @@ export function registerPokemonHeldItemService() {
 
   Hooks.on(
     "deleteItem",
-    item => {
+    (item, _options, userId) => {
 
       void onDeleteItem(
-        item
+        item, userId
       );
     }
   );
