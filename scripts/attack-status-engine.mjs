@@ -1,3 +1,4 @@
+import { CONDITION_KIND } from "./condition-riders.mjs";
 import {
   isAttackHit,
   isNaturalAttackAtLeast,
@@ -30,11 +31,12 @@ function attackStatusTemplates(
 
       !effect.disabled &&
 
-      effect.getFlag?.(
-        MODULE_ID,
-        "kind"
-      ) ===
-        "pokemon-status" &&
+      ["pokemon-status", CONDITION_KIND].includes(
+        effect.getFlag?.(
+          MODULE_ID,
+          "kind"
+        )
+      ) &&
 
       Boolean(
         effect.getFlag?.(

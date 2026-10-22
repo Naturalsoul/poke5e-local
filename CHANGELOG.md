@@ -4,6 +4,22 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.29.0] — 2026-10-22
+
+- **Moves que asustan, ciegan o apresan** (condiciones de D&D, no estados Pokémon):
+  - **Glare, Scary Face y Roar** asustan al fallar la salvación de WIS. Al final de cada uno de sus turnos, el
+    asustado repite la salvación contra la CD del Move y, si la supera, se le pasa (avisa en el chat). El
+    desplazamiento forzado de Roar sigue siendo del DM.
+  - **Flash** ciega hasta el final del siguiente turno de quien falla la salvación de CON.
+  - **Crush Grip** (al acertar) y **Snap Trap** (al fallar la salvación) apresan.
+  - **Constrict, Vice Grip y Jaw Lock** apresan como Bind, con su acción de continuar (daño automático mientras
+    siga apresado). Escapar sigue siendo del DM: se quita el efecto.
+  - Los Moves que ya están en las hojas reciben lo nuevo al iniciar el mundo.
+- **Registro de cobertura al día:** Rain Dance, Sunny Day, Sandstorm, Hail, Snowscape y los terrenos Grassy, Misty y
+  Psychic ya figuran como automatizados (con nota para el DM de lo que falta: el +1 CA de Snowscape y el bloqueo de
+  acciones bonus de Psychic Terrain). Acid e Ice Shard son solo daño; Baby-Doll Eyes y Captivate quedan manuales
+  (reacciones que elige el jugador).
+
 ## [0.28.7] — 2026-10-22
 
 - **Aviso de automatización de los Moves solo para el DM:** el mensaje "Su efecto especial no está automatizado" /

@@ -1,3 +1,4 @@
+import { processConditionRidersEndTurn } from "./condition-riders.mjs";
 import { publishRollBeforeDamage } from "./chat-roll-display.mjs";
 import {
   processPokemonPeriodicEndTurn
@@ -1610,6 +1611,7 @@ async function processEndTurn(
   await processBerryAbilitiesEndTurn(actor);
     await processEventAbilitiesEndTurn(actor);
   await processSelfStatusMovesEndTurn(actor);
+  await processConditionRidersEndTurn(actor);
   await processBattlefieldEndTurn(actor);
 
 

@@ -4,7 +4,7 @@ import { coverageNotice, registerMoveCoverageNotice } from "../scripts/move-cove
 import { MOVE_COVERAGE } from "../scripts/move-coverage.mjs";
 
 test("the usage card warns about every Move the module does not fully resolve", () => {
-  assert.deepEqual(coverageNotice("acid"), { kind: "manual", note: null });
+  assert.deepEqual(coverageNotice("aerial-ace"), { kind: "manual", note: null });
   assert.equal(coverageNotice("assist").kind, "manual");
   assert.deepEqual(coverageNotice("amnesia"), { kind: "partial", note: MOVE_COVERAGE.amnesia.note });
   assert.equal(coverageNotice("absorb"), null, "fully automated");
@@ -20,7 +20,7 @@ test("only the GM sees the notice on the card", () => {
   globalThis.game = { user: { isGM: false }, settings: { get: () => "es" } };
   globalThis.document = { createElement: () => ({ append() {} }) };
   registerMoveCoverageNotice();
-  const move = { getFlag: (_m, key) => ({ kind: "move", sourceId: "acid" })[key] };
+  const move = { getFlag: (_m, key) => ({ kind: "move", sourceId: "salt-cure" })[key] };
   const message = { type: "usage", getAssociatedItem: () => move };
   const card = () => { const appended = []; return { appended, append: node => appended.push(node), querySelector: () => null }; };
   const player = card();
