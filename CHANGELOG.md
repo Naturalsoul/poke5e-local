@@ -4,6 +4,16 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.34.0] — 2026-10-22
+
+- **Crítico ampliado:** Slash, Night Slash, Razor Leaf, Karate Chop, Cross Chop, Crabhammer, Leaf Blade, Psycho Cut,
+  Shadow Claw, Air Cutter, Aqua Cutter, Attack Order, Drill Peck, Drill Run, Ivy Cudgel, Seismic Toss, Blaze Kick,
+  Hyper Fang y Esper Wing hacen crítico con 19–20; Fickle Beam con 17–20 y Frost Breath con 16–20. Si otra fuente
+  (Super Luck) ya da un rango mayor, se queda el mayor.
+- **Feint Attack:** siempre se tira con ventaja.
+- **Movimientos que nunca fallan** (Aerial Ace, Aura Sphere, Magical Leaf, Magnet Bomb, Shadow Punch, Smart Strike,
+  Shock Wave, Disarming Voice, Tachyon Cutter): ya se creaban sin tirada de ataque, solo con daño; ahora constan así.
+
 ## [0.33.0] — 2026-10-22
 
 - **Thousand Arrows:** quien falla la salvación de DES queda derribado. Que alcance a voladores y que el derribado

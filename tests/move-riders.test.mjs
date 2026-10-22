@@ -45,3 +45,25 @@ test("Eternabeam incapacitates its user until the end of its next turn", () => {
   assert.deepEqual(effect.statuses, ["incapacitated"]);
   assert.equal(effect.flags[M].expireAtEndOfNextTurn, true);
 });
+
+test("wider critical ranges are set on the attack roll, keeping a wider one already there", async () => {
+  const { onPreRollAttackCritical } = await import("../scripts/move-riders.mjs");
+  const item = id => createFlagDocument({ flags: { [M]: { kind: "move", sourceId: id } } });
+  const config = (id, criticalSuccess) => ({ subject: { item: item(id) }, rolls: [{ options: criticalSuccess ? { criticalSuccess } : {} }] });
+  const slash = config("slash");
+  onPreRollAttackCritical(slash);
+  assert.equal(slash.rolls[0].options.criticalSuccess, 19);
+  const frost = config("frost-breath");
+  onPreRollAttackCritical(frost);
+  assert.equal(frost.rolls[0].options.criticalSuccess, 16);
+  const lucky = config("slash", 18);
+  onPreRollAttackCritical(lucky);
+  assert.equal(lucky.rolls[0].options.criticalSuccess, 18);
+  const tackle = config("tackle");
+  onPreRollAttackCritical(tackle);
+  assert.equal(tackle.rolls[0].options.criticalSuccess, undefined);
+  assert.equal(tackle.rolls[0].options.advantage, undefined);
+  const feint = config("feint-attack");
+  onPreRollAttackCritical(feint);
+  assert.equal(feint.rolls[0].options.advantage, true);
+});

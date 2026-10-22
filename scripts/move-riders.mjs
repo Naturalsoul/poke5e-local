@@ -10,6 +10,8 @@ import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
  * - Clear Smog: on a hit, the target's stat changes are reset.
  * - Incinerate: on a hit, the target's held berry burns to ash.
  * - Eternabeam: its user is incapacitated until the end of its next turn.
+ * - Moves with a wider critical range (19-20, Fickle Beam 17-20, Frost Breath 16-20), set on the roll itself.
+ * - Feint Attack: always rolled with advantage.
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
@@ -49,6 +51,25 @@ export const HIT_RIDERS = Object.freeze({
   }
 });
 
+const crit19 = ["air-cutter", "aqua-cutter", "attack-order", "blaze-kick", "crabhammer", "cross-chop", "drill-peck", "drill-run",
+  "esper-wing", "hyper-fang", "ivy-cudgel", "karate-chop", "leaf-blade", "night-slash", "psycho-cut", "razor-leaf", "seismic-toss",
+  "shadow-claw", "slash"];
+export const CRITICAL_RANGES = Object.freeze({ ...Object.fromEntries(crit19.map(id => [id, 19])), "fickle-beam": 17, "frost-breath": 16 });
+
+// Lowest threshold wins, so Super Luck or another source never narrows the Move's own range.
+const ADVANTAGE_MOVES = new Set(["feint-attack"]);
+
+export function onPreRollAttackCritical(config) {
+  const id = moveId(config?.subject?.item);
+  const threshold = CRITICAL_RANGES[id];
+  if (!threshold && !ADVANTAGE_MOVES.has(id)) {return;}
+  for (const rollConfig of config.rolls ?? []) {
+    rollConfig.options ??= {};
+    if (threshold) {rollConfig.options.criticalSuccess = Math.min(rollConfig.options.criticalSuccess ?? 20, threshold);}
+    if (ADVANTAGE_MOVES.has(id)) {rollConfig.options.advantage = true;}
+  }
+}
+
 async function onAttackMessage(message) {
   const item = message.getAssociatedItem?.();
   const rider = HIT_RIDERS[moveId(item)];
@@ -85,4 +106,5 @@ export function registerMoveRiders() {
   if (registered) {return;}
   registered = true;
   Hooks.on("createChatMessage", onCreateChatMessage);
+  Hooks.on("dnd5e.preRollAttack", onPreRollAttackCritical);
 }
