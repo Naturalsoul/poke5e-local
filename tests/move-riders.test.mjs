@@ -103,3 +103,43 @@ test("Jump Kick and Supercell Slam hurt their user on a miss", async () => {
   assert.equal(MISS_RIDERS["high-jump-kick"](user), 1);
   assert.equal(MISS_RIDERS["supercell-slam"](user), 3);
 });
+
+test("battle-state damage: boosts add dice, a missed last attack powers up, consecutive hits double", async () => {
+  const { onPreRollDamageRiders, recordAttack, clearAttackHistory } = await import("../scripts/move-riders.mjs");
+  const boost = value => ({ disabled: false, changes: [{ value }], getFlag: (_m, key) => (key === "kind" ? "pokemon-modifier" : undefined) });
+  const user = { uuid: "Actor.u", effects: [boost("2"), boost("5"), boost("-5")], system: { attributes: { hp: { value: 10, max: 10 } } } };
+  const roll = (id, target = null, parts = ["2d6 + 4"]) => {
+    game.user = { targets: target ? new Set([{ actor: target }]) : new Set() };
+    const item = createFlagDocument({ flags: { [M]: { kind: "move", sourceId: id } } });
+    const config = { subject: { item, actor: user, attack: { ability: "str" } }, rolls: [{ parts: [...parts] }] };
+    onPreRollDamageRiders(config);
+    return config.rolls[0].parts;
+  };
+  const attack = (moveId, hit, round = null, targetActorUuid = "Actor.t") => {
+    game.combat = round === null ? null : { round };
+    recordAttack({ actorUuid: "Actor.u", moveId, hit, targetActorUuid });
+  };
+  assert.deepEqual(roll("stored-power"), ["2d6 + 4", "2d6"], "two boosts, the penalty doesn't count");
+  assert.deepEqual(roll("punishment", { effects: [boost("1")] }), ["2d6 + 4", "1d6"]);
+  clearAttackHistory();
+  attack("tackle", false);
+  attack("stomping-tantrum", true);
+  assert.deepEqual(roll("stomping-tantrum"), ["2d6 + 4", "2d6"]);
+  assert.deepEqual(roll("temper-flare"), ["2d6 + 4", "1d6"]);
+  clearAttackHistory();
+  attack("fury-cutter", true, 1);
+  attack("fury-cutter", true, 2);
+  attack("fury-cutter", true, 3);
+  assert.deepEqual(roll("fury-cutter", null, ["1d4 + 4"]), ["1d4 + 4", "3d4"], "third round: x4");
+  attack("fury-cutter", true, 5);
+  assert.deepEqual(roll("fury-cutter", null, ["1d4 + 4"]), ["1d4 + 4"], "a skipped round resets it");
+  clearAttackHistory();
+  attack("power-up-punch", true);
+  attack("power-up-punch", true);
+  attack("power-up-punch", true);
+  assert.deepEqual(roll("power-up-punch", null, ["1d6 + 4"]), ["1d6 + 4", "1d6"], "capped at double the dice");
+  attack("power-up-punch", true, null, "Actor.other");
+  assert.deepEqual(roll("power-up-punch", null, ["1d6 + 4"]), ["1d6 + 4"], "a new target resets it");
+  game.user = undefined;
+  game.combat = undefined;
+});

@@ -1,5 +1,5 @@
 import { pokemonTypes } from "./status-runtime.mjs";
-import { buildAttackOutcome } from "./attack-outcome-engine.mjs";
+import { buildAttackOutcome, subscribeAttackOutcome } from "./attack-outcome-engine.mjs";
 import { getPokemonHeldItem } from "./pokemon-held-item-service.mjs";
 import { CONDITION_KIND } from "./condition-riders.mjs";
 import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
@@ -18,6 +18,10 @@ import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
  *   (the formula repeated, so a critical still doubles its dice), Hex and Wring Out (MOVE again), Hard Press
  *   (+proficiency), Eruption (STAB again), Dragon Energy (+1d6 per 20 HP) and Rage Fist (+1 per 10 HP missing).
  *   The target is the one targeted when the damage is rolled.
+ * - Damage that depends on the battle: Stored Power and Power Trip (+1 die per boost on the user), Punishment (per
+ *   boost on the target), Stomping Tantrum (double dice) and Temper Flare (+1 die) after a missed attack, Fury Cutter
+ *   and Ice Ball (dice doubling each consecutive round they hit, up to x8) and Power-Up Punch (+1 die per
+ *   consecutive hit on the same target, up to double), from each Pokémon's recent attacks.
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
@@ -100,6 +104,44 @@ const moveModifier = (actor, activity) => Number(actor?.system?.abilities?.[acti
 const proficiency = actor => Number(actor?.system?.attributes?.prof) || 0;
 const lowHpMultiplier = user => { const share = hpShare(user); if (share === null) {return 1;} if (share <= 0.1) {return 3;} return share < 0.5 ? 2 : 1; };
 
+// A boost: an active stat change with a positive value (Leer-like debuffs and penalties don't count).
+const boosts = actor => Array.from(actor?.effects ?? []).filter(effect => !effect.disabled && effect.getFlag?.(MODULE_ID, "kind") === "pokemon-modifier"
+  && Array.from(effect.changes ?? []).some(change => Number(change.value) > 0)).length;
+
+// shortcut: kept in memory on the client that rolls the attacks, so a reload forgets it; move to actor flags if it matters.
+const history = new Map();
+export function recordAttack(outcome) {
+  if (!outcome?.actorUuid || outcome.hit === null) {return;}
+  const entries = history.get(outcome.actorUuid) ?? [];
+  entries.push({ moveId: outcome.moveId, hit: outcome.hit, targetUuid: outcome.targetActorUuid, round: game.combat?.round ?? null });
+  history.set(outcome.actorUuid, entries.slice(-10));
+}
+export const clearAttackHistory = () => history.clear();
+// The attack being resolved is the latest; the one before it is "the last attack".
+const attacks = actor => history.get(actor?.uuid) ?? [];
+const missedLast = actor => attacks(actor).at(-2)?.hit === false;
+// Consecutive hits with this Move ending with this one: each in the round after the previous (if `rounds`), on the same
+// target (if `sameTarget`).
+function streak(actor, id, { rounds = false, sameTarget = false } = {}) {
+  const entries = attacks(actor);
+  let count = 0;
+  for (let index = entries.length - 1; index >= 0; index--) {
+    const entry = entries[index];
+    const later = entries[index + 1];
+    if (entry.moveId !== id || !entry.hit) {break;}
+    if (later && rounds && entry.round !== null && later.round !== entry.round + 1) {break;}
+    if (later && sameTarget && entry.targetUuid !== later.targetUuid) {break;}
+    count++;
+  }
+  return count;
+}
+const die = (dice, count) => (count > 0 && dice ? [`${dice.number * count}d${dice.faces}`] : []);
+const oneDie = (dice, count) => (count > 0 && dice ? [`${count}d${dice.faces}`] : []);
+const doubling = ({ user, item, dice }) => {
+  const multiplier = Math.min(8, 2 ** Math.max(0, streak(user, moveId(item), { rounds: true }) - 1));
+  return { extra: die(dice, multiplier - 1) };
+};
+
 // Each returns { times, extra }: the formula repeated `times` over, plus extra parts.
 export const DAMAGE_RIDERS = Object.freeze({
   brine: ({ target }) => ({ times: hpShare(target) !== null && hpShare(target) < 0.5 ? 2 : 1 }),
@@ -118,7 +160,16 @@ export const DAMAGE_RIDERS = Object.freeze({
     const hp = user?.system?.attributes?.hp;
     const bonus = Math.floor(((Number(hp?.max) || 0) - (Number(hp?.value) || 0)) / 10);
     return { extra: bonus > 0 ? [bonus] : [] };
-  }
+  },
+  "stored-power": ({ user, dice }) => ({ extra: oneDie(dice, boosts(user)) }),
+  "power-trip": ({ user, dice }) => ({ extra: oneDie(dice, boosts(user)) }),
+  punishment: ({ target, dice }) => ({ extra: oneDie(dice, boosts(target)) }),
+  "stomping-tantrum": ({ user, dice }) => ({ extra: missedLast(user) ? die(dice, 1) : [] }),
+  "temper-flare": ({ user, dice }) => ({ extra: missedLast(user) ? oneDie(dice, 1) : [] }),
+  "fury-cutter": context => doubling(context),
+  "ice-ball": context => doubling(context),
+  "power-up-punch": ({ user, item, dice }) => ({
+    extra: oneDie(dice, Math.min(dice?.number ?? 0, streak(user, moveId(item), { sameTarget: true }) - 1)) })
 });
 
 const targetedActor = () => (game.user?.targets?.size === 1 ? [...game.user.targets][0]?.actor ?? null : null);
@@ -129,7 +180,9 @@ export function onPreRollDamageRiders(config) {
   const rider = DAMAGE_RIDERS[moveId(item)];
   const roll = config?.rolls?.[0];
   if (!rider || !roll || config.isHealing) {return;}
-  const { times = 1, extra = [] } = rider({ user: activity.actor, target: targetedActor(), activity, item });
+  const match = String(roll.parts?.[0] ?? "").match(/(\d+)d(\d+)/);
+  const dice = match ? { number: Number(match[1]), faces: Number(match[2]) } : null;
+  const { times = 1, extra = [] } = rider({ user: activity.actor, target: targetedActor(), activity, item, dice });
   const base = [...(roll.parts ?? [])];
   roll.parts = [...Array.from({ length: times }, () => base).flat(), ...extra.filter(Boolean).map(String)];
 }
@@ -173,4 +226,5 @@ export function registerMoveRiders() {
   Hooks.on("createChatMessage", onCreateChatMessage);
   Hooks.on("dnd5e.preRollAttack", onPreRollAttackCritical);
   Hooks.on("dnd5e.preRollDamage", onPreRollDamageRiders);
+  subscribeAttackOutcome(recordAttack);
 }

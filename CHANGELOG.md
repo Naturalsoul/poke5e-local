@@ -4,6 +4,17 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.37.0] — 2026-10-22
+
+- **Daño según la batalla** (se añade a la tirada de daño):
+  - **Stored Power / Power Trip:** +1 dado por cada mejora activa del usuario (cambios de estadística positivos).
+  - **Punishment:** +1 dado por cada mejora activa del objetivo marcado.
+  - **Stomping Tantrum:** dados dobles si el último ataque del usuario falló. **Temper Flare:** +1 dado.
+  - **Fury Cutter / Ice Ball:** los dados se doblan cada ronda seguida que aciertan (x2, x4, x8 máximo); un fallo o
+    saltarse una ronda lo reinicia.
+  - **Power-Up Punch:** +1 dado por cada acierto seguido al mismo objetivo, hasta el doble de dados.
+  - Los ataques recientes se recuerdan en el navegador de quien tira; si recarga, se olvidan.
+
 ## [0.36.2] — 2026-10-22
 
 - **Golpes múltiples, manuales:** Arm Thrust, Bone Rush, Bullet Seed, Comet Punch, Double Slap, Fury Attack, Fury
