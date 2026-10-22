@@ -22,9 +22,16 @@ globalThis.fromUuidSync = () => null;
 globalThis.Sequence = class {
   effect() {
     const step = { calls: [] };
-    for (const name of ["file", "tint", "atLocation", "stretchTo", "scaleToObject", "size", "missed", "delay", "mask"]) {
+    for (const name of ["file", "tint", "atLocation", "stretchTo", "scaleToObject", "size", "missed", "delay", "mask",
+      "copySprite", "forUsers", "filter", "duration", "fadeOut", "animateProperty"]) {
       step[name] = (...args) => { step.calls.push([name, ...args]); return step; };
     }
+    (this.steps ??= []).push(step);
+    return step;
+  }
+  canvasPan() {
+    const step = { calls: [["canvasPan"]] };
+    for (const name of ["shake", "forUsers", "delay"]) {step[name] = (...args) => { step.calls.push([name, ...args]); return step; };}
     (this.steps ??= []).push(step);
     return step;
   }
@@ -93,6 +100,25 @@ test("non-attack Moves play on use, attacks and areas on a point wait; the setti
 });
 
 const settle = () => new Promise(resolve => setImmediate(resolve));
+
+test("an attack's animation and sound wait for Dice So Nice to show the roll in chat", async () => {
+  let reveal;
+  globalThis.game.dice3d = { waitFor3DAnimationByMessageID: id => (id === "roll-message" ? new Promise(resolve => { reveal = resolve; }) : null) };
+  globalThis.requestAnimationFrame = callback => setImmediate(callback);
+  played.length = 0;
+  heard.length = 0;
+  const item = move("ember");
+  animations.onAttackOutcome({ hit: false }, { activity: { type: "attack", item }, roll: { parent: { id: "roll-message" } } });
+  for (let tick = 0; tick < 5; tick++) {await settle();}
+  assert.equal(played.length, 0, "nothing gives the miss away while the dice roll");
+  assert.equal(heard.length, 0);
+  reveal();
+  for (let tick = 0; tick < 10; tick++) {await settle();}
+  assert.equal(played.length, 1);
+  assert.equal(heard.length, 1);
+  delete globalThis.game.dice3d;
+  delete globalThis.requestAnimationFrame;
+});
 
 test("Moves imported with an old definition (no area) still get their size and their template", async () => {
   const legacy = move("earthquake");
@@ -271,4 +297,32 @@ test("each player can mute Move sounds just for themselves", async () => {
   receive({ type: "move-sound", src: `${root}/gen7-ember.ogg` });
   receive({ type: "move-sound", src: "https://example.com/anything.mp3" });
   assert.deepEqual(heard, [`${root}/gen7-ember.ogg`], "only the module's own sounds");
+});
+
+test("a hit flashes and knocks back the target with a burst; a critical also shakes; players who turned it off don't see it", () => {
+  const item = move("tackle");
+  const source = { center: { x: 0, y: 0 } };
+  const target = { center: { x: 100, y: 0 } };
+  const animation = animations.moveAnimation(item);
+  const run = options => { const sequence = new globalThis.Sequence(); animations.addImpact(sequence, animation, source, target, options); return sequence.steps ?? []; };
+  const hit = run({ viewers: ["u1"] });
+  assert.equal(hit.length, 2, "the flash and the burst, no shake");
+  const recoil = hit[0].calls.filter(([name]) => name === "animateProperty");
+  assert.deepEqual(recoil.map(([, , property, { to }]) => [property, to > 0]), [["position.x", true]], "pushed away from the attacker");
+  assert.ok(hit.every(step => step.calls.some(([name, users]) => name === "forUsers" && users.includes("u1"))));
+  const critical = run({ critical: true, viewers: ["u1"] });
+  assert.equal(critical.length, 3);
+  assert.equal(critical[2].calls[0][0], "canvasPan");
+  assert.equal(run({ viewers: [] }).length, 0);
+  game.users = [{ id: "u1", active: true, getFlag: () => false }, { id: "u2", active: true, getFlag: () => true }, { id: "u3", active: false }];
+  assert.deepEqual(animations.impactViewers(), ["u1"]);
+  delete game.users;
+});
+
+test("a missed attack gets no impact", () => {
+  game.users = [{ id: "u1", active: true, getFlag: () => false }];
+  played.length = 0;
+  animations.playMoveAnimation(move("tackle"), [{ center: { x: 5, y: 5 } }], { missed: true, impact: { critical: false } });
+  assert.equal(played[0].length, 1);
+  delete game.users;
 });

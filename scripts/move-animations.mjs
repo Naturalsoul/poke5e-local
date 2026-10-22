@@ -1,3 +1,4 @@
+import { messageRollShown } from "./chat-roll-display.mjs";
 import { subscribeAttackOutcome } from "./attack-outcome-engine.mjs";
 import { resolvePokemonCryPath } from "./pokemon-cry-service.mjs";
 
@@ -22,6 +23,8 @@ import { resolvePokemonCryPath } from "./pokemon-cry-service.mjs";
 const MODULE_ID = "poke5e-local";
 const SETTING = "moveAnimations";
 const SOUND_SETTING = "moveSounds";
+const IMPACT_SETTING = "moveImpacts";
+const IMPACT_OFF = "impactOff";
 const SOCKET_CHANNEL = `module.${MODULE_ID}`;
 const SOUND_MESSAGE = "move-sound";
 
@@ -204,7 +207,40 @@ function nearEdge(source, target) {
   return { x: to.x - (to.x - from.x) * pull, y: to.y - (to.y - from.y) * pull };
 }
 
-function playOnTargets(sequence, animation, source, { targets, missed }) {
+/* Hit-stop on a hit: the target's silhouette flashes white and holds, then is knocked back away from the attacker
+ * as it fades, and a burst of the Move's colour lands on it. A critical holds longer, pushes further and shakes the
+ * camera. Each player can turn it off: the choice is kept on their user, so whoever rolls knows who sees it. */
+const IMPACT_BURST = "jb2a.impact.006.yellow";
+const RECOIL = 160;
+export const impactViewers = () => Array.from(game.users ?? [])
+  .filter(user => user.active && !user.getFlag?.(MODULE_ID, IMPACT_OFF)).map(user => user.id);
+
+// When the strike reaches the target, from the start of its animation.
+function impactDelay(animation) {
+  if (animation.melee) {return 300;}
+  return animation.at === "target" ? 150 : 550;
+}
+
+export function addImpact(sequence, animation, source, target, { critical = false, viewers = impactViewers() } = {}) {
+  if (!viewers.length || !target) {return;}
+  const delay = impactDelay(animation);
+  const hold = critical ? 140 : 110;
+  const from = source?.center;
+  const to = target.center;
+  const length = from && to ? Math.hypot(to.x - from.x, to.y - from.y) : 0;
+  const push = (canvas.grid?.size ?? 100) * (critical ? 0.25 : 0.2);
+  const flash = sequence.effect().copySprite(target).atLocation(target).forUsers(viewers).delay(delay)
+    .filter("ColorMatrix", { brightness: 3 }).duration(hold + RECOIL).fadeOut(RECOIL);
+  for (const axis of ["x", "y"]) {
+    const offset = length ? ((to[axis] - from[axis]) / length) * push : 0;
+    if (offset) {flash.animateProperty("sprite", `position.${axis}`, { from: 0, to: offset, duration: RECOIL, delay: hold, ease: "easeOutCubic" });}
+  }
+  const burst = sequence.effect().file(IMPACT_BURST).atLocation(target).scaleToObject(critical ? 2 : 1.4).forUsers(viewers).delay(delay);
+  if (animation.tint) {burst.tint(animation.tint);}
+  if (critical) {sequence.canvasPan().shake({ duration: 300, strength: 12, rotation: false }).forUsers(viewers).delay(delay);}
+}
+
+function playOnTargets(sequence, animation, source, { targets, missed, impact }) {
   for (const target of targets) {
     if (animation.at === "from-user" && !source) {continue;}
     const step = effect(sequence, animation);
@@ -213,6 +249,7 @@ function playOnTargets(sequence, animation, source, { targets, missed }) {
     if (missed) {step.missed();}
     // The element lands on the target as the strike does.
     else if (animation.overlay) {effect(sequence, animation.overlay).atLocation(target).scaleToObject(1.5).delay(300);}
+    if (impact && !missed) {addImpact(sequence, animation, source, target, impact);}
   }
 }
 
@@ -313,7 +350,7 @@ export async function playTemplateAnimation(item, template, area = template) {
 }
 
 // Plays it from the user's token toward each target (or on them, or around the user).
-export function playMoveAnimation(item, targets, { missed = false } = {}) {
+export function playMoveAnimation(item, targets, { missed = false, impact = null } = {}) {
   if (!canAnimate()) {return;}
   const animation = moveAnimation(item);
   const source = tokenOf(item.actor);
@@ -323,7 +360,7 @@ export function playMoveAnimation(item, targets, { missed = false } = {}) {
     if (!source) {return;}
     playAround(sequence, animation, source);
   } else {
-    playOnTargets(sequence, animation, source, { targets, missed });
+    playOnTargets(sequence, animation, source, { targets, missed, impact });
   }
   logged(sequence.play());
 }
@@ -331,14 +368,16 @@ export function playMoveAnimation(item, targets, { missed = false } = {}) {
 const targetTokens = () => Array.from(game.user?.targets ?? []);
 const isAttack = activity => activity?.type === "attack";
 const placesTemplate = activity => Boolean(activity?.target?.template?.type);
-// Attack Moves: after the roll is shown, against the target it was rolled on. One with an area plays on its
-// template instead, so it doesn't need a target.
-function onAttackOutcome(outcome, context) {
+// Attack Moves: once Dice So Nice has shown the roll in chat (the animation and sound give away a hit or a
+// miss), against the target it was rolled on. One with an area plays on its template instead.
+export function onAttackOutcome(outcome, context) {
   const item = moveOf(context?.activity?.item);
   if (!item || placesTemplate(context.activity)) {return;}
   const document = fromUuidSync(outcome.targetActorUuid ?? "", { strict: false });
   const target = tokenOf(document?.actor ?? document);
-  playMoveAnimation(item, target ? [target] : [], { missed: outcome.hit === false });
+  logged(messageRollShown(context.roll?.parent)
+    .then(() => playMoveAnimation(item, target ? [target] : [], { missed: outcome.hit === false,
+      impact: outcome.hit === true ? { critical: outcome.critical === true } : null })));
 }
 
 // Other Moves: when used. Moves with an area wait for their template.
@@ -380,6 +419,11 @@ function onCreateRegion(region, _options, userId) {
   if (item) {logged(playTemplateAnimation(item, template, region));}
 }
 
+// Kept on the user too, so the player who rolls an attack knows not to show this player the impact.
+async function syncImpactChoice(on) {
+  if (Boolean(game.user?.getFlag?.(MODULE_ID, IMPACT_OFF)) !== !on) {await game.user.setFlag(MODULE_ID, IMPACT_OFF, !on);}
+}
+
 let registered = false;
 
 export function registerMoveAnimations() {
@@ -397,6 +441,14 @@ export function registerMoveAnimations() {
       : "Reproduce el sonido de cada Move con su animación. Apagado: tú no los oyes; los demás jugadores sí.",
     scope: "client", config: true, type: Boolean, default: true
   });
+  game.settings.register(MODULE_ID, IMPACT_SETTING, {
+    name: en() ? "Poke5e - Hit impact" : "Poke5e - Impacto de los golpes",
+    hint: en() ? "On a hit, the target flashes, is knocked back and a burst lands on it (a critical also shakes the screen). Off: you don't see it."
+      : "Al acertar, el objetivo destella, retrocede y recibe un estallido (un crítico además sacude la pantalla). Apagado: tú no lo ves.",
+    scope: "client", config: true, type: Boolean, default: true,
+    onChange: value => logged(syncImpactChoice(value))
+  });
+  Hooks.once("ready", () => logged(syncImpactChoice(game.settings.get(MODULE_ID, IMPACT_SETTING))));
   void loadMoveSounds();
   Hooks.once("ready", () => game.socket?.on(SOCKET_CHANNEL, message => {
     // Only the module's own Move sounds and cries, whoever sends it.

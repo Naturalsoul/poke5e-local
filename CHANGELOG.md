@@ -4,7 +4,7 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
-## [0.31.0] — 2026-10-22
+## [0.32.0] — 2026-10-22
 
 - **Más Moves de estado automatizados (tanda 3):**
   - **Mean Look:** al fallar la salvación de WIS, el objetivo no puede ser cambiado ni retirado durante 3 rondas
@@ -15,7 +15,7 @@ solo se corrige algo.
   - **Incinerate:** al acertar, la baya que lleva el objetivo se reduce a cenizas.
   - **Eternabeam:** el usuario queda incapacitado hasta el final de su siguiente turno.
 
-## [0.30.0] — 2026-10-22
+## [0.31.0] — 2026-10-22
 
 - **Más Moves de estado automatizados (tanda 2):**
   - **Fire Lash:** al acertar y fallar la salvación de CON, los aliados suman +1 a sus ataques contra el objetivo
@@ -25,7 +25,7 @@ solo se corrige algo.
   - **Glaciate:** cada impacto quita 5 ft de velocidad al objetivo durante el combate. Congelarlo al llegar a 0 y
     que se caliente (una acción) siguen siendo del DM.
 
-## [0.29.0] — 2026-10-22
+## [0.30.0] — 2026-10-22
 
 - **Moves que asustan, ciegan o apresan** (condiciones de D&D, no estados Pokémon):
   - **Glare, Scary Face y Roar** asustan al fallar la salvación de WIS. Al final de cada uno de sus turnos, el
@@ -40,6 +40,22 @@ solo se corrige algo.
   Psychic ya figuran como automatizados (con nota para el DM de lo que falta: el +1 CA de Snowscape y el bloqueo de
   acciones bonus de Psychic Terrain). Acid e Ice Shard son solo daño; Baby-Doll Eyes y Captivate quedan manuales
   (reacciones que elige el jugador).
+## [0.29.1] — 2026-10-22
+
+- **Impacto de los golpes normales más marcado:** el retroceso de un acierto no crítico casi se duplica y la
+  congelación dura un poco más. El crítico no cambia.
+
+## [0.29.0] — 2026-10-22
+
+- **Impacto de los golpes (hit-stop):** cuando un ataque acierta, el objetivo destella en blanco y se congela un
+  instante, retrocede alejándose del atacante y recibe un estallido del color del tipo del Move. Un crítico se
+  congela más, empuja más lejos y además sacude la pantalla. Cada jugador puede apagarlo en sus ajustes
+  ("Poke5e - Impacto de los golpes"). Los fallos no tienen impacto.
+
+## [0.28.8] — 2026-10-22
+
+- **Las animaciones y sonidos de los ataques esperan a Dice So Nice:** ya no se reproducen mientras ruedan los
+  dados (delataban si el Move acertaba o fallaba). Salen cuando el resultado aparece en el chat.
 
 ## [0.28.7] — 2026-10-22
 
