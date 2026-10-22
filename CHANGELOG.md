@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.33.0] — 2026-10-22
+
+- **Thousand Arrows:** quien falla la salvación de DES queda derribado. Que alcance a voladores y que el derribado
+  sea vulnerable a Tierra sigue siendo del DM.
+- **Cierre de "Estados extra":** Belch, Octolock, Triple Arrows y Worry Seed quedan como manuales (dependen de una
+  elección del jugador o de tiradas enfrentadas); Corrosive Gas pasa al bloque de efectos de campo.
+
 ## [0.32.0] — 2026-10-22
 
 - **Más Moves de estado automatizados (tanda 3):**

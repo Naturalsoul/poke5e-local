@@ -20,10 +20,10 @@ export const CONDITION_KIND = "move-condition";
 const ICONS = "systems/dnd5e/icons/svg/statuses";
 
 const LABELS = {
-  es: { frightened: "Asustado", blinded: "Cegado", grappled: "Apresado", trapped: "Mean Look — No puede huir ni cambiarse",
+  es: { frightened: "Asustado", blinded: "Cegado", prone: "Derribado", grappled: "Apresado", trapped: "Mean Look — No puede huir ni cambiarse",
     salted: "Salt Cure — Salado", save: "Salvación contra", overcomes: "se sobrepone a", saltHurts: "sufre daño por Salt Cure",
     saltEnds: "ya no sufre Salt Cure", cantLeave: name => `${name} no puede huir ni ser cambiado (Mean Look).` },
-  en: { frightened: "Frightened", blinded: "Blinded", grappled: "Grappled", trapped: "Mean Look — Can't flee or switch out",
+  en: { frightened: "Frightened", blinded: "Blinded", prone: "Prone", grappled: "Grappled", trapped: "Mean Look — Can't flee or switch out",
     salted: "Salt Cure — Salted", save: "Save against", overcomes: "overcomes", saltHurts: "is hurt by Salt Cure",
     saltEnds: "is no longer hurt by Salt Cure", cantLeave: name => `${name} can't flee or be switched out (Mean Look).` }
 };
@@ -39,11 +39,13 @@ export const CONDITION_RIDERS = Object.freeze({
   flash: { condition: "blinded", trigger: "failed-save", untilEndOfNextTurn: true },
   "crush-grip": { condition: "grappled", trigger: "hit" },
   "snap-trap": { condition: "grappled", trigger: "failed-save" },
+  // shortcut: being hit by Ground Moves while grounded is the GM's; no engine tracks Ground immunity yet.
+  "thousand-arrows": { condition: "prone", trigger: "failed-save" },
   "mean-look": { condition: "trapped", trigger: "failed-save", img: "icons/svg/net.svg", rounds: 3 },
   "salt-cure": { condition: "salted", trigger: "failed-save", img: "icons/svg/acid.svg",
     startTurnDamage: { formula: "1d4", type: "rock", vulnerableTypes: ["water", "steel"] } }
 });
-const DND_CONDITIONS = new Set(["frightened", "blinded", "grappled"]);
+const DND_CONDITIONS = new Set(["frightened", "blinded", "grappled", "prone"]);
 
 const effectId = (moveId, condition) => `P5c${moveId}${condition}`.replace(/[^A-Za-z0-9]/g, "").padEnd(16, "0").slice(0, 16);
 

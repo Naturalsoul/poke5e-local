@@ -89,3 +89,9 @@ test("Salt Cure deals 1d4 rock at the start of each turn, double to Water and St
   await processConditionRidersStartTurn(water);
   assert.deepEqual(water.applied, [{ value: 6, type: "rock" }]);
 });
+
+test("Thousand Arrows knocks prone whoever fails the save", () => {
+  const [effect] = buildConditionEffects(move("thousand-arrows"));
+  assert.deepEqual(effect.statuses, ["prone"]);
+  assert.equal(effect.flags["poke5e-local"].trigger, "failed-save");
+});
