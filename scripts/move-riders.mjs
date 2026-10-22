@@ -10,8 +10,9 @@ import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
  * One-off effects of a few Moves, run by the active GM from the chat messages (after Dice So Nice):
  * - Clear Smog: on a hit, the target's stat changes are reset.
  * - Incinerate: on a hit, the target's held berry burns to ash.
- * - Multi-hit Moves (Bullet Seed, Fury Attack…): on a hit, a d4 chain (3 or 4: one more 1d4 hit, up to four),
- *   and Barrage's 1d4 projectiles. The extra damage is posted as a damage roll to apply from chat.
+ * - Multi-hit Moves (Bullet Seed, Fury Attack…): on a hit, a card with a button for the player to roll the d4
+ *   (3 or 4: one more hit and another button, up to four); Barrage's button rolls its 1d4 projectiles. The extra
+ *   hits' damage is the player's to roll.
  * - Jump Kick, High Jump Kick and Supercell Slam: on a miss, the user takes 1 (or its proficiency) damage.
  * - Eternabeam: its user is incapacitated until the end of its next turn.
  * - Moves with a wider critical range (19-20, Fickle Beam 17-20, Frost Breath 16-20), set on the roll itself.
@@ -26,10 +27,16 @@ const MODULE_ID = "poke5e-local";
 
 const LABELS = {
   es: { cleared: "pierde sus cambios de estadísticas", burned: name => `se queda sin ${name}: se ha reducido a cenizas`,
-    worn: "Eternabeam — Incapacitado", chain: "Golpes extra", extraHits: count => `${count} golpe(s) extra`,
+    worn: "Eternabeam — Incapacitado", rollD4: "Tirar d4", rollProjectiles: "Tirar proyectiles (1d4)", chainStart: "¡Acierta! Tira el d4: con 3 o 4 encadena otro golpe.",
+    barrageStart: "¡Acierta! Tira 1d4 para ver cuántos proyectiles lanza.", another: hits => `¡Otro golpe! (${hits}/4)`,
+    chainEnd: hits => `La cadena termina: ${hits} golpe(s) extra. Tira su daño (1d4 cada uno).`,
+    projectiles: count => `${count} proyectil(es): ${count - 1} golpe(s) extra de 1d4.`, notYours: "Solo el dueño de este Pokémon puede tirarlo.",
     crash: "se estrella y recibe" },
   en: { cleared: "loses its stat changes", burned: name => `loses its ${name}: it burned to ash`,
-    worn: "Eternabeam — Incapacitated", chain: "Extra hits", extraHits: count => `${count} extra hit(s)`,
+    worn: "Eternabeam — Incapacitated", rollD4: "Roll d4", rollProjectiles: "Roll projectiles (1d4)", chainStart: "Hit! Roll the d4: a 3 or 4 chains another hit.",
+    barrageStart: "Hit! Roll 1d4 to see how many projectiles it fires.", another: hits => `Another hit! (${hits}/4)`,
+    chainEnd: hits => `The chain ends: ${hits} extra hit(s). Roll their damage (1d4 each).`,
+    projectiles: count => `${count} projectile(s): ${count - 1} extra 1d4 hit(s).`, notYours: "Only this Pokémon's owner can roll it.",
     crash: "crashes and takes" }
 };
 const text = () => LABELS[game.settings.get(MODULE_ID, "language") === "en" ? "en" : "es"];
@@ -47,46 +54,61 @@ async function chat(actor, html) {
 
 const speaker = actor => ChatMessage.implementation.getSpeaker({ actor });
 
-async function shownRoll(roll, actor, flavor, flags = {}) {
-  const message = await roll.toMessage({ speaker: speaker(actor), flavor, flags });
-  await game.dice3d?.waitFor3DAnimationByMessageID?.(message?.id);
-  return message;
+// After a roll of the d4 (Barrage: of its projectiles): the next state, and whether the chain goes on.
+export function nextChainState(state, total) {
+  if (state.kind === "barrage") {return { ...state, hits: total - 1, done: true };}
+  const more = total >= 3;
+  const hits = state.hits + (more ? 1 : 0);
+  return { ...state, hits, done: !more || hits >= 4 };
 }
 
-// The extra hits' damage, as a dnd5e damage roll so it can be applied from its chat card.
-async function extraDamage(count, { item, user }) {
-  if (count <= 0) {return;}
-  const type = item.getFlag(MODULE_ID, "moveDefinition")?.type;
-  const roll = await new CONFIG.Dice.DamageRoll(`${count}d4`, {}, { type, types: type ? [type] : [] }).evaluate();
-  await shownRoll(roll, user, `${escape(item.name)} — ${text().extraHits(count)}`, { dnd5e: { roll: { type: "damage" } } });
-}
+const chainButton = state => `<div class="card-buttons"><button type="button" data-visibility="all" data-poke5e-hit-chain>
+  <i class="fa-solid fa-dice-d6" aria-hidden="true"></i> ${state.kind === "barrage" ? text().rollProjectiles : text().rollD4}</button></div>`;
 
-// d4 after each hit: 3 or 4 is one more hit, up to four more.
-export async function rollHitChain() {
-  let hits = 0;
-  const results = [];
-  while (hits < 4) {
-    const roll = await new Roll("1d4").evaluate();
-    results.push(roll);
-    if (roll.total < 3) {break;}
-    hits++;
-  }
-  return { hits, results };
+function chainStartCard(_target, { item, user }, kind) {
+  const state = { kind, itemName: item.name, actorUuid: user?.uuid, hits: 0 };
+  const intro = kind === "barrage" ? text().barrageStart : text().chainStart;
+  return ChatMessage.implementation.create({ speaker: speaker(user),
+    content: `<p><strong>${escape(item.name)}</strong> — ${intro}</p>${chainButton(state)}`, flags: { [MODULE_ID]: { hitChain: state } } });
 }
+const chainHits = (target, context) => chainStartCard(target, context, "chain");
+const barrageHits = (target, context) => chainStartCard(target, context, "barrage");
 
-async function chainHits(_target, context) {
-  const { hits, results } = await rollHitChain();
-  const message = await ChatMessage.implementation.create({ speaker: speaker(context.user), rolls: results,
-    flavor: `${escape(context.item.name)} — ${text().chain}: ${results.map(roll => roll.total).join(", ")}` });
-  await game.dice3d?.waitFor3DAnimationByMessageID?.(message?.id);
-  await extraDamage(hits, context);
-}
+// Each card's button rolls once: the card that follows it points back to it.
+const chainSpent = message => Boolean(game.messages?.find?.(entry => entry.getFlag?.(MODULE_ID, "hitChainParent") === message.id));
 
-// shortcut: each projectile is 1d4 as written, even where the Move's dice scale with level.
-async function barrageHits(_target, context) {
+async function rollChain(message) {
+  const state = message.getFlag(MODULE_ID, "hitChain");
+  const actor = state?.actorUuid ? fromUuidSync(state.actorUuid, { strict: false }) : null;
+  if (!state || chainSpent(message)) {return;}
+  if (!actor?.isOwner) {ui.notifications.warn(text().notYours); return;}
   const roll = await new Roll("1d4").evaluate();
-  await shownRoll(roll, context.user, `${escape(context.item.name)} — ${text().chain}`);
-  await extraDamage(roll.total - 1, context);
+  const next = nextChainState(state, roll.total);
+  let result = text().another(next.hits);
+  if (state.kind === "barrage") {result = text().projectiles(roll.total);}
+  else if (next.done) {result = next.hits >= 4 && roll.total >= 3 ? `${text().another(next.hits)} ${text().chainEnd(next.hits)}` : text().chainEnd(next.hits);}
+  await ChatMessage.implementation.create({ speaker: speaker(actor), rolls: [roll],
+    content: `<p><strong>${escape(state.itemName)}</strong> — d4: <strong>${roll.total}</strong>. ${result}</p>${next.done ? "" : chainButton(next)}`,
+    flags: { [MODULE_ID]: { hitChainParent: message.id, ...(next.done ? {} : { hitChain: next }) } } });
+}
+
+function onChainClick(event) {
+  const button = event.target?.closest?.("[data-poke5e-hit-chain]");
+  if (!button) {return;}
+  event.preventDefault();
+  event.stopPropagation();
+  const message = game.messages.get(button.closest("[data-message-id]")?.dataset.messageId);
+  if (!message) {return;}
+  button.disabled = true;
+  void rollChain(message).catch(error => console.error(`[${MODULE_ID}] hit chain`, error)).finally(() => {
+    button.disabled = false;
+    if (chainSpent(message)) {button.closest(".card-buttons")?.remove();}
+  });
+}
+
+// A spent button is hidden when the card is drawn again.
+function onRenderChain(message, html) {
+  if (message.getFlag?.(MODULE_ID, "hitChain") && chainSpent(message)) {html.querySelector?.("[data-poke5e-hit-chain]")?.closest(".card-buttons")?.remove();}
 }
 
 export const MISS_RIDERS = Object.freeze({
@@ -222,4 +244,6 @@ export function registerMoveRiders() {
   Hooks.on("createChatMessage", onCreateChatMessage);
   Hooks.on("dnd5e.preRollAttack", onPreRollAttackCritical);
   Hooks.on("dnd5e.preRollDamage", onPreRollDamageRiders);
+  Hooks.on("dnd5e.renderChatMessage", onRenderChain);
+  document.addEventListener("click", onChainClick, true);
 }

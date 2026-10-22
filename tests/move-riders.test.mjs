@@ -96,16 +96,13 @@ test("HP-based damage: low HP multiplies Flail, a hurt target doubles Brine, bon
   game.user = undefined;
 });
 
-test("multi-hit chain: each 3 or 4 on the d4 is one more hit, up to four", async () => {
-  const { rollHitChain } = await import("../scripts/move-riders.mjs");
-  const run = async totals => {
-    const queue = [...totals];
-    globalThis.Roll = class { async evaluate() { this.total = queue.shift(); return this; } };
-    return (await rollHitChain()).hits;
-  };
-  assert.equal(await run([2]), 0);
-  assert.equal(await run([4, 3, 1]), 2);
-  assert.equal(await run([4, 4, 4, 4, 4]), 4);
+test("multi-hit chain: each 3 or 4 on the player's d4 is one more hit and another roll, up to four", async () => {
+  const { nextChainState } = await import("../scripts/move-riders.mjs");
+  const start = { kind: "chain", hits: 0 };
+  assert.deepEqual(nextChainState(start, 2), { kind: "chain", hits: 0, done: true });
+  assert.deepEqual(nextChainState(start, 4), { kind: "chain", hits: 1, done: false });
+  assert.deepEqual(nextChainState({ kind: "chain", hits: 3 }, 3), { kind: "chain", hits: 4, done: true }, "four extra hits at most");
+  assert.deepEqual(nextChainState({ kind: "barrage", hits: 0 }, 3), { kind: "barrage", hits: 2, done: true });
 });
 
 test("Jump Kick and Supercell Slam hurt their user on a miss", async () => {

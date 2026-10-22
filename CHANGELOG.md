@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.36.1] — 2026-10-22
+
+- **Golpes múltiples con botón:** al acertar ya no se tira todo solo. Sale una tarjeta con el botón **Tirar d4**:
+  con 3 o 4 hay otro golpe y otro botón, hasta cuatro; al fallar, la cadena termina y dice cuántos golpes extra
+  hubo. Barrage trae el botón **Tirar proyectiles (1d4)**. El daño de los golpes extra ya no se lanza: lo tira el
+  jugador. Solo el dueño del Pokémon (o el DM) puede pulsarlo, y cada botón sirve una vez.
+
 ## [0.36.0] — 2026-10-22
 
 - **Golpes múltiples:** al acertar Arm Thrust, Bone Rush, Bullet Seed, Comet Punch, Double Slap, Fury Attack, Fury
