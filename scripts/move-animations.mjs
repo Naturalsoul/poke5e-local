@@ -106,6 +106,13 @@ const HEAL = "jb2a.healing_generic.burst.greenorange";
 const BUFF = "jb2a.on_token_buff.001.001.orangeyellow";
 const DEBUFF = "jb2a.condition.curse.01.001.red";
 
+// Status Moves that help an ally (the rest of the status Moves aimed at others hinder an enemy): no curse on them.
+export const SUPPORT_MOVES = new Set(["after-you", "ally-switch", "aromatherapy", "aromatic-mist", "barrier", "bestow",
+  "coaching", "crafty-shield", "decorate", "dragon-cheer", "floral-healing", "flower-shield", "gear-up", "growth",
+  "heal-bell", "helping-hand", "hold-hands", "instruct", "lucky-chant", "magic-coat", "mat-block", "milk-drink", "mist",
+  "mud-sport", "purify", "quick-guard", "revival-blessing", "safeguard", "tailwind", "water-sport", "wide-guard"]);
+const HEALING_SUPPORT = new Set(["aromatherapy", "floral-healing", "heal-bell", "milk-drink", "purify", "revival-blessing"]);
+
 const en = () => game.settings.get(MODULE_ID, "language") === "en";
 const logged = task => { void Promise.resolve(task).catch(error => console.error(`[${MODULE_ID}] move animations`, error)); };
 const active = id => Boolean(game.modules?.get(id)?.active);
@@ -159,6 +166,11 @@ export function moveAnimation(item) {
   const shape = moveShape(definition);
   const kind = kindOf(definition);
   if (kind === "heal") {return { file: HEAL, at: "user" };}
+  const id = item.getFlag(MODULE_ID, "sourceId");
+  if (kind === "status" && SUPPORT_MOVES.has(id)) {
+    const at = shape === "self" || shape === "burst" ? "user" : "target";
+    return HEALING_SUPPORT.has(id) ? { file: HEAL, at } : { file: BUFF, at, tint: fx.color };
+  }
   if (kind === "status") {return shape === "self" ? { file: BUFF, at: "user", tint: fx.color } : { file: DEBUFF, at: "target", tint: fx.color };}
   return damageAnimation(item, fx, shape, definition);
 }

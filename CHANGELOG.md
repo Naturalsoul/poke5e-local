@@ -4,6 +4,30 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.28.5] — 2026-10-22
+
+- **Botones de tirada de los objetos, rehechos desde cero:** ahora van dentro de la tarjeta, escritos en su
+  contenido al publicarla (como los botones propios de dnd5e), y el clic se atiende antes que cualquier otro código
+  de la página. Las tarjetas antiguas reciben el botón al pintarse. Si la tarjeta no encuentra su tirada, avisa.
+
+## [0.28.4] — 2026-10-22
+
+- **Botones de tirada de las pociones** (y del resto de objetos con tirada): no respondían a ningún clic. Ahora el
+  clic se atiende desde el documento y encuentra la tarjeta por su mensaje, como los demás botones del módulo, así
+  que funciona para el autor, el dueño del personaje y el DM aunque el chat vuelva a pintar la tarjeta. Si la tirada
+  falla (también al calcular Nurse o Tactician), avisa en vez de no hacer nada.
+
+## [0.28.3] — 2026-10-22
+
+- **Poison Gas: mitad de daño si se supera la salvación** (regla de mesa; el texto lo da siempre completo). Vale en
+  la nube, al empezar el turno dentro (salvación de CON: completo y envenenado si falla, la mitad si la supera), y en
+  la tarjeta de uso, que antes no aplicaba **ningún** daño a quien superaba la salvación. Las copias de Poison Gas
+  que ya están en las hojas se corrigen solas al iniciar el mundo (el DM).
+- **Animaciones de los Moves de apoyo:** Helping Hand, Coaching, Dragon Cheer, Safeguard, Tailwind y el resto de
+  Moves de estado que ayudan a un aliado ya no muestran la calavera de maldición: un brillo de mejora sobre el
+  aliado (o alrededor del usuario si es un área), y una curación en los que curan (Floral Healing, Milk Drink, Heal
+  Bell, Aromatherapy, Purify, Revival Blessing).
+
 ## [0.28.2] — 2026-10-22
 
 - Ventana de experiencia: "¡Murkrow puede subir al Nv. 9!" ya no repite el nivel del nombre ("Murkrow (Lv. 8)").
