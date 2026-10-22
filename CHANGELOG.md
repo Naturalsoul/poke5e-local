@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.28.6] — 2026-10-22
+
+- **Errores de permisos en los jugadores al dar un held item:** al arrastrar un objeto a un Pokémon (o quitárselo),
+  el navegador de cada jugador conectado intentaba también asignarlo y mostraba "User … lacks permission to update
+  Actor". Ahora solo lo hace quien hizo el cambio. Revisadas el resto de reacciones a cambios del mundo (tokens,
+  actores, objetos, efectos, combate, chat y ajustes): ya actuaban solo en el DM o en quien hizo el cambio.
+
 ## [0.28.5] — 2026-10-22
 
 - **Botones de tirada de los objetos, rehechos desde cero:** ahora van dentro de la tarjeta, escritos en su

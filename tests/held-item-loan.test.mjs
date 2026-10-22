@@ -3,7 +3,7 @@ import test from "node:test";
 import { createFlagDocument, createHooks, installFoundryUtils } from "./helpers/foundry-mocks.mjs";
 import {
   getPokemonHeldItem, reconcilePokemonHeldItemLoan, transferTrainerHeldItemToPokemon,
-  transferPokemonHeldItemToTrainer
+  transferPokemonHeldItemToTrainer, registerPokemonHeldItemService
 } from "../scripts/pokemon-held-item-service.mjs";
 import { HELD_ITEM_LOAN, LOAN_SYNC_OPTION, registerHeldItemLoanSync } from "../scripts/held-item-loan-sync.mjs";
 
@@ -225,4 +225,19 @@ test("failed migration restores the existing Pokemon's quantity and charges", as
   assert.equal(held.getFlag(MODULE_ID, HELD_ITEM_LOAN), undefined);
   assert.equal(value.original.system.quantity, 1);
   assert.equal(value.trainer.items.length, 1);
+});
+
+test("only the client that gave a Pokémon an item assigns it: the others would lack permission", async () => {
+  registerPokemonHeldItemService();
+  const { pokemon } = fixture();
+  const berry = inventoryItem(pokemon, { name: "Oran Berry", flags: { [MODULE_ID]: {
+    kind: "catalog-item", itemType: "berry", sourceId: "oran-berry"
+  } }, system: { quantity: 1 } });
+  const created = (userId) => hooks.handlers("createItem").forEach(handler => handler(berry, {}, userId));
+  created("player");
+  await flush();
+  assert.equal(pokemon.getFlag(MODULE_ID, "heldItemId"), undefined, "the GM's client stays out of a player's drop");
+  created(game.user.id);
+  await flush();
+  assert.equal(pokemon.getFlag(MODULE_ID, "heldItemId"), berry.id);
 });
