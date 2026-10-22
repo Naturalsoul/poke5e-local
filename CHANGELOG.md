@@ -4,6 +4,58 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.25.0] — 2026-10-21
+
+- **Diseño de las hojas.** Nuevo ajuste "Poke5e - Diseño de las hojas" (Configuración, por jugador), pensado
+  para cambiar el estilo si cambia el tono de la campaña. Dos diseños: **Team Rocket** (el de siempre: ficha de
+  Pokémon en pizarra y hoja de Entrenador en rojo Rocket) y **D&D 5e**: la hoja de Entrenador vuelve al aspecto
+  de la hoja de personaje de dnd5e (cabecera, barra lateral y pestañas) y los paneles del módulo (centro de
+  mando, ficha de Pokémon, planificador, Fakemon Studio) toman sus colores: pergamino en el modo claro de
+  Foundry y azul vaquero en el oscuro. Todo sigue funcionando igual en los dos; solo cambia el aspecto.
+- Para que el modo claro se lea bien, 131 colores fijos pensados para fondos oscuros pasan a los colores comunes:
+  fondos oscuros de botones y buscadores (Desplegar, acciones de movimiento, buscador del planificador), texto
+  claro (PS de la party) y los verdes, azules, rojos y dorados pastel de los estados. En el diseño Team Rocket se
+  ven casi igual. Nuevo color común `--poke5e-ui-on-accent` para el texto sobre botones rojos; el rango del Team
+  Rocket se lee sobre la cabecera de dnd5e.
+
+## [0.24.0] — 2026-10-21
+
+- **Rango en el Team Rocket.** La línea bajo el nombre del entrenador ("TEAM ROCKET // RECLUTA") ya no es fija: el DM
+  elige el rango en un desplegable de la propia línea (Recluta, Alto Rango Recluta, Ejecutivo, Administrador o
+  Administrador Jefe), y el jugador solo ve el texto. El cambio se rechaza si no viene de un DM, aunque el jugador sea
+  dueño del actor. Sin elegir, sigue siendo Recluta.
+
+## [0.23.3] — 2026-10-21
+
+- **Colores escritos a mano, a la base común.** En la ficha de Pokémon, la hoja de Entrenador y su gestor, el
+  planificador y Fakemon Studio, 626 colores fijos (fondos, degradados, bordes, brillos rojos, crema y dorados) usan
+  ahora los colores de `styles/theme.css`; los transparentes, con `color-mix()`. Se ve igual: los tonos que estaban
+  a 1–6 unidades de un color común se igualan a él, y las ventanas de Entrenador conservan su paleta Rocket. Quedan
+  como estaban las sombras y brillos neutros (negro y blanco), los colores de tipo y de PS, y los colores propios
+  de algunos diálogos (el rojo de los diálogos de Entrenador, el morado de Fakemon Studio).
+
+## [0.23.2] — 2026-10-21
+
+- **Texto más legible.** Las ventanas usaban etiquetas de 6 a 11 px (los botones Check/Save, la naturaleza, los
+  estados, la EXP del equipo, la potencia de los Moves…). Ahora el texto pequeño mide de 10 a 12 px: lo que era de
+  6–7,5 px pasa a 10, el de 8 a 11, el de 9 a 11,5 y el de 10–11 a 12. Cada tamaño sale de una escala en
+  `styles/theme.css` (`--poke5e-ui-text-*`), así que se ajusta en un solo sitio. Se mantiene la micro-etiqueta
+  "MOD" de 4 px del modificador, que no cabría en su píldora.
+- Con el texto más grande, el resumen inferior del planificador va siempre en su propia fila, con "Repartir XP" y
+  "Generar" debajo, para que sus etiquetas se lean enteras; la estrella de la característica principal de la ficha
+  de Pokémon vuelve a ser pequeña para no pisar el valor.
+- En el gestor del Entrenador, el nombre de cada Pokémon con su nivel pasa a una segunda línea en vez de cortarse
+  ("Megabyte (Lv.…").
+
+## [0.23.1] — 2026-10-21
+
+- **Base común de colores para los temas.** `styles/theme.css` reúne los colores de todas las ventanas (fondo,
+  paneles, bordes, texto, acento…) y las paletas propias de la ficha de Pokémon, el planificador, Fakemon Studio, la
+  hoja de Entrenador y su gestor apuntan a ella. Se ve igual que antes (las ventanas de Entrenador conservan sus
+  colores Team Rocket; algunos tonos cambian en 1–4 unidades al unificarse). Es el paso previo a poder elegir un
+  tema en la configuración.
+- Se borra `styles/trainer.backup-pre-refactor.css` (11.000 líneas que no se cargaban).
+
 ## [0.23.0] — 2026-10-21
 
 - **Aviso en la tarjeta de los Moves sin automatizar.** Al usar uno de los 421 Moves pendientes o los 19 manuales,

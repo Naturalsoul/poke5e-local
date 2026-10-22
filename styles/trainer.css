@@ -113,7 +113,7 @@
     var(--poke5e-trainer-radius-md);
 
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     600;
@@ -293,7 +293,7 @@ button {
   color:
     var(--poke5e-trainer-accent);
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 700;
 
   letter-spacing: 0.08em;
@@ -370,7 +370,7 @@ button {
 
   opacity: 0.55;
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 700;
 
   white-space: nowrap;
@@ -392,7 +392,7 @@ button {
   background:
     rgba(0, 0, 0, 0.1);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
 }
 
 
@@ -509,7 +509,7 @@ button {
 
   opacity: 0.62;
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   line-height: 1.35;
 }
 
@@ -545,7 +545,7 @@ button {
 > strong,
 .poke5e-trainer-create__selection-summary
 > strong {
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 750;
 
   letter-spacing: 0.025em;
@@ -575,7 +575,7 @@ select {
 small {
   opacity: 0.55;
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   line-height: 1.35;
 }
 
@@ -625,7 +625,7 @@ small {
   color:
     var(--poke5e-trainer-accent);
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 800;
 
   letter-spacing: 0.05em;
@@ -713,7 +713,7 @@ small {
   background:
     rgba(255, 255, 255, 0.025);
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 650;
 
   transition:
@@ -860,7 +860,7 @@ strong {
 
   overflow: hidden;
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
 
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -875,7 +875,7 @@ small {
       var(--poke5e-trainer-accent)
     );
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 700;
 
   text-transform: uppercase;
@@ -948,7 +948,7 @@ small {
   background:
     rgba(255, 255, 255, 0.045);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
 }
 
 
@@ -957,7 +957,7 @@ strong {
   color:
     var(--poke5e-trainer-accent);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
 
   text-transform: uppercase;
 }
@@ -984,7 +984,7 @@ strong {
   color:
     var(--poke5e-trainer-accent);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
 }
 
 
@@ -1023,7 +1023,7 @@ strong {
   background:
     rgba(255, 255, 255, 0.025);
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 600;
 
   text-align: center;
@@ -1073,7 +1073,7 @@ strong {
 
   opacity: 0.9;
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
 }
 
 
@@ -1212,7 +1212,7 @@ span {
   color:
     var(--poke5e-trainer-accent);
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 800;
 
   letter-spacing: 0.08em;
@@ -1271,7 +1271,7 @@ dl
 dt {
   opacity: 0.55;
 
-  font-size: 8px;
+  font-size: var(--poke5e-ui-text-xs);
   font-weight: 700;
 
   text-transform: uppercase;
@@ -1283,7 +1283,7 @@ dd {
   margin:
     2px 0 0;
 
-  font-size: 11px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 650;
 }
 
@@ -1326,7 +1326,7 @@ dd {
 
 .poke5e-trainer-create__summary-limits
 small {
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 700;
 
   text-transform: uppercase;
@@ -1365,7 +1365,7 @@ strong {
   color:
     #b64040;
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 650;
 }
 
@@ -1398,7 +1398,7 @@ button {
   border-radius:
     var(--poke5e-trainer-radius-md);
 
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   font-weight: 700;
 }
 
@@ -1416,7 +1416,7 @@ button {
 > span {
   opacity: 0.55;
 
-  font-size: 9px;
+  font-size: var(--poke5e-ui-text-sm);
   font-weight: 700;
 
   text-align: center;
@@ -1513,8 +1513,8 @@ button {
 
 .poke5e-trainer-create
 [data-pokemon-type="electric"] {
-  --poke5e-type-color: #d9a91c;
-  --poke5e-type-soft: rgba(217, 169, 28, 0.16);
+  --poke5e-type-color: var(--poke5e-ui-gold);
+  --poke5e-type-soft: color-mix(in srgb, var(--poke5e-ui-gold) 16%, transparent);
 }
 
 
@@ -1853,7 +1853,7 @@ small {
     var(--poke5e-level-up-accent);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     800;
@@ -1912,7 +1912,7 @@ strong {
     999px;
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -1942,7 +1942,7 @@ i {
     var(--poke5e-level-up-accent);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -2048,7 +2048,7 @@ p,
     0.62;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   line-height:
     1.35;
@@ -2077,7 +2077,7 @@ p,
 .poke5e-level-up-dialog__field
 > span {
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     750;
@@ -2203,7 +2203,7 @@ select {
 .poke5e-level-up-dialog__limits
 small {
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     750;
@@ -2261,7 +2261,7 @@ strong {
     0.68;
 
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 
   line-height:
     1.4;
@@ -2374,7 +2374,7 @@ small {
     0.72;
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   line-height:
     1.35;
@@ -2416,7 +2416,7 @@ p {
     0.68;
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   line-height:
     1.35;
@@ -2633,7 +2633,7 @@ strong {
     var(--poke5e-trainer-accent);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     700;
@@ -2695,7 +2695,7 @@ small {
     0.68;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     700;
@@ -2711,7 +2711,7 @@ small {
 .poke5e-level-up-move-card__metric
 strong {
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 
   line-height:
     1.25;
@@ -2889,7 +2889,7 @@ small {
     0.62;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     750;
@@ -2953,7 +2953,7 @@ small {
     0.62;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 }
 
 
@@ -3017,7 +3017,7 @@ small {
     0.62;
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     750;
@@ -3118,7 +3118,7 @@ strong {
 
 .poke5e-pokemon-level-up__asi-field.is-at-cap {
   border-color:
-    rgba(199, 175, 115, 0.4);
+    color-mix(in srgb, var(--poke5e-ui-brass) 40%, transparent);
 }
 
 
@@ -3163,7 +3163,7 @@ small {
     0.48;
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   text-transform:
     uppercase;
@@ -3225,7 +3225,7 @@ small {
     0.55;
 
   font-size:
-    6px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     700;
@@ -3254,7 +3254,7 @@ strong {
     0.7;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -3429,7 +3429,7 @@ output {
     var(--poke5e-level-up-accent);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     750;
@@ -3450,7 +3450,7 @@ output {
     rgba(74, 167, 100, 0.1);
 
   color:
-    #69c47f;
+    color-mix(in srgb, var(--poke5e-ui-success) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -3576,7 +3576,7 @@ button:disabled {
 .poke5e-pokemon-level-up__progress-card
 strong {
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -3586,7 +3586,7 @@ small {
     0.62;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   line-height:
     1.3;
@@ -3649,7 +3649,7 @@ small {
     rgba(0, 0, 0, 0.025);
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     650;
@@ -3666,7 +3666,7 @@ small {
     var(--poke5e-level-up-accent);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -3694,7 +3694,7 @@ button {
     var(--poke5e-level-up-soft);
 
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     750;
@@ -3854,47 +3854,47 @@ button:hover {
 
 .dnd5e2.sheet.actor.character.poke5e-trainer-sheet {
   --poke5e-fr-bg-1:
-    #07090d;
+    var(--poke5e-ui-bg);
 
   --poke5e-fr-bg-2:
-    #11161d;
+    var(--poke5e-ui-surface);
 
   --poke5e-fr-panel:
-    rgba(15, 19, 25, 0.9);
+    color-mix(in srgb, var(--poke5e-ui-surface) 90%, transparent);
 
   --poke5e-fr-panel-soft:
-    rgba(22, 27, 35, 0.84);
+    color-mix(in srgb, var(--poke5e-ui-surface) 84%, transparent);
 
   --poke5e-fr-panel-glow:
     rgba(35, 16, 16, 0.34);
 
   --poke5e-fr-red:
-    #c43d3d;
+    var(--poke5e-ui-accent);
 
   --poke5e-fr-red-soft:
-    rgba(196, 61, 61, 0.16);
+    color-mix(in srgb, var(--poke5e-ui-accent) 16%, transparent);
 
   --poke5e-fr-red-strong:
-    rgba(196, 61, 61, 0.34);
+    color-mix(in srgb, var(--poke5e-ui-accent) 34%, transparent);
 
   --poke5e-fr-gold:
-    #c7af73;
+    var(--poke5e-ui-brass);
 
   --poke5e-fr-gold-soft:
-    rgba(199, 175, 115, 0.18);
+    color-mix(in srgb, var(--poke5e-ui-brass) 18%, transparent);
 
   --poke5e-fr-ivory:
-    #efe8d8;
+    var(--poke5e-ui-cream);
 
   --poke5e-fr-text:
-    #e8e1d2;
+    var(--poke5e-ui-text);
 
   /*
    * Valor final V6.1.
    * Sustituye el antiguo #a6acb6.
    */
   --poke5e-fr-muted:
-    #b7bcc5;
+    var(--poke5e-ui-muted);
 
   --poke5e-fr-blue-dark:
     #202733;
@@ -3907,10 +3907,10 @@ button:hover {
    * utilizan la nomenclatura Trainer anterior.
    */
   --poke5e-trainer-border:
-    rgba(196, 61, 61, 0.28);
+    color-mix(in srgb, var(--poke5e-ui-accent) 28%, transparent);
 
   --poke5e-trainer-border-strong:
-    rgba(196, 61, 61, 0.5);
+    color-mix(in srgb, var(--poke5e-ui-accent) 50%, transparent);
 
   --poke5e-trainer-accent:
     var(--poke5e-fr-red);
@@ -3926,6 +3926,10 @@ button:hover {
 
   --poke5e-trainer-muted:
     var(--poke5e-fr-muted);
+}
+
+
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet {
 
   /*
    * Contrato final del header D&D5e 5.3.3.
@@ -3942,20 +3946,20 @@ button:hover {
  * SHEET SHELL
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .window-content {
   background:
     radial-gradient(
       circle at 50% 0,
-      rgba(196, 61, 61, 0.1),
+      color-mix(in srgb, var(--poke5e-ui-accent) 10%, transparent),
       transparent 280px
     ),
     linear-gradient(
       90deg,
-      rgba(199, 175, 115, 0.03) 0,
+      color-mix(in srgb, var(--poke5e-ui-brass) 3%, transparent) 0,
       transparent 20%,
       transparent 80%,
-      rgba(199, 175, 115, 0.03) 100%
+      color-mix(in srgb, var(--poke5e-ui-brass) 3%, transparent) 100%
     ),
     repeating-linear-gradient(
       90deg,
@@ -3964,8 +3968,8 @@ button:hover {
     ),
     linear-gradient(
       180deg,
-      rgba(16, 20, 28, 0.96),
-      rgba(7, 9, 13, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-surface) 96%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-bg) 99%, transparent)
     )
     !important;
 }
@@ -3975,9 +3979,9 @@ button:hover {
  * Neutraliza pseudo-elementos visuales heredados
  * que no forman parte de la identidad Trainer.
  */
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .window-content::before,
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .window-content::after {
   content:
     none !important;
@@ -3997,12 +4001,12 @@ button:hover {
  * MAIN CONTENT BACKGROUND
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .main-content {
   background:
     radial-gradient(
       circle at 50% 12%,
-      rgba(197, 59, 59, 0.05),
+      color-mix(in srgb, var(--poke5e-ui-accent) 5%, transparent),
       transparent 220px
     ),
     linear-gradient(
@@ -4017,7 +4021,7 @@ button:hover {
  * HEADER SHELL
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header {
   position:
     relative;
@@ -4027,30 +4031,30 @@ button:hover {
 
   border-bottom:
     1px solid
-    rgba(196, 61, 61, 0.42);
+    color-mix(in srgb, var(--poke5e-ui-accent) 42%, transparent);
 
   background:
     linear-gradient(
       180deg,
       rgba(255, 255, 255, 0.02),
       rgba(0, 0, 0, 0.14) 50%,
-      rgba(0, 0, 0, 0.26)
+      color-mix(in srgb, var(--poke5e-ui-bg) 26%, transparent)
     ),
     radial-gradient(
       circle at 50% 14%,
-      rgba(196, 61, 61, 0.13),
+      color-mix(in srgb, var(--poke5e-ui-accent) 13%, transparent),
       transparent 220px
     ),
     linear-gradient(
       90deg,
-      rgba(7, 9, 13, 0.98),
-      rgba(18, 23, 31, 0.88) 48%,
-      rgba(7, 9, 13, 0.98)
+      color-mix(in srgb, var(--poke5e-ui-bg) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 88%, transparent) 48%,
+      color-mix(in srgb, var(--poke5e-ui-bg) 98%, transparent)
     );
 
   box-shadow:
     inset 0 -1px 0
-      rgba(199, 175, 115, 0.055),
+      color-mix(in srgb, var(--poke5e-ui-brass) 5.5%, transparent),
     0 8px 22px
       rgba(0, 0, 0, 0.2);
 }
@@ -4060,24 +4064,24 @@ button:hover {
  * HEADER DECORATIVE LAYER
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header::before {
   background:
     linear-gradient(
       180deg,
       transparent 0,
       rgba(0, 0, 0, 0.14) 28%,
-      rgba(0, 0, 0, 0.4) 100%
+      color-mix(in srgb, var(--poke5e-ui-bg) 40%, transparent) 100%
     ),
     radial-gradient(
       circle at 50% 18%,
-      rgba(239, 232, 216, 0.05),
+      color-mix(in srgb, var(--poke5e-ui-cream) 5%, transparent),
       transparent 105px
     ),
     linear-gradient(
       90deg,
       transparent calc(50% - 90px),
-      rgba(239, 232, 216, 0.03)
+      color-mix(in srgb, var(--poke5e-ui-cream) 3%, transparent)
         calc(50% - 90px)
         calc(50% + 90px),
       transparent calc(50% + 90px)
@@ -4085,7 +4089,7 @@ button:hover {
     linear-gradient(
       90deg,
       transparent calc(50% - 1px),
-      rgba(239, 232, 216, 0.07)
+      color-mix(in srgb, var(--poke5e-ui-cream) 7%, transparent)
         calc(50% - 1px)
         calc(50% + 1px),
       transparent calc(50% + 1px)
@@ -4097,7 +4101,7 @@ button:hover {
  * ROCKET WATERMARK
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header::after {
   content:
     "R";
@@ -4118,7 +4122,7 @@ button:hover {
     );
 
   color:
-    rgba(196, 61, 61, 0.105);
+    color-mix(in srgb, var(--poke5e-ui-accent) 10.5%, transparent);
 
   font-family:
     Helvetica,
@@ -4137,7 +4141,7 @@ button:hover {
 
   text-shadow:
     0 0 22px
-    rgba(196, 61, 61, 0.075);
+    color-mix(in srgb, var(--poke5e-ui-accent) 7.5%, transparent);
 
   pointer-events:
     none;
@@ -4148,7 +4152,7 @@ button:hover {
  * HEADER — TRAINER IDENTITY
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header
 > .left {
   z-index:
@@ -4169,10 +4173,10 @@ button:hover {
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header
 .document-name,
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header
 .document-name
 input {
@@ -4203,7 +4207,7 @@ input {
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header
 > .left
 .class {
@@ -4216,7 +4220,7 @@ input {
     sans-serif;
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     700;
@@ -4228,16 +4232,20 @@ input {
 
 /* ============================================================
  * ROCKET TRAINER IDENTIFIER
+ *
+ * "TEAM ROCKET // <rank>": text for players, a select for the GM
+ * (trainer-rocket-rank.mjs).
  * ============================================================ */
 
 .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header
-> .left::after {
-  content:
-    "TEAM ROCKET // RECLUTA";
-
+> .left
+.poke5e-trainer-rocket-rank {
   display:
-    block;
+    flex;
+
+  align-items:
+    center;
 
   width:
     max-content;
@@ -4254,11 +4262,11 @@ input {
 
   border:
     1px solid
-    rgba(199, 175, 115, 0.18);
+    color-mix(in srgb, var(--poke5e-ui-brass) 18%, transparent);
 
   border-left:
     2px solid
-    rgba(196, 61, 61, 0.72);
+    color-mix(in srgb, var(--poke5e-ui-accent) 72%, transparent);
 
   border-radius:
     3px;
@@ -4266,12 +4274,12 @@ input {
   background:
     linear-gradient(
       90deg,
-      rgba(196, 61, 61, 0.095),
-      rgba(8, 10, 14, 0.48) 72%
+      color-mix(in srgb, var(--poke5e-ui-accent) 9.5%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-bg) 48%, transparent) 72%
     );
 
   color:
-    rgba(199, 175, 115, 0.82);
+    color-mix(in srgb, var(--poke5e-ui-brass) 82%, transparent);
 
   font-family:
     "Roboto Condensed",
@@ -4279,7 +4287,7 @@ input {
     sans-serif;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     800;
@@ -4293,8 +4301,70 @@ input {
   text-transform:
     uppercase;
 
-  pointer-events:
+  white-space:
+    pre;
+}
+
+
+/* With the dnd5e design the rank sits on dnd5e's own header, dark in both modes. */
+body.poke5e-design-dnd5e .dnd5e2.sheet.actor.character.poke5e-trainer-sheet .poke5e-trainer-rocket-rank {
+  border-color:
+    rgba(255, 255, 255, 0.28);
+  background:
+    rgba(0, 0, 0, 0.28);
+  color:
+    var(--poke5e-ui-on-accent);
+}
+
+
+/* The GM's select reads as part of the label: same font, a small caret. */
+.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+.poke5e-trainer-rocket-rank
+select {
+  width:
+    auto;
+
+  height:
+    auto;
+
+  margin:
+    0;
+
+  padding:
+    0 14px 0 0;
+
+  border:
     none;
+
+  background:
+    transparent;
+
+  color:
+    inherit;
+
+  font:
+    inherit;
+
+  letter-spacing:
+    inherit;
+
+  text-transform:
+    inherit;
+
+  cursor:
+    pointer;
+}
+
+
+.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+.poke5e-trainer-rocket-rank
+select
+option {
+  background:
+    var(--poke5e-ui-surface);
+
+  color:
+    var(--poke5e-ui-text);
 }
 
 
@@ -4302,7 +4372,7 @@ input {
  * HEADER — RIGHT HUD
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header
 > .right {
   z-index:
@@ -4314,13 +4384,13 @@ input {
  * Estos elementos de CharacterActorSheet no forman
  * parte de la interfaz Trainer final.
  */
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header
 .level-badge,
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header
 .inspiration,
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header
 .boon-badge {
   display:
@@ -4332,7 +4402,7 @@ input {
  * HEADER ACTIONS
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header
 .sheet-header-buttons {
   top:
@@ -4352,7 +4422,7 @@ input {
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header
 .sheet-header-buttons
 :is(button, a) {
@@ -4382,7 +4452,7 @@ input {
 
   border:
     1px solid
-    rgba(199, 175, 115, 0.28);
+    color-mix(in srgb, var(--poke5e-ui-brass) 28%, transparent);
 
   border-radius:
     5px;
@@ -4390,8 +4460,8 @@ input {
   background:
     linear-gradient(
       180deg,
-      rgba(38, 45, 57, 0.96),
-      rgba(15, 19, 25, 0.98)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 96%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 98%, transparent)
     );
 
   color:
@@ -4471,27 +4541,27 @@ input {
   filter:
     drop-shadow(
       0 0 4px
-      rgba(199, 175, 115, 0.3)
+      color-mix(in srgb, var(--poke5e-ui-brass) 30%, transparent)
     );
 }
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header
 .sheet-header-buttons
 :is(button, a):hover {
   border-color:
-    rgba(196, 61, 61, 0.68);
+    color-mix(in srgb, var(--poke5e-ui-accent) 68%, transparent);
 
   background:
     linear-gradient(
       180deg,
-      rgba(58, 35, 40, 0.98),
-      rgba(22, 19, 24, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 99%, transparent)
     );
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header
 .sheet-header-buttons
 :is(button, a):active {
@@ -4504,11 +4574,11 @@ input {
  * NATIVE XP — IF DND5E RENDERS IT
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header
 .xp-label {
   color:
-    rgba(199, 175, 115, 0.86);
+    color-mix(in srgb, var(--poke5e-ui-brass) 86%, transparent);
 
   font-family:
     "Roboto Condensed",
@@ -4516,24 +4586,24 @@ input {
     sans-serif;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     700;
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-header
 .xp-bar {
   height:
     5px;
 
   border-color:
-    rgba(199, 175, 115, 0.38);
+    color-mix(in srgb, var(--poke5e-ui-brass) 38%, transparent);
 
   background:
-    rgba(4, 6, 9, 0.96);
+    color-mix(in srgb, var(--poke5e-ui-bg) 96%, transparent);
 }
 
 
@@ -4541,7 +4611,7 @@ input {
  * PERSONNEL SIDEBAR
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sheet-body
 .main-content
 > .sidebar {
@@ -4557,7 +4627,7 @@ input {
  * PERSONNEL CARD
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 > .card {
   position:
@@ -4568,7 +4638,7 @@ input {
 
   border:
     1px solid
-    rgba(196, 61, 61, 0.26);
+    color-mix(in srgb, var(--poke5e-ui-accent) 26%, transparent);
 
   border-radius:
     8px;
@@ -4576,13 +4646,13 @@ input {
   background:
     radial-gradient(
       circle at 50% 5%,
-      rgba(196, 61, 61, 0.1),
+      color-mix(in srgb, var(--poke5e-ui-accent) 10%, transparent),
       transparent 150px
     ),
     linear-gradient(
       180deg,
-      rgba(25, 30, 39, 0.98),
-      rgba(10, 13, 18, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-panel) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-bg) 99%, transparent)
     );
 
   box-shadow:
@@ -4597,7 +4667,7 @@ input {
  * ROCKET PERSONNEL LABEL
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 > .card::before {
   content:
@@ -4620,13 +4690,13 @@ input {
 
   border:
     1px solid
-    rgba(196, 61, 61, 0.42);
+    color-mix(in srgb, var(--poke5e-ui-accent) 42%, transparent);
 
   border-radius:
     3px;
 
   background:
-    rgba(8, 10, 14, 0.84);
+    color-mix(in srgb, var(--poke5e-ui-bg) 84%, transparent);
 
   color:
     var(--poke5e-fr-gold);
@@ -4637,7 +4707,7 @@ input {
     sans-serif;
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     800;
@@ -4664,7 +4734,7 @@ input {
  * PORTRAIT
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .card
 > .portrait {
@@ -4675,23 +4745,23 @@ input {
     7px 7px 0 0;
 
   background:
-    #090c11;
+    var(--poke5e-ui-bg);
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .card
 > .portrait
 > img,
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .card
 > .portrait
 > video {
   border-bottom:
     2px solid
-    rgba(196, 61, 61, 0.64);
+    color-mix(in srgb, var(--poke5e-ui-accent) 64%, transparent);
 
   border-radius:
     7px 7px 0 0;
@@ -4702,7 +4772,7 @@ input {
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .card
 > .portrait::after {
@@ -4711,14 +4781,14 @@ input {
 
   border:
     1px solid
-    rgba(199, 175, 115, 0.55);
+    color-mix(in srgb, var(--poke5e-ui-brass) 55%, transparent);
 
   border-radius:
     4px;
 
   box-shadow:
     inset 0 0 0 1px
-    rgba(196, 61, 61, 0.16);
+    color-mix(in srgb, var(--poke5e-ui-accent) 16%, transparent);
 }
 
 /* ============================================================
@@ -4728,7 +4798,7 @@ input {
  * sin modificar attributes.ac ni su tooltip.
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .card
 .ac-badge.badge[
@@ -4754,7 +4824,7 @@ input {
 
   border:
     2px solid
-    rgba(199, 175, 115, 0.78);
+    color-mix(in srgb, var(--poke5e-ui-brass) 78%, transparent);
 
   border-radius:
     50%;
@@ -4762,9 +4832,9 @@ input {
   background:
     linear-gradient(
       180deg,
-      rgba(117, 38, 43, 0.98)
+      color-mix(in srgb, var(--poke5e-ui-accent-dark) 98%, transparent)
         0 43%,
-      rgba(12, 15, 20, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-bg) 99%, transparent)
         43% 100%
     )
     !important;
@@ -4786,9 +4856,9 @@ input {
 
   box-shadow:
     0 0 0 3px
-      rgba(7, 9, 13, 0.94),
+      color-mix(in srgb, var(--poke5e-ui-bg) 94%, transparent),
     0 0 0 4px
-      rgba(196, 61, 61, 0.24),
+      color-mix(in srgb, var(--poke5e-ui-accent) 24%, transparent),
     0 7px 14px
       rgba(0, 0, 0, 0.36),
     inset 0 1px 0
@@ -4798,7 +4868,7 @@ input {
 
 /* Horizontal Poké-style divider */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .card
 .ac-badge.badge[
@@ -4826,7 +4896,7 @@ input {
     1;
 
   background:
-    rgba(199, 175, 115, 0.72);
+    color-mix(in srgb, var(--poke5e-ui-brass) 72%, transparent);
 
   box-shadow:
     0 1px 0
@@ -4839,7 +4909,7 @@ input {
 
 /* AC label */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .card
 .ac-badge.badge[
@@ -4872,7 +4942,7 @@ input {
     sans-serif;
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     900;
@@ -4896,7 +4966,7 @@ input {
 
 /* Native AC value */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .card
 .ac-badge.badge[
@@ -4947,18 +5017,18 @@ input {
  * SIDEBAR COLLAPSER
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .card-tab {
   border:
     1px solid
-    rgba(199, 175, 115, 0.18);
+    color-mix(in srgb, var(--poke5e-ui-brass) 18%, transparent);
 
   background:
     linear-gradient(
       180deg,
-      #2a303c,
-      #171b23
+      var(--poke5e-ui-panel-alt),
+      var(--poke5e-ui-surface)
     );
 
   box-shadow:
@@ -4967,7 +5037,7 @@ input {
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .card-tab
 > i {
@@ -4980,7 +5050,7 @@ input {
  * STATS PANEL
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .card
 > .stats {
@@ -4993,13 +5063,13 @@ input {
   background:
     linear-gradient(
       180deg,
-      rgba(31, 37, 47, 0.9),
-      rgba(17, 21, 28, 0.98)
+      color-mix(in srgb, var(--poke5e-ui-panel) 90%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 98%, transparent)
     );
 
   border-top:
     1px solid
-    rgba(199, 175, 115, 0.14);
+    color-mix(in srgb, var(--poke5e-ui-brass) 14%, transparent);
 }
 
 
@@ -5007,7 +5077,7 @@ input {
  * TRAINER HUD — SR / SPD / PB
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .lozenges {
@@ -5022,7 +5092,7 @@ input {
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .lozenges
@@ -5044,7 +5114,7 @@ input {
 
   border:
     1px solid
-    rgba(199, 175, 115, 0.26);
+    color-mix(in srgb, var(--poke5e-ui-brass) 26%, transparent);
 
   border-radius:
     6px;
@@ -5052,8 +5122,8 @@ input {
   background:
     linear-gradient(
       180deg,
-      rgba(45, 53, 68, 0.98),
-      rgba(23, 28, 37, 0.98)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-panel) 98%, transparent)
     )
     !important;
 
@@ -5067,7 +5137,7 @@ input {
       rgba(0, 0, 0, 0.18);
 }
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .lozenge[
@@ -5081,7 +5151,7 @@ input {
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .lozenge[
@@ -5120,7 +5190,7 @@ input {
     none;
 }
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .lozenge[
@@ -5132,8 +5202,8 @@ input {
   background:
     linear-gradient(
       180deg,
-      rgba(39, 49, 66, 0.98),
-      rgba(20, 27, 38, 0.98)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 98%, transparent)
     )
     !important;
 
@@ -5145,7 +5215,7 @@ input {
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .lozenge[
@@ -5153,11 +5223,11 @@ input {
 ]
 .value {
   color:
-    #9ebde5;
+    color-mix(in srgb, var(--poke5e-ui-info) 65%, var(--poke5e-ui-text));
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .lozenge[
@@ -5165,35 +5235,35 @@ input {
 ]
 .label {
   color:
-    #a9b9cf;
+    var(--poke5e-ui-muted);
 }
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .lozenge[
   data-poke5e-trainer-metric="proficiency"
 ] {
   border-color:
-    rgba(199, 175, 115, 0.4);
+    color-mix(in srgb, var(--poke5e-ui-brass) 40%, transparent);
 
   background:
     linear-gradient(
       180deg,
-      rgba(49, 46, 41, 0.98),
-      rgba(26, 25, 24, 0.98)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 98%, transparent)
     )
     !important;
 
   box-shadow:
     inset 0 2px 0
-      rgba(199, 175, 115, 0.18),
+      color-mix(in srgb, var(--poke5e-ui-brass) 18%, transparent),
     0 3px 8px
       rgba(0, 0, 0, 0.2);
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .lozenge[
@@ -5205,7 +5275,7 @@ input {
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .lozenge[
@@ -5213,14 +5283,14 @@ input {
 ]
 .label {
   color:
-    rgba(239, 232, 216, 0.74);
+    color-mix(in srgb, var(--poke5e-ui-cream) 74%, transparent);
 }
 
 /*
  * D&D5e desplaza Speed respecto de los otros
  * lozenges. En Trainer los tres forman un HUD.
  */
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .lozenges
@@ -5229,7 +5299,7 @@ input {
     0 !important;
 }
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .lozenge
@@ -5259,7 +5329,7 @@ input {
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .lozenge
@@ -5268,7 +5338,7 @@ input {
     var(--poke5e-fr-gold);
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     800;
@@ -5287,20 +5357,20 @@ input {
  * del Max SR controlable. Ya no debe conservar
  * comportamiento interactivo de Initiative.
  */
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .lozenge[
   data-poke5e-trainer-metric="max-sr"
 ] {
   border-color:
-    rgba(196, 61, 61, 0.42);
+    color-mix(in srgb, var(--poke5e-ui-accent) 42%, transparent);
 
   background:
     linear-gradient(
       180deg,
-      rgba(57, 37, 42, 0.98),
-      rgba(25, 24, 30, 0.98)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 98%, transparent)
     )
     !important;
 
@@ -5312,13 +5382,13 @@ input {
 
   box-shadow:
     inset 0 2px 0
-      rgba(196, 61, 61, 0.22),
+      color-mix(in srgb, var(--poke5e-ui-accent) 22%, transparent),
     0 3px 8px
       rgba(0, 0, 0, 0.2);
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .lozenge[
@@ -5326,11 +5396,11 @@ input {
 ]
 .value {
   color:
-    #e6bc3e;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text));
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .lozenge[
@@ -5365,7 +5435,7 @@ input {
  * TRAINER HP HUD
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .meter-group[
@@ -5395,7 +5465,7 @@ input {
  * HP LABEL
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .meter-group[
@@ -5418,7 +5488,7 @@ input {
     5px;
 
   color:
-    #e6bc3e;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text));
 
   font-family:
     "Roboto Condensed",
@@ -5426,7 +5496,7 @@ input {
     sans-serif;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     900;
@@ -5439,7 +5509,7 @@ input {
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .meter-group[
@@ -5474,7 +5544,7 @@ input {
  * Solo cambiamos la apariencia del control exterior.
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .meter-group[
@@ -5503,22 +5573,22 @@ input {
  * TEMPORARY HP
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .meter-group
 .tmp,
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .meter-group
 .temp,
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .meter-group
 [data-field="temp"],
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .meter-group
@@ -5527,7 +5597,7 @@ input {
     var(--poke5e-fr-muted);
 }
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 .stats
 .meter-group[
@@ -5540,7 +5610,7 @@ input {
   [data-field="tmp"]
 ) {
   color:
-    #9ebde5;
+    color-mix(in srgb, var(--poke5e-ui-info) 65%, var(--poke5e-ui-text));
 
   opacity:
     0.9;
@@ -5550,7 +5620,7 @@ input {
  * FAVORITES / LOADOUT
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 > .favorites {
   position:
@@ -5564,7 +5634,7 @@ input {
 
   border-top:
     1px solid
-    rgba(196, 61, 61, 0.18);
+    color-mix(in srgb, var(--poke5e-ui-accent) 18%, transparent);
 
   border-radius:
     0 0 8px 8px;
@@ -5572,14 +5642,14 @@ input {
   background:
     linear-gradient(
       180deg,
-      rgba(196, 61, 61, 0.04),
-      rgba(14, 18, 24, 0.36) 72px,
-      rgba(8, 10, 14, 0.18)
+      color-mix(in srgb, var(--poke5e-ui-accent) 4%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 36%, transparent) 72px,
+      color-mix(in srgb, var(--poke5e-ui-bg) 18%, transparent)
     );
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 > .favorites::before {
   content:
@@ -5600,7 +5670,7 @@ input {
     sans-serif;
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     800;
@@ -5613,7 +5683,7 @@ input {
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 > .favorites
 > h3 {
@@ -5625,13 +5695,13 @@ input {
 
   border-bottom:
     1px solid
-    rgba(199, 175, 115, 0.18);
+    color-mix(in srgb, var(--poke5e-ui-brass) 18%, transparent);
 
   color:
     var(--poke5e-fr-ivory);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     800;
@@ -5647,7 +5717,7 @@ input {
  * FAVORITES DROP AREA
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 > .favorites
 > ul.drop {
@@ -5656,7 +5726,7 @@ input {
 
   border:
     1px dashed
-    rgba(196, 61, 61, 0.3);
+    color-mix(in srgb, var(--poke5e-ui-accent) 30%, transparent);
 
   border-radius:
     8px;
@@ -5664,12 +5734,12 @@ input {
   background:
     linear-gradient(
       180deg,
-      rgba(196, 61, 61, 0.035),
+      color-mix(in srgb, var(--poke5e-ui-accent) 3.5%, transparent),
       rgba(0, 0, 0, 0.04)
     );
 
   color:
-    rgba(183, 188, 197, 0.76);
+    color-mix(in srgb, var(--poke5e-ui-muted) 76%, transparent);
 
   box-shadow:
     inset 0 1px 0
@@ -5677,22 +5747,22 @@ input {
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 > .favorites
 > ul.drop:hover {
   border-color:
-    rgba(199, 175, 115, 0.24);
+    color-mix(in srgb, var(--poke5e-ui-brass) 24%, transparent);
 
   background:
     linear-gradient(
       180deg,
-      rgba(196, 61, 61, 0.06),
-      rgba(199, 175, 115, 0.02)
+      color-mix(in srgb, var(--poke5e-ui-accent) 6%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-brass) 2%, transparent)
     );
 
   color:
-    rgba(239, 232, 216, 0.74);
+    color-mix(in srgb, var(--poke5e-ui-cream) 74%, transparent);
 }
 
 
@@ -5700,7 +5770,7 @@ input {
  * FAVORITE ITEMS
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 > .favorites
 > ul
@@ -5710,11 +5780,11 @@ input {
 
   border-top:
     1px solid
-    rgba(239, 232, 216, 0.07);
+    color-mix(in srgb, var(--poke5e-ui-cream) 7%, transparent);
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 > .favorites
 > ul
@@ -5722,13 +5792,13 @@ input {
   background:
     linear-gradient(
       90deg,
-      rgba(196, 61, 61, 0.06),
+      color-mix(in srgb, var(--poke5e-ui-accent) 6%, transparent),
       transparent 70%
     );
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 > .favorites
 .title {
@@ -5740,19 +5810,19 @@ input {
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 > .favorites
 .secondary {
   color:
-    #b7bcc5;
+    var(--poke5e-ui-muted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .sidebar
 > .favorites::after {
   content:
@@ -5771,7 +5841,7 @@ input {
     linear-gradient(
       90deg,
       transparent,
-      rgba(196, 61, 61, 0.18),
+      color-mix(in srgb, var(--poke5e-ui-accent) 18%, transparent),
       transparent
     );
 
@@ -5800,11 +5870,11 @@ input {
  * RAIL SHELL
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .tabs-right {
   border:
     1px solid
-    rgba(199, 175, 115, 0.12);
+    color-mix(in srgb, var(--poke5e-ui-brass) 12%, transparent);
 
   border-radius:
     14px 0 0 14px;
@@ -5812,8 +5882,8 @@ input {
   background:
     linear-gradient(
       180deg,
-      rgba(18, 22, 29, 0.98),
-      rgba(7, 9, 13, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-surface) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-bg) 99%, transparent)
     );
 
   box-shadow:
@@ -5828,7 +5898,7 @@ input {
  * TABS
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .tabs-right
 [data-tab] {
   /*
@@ -5854,7 +5924,7 @@ input {
    * Valor final de microcontraste V6.1.
    */
   color:
-    rgba(183, 188, 197, 0.86);
+    color-mix(in srgb, var(--poke5e-ui-muted) 86%, transparent);
 
   box-shadow:
     none;
@@ -5871,7 +5941,7 @@ input {
  * TAB ICONS
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .tabs-right
 [data-tab]
 :is(i, svg) {
@@ -5884,7 +5954,7 @@ input {
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .tabs-right
 [data-tab]
 img {
@@ -5898,17 +5968,17 @@ img {
  * HOVER
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .tabs-right
 [data-tab]:hover {
   border-color:
-    rgba(199, 175, 115, 0.14);
+    color-mix(in srgb, var(--poke5e-ui-brass) 14%, transparent);
 
   background:
     linear-gradient(
       90deg,
-      rgba(196, 61, 61, 0.13),
-      rgba(199, 175, 115, 0.025)
+      color-mix(in srgb, var(--poke5e-ui-accent) 13%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-brass) 2.5%, transparent)
     );
 
   color:
@@ -5916,15 +5986,15 @@ img {
 
   box-shadow:
     inset 2px 0 0
-    rgba(196, 61, 61, 0.42);
+    color-mix(in srgb, var(--poke5e-ui-accent) 42%, transparent);
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .tabs-right
 [data-tab]:hover
 :is(i, svg),
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .tabs-right
 [data-tab]:hover
 img {
@@ -5937,19 +6007,19 @@ img {
  * ACTIVE TAB
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .tabs-right
 [data-tab].active {
   border-color:
-    rgba(196, 61, 61, 0.55);
+    color-mix(in srgb, var(--poke5e-ui-accent) 55%, transparent);
 
   background:
     radial-gradient(
       circle at 50% 50%,
-      rgba(196, 61, 61, 0.26),
-      rgba(196, 61, 61, 0.08) 70%
+      color-mix(in srgb, var(--poke5e-ui-accent) 26%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-accent) 8%, transparent) 70%
     ),
-    rgba(14, 17, 22, 0.98);
+    color-mix(in srgb, var(--poke5e-ui-bg) 98%, transparent);
 
   color:
     var(--poke5e-fr-ivory);
@@ -5968,7 +6038,7 @@ img {
  * ACTIVE INDICATOR
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .tabs-right
 [data-tab].active::after {
   content:
@@ -5997,7 +6067,7 @@ img {
 
   box-shadow:
     0 0 6px
-    rgba(196, 61, 61, 0.48);
+    color-mix(in srgb, var(--poke5e-ui-accent) 48%, transparent);
 
   transform:
     translateY(-50%);
@@ -6011,7 +6081,7 @@ img {
  * POKÉMON NAVIGATION TAB
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .tabs-right
 [data-tab="pokemon"] {
   color:
@@ -6019,11 +6089,11 @@ img {
 }
 
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .tabs-right
 [data-tab="pokemon"].active {
   border-color:
-    rgba(196, 61, 61, 0.7);
+    color-mix(in srgb, var(--poke5e-ui-accent) 70%, transparent);
 
   color:
     var(--poke5e-fr-ivory);
@@ -6088,7 +6158,7 @@ img {
  * TRAINER SHEET — KEYBOARD ACCESSIBILITY
  * ============================================================ */
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 :is(
   button,
   select,
@@ -6098,7 +6168,7 @@ img {
 ):focus-visible {
   outline:
     2px solid
-    rgba(199, 175, 115, 0.9);
+    color-mix(in srgb, var(--poke5e-ui-brass) 90%, transparent);
 
   outline-offset:
     2px;
@@ -6112,7 +6182,7 @@ img {
  * Su mayor especificidad mantiene este valor
  * sobre el focus-visible general.
  */
-.dnd5e2.sheet.actor.character.poke5e-trainer-sheet
+:where(body:not(.poke5e-design-dnd5e)) .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .tabs-right
 [data-tab]:focus-visible {
   outline:
@@ -6227,7 +6297,7 @@ img {
 
   border:
     1px solid
-    rgba(196, 61, 61, 0.26);
+    color-mix(in srgb, var(--poke5e-ui-accent) 26%, transparent);
 
   border-top:
     3px solid
@@ -6239,13 +6309,13 @@ img {
   background:
     radial-gradient(
       circle at 50% -80px,
-      rgba(196, 61, 61, 0.09),
+      color-mix(in srgb, var(--poke5e-ui-accent) 9%, transparent),
       transparent 240px
     ),
     linear-gradient(
       180deg,
-      rgba(20, 24, 31, 0.96),
-      rgba(8, 11, 15, 0.98)
+      color-mix(in srgb, var(--poke5e-ui-surface) 96%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-bg) 98%, transparent)
     );
 
   box-shadow:
@@ -6273,10 +6343,10 @@ img {
   background:
     linear-gradient(
       90deg,
-      rgba(199, 175, 115, 0.02),
+      color-mix(in srgb, var(--poke5e-ui-brass) 2%, transparent),
       transparent 12%,
       transparent 88%,
-      rgba(199, 175, 115, 0.02)
+      color-mix(in srgb, var(--poke5e-ui-brass) 2%, transparent)
     );
 
   pointer-events:
@@ -6320,7 +6390,7 @@ img {
 
   border:
     1px solid
-    rgba(239, 232, 216, 0.08);
+    color-mix(in srgb, var(--poke5e-ui-cream) 8%, transparent);
 
   border-radius:
     11px;
@@ -6328,8 +6398,8 @@ img {
   background:
     linear-gradient(
       180deg,
-      rgba(31, 36, 45, 0.9),
-      rgba(19, 23, 30, 0.94)
+      color-mix(in srgb, var(--poke5e-ui-panel) 90%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 94%, transparent)
     );
 
   box-shadow:
@@ -6366,7 +6436,7 @@ img {
 
   border:
     1px solid
-    rgba(239, 232, 216, 0.08);
+    color-mix(in srgb, var(--poke5e-ui-cream) 8%, transparent);
 
   border-radius:
     999px;
@@ -6374,15 +6444,15 @@ img {
   background:
     linear-gradient(
       180deg,
-      rgba(43, 50, 64, 0.74),
-      rgba(24, 29, 38, 0.92)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 74%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-panel) 92%, transparent)
     );
 
   color:
     var(--poke5e-fr-ivory);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -6409,7 +6479,7 @@ img {
 
   border:
     1px solid
-    rgba(196, 61, 61, 0.46);
+    color-mix(in srgb, var(--poke5e-ui-accent) 46%, transparent);
 
   border-radius:
     999px;
@@ -6417,18 +6487,18 @@ img {
   background:
     linear-gradient(
       180deg,
-      rgba(103, 48, 48, 0.94),
-      rgba(60, 30, 33, 0.98)
+      color-mix(in srgb, var(--poke5e-ui-accent-dark) 94%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-panel) 98%, transparent)
     );
 
   color:
-    var(--poke5e-fr-ivory);
+    var(--poke5e-ui-on-accent);
 
   font-family:
     var(--poke5e-display-font);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     700;
@@ -6490,7 +6560,7 @@ img {
 
   border:
     1px solid
-    rgba(239, 232, 216, 0.07);
+    color-mix(in srgb, var(--poke5e-ui-cream) 7%, transparent);
 
   border-radius:
     999px;
@@ -6498,15 +6568,15 @@ img {
   background:
     linear-gradient(
       180deg,
-      rgba(39, 45, 56, 0.92),
-      rgba(23, 28, 36, 0.96)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 92%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-panel) 96%, transparent)
     );
 
   color:
-    #b7bcc5;
+    var(--poke5e-ui-muted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     600;
@@ -6557,7 +6627,7 @@ strong {
 
   border:
     1px solid
-    rgba(199, 175, 115, 0.22);
+    color-mix(in srgb, var(--poke5e-ui-brass) 22%, transparent);
 
   border-radius:
     999px;
@@ -6565,15 +6635,15 @@ strong {
   background:
     linear-gradient(
       180deg,
-      rgba(45, 53, 67, 0.98),
-      rgba(29, 35, 45, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-panel) 99%, transparent)
     );
 
   color:
     var(--poke5e-fr-text);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     700;
@@ -6602,13 +6672,13 @@ strong {
 .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .poke5e-trainer-command-feature:focus-visible {
   border-color:
-    rgba(199, 175, 115, 0.5);
+    color-mix(in srgb, var(--poke5e-ui-brass) 50%, transparent);
 
   background:
     linear-gradient(
       180deg,
-      rgba(55, 64, 80, 0.98),
-      rgba(34, 41, 52, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-panel) 99%, transparent)
     );
 }
 
@@ -6640,10 +6710,10 @@ i {
     0;
 
   color:
-    #b7bcc5;
+    var(--poke5e-ui-muted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     700;
@@ -6667,7 +6737,7 @@ select {
 
   border:
     1px solid
-    rgba(199, 175, 115, 0.22);
+    color-mix(in srgb, var(--poke5e-ui-brass) 22%, transparent);
 
   border-radius:
     6px;
@@ -6675,15 +6745,15 @@ select {
   background:
     linear-gradient(
       180deg,
-      rgba(39, 45, 56, 0.98),
-      rgba(20, 24, 31, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 99%, transparent)
     );
 
   color:
     var(--poke5e-fr-ivory);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   box-shadow:
     inset 0 1px 0
@@ -6714,7 +6784,7 @@ select {
 
   border:
     1px solid
-    rgba(239, 232, 216, 0.08);
+    color-mix(in srgb, var(--poke5e-ui-cream) 8%, transparent);
 
   border-radius:
     12px;
@@ -6722,8 +6792,8 @@ select {
   background:
     linear-gradient(
       180deg,
-      rgba(25, 29, 37, 0.78),
-      rgba(15, 19, 25, 0.86)
+      color-mix(in srgb, var(--poke5e-ui-panel) 78%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 86%, transparent)
     );
 
   box-shadow:
@@ -6748,7 +6818,7 @@ select {
 
   box-shadow:
     inset 0 0 0 1px
-    rgba(199, 175, 115, 0.035);
+    color-mix(in srgb, var(--poke5e-ui-brass) 3.5%, transparent);
 
   pointer-events:
     none;
@@ -6758,18 +6828,18 @@ select {
 .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .poke5e-trainer-command-section--active {
   border-color:
-    rgba(196, 61, 61, 0.22);
+    color-mix(in srgb, var(--poke5e-ui-accent) 22%, transparent);
 
   background:
     radial-gradient(
       circle at 50% 0,
-      rgba(196, 61, 61, 0.055),
+      color-mix(in srgb, var(--poke5e-ui-accent) 5.5%, transparent),
       transparent 140px
     ),
     linear-gradient(
       180deg,
-      rgba(25, 29, 37, 0.82),
-      rgba(14, 18, 24, 0.9)
+      color-mix(in srgb, var(--poke5e-ui-panel) 82%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 90%, transparent)
     );
 }
 
@@ -6786,7 +6856,7 @@ select {
 
   border-bottom:
     1px solid
-    rgba(199, 175, 115, 0.14);
+    color-mix(in srgb, var(--poke5e-ui-brass) 14%, transparent);
 }
 
 
@@ -6813,7 +6883,7 @@ h3 {
     var(--poke5e-display-font);
 
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     800;
@@ -6863,7 +6933,7 @@ i {
 
   border:
     1px dashed
-    rgba(196, 61, 61, 0.28);
+    color-mix(in srgb, var(--poke5e-ui-accent) 28%, transparent);
 
   border-radius:
     11px;
@@ -6871,10 +6941,10 @@ i {
   background:
     radial-gradient(
       circle at 50% 50%,
-      rgba(196, 61, 61, 0.035),
+      color-mix(in srgb, var(--poke5e-ui-accent) 3.5%, transparent),
       transparent 130px
     ),
-    rgba(4, 7, 11, 0.26);
+    color-mix(in srgb, var(--poke5e-ui-bg) 26%, transparent);
 
   color:
     var(--poke5e-fr-muted);
@@ -6913,10 +6983,10 @@ i {
 .poke5e-trainer-command-empty
 strong {
   color:
-    rgba(239, 232, 216, 0.82);
+    color-mix(in srgb, var(--poke5e-ui-cream) 82%, transparent);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     700;
@@ -6927,10 +6997,10 @@ strong {
 .poke5e-trainer-command-empty
 span {
   color:
-    rgba(183, 188, 197, 0.82);
+    color-mix(in srgb, var(--poke5e-ui-muted) 82%, transparent);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -6987,7 +7057,7 @@ span {
 
   border:
     1px solid
-    rgba(239, 232, 216, 0.08);
+    color-mix(in srgb, var(--poke5e-ui-cream) 8%, transparent);
 
   border-radius:
     12px;
@@ -7007,7 +7077,7 @@ span {
 
   border:
     1px solid
-    rgba(239, 232, 216, 0.08);
+    color-mix(in srgb, var(--poke5e-ui-cream) 8%, transparent);
 
   border-radius:
     14px;
@@ -7095,7 +7165,7 @@ span {
     0 0 0 3px
       var(
         --poke5e-type-soft,
-        rgba(196, 61, 61, 0.14)
+        color-mix(in srgb, var(--poke5e-ui-accent) 14%, transparent)
       ),
     0 8px 16px
       rgba(0, 0, 0, 0.22);
@@ -7171,7 +7241,7 @@ span {
     0.8;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -7219,7 +7289,7 @@ span {
     white;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 
   font-weight:
     700;
@@ -7252,7 +7322,7 @@ span {
     var(--poke5e-fr-muted);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -7383,7 +7453,7 @@ strong {
     8px;
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 }
 
 
@@ -7391,10 +7461,10 @@ strong {
 .poke5e-trainer-pokemon-exp__meta
 > span {
   color:
-    #e6bc3e;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text));
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     900;
@@ -7411,10 +7481,10 @@ strong {
     hidden;
 
   color:
-    rgba(232, 225, 211, 0.9);
+    color-mix(in srgb, var(--poke5e-ui-text) 90%, transparent);
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     700;
@@ -7443,7 +7513,7 @@ strong {
     2px;
 
   background:
-    #07101d;
+    var(--poke5e-ui-bg);
 
   box-shadow:
     inset 0 1px 2px
@@ -7565,7 +7635,7 @@ strong {
 
   border:
     1px solid
-    rgba(239, 232, 216, 0.08);
+    color-mix(in srgb, var(--poke5e-ui-cream) 8%, transparent);
 
   border-radius:
     50%;
@@ -7598,7 +7668,7 @@ img {
     0.55;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -7676,7 +7746,7 @@ img {
 
   border:
     2px dashed
-    rgba(196, 61, 61, 0.28);
+    color-mix(in srgb, var(--poke5e-ui-accent) 28%, transparent);
 
   background:
     rgba(0, 0, 0, 0.018);
@@ -7704,7 +7774,7 @@ img {
 .poke5e-trainer-command-card--empty
 > strong {
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -7715,7 +7785,7 @@ img {
     220px;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   line-height:
     1.4;
@@ -7754,7 +7824,7 @@ img {
 
   border:
     1px solid
-    rgba(239, 232, 216, 0.1);
+    color-mix(in srgb, var(--poke5e-ui-cream) 10%, transparent);
 
   border-radius:
     8px;
@@ -7762,15 +7832,15 @@ img {
   background:
     linear-gradient(
       180deg,
-      rgba(45, 53, 67, 0.98),
-      rgba(29, 35, 45, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-panel) 99%, transparent)
     );
 
   color:
     var(--poke5e-fr-text);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     750;
@@ -7798,13 +7868,13 @@ img {
 .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .poke5e-trainer-command-action:hover {
   border-color:
-    rgba(199, 175, 115, 0.3);
+    color-mix(in srgb, var(--poke5e-ui-brass) 30%, transparent);
 
   background:
     linear-gradient(
       180deg,
-      rgba(55, 64, 80, 0.98),
-      rgba(34, 41, 52, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-panel) 99%, transparent)
     );
 }
 
@@ -7824,17 +7894,17 @@ i {
 .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .poke5e-trainer-command-action--primary {
   border-color:
-    rgba(196, 61, 61, 0.56);
+    color-mix(in srgb, var(--poke5e-ui-accent) 56%, transparent);
 
   background:
     linear-gradient(
       180deg,
-      rgba(100, 35, 40, 0.96),
-      rgba(58, 23, 28, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-accent-dark) 96%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-accent-dark) 99%, transparent)
     );
 
   color:
-    var(--poke5e-fr-ivory);
+    var(--poke5e-ui-on-accent);
 
   box-shadow:
     inset 0 1px 0
@@ -7847,20 +7917,20 @@ i {
 .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .poke5e-trainer-command-action--primary:hover {
   border-color:
-    rgba(196, 61, 61, 0.82);
+    color-mix(in srgb, var(--poke5e-ui-accent) 82%, transparent);
 
   background:
     linear-gradient(
       180deg,
-      rgba(124, 40, 46, 0.98),
-      rgba(70, 25, 31, 0.99)
+      color-mix(in srgb, var(--poke5e-ui-accent-dark) 98%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-accent-dark) 99%, transparent)
     );
 
   box-shadow:
     inset 0 1px 0
       rgba(255, 255, 255, 0.07),
     0 0 10px
-      rgba(196, 61, 61, 0.12);
+      color-mix(in srgb, var(--poke5e-ui-accent) 12%, transparent);
 }
 
 
@@ -7900,7 +7970,7 @@ i {
     0;
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -7911,13 +7981,13 @@ i {
 .dnd5e2.sheet.actor.character.poke5e-trainer-sheet
 .poke5e-trainer-command-action--level-up {
   border-color:
-    rgba(199, 175, 115, 0.56);
+    color-mix(in srgb, var(--poke5e-ui-brass) 56%, transparent);
 
   background:
     linear-gradient(
       180deg,
-      rgba(199, 175, 115, 0.26),
-      rgba(199, 175, 115, 0.1)
+      color-mix(in srgb, var(--poke5e-ui-brass) 26%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-brass) 10%, transparent)
     );
 
   color:
@@ -7925,7 +7995,7 @@ i {
 
   box-shadow:
     0 0 10px
-    rgba(199, 175, 115, 0.08);
+    color-mix(in srgb, var(--poke5e-ui-brass) 8%, transparent);
 }
 
 
@@ -7939,8 +8009,8 @@ i {
   background:
     linear-gradient(
       180deg,
-      rgba(199, 175, 115, 0.34),
-      rgba(199, 175, 115, 0.14)
+      color-mix(in srgb, var(--poke5e-ui-brass) 34%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-brass) 14%, transparent)
     );
 }
 
@@ -7954,14 +8024,14 @@ i {
   border-color:
     var(
       --poke5e-type-color,
-      rgba(196, 61, 61, 0.36)
+      color-mix(in srgb, var(--poke5e-ui-accent) 36%, transparent)
     );
 
   background:
     linear-gradient(
       180deg,
-      rgba(43, 50, 71, 0.96),
-      rgba(23, 29, 44, 0.98)
+      color-mix(in srgb, var(--poke5e-ui-panel-alt) 96%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-panel) 98%, transparent)
     );
 }
 
@@ -8013,13 +8083,13 @@ i {
 
   border:
     1px solid
-    rgba(239, 232, 216, 0.075);
+    color-mix(in srgb, var(--poke5e-ui-cream) 7.5%, transparent);
 
   border-left:
     3px solid
     var(
       --poke5e-type-color,
-      rgba(196, 61, 61, 0.5)
+      color-mix(in srgb, var(--poke5e-ui-accent) 50%, transparent)
     );
 
   border-radius:
@@ -8028,8 +8098,8 @@ i {
   background:
     linear-gradient(
       180deg,
-      rgba(28, 33, 41, 0.88),
-      rgba(17, 21, 27, 0.94)
+      color-mix(in srgb, var(--poke5e-ui-panel) 88%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 94%, transparent)
     );
 
   box-shadow:
@@ -8049,7 +8119,7 @@ i {
     translateY(-1px);
 
   border-color:
-    rgba(199, 175, 115, 0.18);
+    color-mix(in srgb, var(--poke5e-ui-brass) 18%, transparent);
 
   border-left-color:
     var(
@@ -8060,8 +8130,8 @@ i {
   background:
     linear-gradient(
       180deg,
-      rgba(32, 38, 47, 0.92),
-      rgba(18, 22, 29, 0.96)
+      color-mix(in srgb, var(--poke5e-ui-panel) 92%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-surface) 96%, transparent)
     );
 }
 
@@ -8086,7 +8156,7 @@ i {
       135deg,
       var(
         --poke5e-type-soft,
-        rgba(196, 61, 61, 0.1)
+        color-mix(in srgb, var(--poke5e-ui-accent) 10%, transparent)
       ),
       rgba(255, 255, 255, 0.018)
     );
@@ -8120,21 +8190,21 @@ i {
     2px solid
     var(
       --poke5e-type-color,
-      rgba(199, 175, 115, 0.34)
+      color-mix(in srgb, var(--poke5e-ui-brass) 34%, transparent)
     );
 
   border-radius:
     50%;
 
   background:
-    #090c11;
+    var(--poke5e-ui-bg);
 
   object-fit:
     cover;
 
   box-shadow:
     0 0 0 2px
-      rgba(7, 9, 13, 0.8),
+      color-mix(in srgb, var(--poke5e-ui-bg) 80%, transparent),
     0 5px 12px
       rgba(0, 0, 0, 0.32);
 }
@@ -8197,7 +8267,7 @@ i {
     4px;
 
   color:
-    #d9dbe0;
+    var(--poke5e-ui-muted);
 }
 
 
@@ -8214,7 +8284,7 @@ strong {
     var(--poke5e-fr-ivory);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     750;
@@ -8264,7 +8334,7 @@ strong {
     white;
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     700;
@@ -8293,10 +8363,10 @@ strong {
     6px;
 
   color:
-    #e1e3e7;
+    var(--poke5e-ui-text);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     650;
@@ -8314,13 +8384,13 @@ strong {
 
   border:
     1px solid
-    rgba(239, 232, 216, 0.08);
+    color-mix(in srgb, var(--poke5e-ui-cream) 8%, transparent);
 
   border-radius:
     2px;
 
   background:
-    #080b0f;
+    var(--poke5e-ui-bg);
 
   box-shadow:
     inset 0 1px 2px
@@ -8449,7 +8519,7 @@ strong {
     var(--poke5e-fr-red-soft);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 }
 
 
@@ -8477,7 +8547,7 @@ button {
     0;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 }
 
 
@@ -8492,13 +8562,13 @@ button {
 
   border:
     1px solid
-    rgba(239, 232, 216, 0.07);
+    color-mix(in srgb, var(--poke5e-ui-cream) 7%, transparent);
 
   border-radius:
     10px;
 
   background:
-    rgba(7, 9, 13, 0.42);
+    color-mix(in srgb, var(--poke5e-ui-bg) 42%, transparent);
 
   box-shadow:
     inset 0 1px 0
@@ -8527,16 +8597,16 @@ button {
   background:
     linear-gradient(
       90deg,
-      rgba(196, 61, 61, 0.075),
-      rgba(29, 34, 43, 0.42) 55%,
-      rgba(12, 15, 20, 0.72)
+      color-mix(in srgb, var(--poke5e-ui-accent) 7.5%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-panel) 42%, transparent) 55%,
+      color-mix(in srgb, var(--poke5e-ui-bg) 72%, transparent)
     );
 
   color:
     var(--poke5e-fr-text);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     700;
@@ -8558,9 +8628,9 @@ button {
   background:
     linear-gradient(
       90deg,
-      rgba(196, 61, 61, 0.12),
-      rgba(34, 40, 50, 0.52) 55%,
-      rgba(14, 17, 22, 0.76)
+      color-mix(in srgb, var(--poke5e-ui-accent) 12%, transparent),
+      color-mix(in srgb, var(--poke5e-ui-panel) 52%, transparent) 55%,
+      color-mix(in srgb, var(--poke5e-ui-bg) 76%, transparent)
     );
 }
 
@@ -8573,7 +8643,7 @@ button {
 
   border-bottom:
     1px solid
-    rgba(196, 61, 61, 0.18);
+    color-mix(in srgb, var(--poke5e-ui-accent) 18%, transparent);
 }
 
 
@@ -8604,13 +8674,13 @@ strong {
 
   border:
     1px solid
-    rgba(196, 61, 61, 0.16);
+    color-mix(in srgb, var(--poke5e-ui-accent) 16%, transparent);
 
   border-radius:
     999px;
 
   background:
-    rgba(196, 61, 61, 0.12);
+    color-mix(in srgb, var(--poke5e-ui-accent) 12%, transparent);
 
   color:
     var(--poke5e-fr-red);
@@ -8643,7 +8713,7 @@ strong {
 
   border-top:
     1px solid
-    rgba(239, 232, 216, 0.07);
+    color-mix(in srgb, var(--poke5e-ui-cream) 7%, transparent);
 }
 
 
@@ -8670,7 +8740,7 @@ strong {
 
   border:
     1px solid
-    rgba(239, 232, 216, 0.07);
+    color-mix(in srgb, var(--poke5e-ui-cream) 7%, transparent);
 
   border-left:
     3px solid
@@ -8726,7 +8796,7 @@ strong {
     2px solid
     var(
       --poke5e-type-color,
-      rgba(239, 232, 216, 0.08)
+      color-mix(in srgb, var(--poke5e-ui-cream) 8%, transparent)
     );
 
   border-radius:
@@ -8804,7 +8874,7 @@ strong {
     var(--poke5e-fr-ivory);
 
   font-size:
-    10px;
+    var(--poke5e-ui-text-md);
 
   text-overflow:
     ellipsis;
@@ -8829,7 +8899,7 @@ strong {
     0.8;
 
   font-size:
-    8px;
+    var(--poke5e-ui-text-xs);
 }
 
 
@@ -8872,7 +8942,7 @@ strong {
     0.72;
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   text-align:
     center;
@@ -8903,8 +8973,8 @@ strong {
 
 .poke5e-trainer-command-center
 [data-pokemon-type="electric"] {
-  --poke5e-type-color: #d9a91c;
-  --poke5e-type-soft: rgba(217, 169, 28, 0.16);
+  --poke5e-type-color: var(--poke5e-ui-gold);
+  --poke5e-type-soft: color-mix(in srgb, var(--poke5e-ui-gold) 16%, transparent);
 }
 
 .poke5e-trainer-command-center
@@ -9112,7 +9182,7 @@ strong {
     rgba(0, 0, 0, 0.24);
 
   font-size:
-    11px;
+    var(--poke5e-ui-text-md);
 
   font-weight:
     700;
@@ -9149,7 +9219,7 @@ strong {
 .poke5e-trainer-battle-event
 i {
   color:
-    #f2c94c;
+    color-mix(in srgb, var(--poke5e-ui-gold) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -9191,7 +9261,7 @@ span {
     var(--poke5e-fainted);
 
   background:
-    rgba(70, 24, 24, 0.96);
+    color-mix(in srgb, var(--poke5e-ui-accent-dark) 96%, transparent);
 }
 
 
@@ -9199,7 +9269,7 @@ span {
 .poke5e-trainer-battle-event[data-reason="fainted"]
 i {
   color:
-    #ff8585;
+    color-mix(in srgb, var(--poke5e-ui-accent) 65%, var(--poke5e-ui-text));
 }
 
 
@@ -9328,7 +9398,7 @@ i {
     var(--poke5e-fainted);
 
   font-size:
-    9px;
+    var(--poke5e-ui-text-sm);
 
   font-weight:
     800;
@@ -9425,7 +9495,7 @@ strong {
     white;
 
   font-size:
-    7px;
+    var(--poke5e-ui-text-2xs);
 
   font-weight:
     800;
@@ -9497,7 +9567,7 @@ strong {
     var(--poke5e-fainted);
 
   font-size:
-    7px !important;
+    var(--poke5e-ui-text-2xs) !important;
 
   font-weight:
     800;
@@ -9823,7 +9893,7 @@ strong {
   display: grid;
   gap: 2px;
   min-width: 0;
-  font-size: 10px;
+  font-size: var(--poke5e-ui-text-md);
   text-transform: uppercase;
   opacity: 0.85;
 }
@@ -9831,6 +9901,6 @@ strong {
 .poke5e-battlefield__field select {
   min-width: 0;
   height: 22px;
-  font-size: 11px;
+  font-size: var(--poke5e-ui-text-md);
   text-transform: none;
 }

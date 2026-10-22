@@ -34,6 +34,11 @@ import {
 } from "./trainer-ownership-service.mjs";
 
 import {
+  registerTrainerRocketRank,
+  renderRocketRank
+} from "./trainer-rocket-rank.mjs";
+
+import {
   registerTrainerPokemonCenterService,
   useTrainerPokemonCenter
 } from "./trainer-pokemon-center-service.mjs";
@@ -1283,6 +1288,11 @@ function onRenderApplicationV2(
     trainer
   );
 
+  renderRocketRank(
+    element,
+    trainer
+  );
+
   const host =
     element.querySelector(
       COMMAND_HOST_SELECTOR
@@ -1373,6 +1383,8 @@ function onDeleteActor(
 export function registerTrainerSheetUi() {
 
   registerTrainerPokemonCenterService();
+
+  registerTrainerRocketRank();
 
   document.addEventListener(
     "click",
