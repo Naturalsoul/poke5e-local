@@ -92,7 +92,7 @@ export function showExperienceGain({ actor, before, after, gained, lost }) {
       count.textContent = `+${gained.toLocaleString()} XP`;
       if (ready) {
         element.classList.add("is-ready");
-        message.textContent = text.ready(actor.name, before.level + 1);
+        message.textContent = text.ready(withoutLevel(actor.name), before.level + 1);
         sounds.fanfare();
         void playPokemonCry(actor);
         if (levelUp) {levelUp.disabled = false;}

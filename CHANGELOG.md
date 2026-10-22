@@ -4,6 +4,10 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.28.2] — 2026-10-22
+
+- Ventana de experiencia: "¡Murkrow puede subir al Nv. 9!" ya no repite el nivel del nombre ("Murkrow (Lv. 8)").
+
 ## [0.28.1] — 2026-10-22
 
 - Recompensa: la tarjeta del chat sale a nombre de "Recompensa", no del personaje asignado al DM. La ventana de
