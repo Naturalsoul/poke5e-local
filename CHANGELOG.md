@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.36.2] — 2026-10-22
+
+- **Golpes múltiples, manuales:** Arm Thrust, Bone Rush, Bullet Seed, Comet Punch, Double Slap, Fury Attack, Fury
+  Swipes, Icicle Spear, Pin Missile, Rock Blast, Spike Cannon, Tail Slap, Water Shuriken y Barrage ya no sacan
+  tarjeta ni botón: el jugador tira la cadena de d4 y su daño. Jump Kick, High Jump Kick y Supercell Slam siguen
+  automáticos.
+
 ## [0.36.1] — 2026-10-22
 
 - **Golpes múltiples con botón:** al acertar ya no se tira todo solo. Sale una tarjeta con el botón **Tirar d4**:
