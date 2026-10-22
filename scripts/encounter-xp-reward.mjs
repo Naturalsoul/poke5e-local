@@ -2,7 +2,7 @@ import { playerTeams, pokemonLevel } from "./encounter-difficulty.mjs";
 import { encounterShare, getEncounterXpRules, poolExpShare } from "./encounter-xp-service.mjs";
 import { addPokemonExperience, getPokemonExperienceState } from "./pokemon-experience-service.mjs";
 import { getPokemonHeldItem } from "./pokemon-held-item-service.mjs";
-import { showExperienceGain } from "./xp-gain-animation.mjs";
+import { showExperienceGain, withoutLevel } from "./xp-gain-animation.mjs";
 
 /* ============================================================
  * ENCOUNTER REWARD
@@ -17,9 +17,9 @@ const MODULE_ID = "poke5e-local";
 const CLAIMED = "claimedRewards";
 
 const LABELS = {
-  es: { subtitle: "Experiencia del combate", claim: "Recibir", received: "Recibida", expShare: "Repartir Experiencia",
+  es: { speaker: "Recompensa", subtitle: "Experiencia del combate", claim: "Recibir", received: "Recibida", expShare: "Repartir Experiencia",
     gone: "Ese Pokémon ya no existe.", already: name => `${name} ya recibió esta experiencia.` },
-  en: { subtitle: "Battle experience", claim: "Receive", received: "Received", expShare: "Exp. Share",
+  en: { speaker: "Reward", subtitle: "Battle experience", claim: "Receive", received: "Received", expShare: "Exp. Share",
     gone: "That Pokémon no longer exists.", already: name => `${name} already received this experience.` }
 };
 const labels = () => LABELS[game.settings.get(MODULE_ID, "language") === "en" ? "en" : "es"];
@@ -61,7 +61,7 @@ function renderContent(teams, expShareTrainerOnly) {
                   data-trainer="${trainer.id}"${holdsExpShare(actor) ? " data-exp-share" : ""}>
                 <img src="${escape(actor.img)}" alt="">
                 <span class="poke5e-xp-award__name">
-                  <strong>${escape(actor.name)}</strong>
+                  <strong>${escape(withoutLevel(actor.name))}</strong>
                   <small>Nv. ${pokemonLevel(actor)}${holdsExpShare(actor)
                     ? ' · <i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Repartir Experiencia'
                     : ""}</small>
@@ -183,6 +183,8 @@ export async function publishEncounterReward({ rows, context, name }) {
   if (!entries.length) {return;}
 
   await ChatMessage.create({
+    // Not the GM's assigned character.
+    speaker: { alias: labels().speaker },
     content: renderCard(name, entries),
     flags: { [MODULE_ID]: { reward: { name, entries } } }
   });

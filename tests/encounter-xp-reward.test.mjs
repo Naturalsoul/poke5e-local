@@ -41,3 +41,9 @@ test("at the trainer's level the XP past the next threshold comes back as lost",
 test("a Pokémon that isn't on the card, or no longer exists, gets nothing", async () => {
   await assert.rejects(claimReward(card("msg3", []), "Actor.goomy"), /ya no existe/);
 });
+
+test("names without their level suffix, where the level is shown apart", async () => {
+  const { withoutLevel } = await import("../scripts/xp-gain-animation.mjs");
+  assert.deepEqual(["Toxel (Lv. 5)", "Xiaomi (Nv. 10)", "Cutie", "Mr. Mime (Lv 3)"].map(withoutLevel),
+    ["Toxel", "Xiaomi", "Cutie", "Mr. Mime"]);
+});

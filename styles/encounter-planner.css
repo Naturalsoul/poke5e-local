@@ -5954,8 +5954,13 @@ button[data-action="publish-reward"]:hover:not(:disabled) {
   background: color-mix(in srgb, var(--award-accent) 14%, var(--award-panel));
 }
 
+/* The native box: Foundry's dark one barely shows on the cards. */
 .poke5e-xp-award__pokemon input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
   margin: 0;
+  appearance: auto;
+  accent-color: var(--award-accent);
 }
 
 .poke5e-xp-award__pokemon img {
@@ -5990,7 +5995,7 @@ button[data-action="publish-reward"]:hover:not(:disabled) {
 }
 
 .poke5e-xp-award__share input {
-  width: 76px;
+  width: 62px;
   height: 26px;
   text-align: right;
 }

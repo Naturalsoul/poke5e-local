@@ -4,6 +4,12 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.28.1] — 2026-10-22
+
+- Recompensa: la tarjeta del chat sale a nombre de "Recompensa", no del personaje asignado al DM. La ventana de
+  experiencia y el diálogo de publicar ya no repiten el nivel de los Pokémon llamados "Toxel (Lv. 5)", así que los
+  nombres caben; en el diálogo, las casillas se ven (casilla nativa en dorado) y el campo de XP es más estrecho.
+
 ## [0.28.0] — 2026-10-22
 
 - **Los jugadores reciben la experiencia.** Nuevo botón **"Publicar recompensa"** en el planificador: el DM marca

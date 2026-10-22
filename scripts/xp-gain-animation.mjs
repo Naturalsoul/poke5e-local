@@ -20,6 +20,9 @@ const LABELS = {
 
 const escape = value => foundry.utils.escapeHTML(String(value ?? ""));
 
+// Many Pokémon are named "Toxel (Lv. 5)": where the level is shown apart, without it.
+export const withoutLevel = name => String(name ?? "").replace(/\s*\((?:Lv|Nv)\.?\s*\d+\)\s*$/i, "");
+
 function volume() {
   try {
     return Number(game.settings.get("core", "globalInterfaceVolume")) || 0;
@@ -65,7 +68,7 @@ export function showExperienceGain({ actor, before, after, gained, lost }) {
     <div class="poke5e-xp-gain__body">
       <img class="poke5e-xp-gain__portrait" src="${escape(actor.img)}" alt="">
       <div class="poke5e-xp-gain__info">
-        <strong>${escape(actor.name)} <small>${text.level} ${before.level}</small></strong>
+        <strong>${escape(withoutLevel(actor.name))} <small>${text.level} ${before.level}</small></strong>
         <div class="poke5e-xp-gain__bar"><span style="width: ${from}%"></span></div>
         <span class="poke5e-xp-gain__count" aria-live="polite">+0 XP</span>
         <p class="poke5e-xp-gain__message" hidden></p>
