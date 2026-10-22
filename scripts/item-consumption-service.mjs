@@ -952,6 +952,13 @@ function attachItemRollsToMessage(
     );
 
 
+  message.data.content =
+    withRollButtons(
+      message.data.content,
+      rolls
+    );
+
+
   message.data.flags[
     MODULE_ID
   ][
@@ -1231,91 +1238,69 @@ async function rollItemFormula(
 }
 
 
-function createRollButton(
-  message,
-  rollDefinition
+/*
+ * Roll buttons live inside the card's content, written once when the card
+ * is created, like dnd5e's own card buttons: whatever re-renders or copies
+ * the message keeps them. The click is caught on the document's capture
+ * phase, so nothing else on the page can swallow it.
+ */
+function rollButtonsMarkup(
+  rolls
 ) {
 
-  const button =
-    document.createElement(
-      "button"
-    );
+  const buttons =
+    rolls
+      .map(
+        roll => `
+      <button type="button" class="${ITEM_ROLL_BUTTON_CLASS}" data-visibility="all" data-poke5e-item-roll="${escapeHtml(roll.id)}">
+        <i class="fa-solid fa-dice" aria-hidden="true"></i>
+        <span>${escapeHtml(localizedRollLabel(roll))} · ${escapeHtml(roll.formula)}</span>
+      </button>`
+      )
+      .join("");
 
 
-  button.type =
-    "button";
-
-
-  button.classList.add(
-    ITEM_ROLL_BUTTON_CLASS
-  );
-
-
-  const allowed =
-    canCurrentUserRollMessage(
-      message
-    );
-
-
-  if (!allowed) {
-
-    button.title =
-      currentLanguage() ===
-        "en"
-        ? "Only the message author or the GM can make this roll."
-        : "Solo el autor del mensaje o el GM puede realizar esta tirada.";
-  }
-
-
-  const icon =
-    document.createElement(
-      "i"
-    );
-
-
-  icon.className =
-    "fa-solid fa-dice";
-
-
-  icon.setAttribute(
-    "aria-hidden",
-    "true"
-  );
-
-
-  const text =
-    document.createElement(
-      "span"
-    );
-
-
-  text.textContent =
-    `${localizedRollLabel(
-      rollDefinition
-    )} · ${rollDefinition.formula}`;
-
-
-  button.append(
-    icon,
-    text
-  );
-
-
-  button.dataset.poke5eItemRoll =
-    rollDefinition.id;
-
-
-  return button;
+  return `<div class="card-buttons ${ITEM_ROLL_ACTIONS_CLASS}">${buttons}</div>`;
 }
 
 
-// Delegated: the button keeps working however the chat log re-renders or copies the card.
+// Inside the chat card (before its closing tag), or at the end of the content.
+function withRollButtons(
+  content,
+  rolls
+) {
+
+  const markup =
+    rollButtonsMarkup(
+      rolls
+    );
+
+
+  const text =
+    String(
+      content ??
+      ""
+    );
+
+
+  const end =
+    text.lastIndexOf(
+      "</div>"
+    );
+
+
+  return end < 0
+    ? text + markup
+    : text.slice(0, end) + markup + text.slice(end);
+}
+
+
 function onItemRollClick(
   event
 ) {
 
   const button =
-    event.target.closest?.(
+    event.target?.closest?.(
       "[data-poke5e-item-roll]"
     );
 
@@ -1330,11 +1315,15 @@ function onItemRollClick(
   event.stopPropagation();
 
 
+  const messageId =
+    button.closest(
+      "[data-message-id]"
+    )?.dataset.messageId;
+
+
   const message =
     game.messages.get(
-      button.closest(
-        "[data-message-id]"
-      )?.dataset.messageId
+      messageId
     );
 
 
@@ -1350,6 +1339,14 @@ function onItemRollClick(
 
 
   if (!rollDefinition) {
+
+    ui.notifications.warn(
+      currentLanguage() ===
+        "en"
+        ? "This card's roll could not be found."
+        : "No se encontró la tirada de esta tarjeta."
+    );
+
 
     return;
   }
@@ -1380,6 +1377,7 @@ function onItemRollClick(
 }
 
 
+// Cards published before the buttons were part of their content.
 function onRenderChatMessage(
   message,
   html
@@ -1387,7 +1385,9 @@ function onRenderChatMessage(
 
   if (
     !html?.querySelector ||
-    !html?.append
+    html.querySelector(
+      "[data-poke5e-item-roll]"
+    )
   ) {
 
     return;
@@ -1406,56 +1406,21 @@ function onRenderChatMessage(
   }
 
 
-  if (
+  const holder =
     html.querySelector(
-      `.${ITEM_ROLL_ACTIONS_CLASS}`
+      ".chat-card"
+    ) ??
+    html.querySelector(
+      ".message-content"
+    ) ??
+    html;
+
+
+  holder.insertAdjacentHTML(
+    "beforeend",
+    rollButtonsMarkup(
+      rolls
     )
-  ) {
-
-    return;
-  }
-
-
-  const actions =
-    document.createElement(
-      "div"
-    );
-
-
-  actions.classList.add(
-    ITEM_ROLL_ACTIONS_CLASS
-  );
-
-
-  actions.style.display =
-    "flex";
-
-  actions.style.flexDirection =
-    "column";
-
-  actions.style.gap =
-    "6px";
-
-  actions.style.marginTop =
-    "8px";
-
-
-  for (
-    const rollDefinition
-    of rolls
-  ) {
-
-    actions.append(
-      createRollButton(
-        message,
-        rollDefinition
-      )
-    );
-  }
-
-
-  html.append(
-    actions
   );
 }
 
@@ -1491,9 +1456,7 @@ export function registerPoke5eItemConsumptionService() {
 
   document.addEventListener(
     "click",
-    onItemRollClick
-  );  Hooks.on(
-    "dnd5e.renderChatMessage",
-    onRenderChatMessage
+    onItemRollClick,
+    true
   );
 }

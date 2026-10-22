@@ -4,6 +4,12 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.28.5] — 2026-10-22
+
+- **Botones de tirada de los objetos, rehechos desde cero:** ahora van dentro de la tarjeta, escritos en su
+  contenido al publicarla (como los botones propios de dnd5e), y el clic se atiende antes que cualquier otro código
+  de la página. Las tarjetas antiguas reciben el botón al pintarse. Si la tarjeta no encuentra su tirada, avisa.
+
 ## [0.28.4] — 2026-10-22
 
 - **Botones de tirada de las pociones** (y del resto de objetos con tirada): no respondían a ningún clic. Ahora el
