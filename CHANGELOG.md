@@ -4,6 +4,11 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.29.1] — 2026-10-22
+
+- **Impacto de los golpes normales más marcado:** el retroceso de un acierto no crítico casi se duplica y la
+  congelación dura un poco más. El crítico no cambia.
+
 ## [0.29.0] — 2026-10-22
 
 - **Impacto de los golpes (hit-stop):** cuando un ataque acierta, el objetivo destella en blanco y se congela un

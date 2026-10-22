@@ -224,11 +224,11 @@ function impactDelay(animation) {
 export function addImpact(sequence, animation, source, target, { critical = false, viewers = impactViewers() } = {}) {
   if (!viewers.length || !target) {return;}
   const delay = impactDelay(animation);
-  const hold = critical ? 140 : 80;
+  const hold = critical ? 140 : 110;
   const from = source?.center;
   const to = target.center;
   const length = from && to ? Math.hypot(to.x - from.x, to.y - from.y) : 0;
-  const push = (canvas.grid?.size ?? 100) * (critical ? 0.25 : 0.12);
+  const push = (canvas.grid?.size ?? 100) * (critical ? 0.25 : 0.2);
   const flash = sequence.effect().copySprite(target).atLocation(target).forUsers(viewers).delay(delay)
     .filter("ColorMatrix", { brightness: 3 }).duration(hold + RECOIL).fadeOut(RECOIL);
   for (const axis of ["x", "y"]) {
