@@ -11,10 +11,6 @@ import {
 } from "./encounter-query-service.mjs";
 
 import {
-  awardEncounterXp
-} from "./encounter-xp-award.mjs";
-
-import {
   climbToNextTier,
   previewSteps
 } from "./encounter-difficulty-steps.mjs";
@@ -2110,19 +2106,6 @@ export class PokemonEncounterPlanner
             </div>
             <button
               type="button"
-              data-action="award-xp"
-              title="Tras el combate: marca los Pokémon que participaron y siguen en pie, y se les entrega su XP."
-              ${context.rows.length ? "" : " disabled"}
-            >
-              <i
-                class="fa-solid fa-gift"
-                aria-hidden="true"
-              ></i>
-              Repartir XP
-            </button>
-
-            <button
-              type="button"
               data-action="generate"
               ${
                 this._encounterState.busy ||
@@ -3815,17 +3798,6 @@ export class PokemonEncounterPlanner
     );
 
     root.querySelector(
-      '[data-action="award-xp"]'
-    )?.addEventListener(
-      "click",
-
-      () => {
-        void this
-          .#awardXp();
-      }
-    );
-
-    root.querySelector(
       '[data-action="generate"]'
     )?.addEventListener(
       "click",
@@ -5421,79 +5393,27 @@ export class PokemonEncounterPlanner
   }
 
   /*
-   * What each Pokémon's XP needs from the whole encounter (null for poke5e's rule as written): with the pace, the
-   * encounter's strength against the party and how many Pokémon share it; with level scaling, the party's level.
+   * What each Pokémon's XP needs from the whole encounter: null for poke5e's rule as written, the party's level with
+   * level scaling.
    */
-  #xpContext(
-    rows = null,
-    encounter = null
-  ) {
+  #xpContext() {
     const rules =
       getEncounterXpRules();
 
-    if (
-      rules.style !==
-        "pace" &&
-      !rules.scaling
-    ) {
+    if (!rules.scaling) {
       return null;
     }
-
-    const party =
-      this.#party();
-
-    const {
-      power,
-      partyPower,
-      weight
-    } =
-      this.#difficulty(
-        rows ??
-        this._encounterState
-          .rows
-          .map(
-            row => ({
-              ...row,
-              level:
-                clampInteger(
-                  row.level,
-                  1,
-                  20,
-                  1
-                ),
-              quantity:
-                clampInteger(
-                  row.quantity,
-                  1,
-                  999,
-                  1
-                )
-            })
-          ),
-        encounter
-      );
 
     return {
       ...rules,
       partyLevel:
-        party.level,
-      participants:
-        party.participants,
-      // A Medium encounter is the party's own strength: one Pokémon per player, or their teams against trainers.
-      partyPower,
-      // Crowd, trainer bonus, types and extras: each Pokémon's XP is its share of the encounter's strength.
-      multiplier:
-        weight
-          ? power / weight
-          : 1
+        this.#party().level
     };
   }
 
   /*
    * The selected location's saved encounters, as a route: how many are mandatory and optional, and what each kind
    * gives the players' strongest Pokémon (if it fights all of them, with the party's participants).
-   * shortcut: a saved trainer encounter counts one Pokémon on the field per trainer and no extras (neither is
-   * saved); save them if the route's numbers must match the planner's exactly.
    */
   #routeSummary(
     encounters
@@ -5581,16 +5501,7 @@ export class PokemonEncounterPlanner
           party.participants,
           {
             context:
-              this.#xpContext(
-                rows,
-                {
-                  trainerBattle,
-                  onField:
-                    trainerBattle
-                      ? encounter.trainers.length
-                      : 0
-                }
-              ),
+              this.#xpContext(),
             optional:
               encounter.optional
           }
@@ -6170,53 +6081,6 @@ export class PokemonEncounterPlanner
       tm &&
         `MT ${tm.id}: ${resolveMoveNames([tm.moveId], this.database.moves, language)[0] ?? tm.moveId}`
     ].filter(Boolean);
-  }
-
-  async #awardXp() {
-    const rows =
-      this._encounterState.rows
-        .map(
-          row =>
-            this.#prepareRow(
-              row
-            )
-        )
-        .filter(Boolean);
-
-    if (!rows.length) {
-      return;
-    }
-
-    const optional =
-      this._encounterState
-        .optional ===
-        true;
-
-    await awardEncounterXp({
-      rows:
-        this.#xpRows(
-          rows
-        ),
-      context:
-        this.#xpContext(),
-      optional,
-      name:
-        this._encounterState.name.trim() ||
-        "Encuentro",
-      trainers:
-        this._encounterState.type ===
-          "trainer"
-          ? this._encounterState
-              .trainers
-              .length
-          : 0,
-      loot:
-        optional
-          ? this.#suggestLoot(
-              rows
-            )
-          : []
-    });
   }
 
   /*

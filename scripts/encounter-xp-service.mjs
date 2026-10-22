@@ -8,7 +8,6 @@ const FRACTION_VALUES =
     ["½", 1 / 2]
   ]);
 
-import { pokemonPower } from "./encounter-difficulty.mjs";
 import { getPokemonExperienceThreshold } from "./pokemon-experience-service.mjs";
 
 const MODULE_ID =
@@ -17,18 +16,11 @@ const MODULE_ID =
 /* ============================================================
  * EXPERIENCE RULES
  *
- * poke5e's rule (200 × Level × SR per Pokémon defeated) levels a Pokémon about once per defeat of one of its level,
- * and pays by SR, which poke5e says isn't strength: a power creep. So, by default, a pace: the encounter's XP is
- * set so that, divided among the players' Pokémon that take part, a Medium encounter gives each 1/N of a level at
- * the party's level; each rival gives its part of the encounter's strength (harder encounters give more). Optional,
- * Gen V's level scaling: weaker rivals give much less, stronger ones more. levelProgress tells what an encounter is
- * worth to one Pokémon, to plan how many fit in a route or dungeon.
+ * poke5e's rule as written: 200 × Level × SR per Pokémon defeated (a fifth if captured), the encounter's total
+ * divided among the players' Pokémon that took part. Power creep is held by the trainer level cap instead
+ * (pokemon-experience-service.mjs). Optional, Gen V's level scaling: weaker rivals give much less, stronger ones
+ * more. levelProgress tells what an encounter is worth to one Pokémon, to plan how many fit in a route or dungeon.
  * ============================================================ */
-
-export const XP_STYLES = Object.freeze({
-  pace: "Ritmo: N encuentros de dificultad Media por nivel (recomendado)",
-  poke5e: "Regla de poke5e: 200 × Nivel × SR"
-});
 
 // An open planner shows the new XP at once.
 const refreshPlanners = () => {
@@ -38,25 +30,7 @@ const refreshPlanners = () => {
 };
 
 export function registerEncounterXpSettings() {
-  const { BooleanField, NumberField, StringField } = foundry.data.fields;
-  game.settings.register(MODULE_ID, "encounterXpStyle", {
-    name: "Poke5e - Experiencia de los encuentros",
-    hint: "Cómo calcula el planificador la experiencia. Con el ritmo, la experiencia total, dividida entre los Pokémon que participan, da a cada uno 1/N de nivel en un encuentro de dificultad Media, sin depender del SR. Con la regla de poke5e, derrotar a un Pokémon de nivel parecido da casi un nivel completo.",
-    scope: "world",
-    config: true,
-    type: new StringField({ required: true, blank: false, choices: XP_STYLES, initial: "pace" }),
-    default: "pace",
-    onChange: refreshPlanners
-  });
-  game.settings.register(MODULE_ID, "encounterXpPace", {
-    name: "Poke5e - Encuentros de dificultad Media por nivel",
-    hint: "Solo con el ritmo: cuántos encuentros de dificultad Media necesita cada Pokémon que participa para subir un nivel.",
-    scope: "world",
-    config: true,
-    type: new NumberField({ required: true, nullable: false, integer: true, min: 1, max: 30, step: 1, initial: 8 }),
-    default: 8,
-    onChange: refreshPlanners
-  });
+  const { BooleanField } = foundry.data.fields;
   game.settings.register(MODULE_ID, "encounterXpLevelScaling", {
     name: "Poke5e - Experiencia según la diferencia de nivel",
     hint: "Como en la quinta generación: derrotar a Pokémon de menor nivel que el grupo da mucha menos experiencia, y a Pokémon de mayor nivel, más.",
@@ -79,13 +53,11 @@ export function registerEncounterXpSettings() {
 export function getEncounterXpRules() {
   try {
     return {
-      style: game.settings.get(MODULE_ID, "encounterXpStyle"),
-      pace: game.settings.get(MODULE_ID, "encounterXpPace"),
       scaling: game.settings.get(MODULE_ID, "encounterXpLevelScaling"),
       expShareTrainerOnly: game.settings.get(MODULE_ID, "encounterXpExpShareTrainerOnly")
     };
   } catch {
-    return { style: "pace", pace: 8, scaling: false, expShareTrainerOnly: false };
+    return { scaling: false, expShareTrainerOnly: false };
   }
 }
 
@@ -153,8 +125,7 @@ export function levelScaling(level, partyLevel) {
 }
 
 /**
- * @param {{ level: number, sr: any, context?: { style: string, pace: number, scaling: boolean, partyLevel: number,
- *   participants: number, partyPower: number, multiplier: number } }} options  without a context, poke5e's rule
+ * @param {{ level: number, sr: any, context?: { scaling: boolean, partyLevel: number } }} options
  */
 export function calculatePokemonEncounterXp({
   level,
@@ -175,20 +146,9 @@ export function calculatePokemonEncounterXp({
     );
 
   const base =
-    context?.style ===
-      "pace"
-      ? (
-          getPokemonExperienceThreshold(context.partyLevel + 1) -
-          getPokemonExperienceThreshold(context.partyLevel)
-        ) /
-        Math.max(1, context.pace) *
-        Math.max(1, context.participants) *
-        pokemonPower(normalizedLevel) *
-        context.multiplier /
-        Math.max(1, context.partyPower)
-      : 200 *
-        normalizedLevel *
-        normalizedSr;
+    200 *
+    normalizedLevel *
+    normalizedSr;
 
   const defeated =
     Math.round(

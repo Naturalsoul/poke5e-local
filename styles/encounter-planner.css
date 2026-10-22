@@ -5621,39 +5621,13 @@ input[type="number"] {
 
 .poke5e-encounter-planner__footer
 button[data-action="generate"] {
+  grid-column:
+    1 / -1;
   width:
     100%;
 
   min-height:
     38px;
-}
-
-/* Repartir XP: next to Generar, gold like the rewards, quieter than the main action. */
-.poke5e-encounter-planner__footer
-button[data-action="award-xp"] {
-  min-height:
-    38px;
-
-  padding:
-    7px 14px;
-
-  border-color:
-    color-mix(in srgb, var(--poke5e-ui-gold) 60%, transparent);
-
-  background:
-    color-mix(in srgb, var(--poke5e-ui-gold) 14%, transparent);
-
-  color:
-    var(--encounter-gold);
-
-  white-space:
-    nowrap;
-}
-
-.poke5e-encounter-planner__footer
-button[data-action="award-xp"]:hover:not(:disabled) {
-  background:
-    color-mix(in srgb, var(--poke5e-ui-gold) 26%, transparent);
 }
 
 /* ============================================================

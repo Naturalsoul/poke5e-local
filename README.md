@@ -29,7 +29,7 @@ Módulo de Foundry VTT para jugar **Pokémon 5e** ([poke5e.app](https://poke5e.a
 Importa Pokémon, Moves, Abilities y objetos, da hojas propias a Pokémon y entrenadores, y automatiza la mayor
 parte de las reglas de combate: tipos, STAB, estados, Abilities, rasgos de entrenador, capturas y más.
 
-- **Versión:** 0.26.0
+- **Versión:** 0.27.0
 - **Requisitos:** Foundry VTT 13 (13.351 o superior) o 14 (probado en 14.365), y D&D5e 5.3.3 o superior.
 - **Idiomas:** español e inglés (ajuste del módulo `language`).
 
@@ -121,12 +121,10 @@ parte, lo dice también, y el DM ve además la nota (en inglés).
     "Subir a…" (los cambios más suaves primero; los niveles al final) o cambio a cambio, y "Bajar" deshace.
   - **Mejores Moves:** los rivales pueden llevar su mejor combinación de Moves de nivel y huevo, y después de MT,
     con cobertura súper eficaz; se ven en la composición antes de crear las hojas.
-  - **Experiencia contra el power creep:** por defecto, un ritmo de "N encuentros Medios por nivel" (la XP total,
-    dividida entre los Pokémon que participan, da a cada uno 1/N de nivel en una pelea Media), sin depender del SR.
-    La regla de poke5e (200 × Nivel × SR) sigue disponible (Configuración → Poke5e - Experiencia de los encuentros).
+  - **Experiencia:** la regla de poke5e (200 × Nivel × SR por Pokémon derrotado, un quinto si se captura), dividida
+    entre los Pokémon que participan. El power creep lo frena el tope de nivel por Entrenador.
   - **Obligatorios y opcionales:** cada encuentro puede ser opcional (XP de recuperación: más a los Pokémon más
-    débiles, y botín). Cada ubicación resume su ruta. "Repartir XP" entrega la parte de cada Pokémon que participó,
-    con el dinero de los Entrenadores.
+    débiles, y botín). Cada ubicación resume su ruta.
   - **Avance:** cuánto de un nivel le da el encuentro al Pokémon más fuerte de los jugadores, con la XP dividida
     entre los Pokémon que participan, y cuántos encuentros así le faltan para subir. Opcional, la XP según
     diferencia de nivel de la Gen V (Configuración → Poke5e - Experiencia según la diferencia de nivel).

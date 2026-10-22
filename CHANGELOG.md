@@ -4,6 +4,16 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.27.0] — 2026-10-22
+
+- **Vuelve la experiencia de poke5e.** El planificador calcula siempre con la regla tal cual: 200 × Nivel × SR por
+  Pokémon derrotado (un quinto si se captura), dividida entre los Pokémon que participan. Se quitan la regla de
+  "ritmo" y sus dos ajustes (Experiencia de los encuentros, Encuentros de dificultad Media por nivel); el power creep
+  lo frena ahora el tope de nivel por Entrenador. Siguen el escalado opcional por nivel (5.ª generación), la regla
+  casera de Repartir Experiencia y el indicador de avance.
+- **Fuera el botón "Repartir XP"** del planificador: los jugadores darán la experiencia a sus Pokémon (próxima
+  versión).
+
 ## [0.26.0] — 2026-10-22
 
 - **Tope de nivel por Entrenador** (regla de mesa contra el power creep). Un Pokémon con Entrenador solo sube de
