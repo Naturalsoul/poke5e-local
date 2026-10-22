@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.29.0] — 2026-10-22
+
+- **Impacto de los golpes (hit-stop):** cuando un ataque acierta, el objetivo destella en blanco y se congela un
+  instante, retrocede alejándose del atacante y recibe un estallido del color del tipo del Move. Un crítico se
+  congela más, empuja más lejos y además sacude la pantalla. Cada jugador puede apagarlo en sus ajustes
+  ("Poke5e - Impacto de los golpes"). Los fallos no tienen impacto.
+
 ## [0.28.8] — 2026-10-22
 
 - **Las animaciones y sonidos de los ataques esperan a Dice So Nice:** ya no se reproducen mientras ruedan los
