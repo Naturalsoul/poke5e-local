@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.28.4] — 2026-10-22
+
+- **Botones de tirada de las pociones** (y del resto de objetos con tirada): no respondían a ningún clic. Ahora el
+  clic se atiende desde el documento y encuentra la tarjeta por su mensaje, como los demás botones del módulo, así
+  que funciona para el autor, el dueño del personaje y el DM aunque el chat vuelva a pintar la tarjeta. Si la tirada
+  falla (también al calcular Nurse o Tactician), avisa en vez de no hacer nada.
+
 ## [0.28.3] — 2026-10-22
 
 - **Poison Gas: mitad de daño si se supera la salvación** (regla de mesa; el texto lo da siempre completo). Vale en

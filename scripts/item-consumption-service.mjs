@@ -1174,18 +1174,25 @@ async function rollItemFormula(
     );
 
 
-  // Nurse and Tactician only add to healing rolls.
-  const bonuses =
-    rollDefinition.kind ===
+  let bonuses =
+    { parts: [] };
+
+  try {
+
+    // Nurse and Tactician only add to healing rolls.
+    if (
+      rollDefinition.kind ===
       "healing"
-      ? await resolveItemHealingBonuses(
+    ) {
+
+      bonuses =
+        await resolveItemHealingBonuses(
           ChatMessage.implementation.getSpeakerActor(
             message.speaker
           )
-        )
-      : { parts: [] };
+        );
+    }
 
-  try {
 
     const roll =
       await new Roll(
@@ -1294,41 +1301,82 @@ function createRollButton(
   );
 
 
-  button.addEventListener(
-    "click",
-    event => {
-
-      event.preventDefault();
-      event.stopPropagation();
-
-
-      if (
-        !canCurrentUserRollMessage(
-          message
-        )
-      ) {
-
-        ui.notifications.warn(
-          currentLanguage() ===
-            "en"
-            ? "You do not have permission to make this roll."
-            : "No tienes permisos para realizar esta tirada."
-        );
-
-
-        return;
-      }
-
-
-      void rollItemFormula(
-        message,
-        rollDefinition
-      );
-    }
-  );
+  button.dataset.poke5eItemRoll =
+    rollDefinition.id;
 
 
   return button;
+}
+
+
+// Delegated: the button keeps working however the chat log re-renders or copies the card.
+function onItemRollClick(
+  event
+) {
+
+  const button =
+    event.target.closest?.(
+      "[data-poke5e-item-roll]"
+    );
+
+
+  if (!button) {
+
+    return;
+  }
+
+
+  event.preventDefault();
+  event.stopPropagation();
+
+
+  const message =
+    game.messages.get(
+      button.closest(
+        "[data-message-id]"
+      )?.dataset.messageId
+    );
+
+
+  const rollDefinition =
+    message &&
+    chatMessageRolls(
+      message
+    ).find(
+      roll =>
+        roll.id ===
+        button.dataset.poke5eItemRoll
+    );
+
+
+  if (!rollDefinition) {
+
+    return;
+  }
+
+
+  if (
+    !canCurrentUserRollMessage(
+      message
+    )
+  ) {
+
+    ui.notifications.warn(
+      currentLanguage() ===
+        "en"
+        ? "You do not have permission to make this roll."
+        : "No tienes permisos para realizar esta tirada."
+    );
+
+
+    return;
+  }
+
+
+  void rollItemFormula(
+    message,
+    rollDefinition
+  );
 }
 
 
@@ -1436,6 +1484,15 @@ export function registerPoke5eItemConsumptionService() {
 
 
   Hooks.on(
+    "dnd5e.renderChatMessage",
+    onRenderChatMessage
+  );
+
+
+  document.addEventListener(
+    "click",
+    onItemRollClick
+  );  Hooks.on(
     "dnd5e.renderChatMessage",
     onRenderChatMessage
   );
