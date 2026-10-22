@@ -4,6 +4,11 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.28.7] — 2026-10-22
+
+- **Aviso de automatización de los Moves solo para el DM:** el mensaje "Su efecto especial no está automatizado" /
+  "Automatizado en parte" bajo las tarjetas de uso ya no lo ven los jugadores.
+
 ## [0.28.6] — 2026-10-22
 
 - **Errores de permisos en los jugadores al dar un held item:** al arrastrar un objeto a un Pokémon (o quitárselo),
