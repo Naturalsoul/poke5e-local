@@ -39,6 +39,54 @@ const EXPERIENCE_BY_LEVEL =
 
 
 /* ============================================================
+ * LEVEL CAP
+ *
+ * Table rule against power creep: a Pokémon can't level above its
+ * trainer's level, and the XP it gains past that is lost. Wild and
+ * rival Pokémon (no trainer) have no cap.
+ * ============================================================ */
+
+export function getPokemonLevelCap(
+  pokemon
+) {
+
+  const uuid =
+    pokemon?.getFlag?.(
+      MODULE_ID,
+      "trainerOwnerUuid"
+    );
+
+  const trainer =
+    uuid
+      ? globalThis.fromUuidSync?.(
+        String(uuid)
+      )
+      : null;
+
+  if (!trainer) {
+
+    return null;
+  }
+
+  // Same reading as getTrainerLevel (trainer-service.mjs), without importing its folder and party services.
+  return Math.min(
+    MAX_POKEMON_LEVEL,
+    Math.max(
+      1,
+      Math.trunc(
+        Number(
+          trainer.getFlag(
+            MODULE_ID,
+            "trainerLevel"
+          )
+        )
+      ) || 1
+    )
+  );
+}
+
+
+/* ============================================================
  * VALIDATION
  * ============================================================ */
 
@@ -275,14 +323,28 @@ export function getPokemonExperienceState(
         );
 
 
+  const levelCap =
+    getPokemonLevelCap(
+      pokemon
+    );
+
+  const atLevelCap =
+    levelCap != null &&
+    level >= levelCap;
+
   const readyToLevel =
     !isMaxLevel &&
+    !atLevelCap &&
     total >=
       nextLevelXp;
 
 
   return {
     level,
+
+    levelCap,
+
+    atLevelCap,
 
     total,
 
@@ -338,10 +400,25 @@ export async function setPokemonExperience(
    * Un Pokémon Nv.3 no puede quedar con 100 XP,
    * porque Nv.3 comienza en 800 XP.
    */
+  /*
+   * Lo que pase del umbral del nivel siguiente al de
+   * su Entrenador se pierde: la barra se queda llena.
+   */
+  const ceiling =
+    currentState.levelCap != null &&
+    currentState.levelCap < MAX_POKEMON_LEVEL
+      ? getPokemonExperienceThreshold(
+        currentState.levelCap + 1
+      )
+      : Infinity;
+
   const total =
     Math.max(
       currentState.levelStartXp,
-      requested
+      Math.min(
+        requested,
+        ceiling
+      )
     );
 
 

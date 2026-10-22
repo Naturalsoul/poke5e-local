@@ -11,8 +11,8 @@ import {
 } from "./encounter-query-service.mjs";
 
 import {
-  awardEncounterXp
-} from "./encounter-xp-award.mjs";
+  publishEncounterReward
+} from "./encounter-xp-reward.mjs";
 
 import {
   climbToNextTier,
@@ -1170,7 +1170,7 @@ export class PokemonEncounterPlanner
                   class="poke5e-encounter-planner__optional-toggle${this._encounterState.optional ? " is-active" : ""}"
                   data-action="toggle-optional"
                   aria-pressed="${this._encounterState.optional ? "true" : "false"}"
-                  title="Un encuentro opcional no hace falta para avanzar: da XP de recuperación (más a los Pokémon más débiles) y sugiere un botín. En un encuentro guardado, se guarda al momento."
+                  title="Un encuentro opcional no hace falta para avanzar; el resumen de la ruta lo cuenta aparte. En un encuentro guardado, se guarda al momento."
                 >
                   <i
                     class="fa-solid ${this._encounterState.optional ? "fa-route" : "fa-flag-checkered"}"
@@ -2110,15 +2110,15 @@ export class PokemonEncounterPlanner
             </div>
             <button
               type="button"
-              data-action="award-xp"
-              title="Tras el combate: marca los Pokémon que participaron y siguen en pie, y se les entrega su XP."
+              data-action="publish-reward"
+              title="Tras el combate: marca los Pokémon que participaron y publica en el chat la XP de cada uno; cada jugador la recibe."
               ${context.rows.length ? "" : " disabled"}
             >
               <i
-                class="fa-solid fa-gift"
+                class="fa-solid fa-star"
                 aria-hidden="true"
               ></i>
-              Repartir XP
+              Publicar recompensa
             </button>
 
             <button
@@ -3815,13 +3815,13 @@ export class PokemonEncounterPlanner
     );
 
     root.querySelector(
-      '[data-action="award-xp"]'
+      '[data-action="publish-reward"]'
     )?.addEventListener(
       "click",
 
       () => {
         void this
-          .#awardXp();
+          .#publishReward();
       }
     );
 
@@ -5421,79 +5421,27 @@ export class PokemonEncounterPlanner
   }
 
   /*
-   * What each Pokémon's XP needs from the whole encounter (null for poke5e's rule as written): with the pace, the
-   * encounter's strength against the party and how many Pokémon share it; with level scaling, the party's level.
+   * What each Pokémon's XP needs from the whole encounter: null for poke5e's rule as written, the party's level with
+   * level scaling.
    */
-  #xpContext(
-    rows = null,
-    encounter = null
-  ) {
+  #xpContext() {
     const rules =
       getEncounterXpRules();
 
-    if (
-      rules.style !==
-        "pace" &&
-      !rules.scaling
-    ) {
+    if (!rules.scaling) {
       return null;
     }
-
-    const party =
-      this.#party();
-
-    const {
-      power,
-      partyPower,
-      weight
-    } =
-      this.#difficulty(
-        rows ??
-        this._encounterState
-          .rows
-          .map(
-            row => ({
-              ...row,
-              level:
-                clampInteger(
-                  row.level,
-                  1,
-                  20,
-                  1
-                ),
-              quantity:
-                clampInteger(
-                  row.quantity,
-                  1,
-                  999,
-                  1
-                )
-            })
-          ),
-        encounter
-      );
 
     return {
       ...rules,
       partyLevel:
-        party.level,
-      participants:
-        party.participants,
-      // A Medium encounter is the party's own strength: one Pokémon per player, or their teams against trainers.
-      partyPower,
-      // Crowd, trainer bonus, types and extras: each Pokémon's XP is its share of the encounter's strength.
-      multiplier:
-        weight
-          ? power / weight
-          : 1
+        this.#party().level
     };
   }
 
   /*
    * The selected location's saved encounters, as a route: how many are mandatory and optional, and what each kind
    * gives the players' strongest Pokémon (if it fights all of them, with the party's participants).
-   * shortcut: a saved trainer encounter counts one Pokémon on the field per trainer and no extras (neither is
-   * saved); save them if the route's numbers must match the planner's exactly.
    */
   #routeSummary(
     encounters
@@ -5581,18 +5529,7 @@ export class PokemonEncounterPlanner
           party.participants,
           {
             context:
-              this.#xpContext(
-                rows,
-                {
-                  trainerBattle,
-                  onField:
-                    trainerBattle
-                      ? encounter.trainers.length
-                      : 0
-                }
-              ),
-            optional:
-              encounter.optional
+              this.#xpContext()
           }
         );
     }
@@ -6118,61 +6055,8 @@ export class PokemonEncounterPlanner
     );
   }
 
-  // An optional encounter's suggested loot: an item or berry, and a TM one of the rivals' species can learn.
-  #suggestLoot(
-    rows
-  ) {
-    const language =
-      getWorldLanguage();
 
-    const item =
-      selectEncounterItem({
-        items:
-          this.database.items,
-        chancePercent:
-          100,
-        categoryWeights: {
-          berry:
-            1,
-          "held-item":
-            1,
-          medicine:
-            1,
-          pokeball:
-            0
-        }
-      });
-
-    const tms =
-      rows.flatMap(
-        row =>
-          row.pokemon
-            .learnset
-            ?.tms ??
-          []
-      );
-
-    const tm =
-      tms[
-        Math.floor(
-          Math.random() *
-          tms.length
-        )
-      ];
-
-    return [
-      item &&
-        localized(
-          item.name,
-          language,
-          item.id
-        ),
-      tm &&
-        `MT ${tm.id}: ${resolveMoveNames([tm.moveId], this.database.moves, language)[0] ?? tm.moveId}`
-    ].filter(Boolean);
-  }
-
-  async #awardXp() {
+  async #publishReward() {
     const rows =
       this._encounterState.rows
         .map(
@@ -6187,35 +6071,16 @@ export class PokemonEncounterPlanner
       return;
     }
 
-    const optional =
-      this._encounterState
-        .optional ===
-        true;
-
-    await awardEncounterXp({
+    await publishEncounterReward({
       rows:
         this.#xpRows(
           rows
         ),
       context:
         this.#xpContext(),
-      optional,
       name:
         this._encounterState.name.trim() ||
-        "Encuentro",
-      trainers:
-        this._encounterState.type ===
-          "trainer"
-          ? this._encounterState
-              .trainers
-              .length
-          : 0,
-      loot:
-        optional
-          ? this.#suggestLoot(
-              rows
-            )
-          : []
+        "Encuentro"
     });
   }
 
@@ -6268,7 +6133,7 @@ export class PokemonEncounterPlanner
         0
       );
 
-    // Its own share: in an optional encounter (catch-up XP), less than an even split.
+    // Its own share: an even split.
     const gained =
       encounterShare(
         this.#xpRows(
@@ -6277,11 +6142,7 @@ export class PokemonEncounterPlanner
         party.strongest.level,
         party.participants,
         {
-          context,
-          optional:
-            this._encounterState
-              .optional ===
-              true
+          context
         }
       );
 
@@ -6306,11 +6167,6 @@ export class PokemonEncounterPlanner
         `${party.strongest.name} (Nv. ${before.level}, ${percent(before.progress)}): ` +
         `${formatNumber(total)} XP si se derrota a todos ÷ ${party.participants} Pokémon que participan = ` +
         `${formatNumber(gained)} XP` +
-        (
-          this._encounterState.optional
-            ? " (opcional: XP de recuperación según su nivel)"
-            : ""
-        ) +
         ` → Nv. ${after.level}, ${percent(after.progress)}.` +
         (
           toLevel

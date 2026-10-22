@@ -1101,13 +1101,13 @@ function trainerLevelUpContent(
         <div class="poke5e-level-up-dialog__limits">
 
           <span>
-            <small>Max SR</small>
+            <small>Max Lv</small>
 
             <strong>
-              ${currentLimits.maxSr}
+              ${preview.currentLevel + currentLimits.controlLevelBonus}
               ${
                 nextLimits
-                  ? ` → ${nextLimits.maxSr}`
+                  ? ` → ${preview.nextLevel + nextLimits.controlLevelBonus}`
                   : ""
               }
             </strong>

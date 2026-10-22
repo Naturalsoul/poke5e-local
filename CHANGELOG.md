@@ -4,6 +4,53 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.28.2] — 2026-10-22
+
+- Ventana de experiencia: "¡Murkrow puede subir al Nv. 9!" ya no repite el nivel del nombre ("Murkrow (Lv. 8)").
+
+## [0.28.1] — 2026-10-22
+
+- Recompensa: la tarjeta del chat sale a nombre de "Recompensa", no del personaje asignado al DM. La ventana de
+  experiencia y el diálogo de publicar ya no repiten el nivel de los Pokémon llamados "Toxel (Lv. 5)", así que los
+  nombres caben; en el diálogo, las casillas se ven (casilla nativa en dorado) y el campo de XP es más estrecho.
+
+## [0.28.0] — 2026-10-22
+
+- **Los jugadores reciben la experiencia.** Nuevo botón **"Publicar recompensa"** en el planificador: el DM marca
+  los Pokémon que participaron (con la regla de Repartir Experiencia; cada parte se puede editar) y sale una tarjeta
+  en el chat con la XP de cada uno. Cada jugador pulsa **"Recibir"** en sus Pokémon (el DM también puede, por un
+  jugador ausente); queda anotado en el Pokémon, así que no se cobra dos veces, y la tarjeta muestra "Recibida" a
+  todos.
+- **Animación de la barra de EXP**, como en los juegos: se llena mientras el número cuenta, con un "tic" y, si el
+  Pokémon puede subir de nivel, destella, suena una fanfarria y su grito, y ofrece "Subir de nivel". Al tope del
+  Entrenador dice cuánta XP se pierde. Los sonidos se generan en el navegador (sin archivos) con el volumen de la
+  interfaz; con "reducir movimiento" la barra salta al final.
+- **Solo experiencia:** se quitan el dinero de los Entrenadores y el botín sugerido, que inventa el DM, y la "XP de
+  recuperación" de los encuentros opcionales (no es de poke5e). Un encuentro opcional sigue contando aparte en el
+  resumen de la ruta.
+
+## [0.27.0] — 2026-10-22
+
+- **Vuelve la experiencia de poke5e.** El planificador calcula siempre con la regla tal cual: 200 × Nivel × SR por
+  Pokémon derrotado (un quinto si se captura), dividida entre los Pokémon que participan. Se quitan la regla de
+  "ritmo" y sus dos ajustes (Experiencia de los encuentros, Encuentros de dificultad Media por nivel); el power creep
+  lo frena ahora el tope de nivel por Entrenador. Siguen el escalado opcional por nivel (5.ª generación), la regla
+  casera de Repartir Experiencia y el indicador de avance.
+- **Fuera el botón "Repartir XP"** del planificador: los jugadores darán la experiencia a sus Pokémon (próxima
+  versión).
+
+## [0.26.0] — 2026-10-22
+
+- **Tope de nivel por Entrenador** (regla de mesa contra el power creep). Un Pokémon con Entrenador solo sube de
+  nivel hasta el nivel de su Entrenador: al llegar, la ficha y el centro de mando dicen "Al nivel de su
+  Entrenador" y la subida de nivel se bloquea con un aviso. La XP que pase del umbral del nivel siguiente se pierde
+  (la barra se queda llena y sube en cuanto sube el Entrenador). Los Pokémon salvajes y de rivales no tienen tope.
+- **Control por nivel, no por SR.** El Entrenador puede desplegar o cambiar a Pokémon de hasta su nivel; si el
+  Pokémon es de nivel mayor, se bloquea con un mensaje. La senda **Guru** pasa de "+1 al SR máximo" a controlar
+  Pokémon de hasta 1 nivel más que el suyo. El SR máximo sale de la progresión del Entrenador: la hoja muestra
+  **NV. MÁX.** en su lugar, igual que la creación y la subida de nivel del Entrenador, y "Mejora de Control" habla
+  de nivel. El SR queda solo para la experiencia y la captura.
+
 ## [0.25.0] — 2026-10-21
 
 - **Diseño de las hojas.** Nuevo ajuste "Poke5e - Diseño de las hojas" (Configuración, por jugador), pensado

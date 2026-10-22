@@ -7,7 +7,7 @@ import {
 } from "./trainer-progression-service.mjs";
 
 import {
-  getTrainerLevelRule
+  getTrainerProgressionLimits
 } from "./trainer-rules.mjs";
 
 
@@ -15,76 +15,11 @@ const MODULE_ID =
   "poke5e-local";
 
 
-function parseSpeciesRating(
-  value
-) {
-
-  if (
-    typeof value ===
-    "number"
-  ) {
-
-    return Number.isFinite(
-      value
-    )
-      ? value
-      : null;
-  }
-
-
-  const text =
-    String(
-      value ??
-      ""
-    ).trim();
-
-
-  const fraction =
-    text.match(
-      /^(\d+)\s*\/\s*(\d+)$/
-    );
-
-
-  if (fraction) {
-
-    const denominator =
-      Number(
-        fraction[2]
-      );
-
-
-    if (
-      denominator === 0
-    ) {
-
-      return null;
-    }
-
-
-    return (
-      Number(
-        fraction[1]
-      ) /
-      denominator
-    );
-  }
-
-
-  const numeric =
-    Number(
-      text
-    );
-
-
-  return Number.isFinite(
-    numeric
-  )
-    ? numeric
-    : null;
-}
-
-
-export function getTrainerMaxSr(
+/*
+ * Table rule: a trainer controls Pokémon up to their own level
+ * (Guru: one more). SR only counts for XP and capture.
+ */
+export function getTrainerControlLevel(
   trainer
 ) {
 
@@ -95,46 +30,43 @@ export function getTrainerMaxSr(
     1;
 
 
-  const base =
-    getTrainerLevelRule(
-      level
-    ).maxSr;
-
-
   const progression =
     getTrainerProgressionState(
       trainer
     );
 
 
-  const pathId =
-    progression
-      ?.path
-      ?.id;
-
-
   return (
-    base +
-    (
-      pathId ===
-      "guru"
-        ? 1
-        : 0
-    )
+    level +
+    getTrainerProgressionLimits({
+      level,
+      pathId:
+        progression
+          ?.path
+          ?.id
+    }).controlLevelBonus
   );
 }
 
 
-export function getPokemonSpeciesRating(
+function getPokemonLevel(
   pokemon
 ) {
 
-  return parseSpeciesRating(
-    pokemon?.getFlag?.(
-      MODULE_ID,
-      "sr"
-    )
-  );
+  const level =
+    Number(
+      pokemon?.getFlag?.(
+        MODULE_ID,
+        "level"
+      )
+    );
+
+
+  return Number.isFinite(
+    level
+  )
+    ? level
+    : null;
 }
 
 
@@ -143,21 +75,21 @@ export function canTrainerControlPokemon(
   pokemon
 ) {
 
-  const sr =
-    getPokemonSpeciesRating(
+  const level =
+    getPokemonLevel(
       pokemon
     );
 
 
-  if (sr == null) {
+  if (level == null) {
 
     return true;
   }
 
 
   return (
-    sr <=
-    getTrainerMaxSr(
+    level <=
+    getTrainerControlLevel(
       trainer
     )
   );
@@ -180,18 +112,7 @@ export function assertTrainerCanControlPokemon(
   }
 
 
-  const maxSr =
-    getTrainerMaxSr(
-      trainer
-    );
-
-  const sr =
-    getPokemonSpeciesRating(
-      pokemon
-    );
-
-
   throw new Error(
-    `${pokemon.name} tiene SR ${sr} y ${trainer.name} solo puede controlar Pokémon de SR ${maxSr} o menor.`
+    `${pokemon.name} es de Nv. ${getPokemonLevel(pokemon)} y ${trainer.name} solo puede controlar Pokémon hasta Nv. ${getTrainerControlLevel(trainer)}.`
   );
 }

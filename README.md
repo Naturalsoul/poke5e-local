@@ -29,7 +29,7 @@ Módulo de Foundry VTT para jugar **Pokémon 5e** ([poke5e.app](https://poke5e.a
 Importa Pokémon, Moves, Abilities y objetos, da hojas propias a Pokémon y entrenadores, y automatiza la mayor
 parte de las reglas de combate: tipos, STAB, estados, Abilities, rasgos de entrenador, capturas y más.
 
-- **Versión:** 0.25.0
+- **Versión:** 0.28.2
 - **Requisitos:** Foundry VTT 13 (13.351 o superior) o 14 (probado en 14.365), y D&D5e 5.3.3 o superior.
 - **Idiomas:** español e inglés (ajuste del módulo `language`).
 
@@ -121,15 +121,18 @@ parte, lo dice también, y el DM ve además la nota (en inglés).
     "Subir a…" (los cambios más suaves primero; los niveles al final) o cambio a cambio, y "Bajar" deshace.
   - **Mejores Moves:** los rivales pueden llevar su mejor combinación de Moves de nivel y huevo, y después de MT,
     con cobertura súper eficaz; se ven en la composición antes de crear las hojas.
-  - **Experiencia contra el power creep:** por defecto, un ritmo de "N encuentros Medios por nivel" (la XP total,
-    dividida entre los Pokémon que participan, da a cada uno 1/N de nivel en una pelea Media), sin depender del SR.
-    La regla de poke5e (200 × Nivel × SR) sigue disponible (Configuración → Poke5e - Experiencia de los encuentros).
-  - **Obligatorios y opcionales:** cada encuentro puede ser opcional (XP de recuperación: más a los Pokémon más
-    débiles, y botín). Cada ubicación resume su ruta. "Repartir XP" entrega la parte de cada Pokémon que participó,
-    con el dinero de los Entrenadores.
+  - **Experiencia:** la regla de poke5e (200 × Nivel × SR por Pokémon derrotado, un quinto si se captura), dividida
+    entre los Pokémon que participan. El power creep lo frena el tope de nivel por Entrenador.
+  - **Obligatorios y opcionales:** cada encuentro puede ser opcional; cada ubicación resume su ruta (cuántos de cada
+    tipo y cuánto avanzan).
+  - **Recompensa:** "Publicar recompensa" marca los Pokémon que participaron y publica en el chat la XP de cada uno.
+    Cada jugador pulsa "Recibir" en sus Pokémon y ve la barra de EXP llenarse (con sonido; si puede subir de nivel,
+    destella y ofrece subir). Solo XP: el dinero y el botín los decide el DM.
   - **Avance:** cuánto de un nivel le da el encuentro al Pokémon más fuerte de los jugadores, con la XP dividida
     entre los Pokémon que participan, y cuántos encuentros así le faltan para subir. Opcional, la XP según
     diferencia de nivel de la Gen V (Configuración → Poke5e - Experiencia según la diferencia de nivel).
+- **Tope de nivel:** los Pokémon de un Entrenador suben de nivel solo hasta el nivel del Entrenador (la XP de más se
+  pierde) y el Entrenador controla Pokémon hasta su nivel (Guru: uno más). El SR solo cuenta para la XP y la captura.
 - **Diseño de las hojas** (Configuración → Poke5e - Diseño de las hojas, por jugador): Team Rocket o D&D 5e.
 - **Fakemon Studio:** crea Pokémon propios con asistente, evoluciones, Moves y copia de seguridad.
 - Transiciones de batalla con sonido.

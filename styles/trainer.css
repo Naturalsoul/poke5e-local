@@ -5361,7 +5361,7 @@ option {
 .sidebar
 .stats
 .lozenge[
-  data-poke5e-trainer-metric="max-sr"
+  data-poke5e-trainer-metric="max-level"
 ] {
   border-color:
     color-mix(in srgb, var(--poke5e-ui-accent) 42%, transparent);
@@ -5392,7 +5392,7 @@ option {
 .sidebar
 .stats
 .lozenge[
-  data-poke5e-trainer-metric="max-sr"
+  data-poke5e-trainer-metric="max-level"
 ]
 .value {
   color:
@@ -5404,7 +5404,7 @@ option {
 .sidebar
 .stats
 .lozenge[
-  data-poke5e-trainer-metric="max-sr"
+  data-poke5e-trainer-metric="max-level"
 ]
 .label {
   color:

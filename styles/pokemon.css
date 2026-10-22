@@ -2458,6 +2458,15 @@ input::-webkit-outer-spin-button {
 }
 
 
+/* At its trainer's level: no more levels until the trainer levels up. */
+.poke5e-pokemon-experience__cap {
+  color:
+    var(--poke5e-ui-gold);
+  font-weight:
+    700;
+}
+
+
 .poke5e-pokemon-experience__track {
   height: 8px;
 

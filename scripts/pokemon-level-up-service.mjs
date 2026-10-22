@@ -1573,6 +1573,18 @@ export async function levelUpPokemon(
 
 
   if (
+    preview
+      .experience
+      .atLevelCap
+  ) {
+
+    throw new Error(
+      `${pokemon.name} ya está al nivel de su Entrenador (Nv. ${preview.experience.levelCap}): no puede subir hasta que su Entrenador suba de nivel.`
+    );
+  }
+
+
+  if (
     !preview
       .experience
       .readyToLevel
