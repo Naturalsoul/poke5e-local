@@ -1,3 +1,4 @@
+import { pokemonTypes } from "./status-runtime.mjs";
 import { buildAttackOutcome } from "./attack-outcome-engine.mjs";
 import { getPokemonHeldItem } from "./pokemon-held-item-service.mjs";
 import { CONDITION_KIND } from "./condition-riders.mjs";
@@ -12,6 +13,10 @@ import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
  * - Eternabeam: its user is incapacitated until the end of its next turn.
  * - Moves with a wider critical range (19-20, Fickle Beam 17-20, Frost Breath 16-20), set on the roll itself.
  * - Feint Attack: always rolled with advantage.
+ * - Damage that depends on hit points, added to the damage roll before it is rolled: Brine, Flail, Reversal
+ *   (the formula repeated, so a critical still doubles its dice), Hex and Wring Out (MOVE again), Hard Press
+ *   (+proficiency), Eruption (STAB again), Dragon Energy (+1d6 per 20 HP) and Rage Fist (+1 per 10 HP missing).
+ *   The target is the one targeted when the damage is rolled.
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
@@ -70,6 +75,50 @@ export function onPreRollAttackCritical(config) {
   }
 }
 
+const hpShare = actor => {
+  const hp = actor?.system?.attributes?.hp;
+  return hp?.max > 0 ? hp.value / hp.max : null;
+};
+const hasStatus = actor => Array.from(actor?.effects ?? []).some(effect => !effect.disabled && effect.getFlag?.(MODULE_ID, "kind") === "pokemon-status");
+// MOVE: the modifier of the ability the Move attacks with.
+const moveModifier = (actor, activity) => Number(actor?.system?.abilities?.[activity?.attack?.ability]?.mod) || 0;
+const proficiency = actor => Number(actor?.system?.attributes?.prof) || 0;
+const lowHpMultiplier = user => { const share = hpShare(user); if (share === null) {return 1;} if (share <= 0.1) {return 3;} return share < 0.5 ? 2 : 1; };
+
+// Each returns { times, extra }: the formula repeated `times` over, plus extra parts.
+export const DAMAGE_RIDERS = Object.freeze({
+  brine: ({ target }) => ({ times: hpShare(target) !== null && hpShare(target) < 0.5 ? 2 : 1 }),
+  flail: ({ user }) => ({ times: lowHpMultiplier(user) }),
+  reversal: ({ user }) => ({ times: lowHpMultiplier(user) }),
+  hex: ({ user, target, activity }) => ({ extra: hasStatus(target) ? [moveModifier(user, activity)] : [] }),
+  "wring-out": ({ user, target, activity }) => ({ extra: hpShare(target) >= 0.5 ? [moveModifier(user, activity)] : [] }),
+  "hard-press": ({ user, target }) => ({ extra: hpShare(target) > 0.5 ? [proficiency(user)] : [] }),
+  eruption: ({ user, item }) => ({ extra: hpShare(user) >= 1 && pokemonTypes(user).includes(item.getFlag(MODULE_ID, "moveDefinition")?.type)
+    ? [proficiency(user)] : [] }),
+  "dragon-energy": ({ user }) => {
+    const dice = Math.floor((Number(user?.system?.attributes?.hp?.value) || 0) / 20);
+    return { extra: dice > 0 ? [`${dice}d6`] : [] };
+  },
+  "rage-fist": ({ user }) => {
+    const hp = user?.system?.attributes?.hp;
+    const bonus = Math.floor(((Number(hp?.max) || 0) - (Number(hp?.value) || 0)) / 10);
+    return { extra: bonus > 0 ? [bonus] : [] };
+  }
+});
+
+const targetedActor = () => (game.user?.targets?.size === 1 ? [...game.user.targets][0]?.actor ?? null : null);
+
+export function onPreRollDamageRiders(config) {
+  const activity = config?.subject;
+  const item = activity?.item;
+  const rider = DAMAGE_RIDERS[moveId(item)];
+  const roll = config?.rolls?.[0];
+  if (!rider || !roll || config.isHealing) {return;}
+  const { times = 1, extra = [] } = rider({ user: activity.actor, target: targetedActor(), activity, item });
+  const base = [...(roll.parts ?? [])];
+  roll.parts = [...Array.from({ length: times }, () => base).flat(), ...extra.filter(Boolean).map(String)];
+}
+
 async function onAttackMessage(message) {
   const item = message.getAssociatedItem?.();
   const rider = HIT_RIDERS[moveId(item)];
@@ -107,4 +156,5 @@ export function registerMoveRiders() {
   registered = true;
   Hooks.on("createChatMessage", onCreateChatMessage);
   Hooks.on("dnd5e.preRollAttack", onPreRollAttackCritical);
+  Hooks.on("dnd5e.preRollDamage", onPreRollDamageRiders);
 }

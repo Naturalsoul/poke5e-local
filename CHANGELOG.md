@@ -4,6 +4,19 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.35.0] — 2026-10-22
+
+- **Daño según los PG** (se añade a la tirada de daño antes de lanzarla; el objetivo es el que tengas marcado):
+  - **Brine:** doble si el objetivo está por debajo del 50 %.
+  - **Flail / Reversal:** doble por debajo del 50 % del usuario, triple al 10 % o menos.
+  - **Hex:** MOVE doble si el objetivo tiene un estado.
+  - **Wring Out:** MOVE doble si el objetivo tiene el 50 % o más.
+  - **Hard Press:** + competencia si el objetivo tiene más del 50 %.
+  - **Eruption:** STAB doble con la vida al máximo.
+  - **Dragon Energy:** +1d6 por cada 20 PG actuales.
+  - **Rage Fist:** +1 por cada 10 PG perdidos.
+- **Water Spout** queda manual: por debajo del 50 % hay que dividir el daño total entre dos al aplicarlo.
+
 ## [0.34.0] — 2026-10-22
 
 - **Crítico ampliado:** Slash, Night Slash, Razor Leaf, Karate Chop, Cross Chop, Crabhammer, Leaf Blade, Psycho Cut,

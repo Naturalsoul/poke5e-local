@@ -67,3 +67,31 @@ test("wider critical ranges are set on the attack roll, keeping a wider one alre
   onPreRollAttackCritical(feint);
   assert.equal(feint.rolls[0].options.advantage, true);
 });
+
+test("HP-based damage: low HP multiplies Flail, a hurt target doubles Brine, bonuses join the roll", async () => {
+  const { onPreRollDamageRiders } = await import("../scripts/move-riders.mjs");
+  const actor = (value, max = 100, extra = {}) => ({ system: { attributes: { hp: { value, max }, prof: 3 }, abilities: { str: { mod: 4 } } },
+    effects: [], getFlag: (_m, key) => (key === "types" ? ["fire"] : undefined), ...extra });
+  const roll = (id, user, target = null, type = "normal") => {
+    game.user = { targets: target ? new Set([{ actor: target }]) : new Set() };
+    const item = createFlagDocument({ flags: { [M]: { kind: "move", sourceId: id, moveDefinition: { type } } } });
+    const config = { subject: { item, actor: user, attack: { ability: "str" } }, rolls: [{ parts: ["1d6 + 4"] }] };
+    onPreRollDamageRiders(config);
+    return config.rolls[0].parts;
+  };
+  assert.deepEqual(roll("flail", actor(60)), ["1d6 + 4"]);
+  assert.deepEqual(roll("flail", actor(40)), ["1d6 + 4", "1d6 + 4"]);
+  assert.deepEqual(roll("reversal", actor(10)), ["1d6 + 4", "1d6 + 4", "1d6 + 4"]);
+  assert.deepEqual(roll("brine", actor(100), actor(30)), ["1d6 + 4", "1d6 + 4"]);
+  assert.deepEqual(roll("brine", actor(100), actor(80)), ["1d6 + 4"]);
+  assert.deepEqual(roll("wring-out", actor(100), actor(80)), ["1d6 + 4", "4"]);
+  assert.deepEqual(roll("hard-press", actor(100), actor(50)), ["1d6 + 4"]);
+  const poisoned = actor(50, 100, { effects: [{ disabled: false, getFlag: () => "pokemon-status" }] });
+  assert.deepEqual(roll("hex", actor(100), poisoned), ["1d6 + 4", "4"]);
+  assert.deepEqual(roll("eruption", actor(100), null, "fire"), ["1d6 + 4", "3"]);
+  assert.deepEqual(roll("eruption", actor(99), null, "fire"), ["1d6 + 4"]);
+  assert.deepEqual(roll("dragon-energy", actor(65)), ["1d6 + 4", "3d6"]);
+  assert.deepEqual(roll("rage-fist", actor(35)), ["1d6 + 4", "6"]);
+  assert.deepEqual(roll("tackle", actor(10)), ["1d6 + 4"]);
+  game.user = undefined;
+});
