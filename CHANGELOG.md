@@ -4,6 +4,16 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.30.0] — 2026-10-22
+
+- **Más Moves de estado automatizados (tanda 2):**
+  - **Fire Lash:** al acertar y fallar la salvación de CON, los aliados suman +1 a sus ataques contra el objetivo
+    (acumulable hasta +5), como Leer.
+  - **Charm:** al fallar la salvación de WIS, el objetivo resta 2 a sus ataques, pero solo contra quien lo usó.
+  - **V-create:** la CA del usuario baja 2 hasta el inicio de su siguiente turno.
+  - **Glaciate:** cada impacto quita 5 ft de velocidad al objetivo durante el combate. Congelarlo al llegar a 0 y
+    que se caliente (una acción) siguen siendo del DM.
+
 ## [0.29.0] — 2026-10-22
 
 - **Moves que asustan, ciegan o apresan** (condiciones de D&D, no estados Pokémon):

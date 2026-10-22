@@ -327,6 +327,51 @@ function calculateTargetedBonus(
   }
 
 
+  // Charm: the attacker's own penalty, only against whoever charmed it.
+  for (
+    const effect
+    of attacker.effects ?? []
+  ) {
+
+    const bonus =
+      Number(
+        effect.getFlag?.(
+          MODULE_ID,
+          "attackVsSource"
+        )
+      );
+
+
+    if (
+      effect.disabled ||
+      !bonus ||
+      target.uuid !==
+        effect.getFlag(
+          MODULE_ID,
+          "sourceActorUuid"
+        )
+    ) {
+
+      continue;
+    }
+
+
+    total +=
+      bonus;
+
+
+    details.push({
+
+      name:
+        effect.name,
+
+      stacks: 1,
+
+      bonus
+    });
+  }
+
+
   return {
 
     total,

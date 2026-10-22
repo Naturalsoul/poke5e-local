@@ -247,3 +247,16 @@ test("next-attack roll modes are spent by the GM when the attack message is crea
   assert.equal(twice.deleted, undefined, "only the GM spends them");
   target.effects = [targetedEffect()];
 });
+
+test("Charm: the charmed attacker takes -2 only on attacks against whoever charmed it", () => {
+  const charm = sourceActorUuid => ({ name: "Charm", disabled: false,
+    getFlag: (moduleId, key) => (moduleId === "poke5e-local" ? { kind: "pokemon-modifier", attackVsSource: -2, sourceActorUuid }[key] : undefined) });
+  const saved = target.effects;
+  target.effects = [];
+  attacker.effects = [charm(target.uuid)];
+  assert.equal(runPreRollAttack().rollConfig.data.poke5eTargeted, -2);
+  attacker.effects = [charm("Actor.someone-else")];
+  assert.equal(runPreRollAttack().rollConfig.data.poke5eTargeted, undefined);
+  delete attacker.effects;
+  target.effects = saved;
+});

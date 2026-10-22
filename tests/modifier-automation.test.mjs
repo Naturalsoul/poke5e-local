@@ -845,3 +845,18 @@ test("Psycho Shift moves its user's status to a target that fails its save", asy
   assert.deepEqual(statusOf(target), [["burned", false]]);
   assert.equal(item.actor.effects.length, 0);
 });
+
+test("status riders batch 2: Fire Lash, Charm, V-create and Glaciate", () => {
+  const built = id => buildMoveModifierEffects({ id }, "en").effects[0];
+  const lash = built("fire-lash").flags[MODULE_ID];
+  assert.equal(lash.trigger, "hit-and-failed-save");
+  assert.deepEqual(lash.targetedAttack, { bonusPerStack: 1, alliesOnly: true, excludeSource: true });
+  assert.equal(lash.maxStacks, 5);
+  assert.equal(built("charm").flags[MODULE_ID].attackVsSource, -2);
+  assert.equal(built("charm").flags[MODULE_ID].trigger, "failed-save");
+  assert.equal(acValue(built("v-create")), "-2");
+  assert.equal(built("v-create").flags[MODULE_ID].expireAtStartTurn, true);
+  const glaciate = built("glaciate");
+  assert.ok(glaciate.changes.some(change => change.key === "system.attributes.movement.bonus" && change.value === "-5"));
+  assert.equal(glaciate.flags[MODULE_ID].trigger, "hit");
+});

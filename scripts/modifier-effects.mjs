@@ -25,7 +25,9 @@ export const AUTOMATED_MODIFIER_MOVES = new Set(["growl", "leer", "screech", "ta
   "fleur-cannon", "focus-blast", "geomancy", "glaive-rush", "headlong-rush", "hyperspace-fury", "leaf-tornado",
   "lunge", "luster-purge", "metal-claw", "metal-sound", "meteor-mash", "mirror-shot", "mist-ball", "moonblast",
   "mud-bomb", "muddy-water", "mystical-fire", "night-daze", "no-retreat", "overheat", "play-nice", "psycho-boost",
-  "seed-flare", "snarl", "spicy-extract", "spirit-break", "spotlight", "sweet-scent"]);
+  "seed-flare", "snarl", "spicy-extract", "spirit-break", "spotlight", "sweet-scent",
+  // Status riders batch 2.
+  "fire-lash", "charm", "v-create", "glaciate"]);
 
 
 /* ============================================================
@@ -470,6 +472,16 @@ const COMPACT_DEFINITIONS = Object.freeze({
     { duration: { seconds: 60 }, concentration: true }),
   "sweet-scent": en => rollModeDebuff(en ? "Sweet Scent — User's next two attacks with advantage" : "Dulce Aroma — Próximos dos ataques del usuario con ventaja",
     "failed-save", { against: 1, vsSource: true, nextAttack: 2 }, untilNextAttack),
+  // Like Leer, after a hit and a failed save.
+  "fire-lash": en => ({ name: en ? "Fire Lash — ally attacks +1" : "Látigo Ígneo — ataques aliados +1", target: "target",
+    trigger: "hit-and-failed-save", duration: { seconds: 60 }, stack: { key: "fire-lash", max: 5 }, changes: [],
+    targetedAttack: { bonusPerStack: 1, alliesOnly: true, excludeSource: true } }),
+  // Only its attacks against the user: read by targeted-modifier-engine.
+  charm: en => ({ name: en ? "Charm — Attacks against the user -2" : "Encanto — Ataques contra el usuario -2", target: "target",
+    trigger: "failed-save", duration: { seconds: 60 }, changes: [], attackVsSource: -2 }),
+  "v-create": en => selfBuff(en ? "V-create — AC -2" : "V de Fuego — CA -2", [ac(-2)], untilTurnStart),
+  // shortcut: freezing at speed 0 and warming up (an action) are the GM's.
+  glaciate: en => combatDebuff(en ? "Glaciate — Speed -5 ft" : "Mundo Gélido — Velocidad -5 ft", "hit", 12, [speedBonus(-5)]),
   // Not automated: the GM targets the creature and applies it with the chat button, like Growth.
   decorate: en => ({ name: en ? "Decorate — Attacks with advantage" : "Decoración — Ataques con ventaja", target: "target",
     trigger: "manual", duration: { seconds: 60 }, changes: [], rollModes: { own: 1 } })
@@ -1296,6 +1308,7 @@ function buildEffect(
             definition.targetedAttack ??
             null,
             rollModes: definition.rollModes ?? null,
+            attackVsSource: definition.attackVsSource ?? null,
 
             expireAtStartTurn:
                 Boolean(
