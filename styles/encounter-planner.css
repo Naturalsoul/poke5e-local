@@ -5621,14 +5621,36 @@ input[type="number"] {
 
 .poke5e-encounter-planner__footer
 button[data-action="generate"] {
-  grid-column:
-    1 / -1;
   width:
     100%;
 
   min-height:
     38px;
 }
+
+/* Publicar recompensa: next to Generar, gold like the rewards, quieter than the main action. */
+.poke5e-encounter-planner__footer
+button[data-action="publish-reward"] {
+  min-height:
+    38px;
+  padding:
+    7px 14px;
+  border-color:
+    color-mix(in srgb, var(--poke5e-ui-gold) 60%, transparent);
+  background:
+    color-mix(in srgb, var(--poke5e-ui-gold) 14%, transparent);
+  color:
+    var(--encounter-gold);
+  white-space:
+    nowrap;
+}
+
+.poke5e-encounter-planner__footer
+button[data-action="publish-reward"]:hover:not(:disabled) {
+  background:
+    color-mix(in srgb, var(--poke5e-ui-gold) 26%, transparent);
+}
+
 
 /* ============================================================
  * RESPONSIVE
@@ -6372,5 +6394,159 @@ button.is-primary {
   button:hover:not(:disabled) {
     transform:
       none;
+  }
+}
+
+
+/* ============================================================
+ * REWARD CARD (chat) AND EXP GAIN WINDOW
+ * ============================================================ */
+
+.poke5e-xp-reward {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.poke5e-xp-reward__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.poke5e-xp-reward__header > i {
+  color: var(--poke5e-ui-gold);
+  font-size: 18px;
+}
+
+.poke5e-xp-reward__header span,
+.poke5e-xp-reward__name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.poke5e-xp-reward__header small,
+.poke5e-xp-reward__name small {
+  opacity: 0.75;
+  font-size: var(--poke5e-ui-text-xs);
+}
+
+.poke5e-xp-reward__list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.poke5e-xp-reward__entry {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 4px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.poke5e-xp-reward__entry img {
+  width: 32px;
+  height: 32px;
+  border: none;
+  object-fit: contain;
+}
+
+.poke5e-xp-reward__entry button {
+  width: auto;
+  min-height: 26px;
+  margin: 0;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+.poke5e-xp-reward__received {
+  color: var(--poke5e-ui-success);
+  font-size: var(--poke5e-ui-text-sm);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.poke5e-xp-gain__body {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.poke5e-xp-gain__portrait {
+  width: 72px;
+  height: 72px;
+  border: none;
+  object-fit: contain;
+}
+
+.poke5e-xp-gain__info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.poke5e-xp-gain__info strong small {
+  opacity: 0.75;
+  font-weight: 600;
+}
+
+/* The games' EXP bar: a thin blue bar in a dark track. */
+.poke5e-xp-gain__bar {
+  height: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.45);
+  border-radius: 999px;
+  background: #1d2328;
+}
+
+.poke5e-xp-gain__bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(180deg, #7fc4ff, #2f86d8);
+}
+
+.poke5e-xp-gain__count {
+  font-size: 18px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.poke5e-xp-gain__message {
+  margin: 0;
+  font-weight: 700;
+}
+
+.poke5e-xp-gain.is-ready .poke5e-xp-gain__bar > span {
+  animation: poke5e-xp-ready 0.45s ease-in-out 3;
+  background: linear-gradient(180deg, #ffe680, #e0a51b);
+}
+
+.poke5e-xp-gain.is-ready .poke5e-xp-gain__message {
+  color: var(--poke5e-ui-gold);
+}
+
+.poke5e-xp-gain.is-capped .poke5e-xp-gain__message {
+  color: var(--poke5e-ui-muted);
+}
+
+@keyframes poke5e-xp-ready {
+  50% {
+    filter: brightness(1.8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poke5e-xp-gain.is-ready .poke5e-xp-gain__bar > span {
+    animation: none;
   }
 }

@@ -113,6 +113,7 @@ import {
 } from "./modifier-engine.mjs";
 import { registerMoveModifierAutomation } from "./modifier-automation.mjs";
 import { registerMoveCoverageNotice } from "./move-coverage-notice.mjs";
+import { registerEncounterReward } from "./encounter-xp-reward.mjs";
 
 import {
   registerPokemonTargetedModifierEngine
@@ -426,6 +427,7 @@ Hooks.once(
     registerPokemonModifierEngine();
     registerMoveModifierAutomation();
     registerMoveCoverageNotice();
+    registerEncounterReward();
     registerPokemonTargetedModifierEngine();
     registerPokemonPeriodicEngine();
     registerMultiTargetEngine();

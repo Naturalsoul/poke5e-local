@@ -11,6 +11,10 @@ import {
 } from "./encounter-query-service.mjs";
 
 import {
+  publishEncounterReward
+} from "./encounter-xp-reward.mjs";
+
+import {
   climbToNextTier,
   previewSteps
 } from "./encounter-difficulty-steps.mjs";
@@ -1166,7 +1170,7 @@ export class PokemonEncounterPlanner
                   class="poke5e-encounter-planner__optional-toggle${this._encounterState.optional ? " is-active" : ""}"
                   data-action="toggle-optional"
                   aria-pressed="${this._encounterState.optional ? "true" : "false"}"
-                  title="Un encuentro opcional no hace falta para avanzar: da XP de recuperación (más a los Pokémon más débiles) y sugiere un botín. En un encuentro guardado, se guarda al momento."
+                  title="Un encuentro opcional no hace falta para avanzar; el resumen de la ruta lo cuenta aparte. En un encuentro guardado, se guarda al momento."
                 >
                   <i
                     class="fa-solid ${this._encounterState.optional ? "fa-route" : "fa-flag-checkered"}"
@@ -2104,6 +2108,19 @@ export class PokemonEncounterPlanner
               </div>
 
             </div>
+            <button
+              type="button"
+              data-action="publish-reward"
+              title="Tras el combate: marca los Pokémon que participaron y publica en el chat la XP de cada uno; cada jugador la recibe."
+              ${context.rows.length ? "" : " disabled"}
+            >
+              <i
+                class="fa-solid fa-star"
+                aria-hidden="true"
+              ></i>
+              Publicar recompensa
+            </button>
+
             <button
               type="button"
               data-action="generate"
@@ -3794,6 +3811,17 @@ export class PokemonEncounterPlanner
       () => {
         void this
           .#undoStep();
+      }
+    );
+
+    root.querySelector(
+      '[data-action="publish-reward"]'
+    )?.addEventListener(
+      "click",
+
+      () => {
+        void this
+          .#publishReward();
       }
     );
 
@@ -5501,9 +5529,7 @@ export class PokemonEncounterPlanner
           party.participants,
           {
             context:
-              this.#xpContext(),
-            optional:
-              encounter.optional
+              this.#xpContext()
           }
         );
     }
@@ -6029,58 +6055,33 @@ export class PokemonEncounterPlanner
     );
   }
 
-  // An optional encounter's suggested loot: an item or berry, and a TM one of the rivals' species can learn.
-  #suggestLoot(
-    rows
-  ) {
-    const language =
-      getWorldLanguage();
 
-    const item =
-      selectEncounterItem({
-        items:
-          this.database.items,
-        chancePercent:
-          100,
-        categoryWeights: {
-          berry:
-            1,
-          "held-item":
-            1,
-          medicine:
-            1,
-          pokeball:
-            0
-        }
-      });
-
-    const tms =
-      rows.flatMap(
-        row =>
-          row.pokemon
-            .learnset
-            ?.tms ??
-          []
-      );
-
-    const tm =
-      tms[
-        Math.floor(
-          Math.random() *
-          tms.length
+  async #publishReward() {
+    const rows =
+      this._encounterState.rows
+        .map(
+          row =>
+            this.#prepareRow(
+              row
+            )
         )
-      ];
+        .filter(Boolean);
 
-    return [
-      item &&
-        localized(
-          item.name,
-          language,
-          item.id
+    if (!rows.length) {
+      return;
+    }
+
+    await publishEncounterReward({
+      rows:
+        this.#xpRows(
+          rows
         ),
-      tm &&
-        `MT ${tm.id}: ${resolveMoveNames([tm.moveId], this.database.moves, language)[0] ?? tm.moveId}`
-    ].filter(Boolean);
+      context:
+        this.#xpContext(),
+      name:
+        this._encounterState.name.trim() ||
+        "Encuentro"
+    });
   }
 
   /*
@@ -6132,7 +6133,7 @@ export class PokemonEncounterPlanner
         0
       );
 
-    // Its own share: in an optional encounter (catch-up XP), less than an even split.
+    // Its own share: an even split.
     const gained =
       encounterShare(
         this.#xpRows(
@@ -6141,11 +6142,7 @@ export class PokemonEncounterPlanner
         party.strongest.level,
         party.participants,
         {
-          context,
-          optional:
-            this._encounterState
-              .optional ===
-              true
+          context
         }
       );
 
@@ -6170,11 +6167,6 @@ export class PokemonEncounterPlanner
         `${party.strongest.name} (Nv. ${before.level}, ${percent(before.progress)}): ` +
         `${formatNumber(total)} XP si se derrota a todos ÷ ${party.participants} Pokémon que participan = ` +
         `${formatNumber(gained)} XP` +
-        (
-          this._encounterState.optional
-            ? " (opcional: XP de recuperación según su nivel)"
-            : ""
-        ) +
         ` → Nv. ${after.level}, ${percent(after.progress)}.` +
         (
           toLevel

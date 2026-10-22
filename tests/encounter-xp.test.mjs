@@ -30,11 +30,12 @@ test("progress: a gain as a share of the level, where it lands, and how many lik
   assert.equal(levelProgress(450000, 1000).toLevel, null, "level 20 has nowhere to go");
 });
 
-test("shares: an even split, but in an optional encounter the weaker Pokémon get more and the strongest less", () => {
+test("shares: an even split; with level scaling, the weaker Pokémon get more and the strongest less", () => {
   const rows = [{ level: 8, sr: 5, quantity: 2 }];
   assert.equal(encounterShare(rows, 10, 2), 8000, "2 × 8 000 between 2");
-  const strongest = encounterShare(rows, 10, 2, { optional: true });
-  const weaker = encounterShare(rows, 4, 2, { optional: true });
+  const context = { scaling: true, partyLevel: 10 };
+  const strongest = encounterShare(rows, 10, 2, { context });
+  const weaker = encounterShare(rows, 4, 2, { context });
   assert.equal(strongest, Math.round(8000 * levelScaling(8, 10)));
   assert.ok(weaker > 8000 && strongest < 8000, `${weaker} > 8000 > ${strongest}`);
 });

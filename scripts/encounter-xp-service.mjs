@@ -90,11 +90,11 @@ export function levelProgress(total, gained) {
 
 /**
  * One receiving Pokémon's share: the XP of every rival (as many as each row's quantity) divided among those taking
- * part. With level scaling, or in an optional encounter (catch-up XP), each rival's part is scaled against the
+ * part. With level scaling, each rival's part is scaled against the
  * receiver's own level, so the party's weaker Pokémon get more and the strongest less.
  */
-export function encounterShare(rows, receiverLevel, participants, { context = null, optional = false } = {}) {
-  const scaled = optional || context?.scaling;
+export function encounterShare(rows, receiverLevel, participants, { context = null } = {}) {
+  const scaled = context?.scaling;
   const total = rows.reduce((sum, row) => sum +
     calculatePokemonEncounterXp({ level: row.level, sr: row.sr, context: context && { ...context, scaling: false } }).defeated *
     (scaled ? levelScaling(row.level, receiverLevel) : 1) * row.quantity, 0);

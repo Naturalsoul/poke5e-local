@@ -4,6 +4,21 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.28.0] — 2026-10-22
+
+- **Los jugadores reciben la experiencia.** Nuevo botón **"Publicar recompensa"** en el planificador: el DM marca
+  los Pokémon que participaron (con la regla de Repartir Experiencia; cada parte se puede editar) y sale una tarjeta
+  en el chat con la XP de cada uno. Cada jugador pulsa **"Recibir"** en sus Pokémon (el DM también puede, por un
+  jugador ausente); queda anotado en el Pokémon, así que no se cobra dos veces, y la tarjeta muestra "Recibida" a
+  todos.
+- **Animación de la barra de EXP**, como en los juegos: se llena mientras el número cuenta, con un "tic" y, si el
+  Pokémon puede subir de nivel, destella, suena una fanfarria y su grito, y ofrece "Subir de nivel". Al tope del
+  Entrenador dice cuánta XP se pierde. Los sonidos se generan en el navegador (sin archivos) con el volumen de la
+  interfaz; con "reducir movimiento" la barra salta al final.
+- **Solo experiencia:** se quitan el dinero de los Entrenadores y el botín sugerido, que inventa el DM, y la "XP de
+  recuperación" de los encuentros opcionales (no es de poke5e). Un encuentro opcional sigue contando aparte en el
+  resumen de la ruta.
+
 ## [0.27.0] — 2026-10-22
 
 - **Vuelve la experiencia de poke5e.** El planificador calcula siempre con la regla tal cual: 200 × Nivel × SR por

@@ -29,7 +29,7 @@ Módulo de Foundry VTT para jugar **Pokémon 5e** ([poke5e.app](https://poke5e.a
 Importa Pokémon, Moves, Abilities y objetos, da hojas propias a Pokémon y entrenadores, y automatiza la mayor
 parte de las reglas de combate: tipos, STAB, estados, Abilities, rasgos de entrenador, capturas y más.
 
-- **Versión:** 0.27.0
+- **Versión:** 0.28.0
 - **Requisitos:** Foundry VTT 13 (13.351 o superior) o 14 (probado en 14.365), y D&D5e 5.3.3 o superior.
 - **Idiomas:** español e inglés (ajuste del módulo `language`).
 
@@ -123,8 +123,11 @@ parte, lo dice también, y el DM ve además la nota (en inglés).
     con cobertura súper eficaz; se ven en la composición antes de crear las hojas.
   - **Experiencia:** la regla de poke5e (200 × Nivel × SR por Pokémon derrotado, un quinto si se captura), dividida
     entre los Pokémon que participan. El power creep lo frena el tope de nivel por Entrenador.
-  - **Obligatorios y opcionales:** cada encuentro puede ser opcional (XP de recuperación: más a los Pokémon más
-    débiles, y botín). Cada ubicación resume su ruta.
+  - **Obligatorios y opcionales:** cada encuentro puede ser opcional; cada ubicación resume su ruta (cuántos de cada
+    tipo y cuánto avanzan).
+  - **Recompensa:** "Publicar recompensa" marca los Pokémon que participaron y publica en el chat la XP de cada uno.
+    Cada jugador pulsa "Recibir" en sus Pokémon y ve la barra de EXP llenarse (con sonido; si puede subir de nivel,
+    destella y ofrece subir). Solo XP: el dinero y el botín los decide el DM.
   - **Avance:** cuánto de un nivel le da el encuentro al Pokémon más fuerte de los jugadores, con la XP dividida
     entre los Pokémon que participan, y cuántos encuentros así le faltan para subir. Opcional, la XP según
     diferencia de nivel de la Gen V (Configuración → Poke5e - Experiencia según la diferencia de nivel).
