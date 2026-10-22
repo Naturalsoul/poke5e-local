@@ -94,6 +94,25 @@ test("non-attack Moves play on use, attacks and areas on a point wait; the setti
 
 const settle = () => new Promise(resolve => setImmediate(resolve));
 
+test("an attack's animation and sound wait for Dice So Nice to show the roll in chat", async () => {
+  let reveal;
+  globalThis.game.dice3d = { waitFor3DAnimationByMessageID: id => (id === "roll-message" ? new Promise(resolve => { reveal = resolve; }) : null) };
+  globalThis.requestAnimationFrame = callback => setImmediate(callback);
+  played.length = 0;
+  heard.length = 0;
+  const item = move("ember");
+  animations.onAttackOutcome({ hit: false }, { activity: { type: "attack", item }, roll: { parent: { id: "roll-message" } } });
+  for (let tick = 0; tick < 5; tick++) {await settle();}
+  assert.equal(played.length, 0, "nothing gives the miss away while the dice roll");
+  assert.equal(heard.length, 0);
+  reveal();
+  for (let tick = 0; tick < 10; tick++) {await settle();}
+  assert.equal(played.length, 1);
+  assert.equal(heard.length, 1);
+  delete globalThis.game.dice3d;
+  delete globalThis.requestAnimationFrame;
+});
+
 test("Moves imported with an old definition (no area) still get their size and their template", async () => {
   const legacy = move("earthquake");
   legacy.setFlag(MODULE_ID, "moveDefinition", { ...legacy.getFlag(MODULE_ID, "moveDefinition"), area: undefined });

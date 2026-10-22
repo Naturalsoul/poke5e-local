@@ -4,6 +4,11 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.28.8] — 2026-10-22
+
+- **Las animaciones y sonidos de los ataques esperan a Dice So Nice:** ya no se reproducen mientras ruedan los
+  dados (delataban si el Move acertaba o fallaba). Salen cuando el resultado aparece en el chat.
+
 ## [0.28.7] — 2026-10-22
 
 - **Aviso de automatización de los Moves solo para el DM:** el mensaje "Su efecto especial no está automatizado" /
