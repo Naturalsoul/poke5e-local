@@ -127,6 +127,10 @@ const LABELS = {
       remaining =>
         `Faltan ${remaining} XP para subir de nivel`,
 
+    pokemonLevelUpCapped:
+      level =>
+        `Al nivel de su Entrenador (Nv. ${level})`,
+
     melee:
       "Cuerpo a cuerpo",
 
@@ -224,6 +228,10 @@ const LABELS = {
     pokemonLevelUpLocked:
       remaining =>
         `${remaining} XP remaining to level up`,
+
+    pokemonLevelUpCapped:
+      level =>
+        `At its trainer's level (Lv. ${level})`,
 
     melee:
       "Melee",
@@ -1176,12 +1184,19 @@ function pokemonLevelUpButton(
     experience.readyToLevel;
 
 
+  const lockedTitle =
+    experience.atLevelCap
+      ? labels.pokemonLevelUpCapped(
+        experience.levelCap
+      )
+      : labels.pokemonLevelUpLocked(
+        experience.xpRemaining
+      );
+
   const title =
     readyToLevel
       ? labels.pokemonLevelUp
-      : labels.pokemonLevelUpLocked(
-          experience.xpRemaining
-        );
+      : lockedTitle;
 
 
   return actionButton({

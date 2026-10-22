@@ -59,11 +59,11 @@ const SHEET_LABELS = {
     trainerSheetUnavailable:
       "No se pudo resolver la ventana del Trainer.",
 
-    maxSr:
-      "SR MÁX.",
+    maxLevel:
+      "NV. MÁX.",
 
-    maxSrTitle:
-      "SR máximo controlable",
+    maxLevelTitle:
+      "Nivel máximo de los Pokémon que puede controlar. Sus Pokémon suben de nivel hasta el nivel del Entrenador.",
 
     speed:
       "SPD",
@@ -133,11 +133,11 @@ const SHEET_LABELS = {
     trainerSheetUnavailable:
       "The Trainer window could not be resolved.",
 
-    maxSr:
-      "MAX SR",
+    maxLevel:
+      "MAX LV",
 
-    maxSrTitle:
-      "Maximum controllable SR",
+    maxLevelTitle:
+      "Highest level of Pokémon they can control. Their Pokémon level up to the trainer's level.",
 
     speed:
       "SPD",
@@ -307,7 +307,7 @@ function getSheetLabels() {
   ];
 }
 
-function getTrainerMaximumSr(
+function getTrainerControlLevel(
   trainer
 ) {
 
@@ -336,7 +336,7 @@ function getTrainerMaximumSr(
     });
 
 
-  return limits.maxSr;
+  return level + limits.controlLevelBonus;
 }
 
 function pokemonFromId(
@@ -1019,7 +1019,7 @@ function updateTrainerSidebar(
 
 
   const [
-    maxSrLozenge,
+    maxLevelLozenge,
     speedLozenge,
     proficiencyLozenge
   ] =
@@ -1027,19 +1027,19 @@ function updateTrainerSidebar(
 
 
   configureTrainerSidebarMetric(
-    maxSrLozenge,
+    maxLevelLozenge,
     {
       metric:
-        "max-sr",
+        "max-level",
 
       label:
-        labels.maxSr,
+        labels.maxLevel,
 
       title:
-        labels.maxSrTitle,
+        labels.maxLevelTitle,
 
       value:
-        getTrainerMaximumSr(
+        getTrainerControlLevel(
           trainer
         )
     }

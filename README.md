@@ -29,7 +29,7 @@ Módulo de Foundry VTT para jugar **Pokémon 5e** ([poke5e.app](https://poke5e.a
 Importa Pokémon, Moves, Abilities y objetos, da hojas propias a Pokémon y entrenadores, y automatiza la mayor
 parte de las reglas de combate: tipos, STAB, estados, Abilities, rasgos de entrenador, capturas y más.
 
-- **Versión:** 0.25.0
+- **Versión:** 0.26.0
 - **Requisitos:** Foundry VTT 13 (13.351 o superior) o 14 (probado en 14.365), y D&D5e 5.3.3 o superior.
 - **Idiomas:** español e inglés (ajuste del módulo `language`).
 
@@ -130,6 +130,8 @@ parte, lo dice también, y el DM ve además la nota (en inglés).
   - **Avance:** cuánto de un nivel le da el encuentro al Pokémon más fuerte de los jugadores, con la XP dividida
     entre los Pokémon que participan, y cuántos encuentros así le faltan para subir. Opcional, la XP según
     diferencia de nivel de la Gen V (Configuración → Poke5e - Experiencia según la diferencia de nivel).
+- **Tope de nivel:** los Pokémon de un Entrenador suben de nivel solo hasta el nivel del Entrenador (la XP de más se
+  pierde) y el Entrenador controla Pokémon hasta su nivel (Guru: uno más). El SR solo cuenta para la XP y la captura.
 - **Diseño de las hojas** (Configuración → Poke5e - Diseño de las hojas, por jugador): Team Rocket o D&D 5e.
 - **Fakemon Studio:** crea Pokémon propios con asistente, evoluciones, Moves y copia de seguridad.
 - Transiciones de batalla con sonido.

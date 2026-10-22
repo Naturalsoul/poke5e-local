@@ -4,6 +4,18 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.26.0] — 2026-10-22
+
+- **Tope de nivel por Entrenador** (regla de mesa contra el power creep). Un Pokémon con Entrenador solo sube de
+  nivel hasta el nivel de su Entrenador: al llegar, la ficha y el centro de mando dicen "Al nivel de su
+  Entrenador" y la subida de nivel se bloquea con un aviso. La XP que pase del umbral del nivel siguiente se pierde
+  (la barra se queda llena y sube en cuanto sube el Entrenador). Los Pokémon salvajes y de rivales no tienen tope.
+- **Control por nivel, no por SR.** El Entrenador puede desplegar o cambiar a Pokémon de hasta su nivel; si el
+  Pokémon es de nivel mayor, se bloquea con un mensaje. La senda **Guru** pasa de "+1 al SR máximo" a controlar
+  Pokémon de hasta 1 nivel más que el suyo. El SR máximo sale de la progresión del Entrenador: la hoja muestra
+  **NV. MÁX.** en su lugar, igual que la creación y la subida de nivel del Entrenador, y "Mejora de Control" habla
+  de nivel. El SR queda solo para la experiencia y la captura.
+
 ## [0.25.0] — 2026-10-21
 
 - **Diseño de las hojas.** Nuevo ajuste "Poke5e - Diseño de las hojas" (Configuración, por jugador), pensado

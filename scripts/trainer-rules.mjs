@@ -7,122 +7,102 @@ const LEVEL_RULES =
 
     1: {
       proficiencyBonus: 2,
-      pokeslots: 3,
-      maxSr: 2
+      pokeslots: 3
     },
 
     2: {
       proficiencyBonus: 2,
-      pokeslots: 3,
-      maxSr: 2
+      pokeslots: 3
     },
 
     3: {
       proficiencyBonus: 2,
-      pokeslots: 3,
-      maxSr: 5
+      pokeslots: 3
     },
 
     4: {
       proficiencyBonus: 2,
-      pokeslots: 3,
-      maxSr: 5
+      pokeslots: 3
     },
 
     5: {
       proficiencyBonus: 3,
-      pokeslots: 4,
-      maxSr: 5
+      pokeslots: 4
     },
 
     6: {
       proficiencyBonus: 3,
-      pokeslots: 4,
-      maxSr: 8
+      pokeslots: 4
     },
 
     7: {
       proficiencyBonus: 3,
-      pokeslots: 4,
-      maxSr: 8
+      pokeslots: 4
     },
 
     8: {
       proficiencyBonus: 3,
-      pokeslots: 4,
-      maxSr: 10
+      pokeslots: 4
     },
 
     9: {
       proficiencyBonus: 4,
-      pokeslots: 4,
-      maxSr: 10
+      pokeslots: 4
     },
 
     10: {
       proficiencyBonus: 4,
-      pokeslots: 5,
-      maxSr: 10
+      pokeslots: 5
     },
 
     11: {
       proficiencyBonus: 4,
-      pokeslots: 5,
-      maxSr: 12
+      pokeslots: 5
     },
 
     12: {
       proficiencyBonus: 4,
-      pokeslots: 5,
-      maxSr: 12
+      pokeslots: 5
     },
 
     13: {
       proficiencyBonus: 5,
-      pokeslots: 5,
-      maxSr: 12
+      pokeslots: 5
     },
 
     14: {
       proficiencyBonus: 5,
-      pokeslots: 5,
-      maxSr: 14
+      pokeslots: 5
     },
 
     15: {
       proficiencyBonus: 5,
-      pokeslots: 6,
-      maxSr: 14
+      pokeslots: 6
     },
 
     16: {
       proficiencyBonus: 5,
-      pokeslots: 6,
-      maxSr: 14
+      pokeslots: 6
     },
 
     17: {
       proficiencyBonus: 6,
-      pokeslots: 6,
-      maxSr: 15
+      pokeslots: 6
     },
 
     18: {
       proficiencyBonus: 6,
-      pokeslots: 6,
-      maxSr: 15
+      pokeslots: 6
     },
 
     19: {
       proficiencyBonus: 6,
-      pokeslots: 6,
-      maxSr: 15
+      pokeslots: 6
     },
 
     20: {
       proficiencyBonus: 6,
-      pokeslots: 6,
-      maxSr: 15
+      pokeslots: 6
     }
   });
 
@@ -667,7 +647,7 @@ export const TRAINER_PATHS =
     guru: {
       id: "guru",
       name: "Guru",
-      maxSrBonus:
+      controlLevelBonus:
         1
     },
 
@@ -732,11 +712,10 @@ export function getTrainerProgressionLimits(
       levelRule
         .pokeslots,
 
-    maxSr:
-      levelRule
-        .maxSr +
+    // Levels above the trainer's that they can still control (Guru).
+    controlLevelBonus:
       Number(
-        path?.maxSrBonus ??
+        path?.controlLevelBonus ??
         0
       )
   };

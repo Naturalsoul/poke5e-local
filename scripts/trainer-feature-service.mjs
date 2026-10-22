@@ -111,9 +111,9 @@ const PATH_DESCRIPTIONS =
 
     guru: {
       es:
-        "Tu Max SR aumenta permanentemente en +1.",
+        "Puedes controlar Pokémon de hasta 1 nivel más que el tuyo (tus Pokémon siguen subiendo solo hasta tu nivel).",
       en:
-        "Your Max SR permanently increases by +1."
+        "You can control Pokémon up to 1 level above yours (your Pokémon still only level up to your level)."
     },
 
     "pokemon-breeder": {
@@ -1681,8 +1681,8 @@ function controlUpgradeFeatureSource(
     description:
       paragraphs([
         language === "es"
-          ? `Puedes controlar Pokémon de hasta SR ${limits.maxSr}.`
-          : `You can control Pokémon up to SR ${limits.maxSr}.`
+          ? `Puedes controlar Pokémon de hasta Nv. ${level + limits.controlLevelBonus}, y tus Pokémon suben de nivel hasta el tuyo.`
+          : `You can control Pokémon up to level ${level + limits.controlLevelBonus}, and your Pokémon level up to your level.`
       ])
   });
 }

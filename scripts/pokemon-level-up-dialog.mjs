@@ -1762,6 +1762,22 @@ export async function openPokemonLevelUpDialog(
 
 
   if (
+    initialPreview
+      .experience
+      .atLevelCap
+  ) {
+
+    ui.notifications.warn(
+      language === "en"
+        ? `${pokemon.name} is already at its trainer's level (Lv. ${initialPreview.experience.levelCap}).`
+        : `${pokemon.name} ya está al nivel de su Entrenador (Nv. ${initialPreview.experience.levelCap}).`
+    );
+
+    return null;
+  }
+
+
+  if (
     !initialPreview
       .experience
       .readyToLevel

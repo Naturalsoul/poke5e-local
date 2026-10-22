@@ -545,6 +545,10 @@ const LABELS = {
     experienceRemaining:
       "Faltan",
 
+    atLevelCap:
+      level =>
+        `Al nivel de su Entrenador (Nv. ${level}): no sube más hasta que su Entrenador suba de nivel`,
+
     readyToLevel:
       "Listo para subir de nivel",
 
@@ -855,6 +859,10 @@ const LABELS = {
 
     experienceRemaining:
       "Remaining",
+
+    atLevelCap:
+      level =>
+        `At its trainer's level (Lv. ${level}): no more levels until the trainer levels up`,
 
     readyToLevel:
       "Ready to level up",
@@ -2782,7 +2790,7 @@ function experienceMarkup(
       `;
 
 
-  const remainingMarkup =
+  let remainingMarkup =
     !experience.isMaxLevel &&
     !experience.readyToLevel
       ? `
@@ -2793,6 +2801,19 @@ function experienceMarkup(
         </small>
       `
       : "";
+
+
+  if (
+    experience.atLevelCap &&
+    !experience.isMaxLevel
+  ) {
+
+    remainingMarkup = `
+      <small class="poke5e-pokemon-experience__cap">
+        ${escapeHtml(labels.atLevelCap(experience.levelCap))}
+      </small>
+    `;
+  }
 
 
   const readyMarkup =

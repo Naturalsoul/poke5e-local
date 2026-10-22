@@ -293,8 +293,8 @@ const LABELS = {
     selectionLimitReached:
       "Ya seleccionaste el máximo de 2 opciones.",
 
-    maxSr:
-      "Max SR",
+    maxLevel:
+      "Max Lv",
 
     pokeslots:
       "Pokéslots",
@@ -378,9 +378,9 @@ const LABELS = {
     requires:
       "Requiere",
 
-    maxSrBonus:
+    controlLevelBonus:
       value =>
-        `Max SR +${value}`,
+        `Max Lv +${value}`,
 
     chooseTwo:
       "Debes elegir exactamente 2 opciones distintas.",
@@ -523,8 +523,8 @@ const LABELS = {
     selectionLimitReached:
       "You already selected the maximum of 2 options.",
 
-    maxSr:
-      "Max SR",
+    maxLevel:
+      "Max Lv",
 
     pokeslots:
       "Pokéslots",
@@ -608,9 +608,9 @@ const LABELS = {
     requires:
       "Requires",
 
-    maxSrBonus:
+    controlLevelBonus:
       value =>
-        `Max SR +${value}`,
+        `Max Lv +${value}`,
 
     chooseTwo:
       "Choose exactly 2 different options.",
@@ -1358,14 +1358,14 @@ function pathBenefits(
 
 
   if (
-    path.maxSrBonus
+    path.controlLevelBonus
   ) {
 
     benefits.push(
       benefitChip(
         labels.pathFeature,
-        labels.maxSrBonus(
-          path.maxSrBonus
+        labels.controlLevelBonus(
+          path.controlLevelBonus
         )
       )
     );
@@ -3371,11 +3371,11 @@ function summaryMarkup(
         <span>
 
           <small>
-            ${labels.maxSr}
+            ${labels.maxLevel}
           </small>
 
           <strong>
-            ${limits.maxSr}
+            ${level + limits.controlLevelBonus}
           </strong>
 
         </span>
