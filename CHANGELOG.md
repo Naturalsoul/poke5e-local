@@ -4,6 +4,14 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.36.0] — 2026-10-22
+
+- **Golpes múltiples:** al acertar Arm Thrust, Bone Rush, Bullet Seed, Comet Punch, Double Slap, Fury Attack, Fury
+  Swipes, Icicle Spear, Pin Missile, Rock Blast, Spike Cannon, Tail Slap o Water Shuriken, se tira la cadena de d4
+  (cada 3 o 4 es otro golpe, hasta cuatro) y el daño extra sale en el chat como tirada de daño, lista para aplicar.
+  Barrage tira 1d4 proyectiles (1d4 cada uno).
+- **Jump Kick / High Jump Kick:** si fallan, el usuario recibe 1 de daño. **Supercell Slam:** recibe su competencia.
+
 ## [0.35.0] — 2026-10-22
 
 - **Daño según los PG** (se añade a la tirada de daño antes de lanzarla; el objetivo es el que tengas marcado):

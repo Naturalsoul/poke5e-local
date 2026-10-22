@@ -10,6 +10,9 @@ import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
  * One-off effects of a few Moves, run by the active GM from the chat messages (after Dice So Nice):
  * - Clear Smog: on a hit, the target's stat changes are reset.
  * - Incinerate: on a hit, the target's held berry burns to ash.
+ * - Multi-hit Moves (Bullet Seed, Fury Attack…): on a hit, a d4 chain (3 or 4: one more 1d4 hit, up to four),
+ *   and Barrage's 1d4 projectiles. The extra damage is posted as a damage roll to apply from chat.
+ * - Jump Kick, High Jump Kick and Supercell Slam: on a miss, the user takes 1 (or its proficiency) damage.
  * - Eternabeam: its user is incapacitated until the end of its next turn.
  * - Moves with a wider critical range (19-20, Fickle Beam 17-20, Frost Breath 16-20), set on the roll itself.
  * - Feint Attack: always rolled with advantage.
@@ -23,9 +26,11 @@ const MODULE_ID = "poke5e-local";
 
 const LABELS = {
   es: { cleared: "pierde sus cambios de estadísticas", burned: name => `se queda sin ${name}: se ha reducido a cenizas`,
-    worn: "Eternabeam — Incapacitado" },
+    worn: "Eternabeam — Incapacitado", chain: "Golpes extra", extraHits: count => `${count} golpe(s) extra`,
+    crash: "se estrella y recibe" },
   en: { cleared: "loses its stat changes", burned: name => `loses its ${name}: it burned to ash`,
-    worn: "Eternabeam — Incapacitated" }
+    worn: "Eternabeam — Incapacitated", chain: "Extra hits", extraHits: count => `${count} extra hit(s)`,
+    crash: "crashes and takes" }
 };
 const text = () => LABELS[game.settings.get(MODULE_ID, "language") === "en" ? "en" : "es"];
 const escape = value => foundry.utils.escapeHTML(String(value ?? ""));
@@ -40,6 +45,62 @@ async function chat(actor, html) {
   await ChatMessage.implementation.create({ speaker: ChatMessage.implementation.getSpeaker({ actor }), content: `<p>${html}</p>` });
 }
 
+const speaker = actor => ChatMessage.implementation.getSpeaker({ actor });
+
+async function shownRoll(roll, actor, flavor, flags = {}) {
+  const message = await roll.toMessage({ speaker: speaker(actor), flavor, flags });
+  await game.dice3d?.waitFor3DAnimationByMessageID?.(message?.id);
+  return message;
+}
+
+// The extra hits' damage, as a dnd5e damage roll so it can be applied from its chat card.
+async function extraDamage(count, { item, user }) {
+  if (count <= 0) {return;}
+  const type = item.getFlag(MODULE_ID, "moveDefinition")?.type;
+  const roll = await new CONFIG.Dice.DamageRoll(`${count}d4`, {}, { type, types: type ? [type] : [] }).evaluate();
+  await shownRoll(roll, user, `${escape(item.name)} — ${text().extraHits(count)}`, { dnd5e: { roll: { type: "damage" } } });
+}
+
+// d4 after each hit: 3 or 4 is one more hit, up to four more.
+export async function rollHitChain() {
+  let hits = 0;
+  const results = [];
+  while (hits < 4) {
+    const roll = await new Roll("1d4").evaluate();
+    results.push(roll);
+    if (roll.total < 3) {break;}
+    hits++;
+  }
+  return { hits, results };
+}
+
+async function chainHits(_target, context) {
+  const { hits, results } = await rollHitChain();
+  const message = await ChatMessage.implementation.create({ speaker: speaker(context.user), rolls: results,
+    flavor: `${escape(context.item.name)} — ${text().chain}: ${results.map(roll => roll.total).join(", ")}` });
+  await game.dice3d?.waitFor3DAnimationByMessageID?.(message?.id);
+  await extraDamage(hits, context);
+}
+
+// shortcut: each projectile is 1d4 as written, even where the Move's dice scale with level.
+async function barrageHits(_target, context) {
+  const roll = await new Roll("1d4").evaluate();
+  await shownRoll(roll, context.user, `${escape(context.item.name)} — ${text().chain}`);
+  await extraDamage(roll.total - 1, context);
+}
+
+export const MISS_RIDERS = Object.freeze({
+  "jump-kick": () => 1,
+  "high-jump-kick": () => 1,
+  "supercell-slam": user => Number(user?.system?.attributes?.prof) || 0
+});
+
+async function crash(user, amount) {
+  if (!user || amount <= 0) {return;}
+  await user.applyDamage(amount);
+  await chat(user, `<strong>${escape(user.name)}</strong> ${text().crash} ${amount}.`);
+}
+
 export const HIT_RIDERS = Object.freeze({
   "clear-smog": async target => {
     const ids = Array.from(target.effects ?? []).filter(effect => effect.getFlag?.(MODULE_ID, "kind") === "pokemon-modifier")
@@ -48,6 +109,9 @@ export const HIT_RIDERS = Object.freeze({
     await target.deleteEmbeddedDocuments("ActiveEffect", ids);
     await chat(target, `<strong>${escape(target.name)}</strong> ${text().cleared}.`);
   },
+  ...Object.fromEntries(["arm-thrust", "bone-rush", "bullet-seed", "comet-punch", "double-slap", "fury-attack", "fury-swipes",
+    "icicle-spear", "pin-missile", "rock-blast", "spike-cannon", "tail-slap", "water-shuriken"].map(id => [id, chainHits])),
+  barrage: barrageHits,
   incinerate: async target => {
     const held = getPokemonHeldItem(target);
     if (held?.getFlag?.(MODULE_ID, "itemType") !== "berry") {return;}
@@ -61,9 +125,9 @@ const crit19 = ["air-cutter", "aqua-cutter", "attack-order", "blaze-kick", "crab
   "shadow-claw", "slash"];
 export const CRITICAL_RANGES = Object.freeze({ ...Object.fromEntries(crit19.map(id => [id, 19])), "fickle-beam": 17, "frost-breath": 16 });
 
-// Lowest threshold wins, so Super Luck or another source never narrows the Move's own range.
 const ADVANTAGE_MOVES = new Set(["feint-attack"]);
 
+// Lowest threshold wins, so Super Luck or another source never narrows the Move's own range.
 export function onPreRollAttackCritical(config) {
   const id = moveId(config?.subject?.item);
   const threshold = CRITICAL_RANGES[id];
@@ -121,13 +185,14 @@ export function onPreRollDamageRiders(config) {
 
 async function onAttackMessage(message) {
   const item = message.getAssociatedItem?.();
-  const rider = HIT_RIDERS[moveId(item)];
+  const id = moveId(item);
   const roll = message.rolls?.[0];
-  if (!rider || !roll) {return;}
+  if (!roll || (!HIT_RIDERS[id] && !MISS_RIDERS[id])) {return;}
   await game.dice3d?.waitFor3DAnimationByMessageID?.(message.id);
   const outcome = buildAttackOutcome(roll, message.getAssociatedActivity?.());
-  const target = outcome.hit === true ? actorFromUuid(outcome.targetActorUuid) : null;
-  if (target) {await rider(target);}
+  if (outcome.hit === false && MISS_RIDERS[id]) {await crash(item.actor, MISS_RIDERS[id](item.actor));}
+  const target = outcome.hit === true && HIT_RIDERS[id] ? actorFromUuid(outcome.targetActorUuid) : null;
+  if (target) {await HIT_RIDERS[id](target, { item, user: item.actor });}
 }
 
 export function eternabeamEffect() {

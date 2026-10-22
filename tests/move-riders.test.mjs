@@ -95,3 +95,24 @@ test("HP-based damage: low HP multiplies Flail, a hurt target doubles Brine, bon
   assert.deepEqual(roll("tackle", actor(10)), ["1d6 + 4"]);
   game.user = undefined;
 });
+
+test("multi-hit chain: each 3 or 4 on the d4 is one more hit, up to four", async () => {
+  const { rollHitChain } = await import("../scripts/move-riders.mjs");
+  const run = async totals => {
+    const queue = [...totals];
+    globalThis.Roll = class { async evaluate() { this.total = queue.shift(); return this; } };
+    return (await rollHitChain()).hits;
+  };
+  assert.equal(await run([2]), 0);
+  assert.equal(await run([4, 3, 1]), 2);
+  assert.equal(await run([4, 4, 4, 4, 4]), 4);
+});
+
+test("Jump Kick and Supercell Slam hurt their user on a miss", async () => {
+  const { MISS_RIDERS } = await import("../scripts/move-riders.mjs");
+  const user = { system: { attributes: { prof: 3 } } };
+  assert.equal(MISS_RIDERS["jump-kick"](user), 1);
+  assert.equal(MISS_RIDERS["high-jump-kick"](user), 1);
+  assert.equal(MISS_RIDERS["supercell-slam"](user), 3);
+  assert.equal(typeof HIT_RIDERS["bullet-seed"], "function");
+});
