@@ -143,3 +143,36 @@ test("battle-state damage: boosts add dice, a missed last attack powers up, cons
   game.user = undefined;
   game.combat = undefined;
 });
+
+test("size, DEX and frustration change the damage; Hold Back leaves 1 HP", async () => {
+  const { onPreRollDamageRiders, onPreRollAttackCritical, onPreApplyDamage, recordAttack, clearAttackHistory } = await import("../scripts/move-riders.mjs");
+  const actor = (size, dex = 10, effects = []) => ({ uuid: `Actor.${size}`, effects, system: { traits: { size }, abilities: { str: { mod: 4 }, dex: { value: dex } },
+    attributes: { hp: { value: 20, max: 20 } } } });
+  const item = id => createFlagDocument({ flags: { [M]: { kind: "move", sourceId: id } } });
+  const roll = (id, user, target = null) => {
+    game.user = { targets: target ? new Set([{ actor: target }]) : new Set() };
+    const config = { subject: { item: item(id), actor: user, attack: { ability: "str" } }, rolls: [{ parts: ["1d8 + 4"] }] };
+    onPreRollDamageRiders(config);
+    return config.rolls[0].parts;
+  };
+  assert.deepEqual(roll("heavy-slam", actor("huge"), actor("med")), ["1d8 + 4", "8"], "two sizes above: MOVE twice");
+  assert.deepEqual(roll("body-press", actor("med"), actor("med")), ["1d8 + 4"]);
+  assert.deepEqual(roll("gyro-ball", actor("med", 8), actor("med", 16)), ["1d8 + 4", "1d8"]);
+  clearAttackHistory();
+  const sniper = actor("sm");
+  recordAttack({ actorUuid: sniper.uuid, moveId: "snipe-shot", hit: true, advantage: true });
+  assert.deepEqual(roll("snipe-shot", sniper), ["1d8 + 4", "1d8"]);
+  const lowered = actor("med", 10, [{ disabled: false, changes: [{ value: "-1" }], getFlag: (_m, key) => (key === "kind" ? "pokemon-modifier" : undefined) }]);
+  assert.deepEqual(roll("lash-out", lowered), ["1d8 + 4", "4"]);
+  const attack = { subject: { item: item("lash-out"), actor: lowered }, rolls: [{ options: {} }] };
+  onPreRollAttackCritical(attack);
+  assert.equal(attack.rolls[0].options.advantage, true);
+  const holdBack = { getAssociatedItem: () => item("hold-back") };
+  const updates = { "system.attributes.hp.value": -3 };
+  onPreApplyDamage(actor("med"), 23, updates, { originatingMessage: holdBack });
+  assert.equal(updates["system.attributes.hp.value"], 1);
+  const other = { "system.attributes.hp.value": -3 };
+  onPreApplyDamage(actor("med"), 23, other, { originatingMessage: { getAssociatedItem: () => item("tackle") } });
+  assert.equal(other["system.attributes.hp.value"], -3);
+  game.user = undefined;
+});

@@ -22,6 +22,10 @@ import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
  *   boost on the target), Stomping Tantrum (double dice) and Temper Flare (+1 die) after a missed attack, Fury Cutter
  *   and Ice Ball (dice doubling each consecutive round they hit, up to x8) and Power-Up Punch (+1 die per
  *   consecutive hit on the same target, up to double), from each Pokémon's recent attacks.
+ * - Size and stats: Body Press (+MOVE against a smaller target), Heat Crash and Heavy Slam (+MOVE per size above it),
+ *   Gyro Ball (double dice when its DEX is lower), Snipe Shot (double dice when rolled with advantage) and Lash Out
+ *   (advantage and +MOVE while it has a status or a lowered stat).
+ * - Hold Back: the damage it deals never takes the target below 1 HP.
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
@@ -86,11 +90,11 @@ const ADVANTAGE_MOVES = new Set(["feint-attack"]);
 export function onPreRollAttackCritical(config) {
   const id = moveId(config?.subject?.item);
   const threshold = CRITICAL_RANGES[id];
-  if (!threshold && !ADVANTAGE_MOVES.has(id)) {return;}
+  if (!threshold && !ADVANTAGE_MOVES.has(id) && id !== "lash-out") {return;}
   for (const rollConfig of config.rolls ?? []) {
     rollConfig.options ??= {};
     if (threshold) {rollConfig.options.criticalSuccess = Math.min(rollConfig.options.criticalSuccess ?? 20, threshold);}
-    if (ADVANTAGE_MOVES.has(id)) {rollConfig.options.advantage = true;}
+    if (ADVANTAGE_MOVES.has(id) || (id === "lash-out" && frustrated(config.subject.actor))) {rollConfig.options.advantage = true;}
   }
 }
 
@@ -113,7 +117,8 @@ const history = new Map();
 export function recordAttack(outcome) {
   if (!outcome?.actorUuid || outcome.hit === null) {return;}
   const entries = history.get(outcome.actorUuid) ?? [];
-  entries.push({ moveId: outcome.moveId, hit: outcome.hit, targetUuid: outcome.targetActorUuid, round: game.combat?.round ?? null });
+  entries.push({ moveId: outcome.moveId, hit: outcome.hit, targetUuid: outcome.targetActorUuid, round: game.combat?.round ?? null,
+    advantage: outcome.advantage === true });
   history.set(outcome.actorUuid, entries.slice(-10));
 }
 export const clearAttackHistory = () => history.clear();
@@ -134,6 +139,16 @@ function streak(actor, id, { rounds = false, sameTarget = false } = {}) {
     count++;
   }
   return count;
+}
+const SIZES = ["tiny", "sm", "med", "lg", "huge", "grg"];
+const sizeRank = actor => SIZES.indexOf(actor?.system?.traits?.size);
+const sizesAbove = (user, target) => (sizeRank(user) < 0 || sizeRank(target) < 0 ? 0 : Math.max(0, sizeRank(user) - sizeRank(target)));
+const dexScore = actor => Number(actor?.system?.abilities?.dex?.value) || 0;
+// Lash Out: a status, or a lowered stat (a penalty, or a Leer-like mark that helps its attackers).
+export function frustrated(actor) {
+  return hasStatus(actor) || Array.from(actor?.effects ?? []).some(effect => !effect.disabled
+    && effect.getFlag?.(MODULE_ID, "kind") === "pokemon-modifier"
+    && (Boolean(effect.getFlag(MODULE_ID, "targetedAttack")) || Array.from(effect.changes ?? []).some(change => Number(change.value) < 0)));
 }
 const die = (dice, count) => (count > 0 && dice ? [`${dice.number * count}d${dice.faces}`] : []);
 const oneDie = (dice, count) => (count > 0 && dice ? [`${count}d${dice.faces}`] : []);
@@ -161,6 +176,12 @@ export const DAMAGE_RIDERS = Object.freeze({
     const bonus = Math.floor(((Number(hp?.max) || 0) - (Number(hp?.value) || 0)) / 10);
     return { extra: bonus > 0 ? [bonus] : [] };
   },
+  "body-press": ({ user, target, activity }) => ({ extra: sizesAbove(user, target) > 0 ? [moveModifier(user, activity)] : [] }),
+  "heat-crash": ({ user, target, activity }) => ({ extra: sizesAbove(user, target) > 0 ? [moveModifier(user, activity) * sizesAbove(user, target)] : [] }),
+  "heavy-slam": ({ user, target, activity }) => ({ extra: sizesAbove(user, target) > 0 ? [moveModifier(user, activity) * sizesAbove(user, target)] : [] }),
+  "gyro-ball": ({ user, target, dice }) => ({ extra: target && dexScore(user) < dexScore(target) ? die(dice, 1) : [] }),
+  "snipe-shot": ({ user, dice }) => ({ extra: attacks(user).at(-1)?.advantage ? die(dice, 1) : [] }),
+  "lash-out": ({ user, activity }) => ({ extra: frustrated(user) ? [moveModifier(user, activity)] : [] }),
   "stored-power": ({ user, dice }) => ({ extra: oneDie(dice, boosts(user)) }),
   "power-trip": ({ user, dice }) => ({ extra: oneDie(dice, boosts(user)) }),
   punishment: ({ target, dice }) => ({ extra: oneDie(dice, boosts(target)) }),
@@ -218,6 +239,13 @@ function onCreateChatMessage(message) {
     .catch(error => console.error(`[${MODULE_ID}] move riders`, error));
 }
 
+// Hold Back: whoever applies its damage from the chat card, the target keeps 1 HP.
+export function onPreApplyDamage(actor, _amount, updates, options) {
+  if (moveId(options?.originatingMessage?.getAssociatedItem?.()) !== "hold-back") {return;}
+  const hp = updates?.["system.attributes.hp.value"];
+  if (hp !== undefined && hp < 1 && Number(actor?.system?.attributes?.hp?.value) >= 1) {updates["system.attributes.hp.value"] = 1;}
+}
+
 let registered = false;
 
 export function registerMoveRiders() {
@@ -227,4 +255,5 @@ export function registerMoveRiders() {
   Hooks.on("dnd5e.preRollAttack", onPreRollAttackCritical);
   Hooks.on("dnd5e.preRollDamage", onPreRollDamageRiders);
   subscribeAttackOutcome(recordAttack);
+  Hooks.on("dnd5e.preApplyDamage", onPreApplyDamage);
 }

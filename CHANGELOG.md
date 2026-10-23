@@ -4,6 +4,18 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.38.0] — 2026-10-22
+
+- **Tamaño y características:**
+  - **Body Press:** +MOVE si el usuario es al menos una talla mayor que el objetivo.
+  - **Heat Crash / Heavy Slam:** +MOVE por cada talla que el usuario supere al objetivo.
+  - **Gyro Ball:** dados dobles si la DES del usuario es menor que la del objetivo.
+  - **Snipe Shot:** dados dobles si el ataque se tiró con ventaja.
+  - **Lash Out:** con un estado o una estadística bajada, ataca con ventaja y suma +MOVE al daño.
+- **Hold Back:** al aplicar su daño desde la tarjeta del chat, el objetivo se queda con 1 PG como mínimo.
+- **Leaf Storm:** el usuario queda agotado: −MOVE al daño de sus ataques hasta el final de su siguiente turno.
+- **Super Fang** queda manual (en un crítico, el jugador elige la mitad de la vida actual del objetivo).
+
 ## [0.37.0] — 2026-10-22
 
 - **Daño según la batalla** (se añade a la tirada de daño):

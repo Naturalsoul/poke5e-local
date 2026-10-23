@@ -27,7 +27,7 @@ export const AUTOMATED_MODIFIER_MOVES = new Set(["growl", "leer", "screech", "ta
   "mud-bomb", "muddy-water", "mystical-fire", "night-daze", "no-retreat", "overheat", "play-nice", "psycho-boost",
   "seed-flare", "snarl", "spicy-extract", "spirit-break", "spotlight", "sweet-scent",
   // Status riders batch 2.
-  "fire-lash", "charm", "v-create", "glaciate"]);
+  "fire-lash", "charm", "v-create", "glaciate", "leaf-storm"]);
 
 
 /* ============================================================
@@ -310,6 +310,9 @@ const COMPACT_DEFINITIONS = Object.freeze({
     return concentrationBuff(en ? `Victory Dance — AC, attacks and saves +${bonus}` : `Danza Triunfal — CA, ataques y salvaciones +${bonus}`,
       [ac(bonus), ...attackChanges(bonus), saveBonus(bonus)]);
   },
+  // Sapped: its next damaging Moves deal MOVE less, until the end of its next turn.
+  "leaf-storm": en => selfBuff(en ? "Leaf Storm — Sapped, damage -MOVE" : "Lluevehojas — Agotado, daño -MOV",
+    damageChanges("-max(@abilities.str.mod, @abilities.dex.mod)"), untilNextTurn),
   "swords-dance": (en, level) => {
     const bonus = level >= 10 ? 2 : 1;
     return concentrationBuff(en ? `Swords Dance — AC +${bonus}` : `Danza Espada — CA +${bonus}`, [ac(bonus)]);
