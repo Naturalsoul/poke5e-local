@@ -4,6 +4,117 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.38.0] — 2026-10-22
+
+- **Tamaño y características:**
+  - **Body Press:** +MOVE si el usuario es al menos una talla mayor que el objetivo.
+  - **Heat Crash / Heavy Slam:** +MOVE por cada talla que el usuario supere al objetivo.
+  - **Gyro Ball:** dados dobles si la DES del usuario es menor que la del objetivo.
+  - **Snipe Shot:** dados dobles si el ataque se tiró con ventaja.
+  - **Lash Out:** con un estado o una estadística bajada, ataca con ventaja y suma +MOVE al daño.
+- **Hold Back:** al aplicar su daño desde la tarjeta del chat, el objetivo se queda con 1 PG como mínimo.
+- **Leaf Storm:** el usuario queda agotado: −MOVE al daño de sus ataques hasta el final de su siguiente turno.
+- **Super Fang** queda manual (en un crítico, el jugador elige la mitad de la vida actual del objetivo).
+
+## [0.37.0] — 2026-10-22
+
+- **Daño según la batalla** (se añade a la tirada de daño):
+  - **Stored Power / Power Trip:** +1 dado por cada mejora activa del usuario (cambios de estadística positivos).
+  - **Punishment:** +1 dado por cada mejora activa del objetivo marcado.
+  - **Stomping Tantrum:** dados dobles si el último ataque del usuario falló. **Temper Flare:** +1 dado.
+  - **Fury Cutter / Ice Ball:** los dados se doblan cada ronda seguida que aciertan (x2, x4, x8 máximo); un fallo o
+    saltarse una ronda lo reinicia.
+  - **Power-Up Punch:** +1 dado por cada acierto seguido al mismo objetivo, hasta el doble de dados.
+  - Los ataques recientes se recuerdan en el navegador de quien tira; si recarga, se olvidan.
+
+## [0.36.2] — 2026-10-22
+
+- **Golpes múltiples, manuales:** Arm Thrust, Bone Rush, Bullet Seed, Comet Punch, Double Slap, Fury Attack, Fury
+  Swipes, Icicle Spear, Pin Missile, Rock Blast, Spike Cannon, Tail Slap, Water Shuriken y Barrage ya no sacan
+  tarjeta ni botón: el jugador tira la cadena de d4 y su daño. Jump Kick, High Jump Kick y Supercell Slam siguen
+  automáticos.
+
+## [0.36.1] — 2026-10-22
+
+- **Golpes múltiples con botón:** al acertar ya no se tira todo solo. Sale una tarjeta con el botón **Tirar d4**:
+  con 3 o 4 hay otro golpe y otro botón, hasta cuatro; al fallar, la cadena termina y dice cuántos golpes extra
+  hubo. Barrage trae el botón **Tirar proyectiles (1d4)**. El daño de los golpes extra ya no se lanza: lo tira el
+  jugador. Solo el dueño del Pokémon (o el DM) puede pulsarlo, y cada botón sirve una vez.
+
+## [0.36.0] — 2026-10-22
+
+- **Golpes múltiples:** al acertar Arm Thrust, Bone Rush, Bullet Seed, Comet Punch, Double Slap, Fury Attack, Fury
+  Swipes, Icicle Spear, Pin Missile, Rock Blast, Spike Cannon, Tail Slap o Water Shuriken, se tira la cadena de d4
+  (cada 3 o 4 es otro golpe, hasta cuatro) y el daño extra sale en el chat como tirada de daño, lista para aplicar.
+  Barrage tira 1d4 proyectiles (1d4 cada uno).
+- **Jump Kick / High Jump Kick:** si fallan, el usuario recibe 1 de daño. **Supercell Slam:** recibe su competencia.
+
+## [0.35.0] — 2026-10-22
+
+- **Daño según los PG** (se añade a la tirada de daño antes de lanzarla; el objetivo es el que tengas marcado):
+  - **Brine:** doble si el objetivo está por debajo del 50 %.
+  - **Flail / Reversal:** doble por debajo del 50 % del usuario, triple al 10 % o menos.
+  - **Hex:** MOVE doble si el objetivo tiene un estado.
+  - **Wring Out:** MOVE doble si el objetivo tiene el 50 % o más.
+  - **Hard Press:** + competencia si el objetivo tiene más del 50 %.
+  - **Eruption:** STAB doble con la vida al máximo.
+  - **Dragon Energy:** +1d6 por cada 20 PG actuales.
+  - **Rage Fist:** +1 por cada 10 PG perdidos.
+- **Water Spout** queda manual: por debajo del 50 % hay que dividir el daño total entre dos al aplicarlo.
+
+## [0.34.0] — 2026-10-22
+
+- **Crítico ampliado:** Slash, Night Slash, Razor Leaf, Karate Chop, Cross Chop, Crabhammer, Leaf Blade, Psycho Cut,
+  Shadow Claw, Air Cutter, Aqua Cutter, Attack Order, Drill Peck, Drill Run, Ivy Cudgel, Seismic Toss, Blaze Kick,
+  Hyper Fang y Esper Wing hacen crítico con 19–20; Fickle Beam con 17–20 y Frost Breath con 16–20. Si otra fuente
+  (Super Luck) ya da un rango mayor, se queda el mayor.
+- **Feint Attack:** siempre se tira con ventaja.
+- **Movimientos que nunca fallan** (Aerial Ace, Aura Sphere, Magical Leaf, Magnet Bomb, Shadow Punch, Smart Strike,
+  Shock Wave, Disarming Voice, Tachyon Cutter): ya se creaban sin tirada de ataque, solo con daño; ahora constan así.
+
+## [0.33.0] — 2026-10-22
+
+- **Thousand Arrows:** quien falla la salvación de DES queda derribado. Que alcance a voladores y que el derribado
+  sea vulnerable a Tierra sigue siendo del DM.
+- **Cierre de "Estados extra":** Belch, Octolock, Triple Arrows y Worry Seed quedan como manuales (dependen de una
+  elección del jugador o de tiradas enfrentadas); Corrosive Gas pasa al bloque de efectos de campo.
+
+## [0.32.0] — 2026-10-22
+
+- **Más Moves de estado automatizados (tanda 3):**
+  - **Mean Look:** al fallar la salvación de WIS, el objetivo no puede ser cambiado ni retirado durante 3 rondas
+    (un Pokémon debilitado sí puede volver). Huir de un combate sigue siendo del DM.
+  - **Salt Cure:** al fallar la salvación de DES, 1d4 de daño de roca al inicio de cada uno de sus turnos (el doble
+    a tipos Agua y Acero) hasta que se le cure o salga del campo.
+  - **Clear Smog:** al acertar, el objetivo pierde todos sus cambios de estadísticas.
+  - **Incinerate:** al acertar, la baya que lleva el objetivo se reduce a cenizas.
+  - **Eternabeam:** el usuario queda incapacitado hasta el final de su siguiente turno.
+
+## [0.31.0] — 2026-10-22
+
+- **Más Moves de estado automatizados (tanda 2):**
+  - **Fire Lash:** al acertar y fallar la salvación de CON, los aliados suman +1 a sus ataques contra el objetivo
+    (acumulable hasta +5), como Leer.
+  - **Charm:** al fallar la salvación de WIS, el objetivo resta 2 a sus ataques, pero solo contra quien lo usó.
+  - **V-create:** la CA del usuario baja 2 hasta el inicio de su siguiente turno.
+  - **Glaciate:** cada impacto quita 5 ft de velocidad al objetivo durante el combate. Congelarlo al llegar a 0 y
+    que se caliente (una acción) siguen siendo del DM.
+
+## [0.30.0] — 2026-10-22
+
+- **Moves que asustan, ciegan o apresan** (condiciones de D&D, no estados Pokémon):
+  - **Glare, Scary Face y Roar** asustan al fallar la salvación de WIS. Al final de cada uno de sus turnos, el
+    asustado repite la salvación contra la CD del Move y, si la supera, se le pasa (avisa en el chat). El
+    desplazamiento forzado de Roar sigue siendo del DM.
+  - **Flash** ciega hasta el final del siguiente turno de quien falla la salvación de CON.
+  - **Crush Grip** (al acertar) y **Snap Trap** (al fallar la salvación) apresan.
+  - **Constrict, Vice Grip y Jaw Lock** apresan como Bind, con su acción de continuar (daño automático mientras
+    siga apresado). Escapar sigue siendo del DM: se quita el efecto.
+  - Los Moves que ya están en las hojas reciben lo nuevo al iniciar el mundo.
+- **Registro de cobertura al día:** Rain Dance, Sunny Day, Sandstorm, Hail, Snowscape y los terrenos Grassy, Misty y
+  Psychic ya figuran como automatizados (con nota para el DM de lo que falta: el +1 CA de Snowscape y el bloqueo de
+  acciones bonus de Psychic Terrain). Acid e Ice Shard son solo daño; Baby-Doll Eyes y Captivate quedan manuales
+  (reacciones que elige el jugador).
 ## [0.29.1] — 2026-10-22
 
 - **Impacto de los golpes normales más marcado:** el retroceso de un acierto no crítico casi se duplica y la

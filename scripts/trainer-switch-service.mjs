@@ -1,3 +1,4 @@
+import { assertCanLeaveField } from "./condition-riders.mjs";
 import {
   isTrainerActor
 } from "./trainer-service.mjs";
@@ -255,6 +256,8 @@ export async function recallPokemon(
     pokemon
   );
 
+  assertCanLeaveField(pokemon);
+
 
   const state =
     getTrainerPartyState(
@@ -320,6 +323,8 @@ export async function switchPokemon(
     trainer,
     outgoing
   );
+
+  assertCanLeaveField(outgoing);
 
   assertTrainerPokemon(
     trainer,

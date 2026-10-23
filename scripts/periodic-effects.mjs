@@ -111,7 +111,7 @@ function definitionFor(
   if (binding) {
     const statuses = [];
     if (binding.timing === "continuation") {
-      statuses.push(["bind", "wrap", "clamp"].includes(move.id) ? "grappled" : "restrained");
+      statuses.push(["bind", "wrap", "clamp", "constrict", "vice-grip", "jaw-lock"].includes(move.id) ? "grappled" : "restrained");
     }
     return {
       name: move.name?.[language] ?? move.name?.en ?? move.id,

@@ -5,6 +5,7 @@ import { applyPokemonMoveModifier } from "./modifier-engine.mjs";
 import { buildAttackOutcome, isNaturalAttackAtLeast } from "./attack-outcome-engine.mjs";
 import { afterPaint, waitForVisibleResult } from "./chat-roll-display.mjs";
 import { isPokemonActor } from "./trainer-party-service.mjs";
+import { CONDITION_KIND } from "./condition-riders.mjs";
 
 const MODULE_ID = "poke5e-local";
 const NATURAL_AT_LEAST_TRIGGER = /^natural-attack-(\d+)\+$/;
@@ -57,11 +58,14 @@ function saveApplication(roll, save, item, template) {
     return trigger === "hit-and-failed-save" ? { item, actor, part: "failed-save", usageId, template } : { item, actor, usageId, template };
 }
 
+// Pokémon statuses and the D&D conditions some Moves give are applied the same way.
+const isStatus = template => ["pokemon-status", CONDITION_KIND].includes(template?.getFlag(MODULE_ID, "kind"));
+
 // The Move's stat change (one application applies all of them) and each status a save gives.
 function automatedTemplates(item) {
   const modifier = AUTOMATED_MODIFIER_MOVES.has(item.getFlag(MODULE_ID, "sourceId"))
     ? item.effects.find(effect => effect.getFlag(MODULE_ID, "kind") === "pokemon-modifier") : null;
-  const statuses = item.effects.filter(effect => effect.getFlag(MODULE_ID, "kind") === "pokemon-status" &&
+  const statuses = item.effects.filter(effect => isStatus(effect) &&
     SAVE_STATUS_TRIGGERS.has(effect.getFlag(MODULE_ID, "trigger")));
   return [modifier, ...statuses].filter(Boolean);
 }
@@ -74,8 +78,6 @@ function eligibleApplications(message, roll) {
   return automatedTemplates(item).map(template => (type === "attack"
     ? attackApplication(message, roll, item, template) : saveApplication(roll, save, item, template))).filter(Boolean);
 }
-
-const isStatus = template => template?.getFlag(MODULE_ID, "kind") === "pokemon-status";
 
 // Hit and failed save arrive as separate messages of the same usage, in either order.
 // shortcut: kept in memory, so a GM reload between the attack and the save loses the pair; persist on the usage message if that matters.
@@ -188,7 +190,7 @@ export async function synchronizeAutomatedMoveModifiers(actor) {
 export async function synchronizeMoveStatusTemplates(actor) {
   if (!isPokemonActor(actor)) {return;}
   for (const item of actor.items ?? []) {
-    if (item.getFlag(MODULE_ID, "kind") !== "move" || item.effects.some(effect => effect.getFlag(MODULE_ID, "kind") === "pokemon-status")) {continue;}
+    if (item.getFlag(MODULE_ID, "kind") !== "move" || item.effects.some(isStatus)) {continue;}
     const { effects } = buildMoveStatusEffects({ id: item.getFlag(MODULE_ID, "sourceId") }, game.settings.get(MODULE_ID, "language"));
     if (effects.length) {await item.createEmbeddedDocuments("ActiveEffect", effects);}
   }

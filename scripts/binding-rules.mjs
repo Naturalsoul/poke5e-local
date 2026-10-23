@@ -4,6 +4,9 @@ export const BINDING_CONTINUATIONS = Object.freeze({
   bind: { activation: "bonus", modifier: null },
   wrap: { activation: "bonus", modifier: null },
   clamp: { activation: "bonus", modifier: null },
+  constrict: { activation: "bonus", modifier: null },
+  "vice-grip": { activation: "action", modifier: "MOVE" },
+  "jaw-lock": { activation: "action", modifier: "MOVE" },
   "sand-tomb": { activation: "action", modifier: "MOVE" },
   whirlpool: { activation: "action", modifier: "MOVE" },
   "thunder-cage": { activation: "action", modifier: "MOVE" }

@@ -1,3 +1,4 @@
+import { buildConditionEffects } from "./condition-riders.mjs";
 import {
   endOfNextTurnFlags
 } from "./turn-duration-runtime.mjs";
@@ -2189,6 +2190,15 @@ export function buildMoveStatusEffects(
       effect
     );
   }
+
+
+  // D&D conditions (frightened, blinded, grappled) ride along with their own kind.
+  effects.push(
+    ...buildConditionEffects(
+      move,
+      language
+    )
+  );
 
 
   return {
