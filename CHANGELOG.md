@@ -4,6 +4,19 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.44.0] — 2026-10-22
+
+- **Derribado automático:**
+  - Al fallar la salvación: Rock Slide, Surf, Waterfall, Syrup Bomb e Hydro Cannon.
+  - Al acertar y fallar la salvación: Body Slam, Low Sweep y Thunderous Kick.
+  - Con un natural alto: Headbutt e Icy Wind (18+), Grass Knot (19+).
+  - Al acertar: Smack Down (solo cuenta contra criaturas elevadas; si no lo estaba, quítalo).
+- **Spirit Shackle / Thousand Waves:** el objetivo no puede ser cambiado ni retirado mientras el usuario siga en
+  combate (quita el efecto cuando salga).
+- **Grass Knot:** dados dobles contra objetivos Grandes o mayores.
+- Quedan manuales los empujones, cargas, intercambios y reacciones de este bloque; Trick, Switcheroo y Spectral
+  Thief pasan a mecánicas especiales.
+
 ## [0.43.0] — 2026-10-22
 
 - **Curación:**

@@ -256,6 +256,7 @@ export const DAMAGE_RIDERS = Object.freeze({
   "body-press": ({ user, target, activity }) => ({ extra: sizesAbove(user, target) > 0 ? [moveModifier(user, activity)] : [] }),
   "heat-crash": ({ user, target, activity }) => ({ extra: sizesAbove(user, target) > 0 ? [moveModifier(user, activity) * sizesAbove(user, target)] : [] }),
   "heavy-slam": ({ user, target, activity }) => ({ extra: sizesAbove(user, target) > 0 ? [moveModifier(user, activity) * sizesAbove(user, target)] : [] }),
+  "grass-knot": ({ target, dice }) => ({ extra: sizeRank(target) >= SIZES.indexOf("lg") ? die(dice, 1) : [] }),
   "gyro-ball": ({ user, target, dice }) => ({ extra: target && dexScore(user) < dexScore(target) ? die(dice, 1) : [] }),
   "snipe-shot": ({ user, dice }) => ({ extra: attacks(user).at(-1)?.advantage ? die(dice, 1) : [] }),
   "lash-out": ({ user, activity }) => ({ extra: frustrated(user) ? [moveModifier(user, activity)] : [] }),

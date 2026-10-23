@@ -95,3 +95,14 @@ test("Thousand Arrows knocks prone whoever fails the save", () => {
   assert.deepEqual(effect.statuses, ["prone"]);
   assert.equal(effect.flags["poke5e-local"].trigger, "failed-save");
 });
+
+test("prone riders by trigger, and shackles block switching like Mean Look", () => {
+  const trigger = id => buildConditionEffects(move(id))[0]?.flags["poke5e-local"].trigger;
+  assert.equal(trigger("surf"), "failed-save");
+  assert.equal(trigger("body-slam"), "hit-and-failed-save");
+  assert.equal(trigger("headbutt"), "natural-attack-18+");
+  assert.deepEqual(buildConditionEffects(move("rock-slide"))[0].statuses, ["prone"]);
+  const [template] = buildConditionEffects(move("spirit-shackle"));
+  const effect = Object.assign(createFlagDocument({ uuid: "Actor.p.ActiveEffect.s", name: template.name, flags: template.flags }), { disabled: false });
+  assert.throws(() => assertCanLeaveField({ name: "Decidueye", effects: [effect], system: { attributes: { hp: { value: 9 } } } }), /Atrapado/);
+});
