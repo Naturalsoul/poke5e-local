@@ -10,7 +10,9 @@ import { pokemonTypes } from "./status-runtime.mjs";
  * (exclusivity, cures, status announcements).
  * - Frightened from Glare, Scary Face and Roar ends with a WIS save at the end of each of the creature's
  *   turns, against the Move's DC.
- * - Mean Look: the target can't be switched out or recalled for 3 rounds.
+ * - Mean Look: the target can't be switched out or recalled for 3 rounds; Spirit Shackle and Thousand Waves until
+ *   the GM removes it (they last while the user stays in battle).
+ * - Prone from many Moves: on a failed save, on a hit and a failed save, or on a high natural attack roll.
  * - Salt Cure: 1d4 rock damage at the start of each of its turns (double to Water and Steel) until it is
  *   healed or leaves the field.
  * ============================================================ */
@@ -20,12 +22,12 @@ export const CONDITION_KIND = "move-condition";
 const ICONS = "systems/dnd5e/icons/svg/statuses";
 
 const LABELS = {
-  es: { frightened: "Asustado", blinded: "Cegado", prone: "Derribado", grappled: "Apresado", trapped: "Mean Look — No puede huir ni cambiarse",
-    salted: "Salt Cure — Salado", save: "Salvación contra", overcomes: "se sobrepone a", saltHurts: "sufre daño por Salt Cure",
-    saltEnds: "ya no sufre Salt Cure", cantLeave: name => `${name} no puede huir ni ser cambiado (Mean Look).` },
-  en: { frightened: "Frightened", blinded: "Blinded", prone: "Prone", grappled: "Grappled", trapped: "Mean Look — Can't flee or switch out",
-    salted: "Salt Cure — Salted", save: "Save against", overcomes: "overcomes", saltHurts: "is hurt by Salt Cure",
-    saltEnds: "is no longer hurt by Salt Cure", cantLeave: name => `${name} can't flee or be switched out (Mean Look).` }
+  es: { frightened: "Asustado", blinded: "Cegado", prone: "Derribado", grappled: "Apresado", trapped: "Mean Look — No puede huir ni cambiarse", shackled: "Atrapado — No puede huir ni cambiarse",
+    salted: "Salt Cure — Salado", "heal-blocked": "Psychic Noise — No puede recuperar PG", save: "Salvación contra", overcomes: "se sobrepone a", saltHurts: "sufre daño por Salt Cure",
+    saltEnds: "ya no sufre Salt Cure", cantLeave: (name, source) => `${name} no puede huir ni ser cambiado (${source}).` },
+  en: { frightened: "Frightened", blinded: "Blinded", prone: "Prone", grappled: "Grappled", trapped: "Mean Look — Can't flee or switch out", shackled: "Trapped — Can't flee or switch out",
+    salted: "Salt Cure — Salted", "heal-blocked": "Psychic Noise — Can't regain HP", save: "Save against", overcomes: "overcomes", saltHurts: "is hurt by Salt Cure",
+    saltEnds: "is no longer hurt by Salt Cure", cantLeave: (name, source) => `${name} can't flee or be switched out (${source}).` }
 };
 const text = () => LABELS[game.settings.get(MODULE_ID, "language") === "en" ? "en" : "es"];
 const escape = value => foundry.utils.escapeHTML(String(value ?? ""));
@@ -41,7 +43,18 @@ export const CONDITION_RIDERS = Object.freeze({
   "snap-trap": { condition: "grappled", trigger: "failed-save" },
   // shortcut: being hit by Ground Moves while grounded is the GM's; no engine tracks Ground immunity yet.
   "thousand-arrows": { condition: "prone", trigger: "failed-save" },
+  ...Object.fromEntries(["rock-slide", "surf", "waterfall", "syrup-bomb", "hydro-cannon"].map(id => [id, { condition: "prone", trigger: "failed-save" }])),
+  ...Object.fromEntries(["body-slam", "low-sweep", "thunderous-kick"].map(id => [id, { condition: "prone", trigger: "hit-and-failed-save" }])),
+  headbutt: { condition: "prone", trigger: "natural-attack-18+" },
+  "icy-wind": { condition: "prone", trigger: "natural-attack-18+" },
+  "grass-knot": { condition: "prone", trigger: "natural-attack-19+" },
+  // shortcut: only "Raised" creatures fall; the GM removes it from one that wasn't.
+  "smack-down": { condition: "prone", trigger: "hit" },
+  "spirit-shackle": { condition: "shackled", trigger: "hit", img: "icons/svg/net.svg" },
+  "thousand-waves": { condition: "shackled", trigger: "failed-save", img: "icons/svg/net.svg" },
   "mean-look": { condition: "trapped", trigger: "failed-save", img: "icons/svg/net.svg", rounds: 3 },
+  // shortcut: it ends at the end of the target's next turn, not the user's.
+  "psychic-noise": { condition: "heal-blocked", trigger: "failed-save", img: "icons/svg/silenced.svg", untilEndOfNextTurn: true },
   "salt-cure": { condition: "salted", trigger: "failed-save", img: "icons/svg/acid.svg",
     startTurnDamage: { formula: "1d4", type: "rock", vulnerableTypes: ["water", "steel"] } }
 });
@@ -80,7 +93,8 @@ async function chat(actor, html) {
 
 // Mean Look: the switch and recall services refuse while it lasts (a fainted Pokémon still goes back).
 export function assertCanLeaveField(pokemon) {
-  if (Number(pokemon?.system?.attributes?.hp?.value) > 0 && conditions(pokemon, "trapped").some(effect => !effect.disabled)) {throw new Error(text().cantLeave(pokemon.name));}
+  const hold = [...conditions(pokemon, "trapped"), ...conditions(pokemon, "shackled")].find(effect => !effect.disabled);
+  if (Number(pokemon?.system?.attributes?.hp?.value) > 0 && hold) {throw new Error(text().cantLeave(pokemon.name, hold.name));}
 }
 
 // The Move's save DC, from the Move that applied it.

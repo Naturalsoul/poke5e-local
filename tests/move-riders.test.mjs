@@ -250,3 +250,62 @@ test("vulnerability, PP spent and downed allies add damage", async () => {
   game.combat = undefined;
   game.user = undefined;
 });
+
+test("Payback and Bolt Beak read the attacks in chat since the user's last one; Electro Ball takes the next tier", async () => {
+  const { onPreRollDamageRiders } = await import("../scripts/move-riders.mjs");
+  const user = { uuid: "Actor.u", effects: [], system: { abilities: { str: { mod: 4 } }, attributes: { movement: { walk: 40 } } },
+    getFlag: (_m, key) => (key === "level" ? 6 : undefined) };
+  const foe = { uuid: "Actor.f", effects: [], system: { attributes: { movement: { walk: 30, fly: 20 } } } };
+  // A d20 that hit (target AC 10), by `actor` at `target`.
+  const message = (actor, target) => ({ rolls: [{ total: 15, options: { target: 10, poke5eTargetActorUuid: target?.uuid }, dice: [] }],
+    getFlag: (scope, key) => (scope === "dnd5e" && key === "roll.type" ? "attack" : undefined),
+    getAssociatedActivity: () => ({ actor, item: { getFlag: () => undefined } }) });
+  const roll = (id, parts = ["1d8 + 4"]) => {
+    game.user = { targets: new Set([{ actor: foe }]) };
+    const definition = { type: "electric", damage: { dice: { 1: "1d6", 5: "1d12", 10: "2d8", 17: "4d6" } } };
+    const item = createFlagDocument({ flags: { [M]: { kind: "move", sourceId: id, moveDefinition: definition } } });
+    const config = { subject: { item, actor: user, attack: { ability: "str" } }, rolls: [{ parts: [...parts] }] };
+    onPreRollDamageRiders(config);
+    return config.rolls[0].parts;
+  };
+  game.messages = { contents: [message(user, foe), message(foe, user), message(user, foe)] };
+  assert.deepEqual(roll("payback"), ["1d8 + 4", "1d8 + 4"], "the foe hit it since its last attack");
+  assert.deepEqual(roll("bolt-beak"), ["1d8 + 4"]);
+  game.messages = { contents: [message(user, foe), message(user, foe)] };
+  assert.deepEqual(roll("payback"), ["1d8 + 4"]);
+  assert.deepEqual(roll("bolt-beak"), ["1d8 + 4", "4"], "the foe didn't attack");
+  assert.deepEqual(roll("electro-ball", ["1d12 + 4"]), ["2d8 + 4"], "faster: level 6 rolls the level 10 dice");
+  game.messages = undefined;
+  game.user = undefined;
+});
+
+test("cures clear the statuses of allies in range; Purify heals its user; Psychic Noise blocks healing", async () => {
+  const { runCures, onPreApplyDamage } = await import("../scripts/move-riders.mjs");
+  const status = id => ({ id, name: id, getFlag: (_m, key) => (key === "kind" ? "pokemon-status" : undefined) });
+  const pokemon = (name, disposition, x, effects = []) => {
+    const token = { center: { x, y: 0 }, document: { disposition } };
+    const actor = { name, effects: [...effects], healed: 0, getFlag: (_m, key) => (key === "level" ? 7 : undefined),
+      getActiveTokens: () => [token], deleteEmbeddedDocuments: async (_type, ids) => { actor.effects = actor.effects.filter(effect => !ids.includes(effect.id)); },
+      applyDamage: async amount => { actor.healed -= amount; } };
+    token.actor = actor;
+    return actor;
+  };
+  const user = pokemon("Chansey", 1, 0, [status("burn")]);
+  const near = pokemon("Pikachu", 1, 5, [status("poison")]);
+  const far = pokemon("Eevee", 1, 50, [status("sleep")]);
+  const foe = pokemon("Gengar", -1, 5, [status("burn")]);
+  globalThis.canvas = { tokens: { placeables: [user, near, far, foe].map(actor => actor.getActiveTokens()[0]) },
+    grid: { measurePath: ([a, b]) => ({ distance: Math.abs(a.x - b.x) }) } };
+  await runCures("aromatherapy", user, {});
+  assert.deepEqual([user, near, far, foe].map(actor => actor.effects.length), [0, 0, 1, 1]);
+  globalThis.fromUuidSync = uuid => (uuid === "far" ? far : null);
+  await runCures("purify", user, { getFlag: (scope, key) => (scope === "dnd5e" && key === "targets" ? [{ uuid: "far" }] : undefined) });
+  assert.equal(far.effects.length, 0);
+  assert.equal(user.healed, 14, "twice its level");
+  const marked = { system: { attributes: { hp: { value: 5 } } },
+    effects: [{ disabled: false, getFlag: (_m, key) => (key === "condition" ? "heal-blocked" : undefined) }] };
+  const updates = { "system.attributes.hp.value": 12 };
+  onPreApplyDamage(marked, -7, updates, {});
+  assert.equal(updates["system.attributes.hp.value"], 5);
+  delete globalThis.canvas;
+});

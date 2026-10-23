@@ -4,6 +4,42 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.44.0] — 2026-10-22
+
+- **Derribado automático:**
+  - Al fallar la salvación: Rock Slide, Surf, Waterfall, Syrup Bomb e Hydro Cannon.
+  - Al acertar y fallar la salvación: Body Slam, Low Sweep y Thunderous Kick.
+  - Con un natural alto: Headbutt e Icy Wind (18+), Grass Knot (19+).
+  - Al acertar: Smack Down (solo cuenta contra criaturas elevadas; si no lo estaba, quítalo).
+- **Spirit Shackle / Thousand Waves:** el objetivo no puede ser cambiado ni retirado mientras el usuario siga en
+  combate (quita el efecto cuando salga).
+- **Grass Knot:** dados dobles contra objetivos Grandes o mayores.
+- Quedan manuales los empujones, cargas, intercambios y reacciones de este bloque; Trick, Switcheroo y Spectral
+  Thief pasan a mecánicas especiales.
+
+## [0.43.0] — 2026-10-22
+
+- **Curación:**
+  - **Milk Drink, Moonlight y Morning Sun** ya tienen su fórmula de curación (faltaba en los datos). Los Pokémon
+    que ya los tienen deben volver a aprenderlos (o reimportarse) para que la tirada aparezca.
+  - **Aromatherapy / Jungle Healing / Heal Bell:** al usarlos, curan los estados de los aliados a 10, 15 y 60 ft
+    (el usuario incluido).
+  - **Purify:** cura los estados de sus objetivos; si curó alguno, el usuario recupera el doble de su nivel en PG.
+  - **Psychic Noise:** quien falla la salvación no puede recuperar PG hasta el final de su siguiente turno.
+- Quedan manuales Wish, Roost, Revival Blessing, Pain Split, Pollen Puff, Heal Block y Snatch; Lunar Blessing pasa a
+  efectos de campo.
+
+## [0.42.0] — 2026-10-22
+
+- **Payback:** daño doble si el objetivo le acertó desde su ataque anterior. **Bolt Beak / Fishious Rend:** MOVE doble
+  si el objetivo no atacó en ese tiempo. Se lee del historial de ataques del chat, así que vale para todos los
+  jugadores y sobrevive a recargar.
+- **Charge Beam:** con un 10 natural o más y acierto, MOVE doble en sus Moves hasta el final de su siguiente turno.
+- **Electro Ball:** si es más rápido que el objetivo, tira los dados del siguiente nivel (al máximo, dados dobles).
+- **Laser Focus:** mientras concentra, su siguiente ataque es crítico.
+- Cierre de **Extras de ataque:** Assurance, Echoed Voice, Fusion Bolt, Dragon Hammer, Glacial Lance, Lock-On, Mind
+  Reader, Lucky Chant y Nature's Madness quedan manuales, con nota para el DM.
+
 ## [0.41.0] — 2026-10-22
 
 - **Collision Course / Electro Drift:** +MOVE si el objetivo es vulnerable a su tipo.

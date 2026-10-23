@@ -27,7 +27,7 @@ export const AUTOMATED_MODIFIER_MOVES = new Set(["growl", "leer", "screech", "ta
   "mud-bomb", "muddy-water", "mystical-fire", "night-daze", "no-retreat", "overheat", "play-nice", "psycho-boost",
   "seed-flare", "snarl", "spicy-extract", "spirit-break", "spotlight", "sweet-scent",
   // Status riders batch 2.
-  "fire-lash", "charm", "v-create", "glaciate", "leaf-storm", "focus-energy", "tail-glow", "calm-mind"]);
+  "fire-lash", "charm", "v-create", "glaciate", "leaf-storm", "focus-energy", "tail-glow", "calm-mind", "laser-focus"]);
 
 
 /* ============================================================
@@ -316,6 +316,7 @@ const COMPACT_DEFINITIONS = Object.freeze({
   // Markers while concentrating: move-riders reads them on the attack and damage rolls.
   "focus-energy": en => concentrationBuff(en ? "Focus Energy — Critical range +2" : "Foco Energía — Rango de crítico +2", []),
   "tail-glow": en => concentrationBuff(en ? "Tail Glow — STAB doubled" : "Ráfaga — STAB doble", []),
+  "laser-focus": en => concentrationBuff(en ? "Laser Focus — Next attack is a critical hit" : "Aguzar — El próximo ataque es crítico", []),
   "calm-mind": en => concentrationBuff(en ? "Calm Mind — STAB doubled" : "Paz Mental — STAB doble", []),
   "swords-dance": (en, level) => {
     const bonus = level >= 10 ? 2 : 1;

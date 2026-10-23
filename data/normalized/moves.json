@@ -23783,7 +23783,16 @@
         "en": "The dice roll for this move changes to 3d6 at level 5, 5d6 at level 10, and 8d6 at level 17.",
         "es": "La tirada de dados de este movimiento pasa a ser 3d6 al nivel 5, 5d6 al nivel 10 y 8d6 al nivel 17."
       },
-      "damage": null,
+      "damage": {
+        "dice": {
+          "1": "2d6",
+          "5": "3d6",
+          "10": "5d6",
+          "17": "8d6"
+        },
+        "modifier": "MOVE",
+        "type": "healing"
+      },
       "save": null,
       "attack": null,
       "tm": null
@@ -24519,7 +24528,16 @@
         "en": "The dice roll for healing changes to 3d10 at level 5, 7d6 at level 10, and 8d8 at level 17.",
         "es": "La tirada de dados de curación pasa a ser 3d10 al nivel 5, 7d6 al nivel 10 y 8d8 al nivel 17."
       },
-      "damage": null,
+      "damage": {
+        "dice": {
+          "1": "2d12",
+          "5": "3d10",
+          "10": "7d6",
+          "17": "8d8"
+        },
+        "modifier": "MOVE",
+        "type": "healing"
+      },
       "save": null,
       "attack": null,
       "tm": null
@@ -24561,7 +24579,16 @@
         "en": "The healing dice roll for this move changes to 3d10 at level 5, 7d6 at level 10, and 8d8 at level 17.",
         "es": "La tirada de dados de curación pasa a ser 3d10 al nivel 5, 7d6 al nivel 10 y 8d8 al nivel 17."
       },
-      "damage": null,
+      "damage": {
+        "dice": {
+          "1": "2d12",
+          "5": "3d10",
+          "10": "7d6",
+          "17": "8d8"
+        },
+        "modifier": "MOVE",
+        "type": "healing"
+      },
       "save": null,
       "attack": null,
       "tm": null
