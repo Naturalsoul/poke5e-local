@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.40.0] — 2026-10-22
+
+- **Chip Away, Sacred Sword, Secret Sword y Darkest Lariat:** ignoran la CA que el objetivo ganó en el combate
+  (se suma al ataque, como hace Unaware).
+- **Focus Energy:** mientras concentra, su rango de crítico se amplía en 2 (20 → 18, 19 → 17).
+- **Tail Glow / Calm Mind:** mientras concentra, sus Moves de su tipo suman el STAB otra vez.
+
 ## [0.39.0] — 2026-10-22
 
 - **Tipo de daño elegido solo** (se puede cambiar en el diálogo de daño):

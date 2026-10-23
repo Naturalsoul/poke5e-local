@@ -1,5 +1,6 @@
 import { hasWeather } from "./battlefield-service.mjs";
-import { pokemonTypes } from "./status-runtime.mjs";
+import { hasPokemonAbility, pokemonTypes } from "./status-runtime.mjs";
+import { battleArmor } from "./passive-ability-engine.mjs";
 import { buildAttackOutcome, subscribeAttackOutcome } from "./attack-outcome-engine.mjs";
 import { getPokemonHeldItem } from "./pokemon-held-item-service.mjs";
 import { CONDITION_KIND } from "./condition-riders.mjs";
@@ -27,6 +28,8 @@ import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
  *   Gyro Ball (double dice when its DEX is lower), Snipe Shot (double dice when rolled with advantage) and Lash Out
  *   (advantage and +MOVE while it has a status or a lowered stat).
  * - Hold Back: the damage it deals never takes the target below 1 HP.
+ * - Chip Away, Sacred Sword, Secret Sword and Darkest Lariat ignore the AC the target gained in battle (as Unaware).
+ * - While concentrating: Focus Energy widens the critical range by 2; Tail Glow and Calm Mind add STAB again.
  * - Damage type picked for the player: Multi-Attack and Revelation Dance (the user's primary type), Techno Blast (its
  *   held Drive) and Weather Ball (the weather, with double dice). Still changeable in the damage dialog.
  * ============================================================ */
@@ -88,15 +91,24 @@ const crit19 = ["air-cutter", "aqua-cutter", "attack-order", "blaze-kick", "crab
 export const CRITICAL_RANGES = Object.freeze({ ...Object.fromEntries(crit19.map(id => [id, 19])), "fickle-beam": 17, "frost-breath": 16 });
 
 const ADVANTAGE_MOVES = new Set(["feint-attack"]);
+const IGNORE_AC_BOOSTS = new Set(["chip-away", "sacred-sword", "secret-sword", "darkest-lariat"]);
+const focusing = (actor, id) => Array.from(actor?.effects ?? []).some(effect => !effect.disabled && effect.getFlag?.(MODULE_ID, "sourceMove") === id);
+const singleTarget = () => (game.user?.targets?.size === 1 ? [...game.user.targets][0]?.actor ?? null : null);
 
 // Lowest threshold wins, so Super Luck or another source never narrows the Move's own range.
 export function onPreRollAttackCritical(config) {
   const id = moveId(config?.subject?.item);
+  const user = config?.subject?.actor;
   const threshold = CRITICAL_RANGES[id];
-  if (!threshold && !ADVANTAGE_MOVES.has(id) && id !== "lash-out") {return;}
+  const focused = focusing(user, "focus-energy");
+  const ignoreBoosts = IGNORE_AC_BOOSTS.has(id) && !hasPokemonAbility(user, "unaware");
+  if (!id || (!threshold && !focused && !ignoreBoosts && !ADVANTAGE_MOVES.has(id) && id !== "lash-out")) {return;}
+  const armor = ignoreBoosts ? battleArmor(singleTarget()) : 0;
   for (const rollConfig of config.rolls ?? []) {
     rollConfig.options ??= {};
     if (threshold) {rollConfig.options.criticalSuccess = Math.min(rollConfig.options.criticalSuccess ?? 20, threshold);}
+    if (focused) {rollConfig.options.criticalSuccess = (rollConfig.options.criticalSuccess ?? 20) - 2;}
+    if (armor) {(rollConfig.parts ??= []).push(String(armor));}
     if (ADVANTAGE_MOVES.has(id) || (id === "lash-out" && frustrated(config.subject.actor))) {rollConfig.options.advantage = true;}
   }
 }
@@ -210,17 +222,24 @@ export const DAMAGE_RIDERS = Object.freeze({
     extra: oneDie(dice, Math.min(dice?.number ?? 0, streak(user, moveId(item), { sameTarget: true }) - 1)) })
 });
 
-const targetedActor = () => (game.user?.targets?.size === 1 ? [...game.user.targets][0]?.actor ?? null : null);
+// Tail Glow and Calm Mind: a Move of the user's type adds its STAB (proficiency) once more.
+function stabAgain(user, item) {
+  const doubled = focusing(user, "tail-glow") || focusing(user, "calm-mind");
+  return doubled && pokemonTypes(user).includes(item?.getFlag?.(MODULE_ID, "moveDefinition")?.type) ? proficiency(user) : 0;
+}
 
 export function onPreRollDamageRiders(config) {
   const activity = config?.subject;
   const item = activity?.item;
-  const rider = DAMAGE_RIDERS[moveId(item)];
   const roll = config?.rolls?.[0];
-  if (!rider || !roll || config.isHealing) {return;}
+  if (!moveId(item) || !roll || config.isHealing) {return;}
+  const stab = stabAgain(activity.actor, item);
+  if (stab) {(roll.parts ??= []).push(String(stab));}
+  const rider = DAMAGE_RIDERS[moveId(item)];
+  if (!rider) {return;}
   const match = String(roll.parts?.[0] ?? "").match(/(\d+)d(\d+)/);
   const dice = match ? { number: Number(match[1]), faces: Number(match[2]) } : null;
-  const { times = 1, extra = [], type = null } = rider({ user: activity.actor, target: targetedActor(), activity, item, dice });
+  const { times = 1, extra = [], type = null } = rider({ user: activity.actor, target: singleTarget(), activity, item, dice });
   if (type) {
     roll.options ??= {};
     roll.options.type = type;

@@ -203,3 +203,26 @@ test("the damage type is picked for the player: primary type, held Drive, weathe
   game.user = undefined;
   game.combat = undefined;
 });
+
+test("AC boosts ignored, Focus Energy widens the critical range, Tail Glow adds STAB again", async () => {
+  const { onPreRollAttackCritical, onPreRollDamageRiders } = await import("../scripts/move-riders.mjs");
+  const marker = sourceMove => ({ disabled: false, changes: [], getFlag: (_m, key) => ({ kind: "pokemon-modifier", sourceMove })[key] });
+  const user = (effects = []) => ({ effects, items: [], system: { attributes: { prof: 3 } }, getFlag: (_m, key) => (key === "types" ? ["fire"] : undefined) });
+  const item = (id, type = "normal") => createFlagDocument({ flags: { [M]: { kind: "move", sourceId: id, moveDefinition: { type } } } });
+  const armored = { effects: [{ disabled: false, changes: [{ key: "system.attributes.ac.bonus", value: "2" }],
+    getFlag: (_m, key) => (key === "kind" ? "pokemon-modifier" : undefined) }] };
+  game.user = { targets: new Set([{ actor: armored }]) };
+  const chip = { subject: { item: item("chip-away"), actor: user() }, rolls: [{ options: {}, parts: [] }] };
+  onPreRollAttackCritical(chip);
+  assert.deepEqual(chip.rolls[0].parts, ["2"], "adds back the target's +2 AC");
+  const slash = { subject: { item: item("slash"), actor: user([marker("focus-energy")]) }, rolls: [{ options: {} }] };
+  onPreRollAttackCritical(slash);
+  assert.equal(slash.rolls[0].options.criticalSuccess, 17);
+  const ember = { subject: { item: item("ember", "fire"), actor: user([marker("tail-glow")]) }, rolls: [{ parts: ["1d10 + 4 + 3"] }] };
+  onPreRollDamageRiders(ember);
+  assert.deepEqual(ember.rolls[0].parts, ["1d10 + 4 + 3", "3"]);
+  const tackle = { subject: { item: item("tackle"), actor: user([marker("tail-glow")]) }, rolls: [{ parts: ["1d6 + 4"] }] };
+  onPreRollDamageRiders(tackle);
+  assert.deepEqual(tackle.rolls[0].parts, ["1d6 + 4"], "not the user's type");
+  game.user = undefined;
+});
