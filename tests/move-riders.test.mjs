@@ -176,3 +176,30 @@ test("size, DEX and frustration change the damage; Hold Back leaves 1 HP", async
   assert.equal(other["system.attributes.hp.value"], -3);
   game.user = undefined;
 });
+
+test("the damage type is picked for the player: primary type, held Drive, weather", async () => {
+  const { onPreRollDamageRiders } = await import("../scripts/move-riders.mjs");
+  const user = (types, held = null) => {
+    const actor = createFlagDocument({ name: "Genesect", flags: { [M]: { kind: "pokemon", types, ...(held ? { heldItemId: held.id } : {}) } } });
+    if (held) {actor.items.push(held); actor.items.get = id => (id === held.id ? held : null); held.parent = actor;}
+    return actor;
+  };
+  const roll = (id, actor) => {
+    game.user = { targets: new Set() };
+    const item = createFlagDocument({ flags: { [M]: { kind: "move", sourceId: id } } });
+    const config = { subject: { item, actor, attack: { ability: "str" } }, rolls: [{ parts: ["1d8 + 4"], options: { type: "normal", types: ["normal"] } }] };
+    onPreRollDamageRiders(config);
+    return config.rolls[0];
+  };
+  assert.equal(roll("multi-attack", user(["dragon", "flying"])).options.type, "dragon");
+  const drive = createFlagDocument({ documentName: "Item", uuid: "Actor.g.Item.d", name: "Chill Drive", flags: { [M]: { kind: "catalog-item", itemType: "held-item" } } });
+  assert.equal(roll("techno-blast", user(["bug", "steel"], drive)).options.type, "ice");
+  game.combat = { getFlag: () => ({ weather: { id: "rain" } }), combatants: [] };
+  const ball = roll("weather-ball", user(["normal"]));
+  assert.equal(ball.options.type, "water");
+  assert.deepEqual(ball.parts, ["1d8 + 4", "1d8"]);
+  game.combat = null;
+  assert.equal(roll("weather-ball", user(["normal"])).options.type, "normal");
+  game.user = undefined;
+  game.combat = undefined;
+});

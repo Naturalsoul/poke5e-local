@@ -4,6 +4,15 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.39.0] — 2026-10-22
+
+- **Tipo de daño elegido solo** (se puede cambiar en el diálogo de daño):
+  - **Multi-Attack / Revelation Dance:** el tipo principal del usuario.
+  - **Techno Blast:** el del Drive que lleva (Burn → Fuego, Chill → Hielo, Douse → Agua, Shock → Eléctrico).
+  - **Weather Ball:** con clima activo, su tipo (sol → Fuego, lluvia → Agua, tormenta de arena → Roca, granizo o
+    nieve → Hielo) y dados dobles.
+- **Flying Press** se elige en el diálogo; **Hidden Power, Natural Gift, Tera Blast y Draco Power** quedan manuales.
+
 ## [0.38.0] — 2026-10-22
 
 - **Tamaño y características:**

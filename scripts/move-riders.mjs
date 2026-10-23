@@ -1,3 +1,4 @@
+import { hasWeather } from "./battlefield-service.mjs";
 import { pokemonTypes } from "./status-runtime.mjs";
 import { buildAttackOutcome, subscribeAttackOutcome } from "./attack-outcome-engine.mjs";
 import { getPokemonHeldItem } from "./pokemon-held-item-service.mjs";
@@ -26,6 +27,8 @@ import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
  *   Gyro Ball (double dice when its DEX is lower), Snipe Shot (double dice when rolled with advantage) and Lash Out
  *   (advantage and +MOVE while it has a status or a lowered stat).
  * - Hold Back: the damage it deals never takes the target below 1 HP.
+ * - Damage type picked for the player: Multi-Attack and Revelation Dance (the user's primary type), Techno Blast (its
+ *   held Drive) and Weather Ball (the weather, with double dice). Still changeable in the damage dialog.
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
@@ -157,7 +160,17 @@ const doubling = ({ user, item, dice }) => {
   return { extra: die(dice, multiplier - 1) };
 };
 
-// Each returns { times, extra }: the formula repeated `times` over, plus extra parts.
+const DRIVES = { burn: "fire", chill: "ice", douse: "water", shock: "electric" };
+function heldDriveType(actor) {
+  let held = null;
+  try { held = getPokemonHeldItem(actor); } catch { return null; }
+  const name = String(held?.name ?? "").toLowerCase();
+  return Object.entries(DRIVES).find(([drive]) => name.includes(drive))?.[1] ?? null;
+}
+const WEATHER_TYPES = [["sun", "fire"], ["rain", "water"], ["sandstorm", "rock"], ["hail", "ice"], ["snow", "ice"]];
+const weatherType = () => WEATHER_TYPES.find(([weather]) => hasWeather(weather))?.[1] ?? null;
+
+// Each returns { times, extra, type }: the formula repeated `times` over, plus extra parts, and the damage type.
 export const DAMAGE_RIDERS = Object.freeze({
   brine: ({ target }) => ({ times: hpShare(target) !== null && hpShare(target) < 0.5 ? 2 : 1 }),
   flail: ({ user }) => ({ times: lowHpMultiplier(user) }),
@@ -182,6 +195,10 @@ export const DAMAGE_RIDERS = Object.freeze({
   "gyro-ball": ({ user, target, dice }) => ({ extra: target && dexScore(user) < dexScore(target) ? die(dice, 1) : [] }),
   "snipe-shot": ({ user, dice }) => ({ extra: attacks(user).at(-1)?.advantage ? die(dice, 1) : [] }),
   "lash-out": ({ user, activity }) => ({ extra: frustrated(user) ? [moveModifier(user, activity)] : [] }),
+  "multi-attack": ({ user }) => ({ type: pokemonTypes(user)[0] ?? null }),
+  "revelation-dance": ({ user }) => ({ type: pokemonTypes(user)[0] ?? null }),
+  "techno-blast": ({ user }) => ({ type: heldDriveType(user) }),
+  "weather-ball": ({ dice }) => (weatherType() ? { type: weatherType(), extra: die(dice, 1) } : { type: "normal" }),
   "stored-power": ({ user, dice }) => ({ extra: oneDie(dice, boosts(user)) }),
   "power-trip": ({ user, dice }) => ({ extra: oneDie(dice, boosts(user)) }),
   punishment: ({ target, dice }) => ({ extra: oneDie(dice, boosts(target)) }),
@@ -203,7 +220,12 @@ export function onPreRollDamageRiders(config) {
   if (!rider || !roll || config.isHealing) {return;}
   const match = String(roll.parts?.[0] ?? "").match(/(\d+)d(\d+)/);
   const dice = match ? { number: Number(match[1]), faces: Number(match[2]) } : null;
-  const { times = 1, extra = [] } = rider({ user: activity.actor, target: targetedActor(), activity, item, dice });
+  const { times = 1, extra = [], type = null } = rider({ user: activity.actor, target: targetedActor(), activity, item, dice });
+  if (type) {
+    roll.options ??= {};
+    roll.options.type = type;
+    roll.options.types = [...new Set([type, ...(roll.options.types ?? [])])];
+  }
   const base = [...(roll.parts ?? [])];
   roll.parts = [...Array.from({ length: times }, () => base).flat(), ...extra.filter(Boolean).map(String)];
 }
