@@ -226,3 +226,27 @@ test("AC boosts ignored, Focus Energy widens the critical range, Tail Glow adds 
   assert.deepEqual(tackle.rolls[0].parts, ["1d6 + 4"], "not the user's type");
   game.user = undefined;
 });
+
+test("vulnerability, PP spent and downed allies add damage", async () => {
+  const { onPreRollDamageRiders } = await import("../scripts/move-riders.mjs");
+  const actor = (extra = {}) => ({ effects: [], system: { abilities: { str: { mod: 4 } }, attributes: { hp: { value: 10, max: 10 } }, traits: { dv: { value: new Set() } } },
+    getActiveTokens: () => [{ document: { disposition: 1 } }], getFlag: () => undefined, ...extra });
+  const roll = (id, user, target = null, spent = 0) => {
+    game.user = { targets: target ? new Set([{ actor: target }]) : new Set() };
+    const item = createFlagDocument({ flags: { [M]: { kind: "move", sourceId: id, moveDefinition: { type: "electric" } } } });
+    item.system = { uses: { spent } };
+    const config = { subject: { item, actor: user, attack: { ability: "str" } }, rolls: [{ parts: ["1d6 + 4"] }] };
+    onPreRollDamageRiders(config);
+    return config.rolls[0].parts;
+  };
+  const weak = actor({ system: { attributes: { hp: { value: 10, max: 10 } }, traits: { dv: { value: new Set(["electric"]) } } } });
+  assert.deepEqual(roll("electro-drift", actor(), weak), ["1d6 + 4", "4"]);
+  assert.deepEqual(roll("electro-drift", actor(), actor()), ["1d6 + 4"]);
+  assert.deepEqual(roll("trump-card", actor(), null, 3), ["1d6 + 4", "8"], "two PP spent before this use");
+  const user = actor();
+  const fainted = actor({ system: { attributes: { hp: { value: 0, max: 10 } } } });
+  game.combat = { combatants: [{ actor: user }, { actor: fainted }, { actor: fainted }] };
+  assert.deepEqual(roll("last-respects", user), ["1d6 + 4", "4d6"]);
+  game.combat = undefined;
+  game.user = undefined;
+});

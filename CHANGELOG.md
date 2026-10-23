@@ -4,6 +4,15 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.41.0] — 2026-10-22
+
+- **Collision Course / Electro Drift:** +MOVE si el objetivo es vulnerable a su tipo.
+- **Skitter Smack:** con ventaja, +Xd6 (X = la mitad de su nivel, redondeando hacia arriba).
+- **Trump Card:** +MOVE por cada PP gastado antes de este uso.
+- **Last Respects:** +2d6 por cada aliado debilitado en el combate, hasta 10d6.
+- Quedan manuales Acrobatics, Present, Fiery Dance, Foul Play, Behemoth Bash, Behemoth Blade y Dynamax Cannon (con
+  nota para el DM); Storm Throw y Flower Trick son solo daño.
+
 ## [0.40.0] — 2026-10-22
 
 - **Chip Away, Sacred Sword, Secret Sword y Darkest Lariat:** ignoran la CA que el objetivo ganó en el combate

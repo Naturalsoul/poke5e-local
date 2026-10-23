@@ -30,6 +30,8 @@ import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
  * - Hold Back: the damage it deals never takes the target below 1 HP.
  * - Chip Away, Sacred Sword, Secret Sword and Darkest Lariat ignore the AC the target gained in battle (as Unaware).
  * - While concentrating: Focus Energy widens the critical range by 2; Tail Glow and Calm Mind add STAB again.
+ * - Collision Course and Electro Drift (+MOVE against a target vulnerable to it), Skitter Smack (+half its level in d6
+ *   with advantage), Trump Card (+MOVE per PP spent before this use) and Last Respects (+2d6 per downed ally, up to 10d6).
  * - Damage type picked for the player: Multi-Attack and Revelation Dance (the user's primary type), Techno Blast (its
  *   held Drive) and Weather Ball (the weather, with double dice). Still changeable in the damage dialog.
  * ============================================================ */
@@ -165,6 +167,19 @@ export function frustrated(actor) {
     && effect.getFlag?.(MODULE_ID, "kind") === "pokemon-modifier"
     && (Boolean(effect.getFlag(MODULE_ID, "targetedAttack")) || Array.from(effect.changes ?? []).some(change => Number(change.value) < 0)));
 }
+const vulnerableTo = (actor, item) => {
+  const types = actor?.system?.traits?.dv?.value;
+  const type = item?.getFlag?.(MODULE_ID, "moveDefinition")?.type;
+  return Boolean(type && types && (types.has?.(type) ?? Array.from(types).includes(type)));
+};
+const levelOf = actor => Number(actor?.getFlag?.(MODULE_ID, "level")) || 0;
+const disposition = actor => actor?.getActiveTokens?.()[0]?.document?.disposition ?? actor?.prototypeToken?.disposition ?? 0;
+// Allies down in this combat: combatants on the user's side at 0 HP.
+function downedAllies(user) {
+  const side = disposition(user);
+  return Array.from(game.combat?.combatants ?? []).map(combatant => combatant.actor)
+    .filter(actor => actor && actor !== user && disposition(actor) === side && Number(actor.system?.attributes?.hp?.value) <= 0).length;
+}
 const die = (dice, count) => (count > 0 && dice ? [`${dice.number * count}d${dice.faces}`] : []);
 const oneDie = (dice, count) => (count > 0 && dice ? [`${count}d${dice.faces}`] : []);
 const doubling = ({ user, item, dice }) => {
@@ -207,6 +222,15 @@ export const DAMAGE_RIDERS = Object.freeze({
   "gyro-ball": ({ user, target, dice }) => ({ extra: target && dexScore(user) < dexScore(target) ? die(dice, 1) : [] }),
   "snipe-shot": ({ user, dice }) => ({ extra: attacks(user).at(-1)?.advantage ? die(dice, 1) : [] }),
   "lash-out": ({ user, activity }) => ({ extra: frustrated(user) ? [moveModifier(user, activity)] : [] }),
+  "collision-course": ({ user, target, item, activity }) => ({ extra: vulnerableTo(target, item) ? [moveModifier(user, activity)] : [] }),
+  "electro-drift": ({ user, target, item, activity }) => ({ extra: vulnerableTo(target, item) ? [moveModifier(user, activity)] : [] }),
+  "skitter-smack": ({ user }) => ({ extra: attacks(user).at(-1)?.advantage && levelOf(user) ? [`${Math.ceil(levelOf(user) / 2)}d6`] : [] }),
+  // Its PP is spent when it is used, so this use is already counted.
+  "trump-card": ({ user, item, activity }) => {
+    const before = Math.max(0, (Number(item?.system?.uses?.spent) || 0) - 1);
+    return { extra: before ? [moveModifier(user, activity) * before] : [] };
+  },
+  "last-respects": ({ user, dice }) => ({ extra: oneDie(dice, Math.min(2 * downedAllies(user), 10 - (dice?.number ?? 1))) }),
   "multi-attack": ({ user }) => ({ type: pokemonTypes(user)[0] ?? null }),
   "revelation-dance": ({ user }) => ({ type: pokemonTypes(user)[0] ?? null }),
   "techno-blast": ({ user }) => ({ type: heldDriveType(user) }),
