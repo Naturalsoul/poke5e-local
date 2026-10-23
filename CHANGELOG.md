@@ -4,6 +4,18 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.43.0] — 2026-10-22
+
+- **Curación:**
+  - **Milk Drink, Moonlight y Morning Sun** ya tienen su fórmula de curación (faltaba en los datos). Los Pokémon
+    que ya los tienen deben volver a aprenderlos (o reimportarse) para que la tirada aparezca.
+  - **Aromatherapy / Jungle Healing / Heal Bell:** al usarlos, curan los estados de los aliados a 10, 15 y 60 ft
+    (el usuario incluido).
+  - **Purify:** cura los estados de sus objetivos; si curó alguno, el usuario recupera el doble de su nivel en PG.
+  - **Psychic Noise:** quien falla la salvación no puede recuperar PG hasta el final de su siguiente turno.
+- Quedan manuales Wish, Roost, Revival Blessing, Pain Split, Pollen Puff, Heal Block y Snatch; Lunar Blessing pasa a
+  efectos de campo.
+
 ## [0.42.0] — 2026-10-22
 
 - **Payback:** daño doble si el objetivo le acertó desde su ataque anterior. **Bolt Beak / Fishious Rend:** MOVE doble

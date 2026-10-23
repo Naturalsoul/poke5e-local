@@ -1,4 +1,4 @@
-import { hasWeather } from "./battlefield-service.mjs";
+import { distanceBetween, hasWeather } from "./battlefield-service.mjs";
 import { hasPokemonAbility, pokemonTypes } from "./status-runtime.mjs";
 import { battleArmor } from "./passive-ability-engine.mjs";
 import { buildAttackOutcome, subscribeAttackOutcome } from "./attack-outcome-engine.mjs";
@@ -35,6 +35,8 @@ import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
  * - From the attacks in chat since the user's previous attack: Payback (double damage if the target hit the user) and
  *   Bolt Beak / Fishious Rend (MOVE again if the target didn't attack). Charge Beam: a natural 10+ hit powers MOVE up
  *   until the end of its next turn. Electro Ball: next tier of dice when faster. Laser Focus: its next attack crits.
+ * - Status cures on use: Aromatherapy (allies within 10 ft), Jungle Healing (15 ft), Heal Bell (60 ft) and Purify (its
+ *   targets; if it cures any, the user heals twice its level). Psychic Noise's mark blocks healing.
  * - Damage type picked for the player: Multi-Attack and Revelation Dance (the user's primary type), Techno Blast (its
  *   held Drive) and Weather Ball (the weather, with double dice). Still changeable in the damage dialog.
  * ============================================================ */
@@ -43,10 +45,10 @@ const MODULE_ID = "poke5e-local";
 
 const LABELS = {
   es: { cleared: "pierde sus cambios de estadísticas", burned: name => `se queda sin ${name}: se ha reducido a cenizas`,
-    worn: "Eternabeam — Incapacitado", charged: "Charge Beam — MOVE doble",
+    worn: "Eternabeam — Incapacitado", cured: "se cura de", purified: "recupera PG con Purify", charged: "Charge Beam — MOVE doble",
     crash: "se estrella y recibe" },
   en: { cleared: "loses its stat changes", burned: name => `loses its ${name}: it burned to ash`,
-    worn: "Eternabeam — Incapacitated", charged: "Charge Beam — MOVE doubled",
+    worn: "Eternabeam — Incapacitated", cured: "is cured of", purified: "regains HP from Purify", charged: "Charge Beam — MOVE doubled",
     crash: "crashes and takes" }
 };
 const text = () => LABELS[game.settings.get(MODULE_ID, "language") === "en" ? "en" : "es"];
@@ -331,6 +333,43 @@ async function onAttackMessage(message) {
   if (target) {await HIT_RIDERS[id](target, { item, user: item.actor, outcome });}
 }
 
+const statusEffects = actor => Array.from(actor?.effects ?? []).filter(effect => effect.getFlag?.(MODULE_ID, "kind") === "pokemon-status");
+const sideOf = actor => actor?.getActiveTokens?.()[0]?.document?.disposition ?? null;
+
+// Allies on the scene (the user included) within `feet`.
+export function alliesWithin(user, feet) {
+  const side = sideOf(user);
+  if (side === null) {return [user];}
+  const actors = new Set((globalThis.canvas?.tokens?.placeables ?? []).filter(token => token.document?.disposition === side).map(token => token.actor));
+  return [...actors].filter(actor => actor && (actor === user || distanceBetween(user, actor) <= feet));
+}
+
+async function cureStatuses(actor) {
+  const effects = statusEffects(actor);
+  if (!effects.length) {return false;}
+  await actor.deleteEmbeddedDocuments("ActiveEffect", effects.map(effect => effect.id));
+  await chat(actor, `<strong>${escape(actor.name)}</strong> ${text().cured} ${effects.map(effect => escape(effect.name)).join(", ")}.`);
+  return true;
+}
+
+const messageTargets = message => Array.from(message.getFlag?.("dnd5e", "targets") ?? []).map(({ uuid }) => actorFromUuid(uuid)).filter(Boolean);
+const CURE_RADIUS = { aromatherapy: 10, "jungle-healing": 15, "heal-bell": 60 };
+
+export async function runCures(id, user, message) {
+  if (CURE_RADIUS[id]) {
+    for (const ally of alliesWithin(user, CURE_RADIUS[id])) {await cureStatuses(ally);}
+    return;
+  }
+  if (id !== "purify") {return;}
+  let cured = false;
+  for (const target of messageTargets(message).filter(actor => actor !== user)) {cured = (await cureStatuses(target)) || cured;}
+  const heal = 2 * (Number(user.getFlag?.(MODULE_ID, "level")) || 0);
+  if (cured && heal) {
+    await user.applyDamage(-heal);
+    await chat(user, `<strong>${escape(user.name)}</strong> ${text().purified}: ${heal}.`);
+  }
+}
+
 export function eternabeamEffect() {
   return { name: text().worn, img: "systems/dnd5e/icons/svg/statuses/incapacitated.svg", statuses: ["incapacitated"],
     transfer: false, changes: [], flags: { [MODULE_ID]: { kind: CONDITION_KIND, condition: "incapacitated", sourceMove: "eternabeam",
@@ -339,6 +378,7 @@ export function eternabeamEffect() {
 
 async function onUsageMessage(message) {
   const item = message.getAssociatedItem?.();
+  if (item?.actor && (CURE_RADIUS[moveId(item)] || moveId(item) === "purify")) {await runCures(moveId(item), item.actor, message);}
   if (moveId(item) === "eternabeam" && item.actor) {await item.actor.createEmbeddedDocuments("ActiveEffect", [eternabeamEffect()]);}
 }
 
@@ -352,6 +392,10 @@ function onCreateChatMessage(message) {
 
 // Hold Back: whoever applies its damage from the chat card, the target keeps 1 HP.
 export function onPreApplyDamage(actor, _amount, updates, options) {
+  const hpNow = Number(actor?.system?.attributes?.hp?.value);
+  // Psychic Noise: no healing while marked.
+  const blocked = Array.from(actor?.effects ?? []).some(effect => !effect.disabled && effect.getFlag?.(MODULE_ID, "condition") === "heal-blocked");
+  if (blocked && updates?.["system.attributes.hp.value"] > hpNow) {updates["system.attributes.hp.value"] = hpNow;}
   if (moveId(options?.originatingMessage?.getAssociatedItem?.()) !== "hold-back") {return;}
   const hp = updates?.["system.attributes.hp.value"];
   if (hp !== undefined && hp < 1 && Number(actor?.system?.attributes?.hp?.value) >= 1) {updates["system.attributes.hp.value"] = 1;}

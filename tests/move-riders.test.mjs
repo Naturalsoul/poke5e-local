@@ -278,3 +278,34 @@ test("Payback and Bolt Beak read the attacks in chat since the user's last one; 
   game.messages = undefined;
   game.user = undefined;
 });
+
+test("cures clear the statuses of allies in range; Purify heals its user; Psychic Noise blocks healing", async () => {
+  const { runCures, onPreApplyDamage } = await import("../scripts/move-riders.mjs");
+  const status = id => ({ id, name: id, getFlag: (_m, key) => (key === "kind" ? "pokemon-status" : undefined) });
+  const pokemon = (name, disposition, x, effects = []) => {
+    const token = { center: { x, y: 0 }, document: { disposition } };
+    const actor = { name, effects: [...effects], healed: 0, getFlag: (_m, key) => (key === "level" ? 7 : undefined),
+      getActiveTokens: () => [token], deleteEmbeddedDocuments: async (_type, ids) => { actor.effects = actor.effects.filter(effect => !ids.includes(effect.id)); },
+      applyDamage: async amount => { actor.healed -= amount; } };
+    token.actor = actor;
+    return actor;
+  };
+  const user = pokemon("Chansey", 1, 0, [status("burn")]);
+  const near = pokemon("Pikachu", 1, 5, [status("poison")]);
+  const far = pokemon("Eevee", 1, 50, [status("sleep")]);
+  const foe = pokemon("Gengar", -1, 5, [status("burn")]);
+  globalThis.canvas = { tokens: { placeables: [user, near, far, foe].map(actor => actor.getActiveTokens()[0]) },
+    grid: { measurePath: ([a, b]) => ({ distance: Math.abs(a.x - b.x) }) } };
+  await runCures("aromatherapy", user, {});
+  assert.deepEqual([user, near, far, foe].map(actor => actor.effects.length), [0, 0, 1, 1]);
+  globalThis.fromUuidSync = uuid => (uuid === "far" ? far : null);
+  await runCures("purify", user, { getFlag: (scope, key) => (scope === "dnd5e" && key === "targets" ? [{ uuid: "far" }] : undefined) });
+  assert.equal(far.effects.length, 0);
+  assert.equal(user.healed, 14, "twice its level");
+  const marked = { system: { attributes: { hp: { value: 5 } } },
+    effects: [{ disabled: false, getFlag: (_m, key) => (key === "condition" ? "heal-blocked" : undefined) }] };
+  const updates = { "system.attributes.hp.value": 12 };
+  onPreApplyDamage(marked, -7, updates, {});
+  assert.equal(updates["system.attributes.hp.value"], 5);
+  delete globalThis.canvas;
+});

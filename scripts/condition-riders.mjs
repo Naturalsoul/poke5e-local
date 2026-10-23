@@ -21,10 +21,10 @@ const ICONS = "systems/dnd5e/icons/svg/statuses";
 
 const LABELS = {
   es: { frightened: "Asustado", blinded: "Cegado", prone: "Derribado", grappled: "Apresado", trapped: "Mean Look — No puede huir ni cambiarse",
-    salted: "Salt Cure — Salado", save: "Salvación contra", overcomes: "se sobrepone a", saltHurts: "sufre daño por Salt Cure",
+    salted: "Salt Cure — Salado", "heal-blocked": "Psychic Noise — No puede recuperar PG", save: "Salvación contra", overcomes: "se sobrepone a", saltHurts: "sufre daño por Salt Cure",
     saltEnds: "ya no sufre Salt Cure", cantLeave: name => `${name} no puede huir ni ser cambiado (Mean Look).` },
   en: { frightened: "Frightened", blinded: "Blinded", prone: "Prone", grappled: "Grappled", trapped: "Mean Look — Can't flee or switch out",
-    salted: "Salt Cure — Salted", save: "Save against", overcomes: "overcomes", saltHurts: "is hurt by Salt Cure",
+    salted: "Salt Cure — Salted", "heal-blocked": "Psychic Noise — Can't regain HP", save: "Save against", overcomes: "overcomes", saltHurts: "is hurt by Salt Cure",
     saltEnds: "is no longer hurt by Salt Cure", cantLeave: name => `${name} can't flee or be switched out (Mean Look).` }
 };
 const text = () => LABELS[game.settings.get(MODULE_ID, "language") === "en" ? "en" : "es"];
@@ -42,6 +42,8 @@ export const CONDITION_RIDERS = Object.freeze({
   // shortcut: being hit by Ground Moves while grounded is the GM's; no engine tracks Ground immunity yet.
   "thousand-arrows": { condition: "prone", trigger: "failed-save" },
   "mean-look": { condition: "trapped", trigger: "failed-save", img: "icons/svg/net.svg", rounds: 3 },
+  // shortcut: it ends at the end of the target's next turn, not the user's.
+  "psychic-noise": { condition: "heal-blocked", trigger: "failed-save", img: "icons/svg/silenced.svg", untilEndOfNextTurn: true },
   "salt-cure": { condition: "salted", trigger: "failed-save", img: "icons/svg/acid.svg",
     startTurnDamage: { formula: "1d4", type: "rock", vulnerableTypes: ["water", "steel"] } }
 });
