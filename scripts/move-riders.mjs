@@ -1,4 +1,6 @@
-import { pokemonTypes } from "./status-runtime.mjs";
+import { hasWeather } from "./battlefield-service.mjs";
+import { hasPokemonAbility, pokemonTypes } from "./status-runtime.mjs";
+import { battleArmor } from "./passive-ability-engine.mjs";
 import { buildAttackOutcome, subscribeAttackOutcome } from "./attack-outcome-engine.mjs";
 import { getPokemonHeldItem } from "./pokemon-held-item-service.mjs";
 import { CONDITION_KIND } from "./condition-riders.mjs";
@@ -26,6 +28,12 @@ import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
  *   Gyro Ball (double dice when its DEX is lower), Snipe Shot (double dice when rolled with advantage) and Lash Out
  *   (advantage and +MOVE while it has a status or a lowered stat).
  * - Hold Back: the damage it deals never takes the target below 1 HP.
+ * - Chip Away, Sacred Sword, Secret Sword and Darkest Lariat ignore the AC the target gained in battle (as Unaware).
+ * - While concentrating: Focus Energy widens the critical range by 2; Tail Glow and Calm Mind add STAB again.
+ * - Collision Course and Electro Drift (+MOVE against a target vulnerable to it), Skitter Smack (+half its level in d6
+ *   with advantage), Trump Card (+MOVE per PP spent before this use) and Last Respects (+2d6 per downed ally, up to 10d6).
+ * - Damage type picked for the player: Multi-Attack and Revelation Dance (the user's primary type), Techno Blast (its
+ *   held Drive) and Weather Ball (the weather, with double dice). Still changeable in the damage dialog.
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
@@ -85,15 +93,24 @@ const crit19 = ["air-cutter", "aqua-cutter", "attack-order", "blaze-kick", "crab
 export const CRITICAL_RANGES = Object.freeze({ ...Object.fromEntries(crit19.map(id => [id, 19])), "fickle-beam": 17, "frost-breath": 16 });
 
 const ADVANTAGE_MOVES = new Set(["feint-attack"]);
+const IGNORE_AC_BOOSTS = new Set(["chip-away", "sacred-sword", "secret-sword", "darkest-lariat"]);
+const focusing = (actor, id) => Array.from(actor?.effects ?? []).some(effect => !effect.disabled && effect.getFlag?.(MODULE_ID, "sourceMove") === id);
+const singleTarget = () => (game.user?.targets?.size === 1 ? [...game.user.targets][0]?.actor ?? null : null);
 
 // Lowest threshold wins, so Super Luck or another source never narrows the Move's own range.
 export function onPreRollAttackCritical(config) {
   const id = moveId(config?.subject?.item);
+  const user = config?.subject?.actor;
   const threshold = CRITICAL_RANGES[id];
-  if (!threshold && !ADVANTAGE_MOVES.has(id) && id !== "lash-out") {return;}
+  const focused = focusing(user, "focus-energy");
+  const ignoreBoosts = IGNORE_AC_BOOSTS.has(id) && !hasPokemonAbility(user, "unaware");
+  if (!id || (!threshold && !focused && !ignoreBoosts && !ADVANTAGE_MOVES.has(id) && id !== "lash-out")) {return;}
+  const armor = ignoreBoosts ? battleArmor(singleTarget()) : 0;
   for (const rollConfig of config.rolls ?? []) {
     rollConfig.options ??= {};
     if (threshold) {rollConfig.options.criticalSuccess = Math.min(rollConfig.options.criticalSuccess ?? 20, threshold);}
+    if (focused) {rollConfig.options.criticalSuccess = (rollConfig.options.criticalSuccess ?? 20) - 2;}
+    if (armor) {(rollConfig.parts ??= []).push(String(armor));}
     if (ADVANTAGE_MOVES.has(id) || (id === "lash-out" && frustrated(config.subject.actor))) {rollConfig.options.advantage = true;}
   }
 }
@@ -150,6 +167,19 @@ export function frustrated(actor) {
     && effect.getFlag?.(MODULE_ID, "kind") === "pokemon-modifier"
     && (Boolean(effect.getFlag(MODULE_ID, "targetedAttack")) || Array.from(effect.changes ?? []).some(change => Number(change.value) < 0)));
 }
+const vulnerableTo = (actor, item) => {
+  const types = actor?.system?.traits?.dv?.value;
+  const type = item?.getFlag?.(MODULE_ID, "moveDefinition")?.type;
+  return Boolean(type && types && (types.has?.(type) ?? Array.from(types).includes(type)));
+};
+const levelOf = actor => Number(actor?.getFlag?.(MODULE_ID, "level")) || 0;
+const disposition = actor => actor?.getActiveTokens?.()[0]?.document?.disposition ?? actor?.prototypeToken?.disposition ?? 0;
+// Allies down in this combat: combatants on the user's side at 0 HP.
+function downedAllies(user) {
+  const side = disposition(user);
+  return Array.from(game.combat?.combatants ?? []).map(combatant => combatant.actor)
+    .filter(actor => actor && actor !== user && disposition(actor) === side && Number(actor.system?.attributes?.hp?.value) <= 0).length;
+}
 const die = (dice, count) => (count > 0 && dice ? [`${dice.number * count}d${dice.faces}`] : []);
 const oneDie = (dice, count) => (count > 0 && dice ? [`${count}d${dice.faces}`] : []);
 const doubling = ({ user, item, dice }) => {
@@ -157,7 +187,17 @@ const doubling = ({ user, item, dice }) => {
   return { extra: die(dice, multiplier - 1) };
 };
 
-// Each returns { times, extra }: the formula repeated `times` over, plus extra parts.
+const DRIVES = { burn: "fire", chill: "ice", douse: "water", shock: "electric" };
+function heldDriveType(actor) {
+  let held = null;
+  try { held = getPokemonHeldItem(actor); } catch { return null; }
+  const name = String(held?.name ?? "").toLowerCase();
+  return Object.entries(DRIVES).find(([drive]) => name.includes(drive))?.[1] ?? null;
+}
+const WEATHER_TYPES = [["sun", "fire"], ["rain", "water"], ["sandstorm", "rock"], ["hail", "ice"], ["snow", "ice"]];
+const weatherType = () => WEATHER_TYPES.find(([weather]) => hasWeather(weather))?.[1] ?? null;
+
+// Each returns { times, extra, type }: the formula repeated `times` over, plus extra parts, and the damage type.
 export const DAMAGE_RIDERS = Object.freeze({
   brine: ({ target }) => ({ times: hpShare(target) !== null && hpShare(target) < 0.5 ? 2 : 1 }),
   flail: ({ user }) => ({ times: lowHpMultiplier(user) }),
@@ -182,6 +222,19 @@ export const DAMAGE_RIDERS = Object.freeze({
   "gyro-ball": ({ user, target, dice }) => ({ extra: target && dexScore(user) < dexScore(target) ? die(dice, 1) : [] }),
   "snipe-shot": ({ user, dice }) => ({ extra: attacks(user).at(-1)?.advantage ? die(dice, 1) : [] }),
   "lash-out": ({ user, activity }) => ({ extra: frustrated(user) ? [moveModifier(user, activity)] : [] }),
+  "collision-course": ({ user, target, item, activity }) => ({ extra: vulnerableTo(target, item) ? [moveModifier(user, activity)] : [] }),
+  "electro-drift": ({ user, target, item, activity }) => ({ extra: vulnerableTo(target, item) ? [moveModifier(user, activity)] : [] }),
+  "skitter-smack": ({ user }) => ({ extra: attacks(user).at(-1)?.advantage && levelOf(user) ? [`${Math.ceil(levelOf(user) / 2)}d6`] : [] }),
+  // Its PP is spent when it is used, so this use is already counted.
+  "trump-card": ({ user, item, activity }) => {
+    const before = Math.max(0, (Number(item?.system?.uses?.spent) || 0) - 1);
+    return { extra: before ? [moveModifier(user, activity) * before] : [] };
+  },
+  "last-respects": ({ user, dice }) => ({ extra: oneDie(dice, Math.min(2 * downedAllies(user), 10 - (dice?.number ?? 1))) }),
+  "multi-attack": ({ user }) => ({ type: pokemonTypes(user)[0] ?? null }),
+  "revelation-dance": ({ user }) => ({ type: pokemonTypes(user)[0] ?? null }),
+  "techno-blast": ({ user }) => ({ type: heldDriveType(user) }),
+  "weather-ball": ({ dice }) => (weatherType() ? { type: weatherType(), extra: die(dice, 1) } : { type: "normal" }),
   "stored-power": ({ user, dice }) => ({ extra: oneDie(dice, boosts(user)) }),
   "power-trip": ({ user, dice }) => ({ extra: oneDie(dice, boosts(user)) }),
   punishment: ({ target, dice }) => ({ extra: oneDie(dice, boosts(target)) }),
@@ -193,17 +246,29 @@ export const DAMAGE_RIDERS = Object.freeze({
     extra: oneDie(dice, Math.min(dice?.number ?? 0, streak(user, moveId(item), { sameTarget: true }) - 1)) })
 });
 
-const targetedActor = () => (game.user?.targets?.size === 1 ? [...game.user.targets][0]?.actor ?? null : null);
+// Tail Glow and Calm Mind: a Move of the user's type adds its STAB (proficiency) once more.
+function stabAgain(user, item) {
+  const doubled = focusing(user, "tail-glow") || focusing(user, "calm-mind");
+  return doubled && pokemonTypes(user).includes(item?.getFlag?.(MODULE_ID, "moveDefinition")?.type) ? proficiency(user) : 0;
+}
 
 export function onPreRollDamageRiders(config) {
   const activity = config?.subject;
   const item = activity?.item;
-  const rider = DAMAGE_RIDERS[moveId(item)];
   const roll = config?.rolls?.[0];
-  if (!rider || !roll || config.isHealing) {return;}
+  if (!moveId(item) || !roll || config.isHealing) {return;}
+  const stab = stabAgain(activity.actor, item);
+  if (stab) {(roll.parts ??= []).push(String(stab));}
+  const rider = DAMAGE_RIDERS[moveId(item)];
+  if (!rider) {return;}
   const match = String(roll.parts?.[0] ?? "").match(/(\d+)d(\d+)/);
   const dice = match ? { number: Number(match[1]), faces: Number(match[2]) } : null;
-  const { times = 1, extra = [] } = rider({ user: activity.actor, target: targetedActor(), activity, item, dice });
+  const { times = 1, extra = [], type = null } = rider({ user: activity.actor, target: singleTarget(), activity, item, dice });
+  if (type) {
+    roll.options ??= {};
+    roll.options.type = type;
+    roll.options.types = [...new Set([type, ...(roll.options.types ?? [])])];
+  }
   const base = [...(roll.parts ?? [])];
   roll.parts = [...Array.from({ length: times }, () => base).flat(), ...extra.filter(Boolean).map(String)];
 }

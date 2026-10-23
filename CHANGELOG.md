@@ -4,6 +4,31 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.41.0] — 2026-10-22
+
+- **Collision Course / Electro Drift:** +MOVE si el objetivo es vulnerable a su tipo.
+- **Skitter Smack:** con ventaja, +Xd6 (X = la mitad de su nivel, redondeando hacia arriba).
+- **Trump Card:** +MOVE por cada PP gastado antes de este uso.
+- **Last Respects:** +2d6 por cada aliado debilitado en el combate, hasta 10d6.
+- Quedan manuales Acrobatics, Present, Fiery Dance, Foul Play, Behemoth Bash, Behemoth Blade y Dynamax Cannon (con
+  nota para el DM); Storm Throw y Flower Trick son solo daño.
+
+## [0.40.0] — 2026-10-22
+
+- **Chip Away, Sacred Sword, Secret Sword y Darkest Lariat:** ignoran la CA que el objetivo ganó en el combate
+  (se suma al ataque, como hace Unaware).
+- **Focus Energy:** mientras concentra, su rango de crítico se amplía en 2 (20 → 18, 19 → 17).
+- **Tail Glow / Calm Mind:** mientras concentra, sus Moves de su tipo suman el STAB otra vez.
+
+## [0.39.0] — 2026-10-22
+
+- **Tipo de daño elegido solo** (se puede cambiar en el diálogo de daño):
+  - **Multi-Attack / Revelation Dance:** el tipo principal del usuario.
+  - **Techno Blast:** el del Drive que lleva (Burn → Fuego, Chill → Hielo, Douse → Agua, Shock → Eléctrico).
+  - **Weather Ball:** con clima activo, su tipo (sol → Fuego, lluvia → Agua, tormenta de arena → Roca, granizo o
+    nieve → Hielo) y dados dobles.
+- **Flying Press** se elige en el diálogo; **Hidden Power, Natural Gift, Tera Blast y Draco Power** quedan manuales.
+
 ## [0.38.0] — 2026-10-22
 
 - **Tamaño y características:**

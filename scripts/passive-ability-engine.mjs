@@ -263,7 +263,7 @@ export function attackAbilityModifiers(actor, move, targets, { melee = false } =
 }
 
 // Unaware ignores the AC its target gained in this battle: the attack adds it back.
-function battleArmor(target) {
+export function battleArmor(target) {
   return Array.from(target?.effects ?? []).filter(effect => !effect.disabled && effect.getFlag?.(MODULE_ID, "kind") === "pokemon-modifier")
     .flatMap(effect => Array.from(effect.changes ?? [])).filter(change => change.key === "system.attributes.ac.bonus" && Number(change.value) > 0)
     .reduce((sum, change) => sum + Number(change.value), 0);

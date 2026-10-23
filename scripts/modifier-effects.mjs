@@ -27,7 +27,7 @@ export const AUTOMATED_MODIFIER_MOVES = new Set(["growl", "leer", "screech", "ta
   "mud-bomb", "muddy-water", "mystical-fire", "night-daze", "no-retreat", "overheat", "play-nice", "psycho-boost",
   "seed-flare", "snarl", "spicy-extract", "spirit-break", "spotlight", "sweet-scent",
   // Status riders batch 2.
-  "fire-lash", "charm", "v-create", "glaciate", "leaf-storm"]);
+  "fire-lash", "charm", "v-create", "glaciate", "leaf-storm", "focus-energy", "tail-glow", "calm-mind"]);
 
 
 /* ============================================================
@@ -313,6 +313,10 @@ const COMPACT_DEFINITIONS = Object.freeze({
   // Sapped: its next damaging Moves deal MOVE less, until the end of its next turn.
   "leaf-storm": en => selfBuff(en ? "Leaf Storm — Sapped, damage -MOVE" : "Lluevehojas — Agotado, daño -MOV",
     damageChanges("-max(@abilities.str.mod, @abilities.dex.mod)"), untilNextTurn),
+  // Markers while concentrating: move-riders reads them on the attack and damage rolls.
+  "focus-energy": en => concentrationBuff(en ? "Focus Energy — Critical range +2" : "Foco Energía — Rango de crítico +2", []),
+  "tail-glow": en => concentrationBuff(en ? "Tail Glow — STAB doubled" : "Ráfaga — STAB doble", []),
+  "calm-mind": en => concentrationBuff(en ? "Calm Mind — STAB doubled" : "Paz Mental — STAB doble", []),
   "swords-dance": (en, level) => {
     const bonus = level >= 10 ? 2 : 1;
     return concentrationBuff(en ? `Swords Dance — AC +${bonus}` : `Danza Espada — CA +${bonus}`, [ac(bonus)]);

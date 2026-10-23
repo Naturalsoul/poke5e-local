@@ -176,3 +176,77 @@ test("size, DEX and frustration change the damage; Hold Back leaves 1 HP", async
   assert.equal(other["system.attributes.hp.value"], -3);
   game.user = undefined;
 });
+
+test("the damage type is picked for the player: primary type, held Drive, weather", async () => {
+  const { onPreRollDamageRiders } = await import("../scripts/move-riders.mjs");
+  const user = (types, held = null) => {
+    const actor = createFlagDocument({ name: "Genesect", flags: { [M]: { kind: "pokemon", types, ...(held ? { heldItemId: held.id } : {}) } } });
+    if (held) {actor.items.push(held); actor.items.get = id => (id === held.id ? held : null); held.parent = actor;}
+    return actor;
+  };
+  const roll = (id, actor) => {
+    game.user = { targets: new Set() };
+    const item = createFlagDocument({ flags: { [M]: { kind: "move", sourceId: id } } });
+    const config = { subject: { item, actor, attack: { ability: "str" } }, rolls: [{ parts: ["1d8 + 4"], options: { type: "normal", types: ["normal"] } }] };
+    onPreRollDamageRiders(config);
+    return config.rolls[0];
+  };
+  assert.equal(roll("multi-attack", user(["dragon", "flying"])).options.type, "dragon");
+  const drive = createFlagDocument({ documentName: "Item", uuid: "Actor.g.Item.d", name: "Chill Drive", flags: { [M]: { kind: "catalog-item", itemType: "held-item" } } });
+  assert.equal(roll("techno-blast", user(["bug", "steel"], drive)).options.type, "ice");
+  game.combat = { getFlag: () => ({ weather: { id: "rain" } }), combatants: [] };
+  const ball = roll("weather-ball", user(["normal"]));
+  assert.equal(ball.options.type, "water");
+  assert.deepEqual(ball.parts, ["1d8 + 4", "1d8"]);
+  game.combat = null;
+  assert.equal(roll("weather-ball", user(["normal"])).options.type, "normal");
+  game.user = undefined;
+  game.combat = undefined;
+});
+
+test("AC boosts ignored, Focus Energy widens the critical range, Tail Glow adds STAB again", async () => {
+  const { onPreRollAttackCritical, onPreRollDamageRiders } = await import("../scripts/move-riders.mjs");
+  const marker = sourceMove => ({ disabled: false, changes: [], getFlag: (_m, key) => ({ kind: "pokemon-modifier", sourceMove })[key] });
+  const user = (effects = []) => ({ effects, items: [], system: { attributes: { prof: 3 } }, getFlag: (_m, key) => (key === "types" ? ["fire"] : undefined) });
+  const item = (id, type = "normal") => createFlagDocument({ flags: { [M]: { kind: "move", sourceId: id, moveDefinition: { type } } } });
+  const armored = { effects: [{ disabled: false, changes: [{ key: "system.attributes.ac.bonus", value: "2" }],
+    getFlag: (_m, key) => (key === "kind" ? "pokemon-modifier" : undefined) }] };
+  game.user = { targets: new Set([{ actor: armored }]) };
+  const chip = { subject: { item: item("chip-away"), actor: user() }, rolls: [{ options: {}, parts: [] }] };
+  onPreRollAttackCritical(chip);
+  assert.deepEqual(chip.rolls[0].parts, ["2"], "adds back the target's +2 AC");
+  const slash = { subject: { item: item("slash"), actor: user([marker("focus-energy")]) }, rolls: [{ options: {} }] };
+  onPreRollAttackCritical(slash);
+  assert.equal(slash.rolls[0].options.criticalSuccess, 17);
+  const ember = { subject: { item: item("ember", "fire"), actor: user([marker("tail-glow")]) }, rolls: [{ parts: ["1d10 + 4 + 3"] }] };
+  onPreRollDamageRiders(ember);
+  assert.deepEqual(ember.rolls[0].parts, ["1d10 + 4 + 3", "3"]);
+  const tackle = { subject: { item: item("tackle"), actor: user([marker("tail-glow")]) }, rolls: [{ parts: ["1d6 + 4"] }] };
+  onPreRollDamageRiders(tackle);
+  assert.deepEqual(tackle.rolls[0].parts, ["1d6 + 4"], "not the user's type");
+  game.user = undefined;
+});
+
+test("vulnerability, PP spent and downed allies add damage", async () => {
+  const { onPreRollDamageRiders } = await import("../scripts/move-riders.mjs");
+  const actor = (extra = {}) => ({ effects: [], system: { abilities: { str: { mod: 4 } }, attributes: { hp: { value: 10, max: 10 } }, traits: { dv: { value: new Set() } } },
+    getActiveTokens: () => [{ document: { disposition: 1 } }], getFlag: () => undefined, ...extra });
+  const roll = (id, user, target = null, spent = 0) => {
+    game.user = { targets: target ? new Set([{ actor: target }]) : new Set() };
+    const item = createFlagDocument({ flags: { [M]: { kind: "move", sourceId: id, moveDefinition: { type: "electric" } } } });
+    item.system = { uses: { spent } };
+    const config = { subject: { item, actor: user, attack: { ability: "str" } }, rolls: [{ parts: ["1d6 + 4"] }] };
+    onPreRollDamageRiders(config);
+    return config.rolls[0].parts;
+  };
+  const weak = actor({ system: { attributes: { hp: { value: 10, max: 10 } }, traits: { dv: { value: new Set(["electric"]) } } } });
+  assert.deepEqual(roll("electro-drift", actor(), weak), ["1d6 + 4", "4"]);
+  assert.deepEqual(roll("electro-drift", actor(), actor()), ["1d6 + 4"]);
+  assert.deepEqual(roll("trump-card", actor(), null, 3), ["1d6 + 4", "8"], "two PP spent before this use");
+  const user = actor();
+  const fainted = actor({ system: { attributes: { hp: { value: 0, max: 10 } } } });
+  game.combat = { combatants: [{ actor: user }, { actor: fainted }, { actor: fainted }] };
+  assert.deepEqual(roll("last-respects", user), ["1d6 + 4", "4d6"]);
+  game.combat = undefined;
+  game.user = undefined;
+});
