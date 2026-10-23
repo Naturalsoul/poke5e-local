@@ -4,6 +4,17 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.42.0] — 2026-10-22
+
+- **Payback:** daño doble si el objetivo le acertó desde su ataque anterior. **Bolt Beak / Fishious Rend:** MOVE doble
+  si el objetivo no atacó en ese tiempo. Se lee del historial de ataques del chat, así que vale para todos los
+  jugadores y sobrevive a recargar.
+- **Charge Beam:** con un 10 natural o más y acierto, MOVE doble en sus Moves hasta el final de su siguiente turno.
+- **Electro Ball:** si es más rápido que el objetivo, tira los dados del siguiente nivel (al máximo, dados dobles).
+- **Laser Focus:** mientras concentra, su siguiente ataque es crítico.
+- Cierre de **Extras de ataque:** Assurance, Echoed Voice, Fusion Bolt, Dragon Hammer, Glacial Lance, Lock-On, Mind
+  Reader, Lucky Chant y Nature's Madness quedan manuales, con nota para el DM.
+
 ## [0.41.0] — 2026-10-22
 
 - **Collision Course / Electro Drift:** +MOVE si el objetivo es vulnerable a su tipo.

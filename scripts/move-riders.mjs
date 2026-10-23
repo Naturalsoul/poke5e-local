@@ -32,6 +32,9 @@ import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
  * - While concentrating: Focus Energy widens the critical range by 2; Tail Glow and Calm Mind add STAB again.
  * - Collision Course and Electro Drift (+MOVE against a target vulnerable to it), Skitter Smack (+half its level in d6
  *   with advantage), Trump Card (+MOVE per PP spent before this use) and Last Respects (+2d6 per downed ally, up to 10d6).
+ * - From the attacks in chat since the user's previous attack: Payback (double damage if the target hit the user) and
+ *   Bolt Beak / Fishious Rend (MOVE again if the target didn't attack). Charge Beam: a natural 10+ hit powers MOVE up
+ *   until the end of its next turn. Electro Ball: next tier of dice when faster. Laser Focus: its next attack crits.
  * - Damage type picked for the player: Multi-Attack and Revelation Dance (the user's primary type), Techno Blast (its
  *   held Drive) and Weather Ball (the weather, with double dice). Still changeable in the damage dialog.
  * ============================================================ */
@@ -40,10 +43,10 @@ const MODULE_ID = "poke5e-local";
 
 const LABELS = {
   es: { cleared: "pierde sus cambios de estadísticas", burned: name => `se queda sin ${name}: se ha reducido a cenizas`,
-    worn: "Eternabeam — Incapacitado",
+    worn: "Eternabeam — Incapacitado", charged: "Charge Beam — MOVE doble",
     crash: "se estrella y recibe" },
   en: { cleared: "loses its stat changes", burned: name => `loses its ${name}: it burned to ash`,
-    worn: "Eternabeam — Incapacitated",
+    worn: "Eternabeam — Incapacitated", charged: "Charge Beam — MOVE doubled",
     crash: "crashes and takes" }
 };
 const text = () => LABELS[game.settings.get(MODULE_ID, "language") === "en" ? "en" : "es"];
@@ -79,6 +82,11 @@ export const HIT_RIDERS = Object.freeze({
     await target.deleteEmbeddedDocuments("ActiveEffect", ids);
     await chat(target, `<strong>${escape(target.name)}</strong> ${text().cleared}.`);
   },
+  "charge-beam": async (_target, { user, outcome }) => {
+    if (!user || (outcome?.natural ?? 0) < 10) {return;}
+    await user.createEmbeddedDocuments("ActiveEffect", [{ name: text().charged, img: "icons/svg/lightning.svg", transfer: false, changes: [],
+      flags: { [MODULE_ID]: { kind: CONDITION_KIND, condition: "charged", sourceMove: "charge-beam", ...endOfNextTurnFlags() } } }]);
+  },
   incinerate: async target => {
     const held = getPokemonHeldItem(target);
     if (held?.getFlag?.(MODULE_ID, "itemType") !== "berry") {return;}
@@ -103,13 +111,17 @@ export function onPreRollAttackCritical(config) {
   const user = config?.subject?.actor;
   const threshold = CRITICAL_RANGES[id];
   const focused = focusing(user, "focus-energy");
+  const laser = Array.from(user?.effects ?? []).find(effect => !effect.disabled && effect.getFlag?.(MODULE_ID, "sourceMove") === "laser-focus");
   const ignoreBoosts = IGNORE_AC_BOOSTS.has(id) && !hasPokemonAbility(user, "unaware");
-  if (!id || (!threshold && !focused && !ignoreBoosts && !ADVANTAGE_MOVES.has(id) && id !== "lash-out")) {return;}
+  if (!id || (!threshold && !focused && !laser && !ignoreBoosts && !ADVANTAGE_MOVES.has(id) && id !== "lash-out")) {return;}
   const armor = ignoreBoosts ? battleArmor(singleTarget()) : 0;
+  // Spent on this attack.
+  if (laser) {void laser.delete().catch(error => console.error(`[${MODULE_ID}] laser focus`, error));}
   for (const rollConfig of config.rolls ?? []) {
     rollConfig.options ??= {};
     if (threshold) {rollConfig.options.criticalSuccess = Math.min(rollConfig.options.criticalSuccess ?? 20, threshold);}
     if (focused) {rollConfig.options.criticalSuccess = (rollConfig.options.criticalSuccess ?? 20) - 2;}
+    if (laser) {rollConfig.options.criticalSuccess = 1;}
     if (armor) {(rollConfig.parts ??= []).push(String(armor));}
     if (ADVANTAGE_MOVES.has(id) || (id === "lash-out" && frustrated(config.subject.actor))) {rollConfig.options.advantage = true;}
   }
@@ -180,6 +192,29 @@ function downedAllies(user) {
   return Array.from(game.combat?.combatants ?? []).map(combatant => combatant.actor)
     .filter(actor => actor && actor !== user && disposition(actor) === side && Number(actor.system?.attributes?.hp?.value) <= 0).length;
 }
+// The attacks in chat after the user's previous attack (the latest of its own is the one being resolved).
+export function attacksSinceLastTurn(user) {
+  const found = [];
+  let own = 0;
+  for (const message of Array.from(game.messages?.contents ?? []).reverse()) {
+    if (message.getFlag?.("dnd5e", "roll.type") !== "attack" || !message.rolls?.[0]) {continue;}
+    const outcome = buildAttackOutcome(message.rolls[0], message.getAssociatedActivity?.());
+    if (outcome.actorUuid === user?.uuid && ++own === 2) {break;}
+    if (outcome.actorUuid !== user?.uuid) {found.push(outcome);}
+  }
+  return found;
+}
+const hitBy = (user, target) => attacksSinceLastTurn(user).some(outcome => outcome.actorUuid === target?.uuid && outcome.hit === true
+  && outcome.targetActorUuid === user.uuid);
+const attackedSince = (user, target) => attacksSinceLastTurn(user).some(outcome => outcome.actorUuid === target?.uuid);
+const topSpeed = actor => Math.max(0, ...Object.values(actor?.system?.attributes?.movement ?? {}).map(Number).filter(Number.isFinite));
+// Electro Ball: the dice of the next level threshold; past the last one, double dice.
+function nextTierDice(item, user) {
+  const table = item?.getFlag?.(MODULE_ID, "moveDefinition")?.damage?.dice ?? {};
+  const levels = Object.keys(table).map(Number).filter(Number.isFinite).sort((a, b) => a - b);
+  const next = levels.find(level => level > levelOf(user));
+  return next === undefined ? null : table[next];
+}
 const die = (dice, count) => (count > 0 && dice ? [`${dice.number * count}d${dice.faces}`] : []);
 const oneDie = (dice, count) => (count > 0 && dice ? [`${count}d${dice.faces}`] : []);
 const doubling = ({ user, item, dice }) => {
@@ -231,6 +266,14 @@ export const DAMAGE_RIDERS = Object.freeze({
     return { extra: before ? [moveModifier(user, activity) * before] : [] };
   },
   "last-respects": ({ user, dice }) => ({ extra: oneDie(dice, Math.min(2 * downedAllies(user), 10 - (dice?.number ?? 1))) }),
+  payback: ({ user, target }) => ({ times: target && hitBy(user, target) ? 2 : 1 }),
+  "bolt-beak": ({ user, target, activity }) => ({ extra: target && !attackedSince(user, target) ? [moveModifier(user, activity)] : [] }),
+  "fishious-rend": ({ user, target, activity }) => ({ extra: target && !attackedSince(user, target) ? [moveModifier(user, activity)] : [] }),
+  "electro-ball": ({ user, target, item, dice }) => {
+    if (!target || topSpeed(user) <= topSpeed(target)) {return {};}
+    const next = nextTierDice(item, user);
+    return next ? { replaceDice: next } : { extra: die(dice, 1) };
+  },
   "multi-attack": ({ user }) => ({ type: pokemonTypes(user)[0] ?? null }),
   "revelation-dance": ({ user }) => ({ type: pokemonTypes(user)[0] ?? null }),
   "techno-blast": ({ user }) => ({ type: heldDriveType(user) }),
@@ -259,11 +302,14 @@ export function onPreRollDamageRiders(config) {
   if (!moveId(item) || !roll || config.isHealing) {return;}
   const stab = stabAgain(activity.actor, item);
   if (stab) {(roll.parts ??= []).push(String(stab));}
+  // Charge Beam's charge: MOVE once more on its damaging Moves.
+  if (focusing(activity.actor, "charge-beam") && activity.attack?.ability) {(roll.parts ??= []).push(String(moveModifier(activity.actor, activity)));}
   const rider = DAMAGE_RIDERS[moveId(item)];
   if (!rider) {return;}
   const match = String(roll.parts?.[0] ?? "").match(/(\d+)d(\d+)/);
   const dice = match ? { number: Number(match[1]), faces: Number(match[2]) } : null;
-  const { times = 1, extra = [], type = null } = rider({ user: activity.actor, target: singleTarget(), activity, item, dice });
+  const { times = 1, extra = [], type = null, replaceDice = null } = rider({ user: activity.actor, target: singleTarget(), activity, item, dice });
+  if (replaceDice && match) {roll.parts[0] = roll.parts[0].replace(match[0], replaceDice);}
   if (type) {
     roll.options ??= {};
     roll.options.type = type;
@@ -282,7 +328,7 @@ async function onAttackMessage(message) {
   const outcome = buildAttackOutcome(roll, message.getAssociatedActivity?.());
   if (outcome.hit === false && MISS_RIDERS[id]) {await crash(item.actor, MISS_RIDERS[id](item.actor));}
   const target = outcome.hit === true && HIT_RIDERS[id] ? actorFromUuid(outcome.targetActorUuid) : null;
-  if (target) {await HIT_RIDERS[id](target, { item, user: item.actor });}
+  if (target) {await HIT_RIDERS[id](target, { item, user: item.actor, outcome });}
 }
 
 export function eternabeamEffect() {
