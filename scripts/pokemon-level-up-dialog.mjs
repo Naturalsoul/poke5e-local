@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   getPokemonLevelUpPreview,
   levelUpPokemon
@@ -36,18 +37,6 @@ function getLanguage() {
   }
 }
 
-
-function escapeHtml(
-  value
-) {
-
-  return foundry.utils.escapeHTML(
-    String(
-      value ??
-      ""
-    )
-  );
-}
 
 
 function signedNumber(

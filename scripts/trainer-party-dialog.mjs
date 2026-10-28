@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   ensureTrainerState,
   isTrainerActor
@@ -387,14 +388,6 @@ const LABELS = {
  * CONSTANTS
  * ============================================================ */
 
-const HTML_ENTITIES = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  "\"": "&quot;",
-  "'": "&#039;"
-};
-
 
 const ACTION_HANDLERS = {
   "party-to-pc":
@@ -431,19 +424,6 @@ function getLanguage() {
 /* ============================================================
  * HTML
  * ============================================================ */
-
-function escapeHtml(value) {
-  return String(
-    value ??
-    ""
-  ).replace(
-    /[&<>"']/g,
-    character =>
-      HTML_ENTITIES[
-        character
-      ]
-  );
-}
 
 
 function pokemonImage(pokemon) {

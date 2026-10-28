@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   FAKEMON_EVOLUTION_ABILITY_SCORE_MODES,
   FAKEMON_EVOLUTION_CONDITION_TYPES
@@ -1135,18 +1136,6 @@ function invalid(
   };
 }
 
-
-function escapeHtml(
-  value
-) {
-
-  return foundry.utils.escapeHTML(
-    String(
-      value ??
-      ""
-    )
-  );
-}
 
 
 function escapeAttribute(

@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import { pokemonAbilityIcon } from "./pokemon-ability-icons.mjs";
 
 const MODULE_ID =
@@ -636,36 +637,6 @@ function localizedText(
 /* ============================================================
  * ESCAPE
  * ============================================================ */
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-}
 
 
 function escapeAttribute(

@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   getTrainerLevelUpPreview,
   levelUpTrainer
@@ -40,18 +41,6 @@ function getLanguage() {
     : "es";
 }
 
-
-function escapeHtml(
-  value
-) {
-
-  return foundry.utils.escapeHTML(
-    String(
-      value ??
-      ""
-    )
-  );
-}
 
 function abilityScoreIncreaseMarkup(
   preview,

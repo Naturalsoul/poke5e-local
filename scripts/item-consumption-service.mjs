@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import { prepareCapture } from "./pokemon-capture-service.mjs";
 import { refundItemHealingBonuses, resolveItemHealingBonuses } from "./trainer-feature-engine.mjs";
 const MODULE_ID =
@@ -397,18 +398,6 @@ function localizedRollLabel(
 /* ============================================================
  * CONFIRMATION
  * ============================================================ */
-
-function escapeHtml(
-  value
-) {
-
-  return foundry.utils.escapeHTML(
-    String(
-      value ??
-      ""
-    )
-  );
-}
 
 
 function confirmationContent(

@@ -4,6 +4,15 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.44.2] — 2026-10-28
+
+- **Chat seguro:** antes de guardar un mensaje se le quita lo que podría ejecutar código (`<script>`, `<iframe>`,
+  atributos `on…` y enlaces `javascript:`). Un nombre de Pokémon u objeto escrito con HTML ya no corre en el
+  navegador de los demás. Los mensajes normales no cambian.
+- **Recompensa de XP:** cada parte de la carta la recibe una sola persona: el dueño del Pokémon, o el GM solo si
+  ningún jugador dueño está conectado. Antes, si el jugador y el GM pulsaban a la vez, la XP podía entrar dos veces.
+- **Limpieza:** las 26 copias de `escapeHtml` pasan a ser una sola, en `scripts/html.mjs`.
+
 ## [0.44.1] — 2026-10-27
 
 - **Tope de nivel:** un Pokémon al nivel de su Entrenador ya no gana XP (antes llenaba la barra hasta el nivel

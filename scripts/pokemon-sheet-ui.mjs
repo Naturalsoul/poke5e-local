@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import { bondMarkup } from "./pokemon-bond-service.mjs";
 import { activeAbilityButton } from "./active-ability-service.mjs";
 import { applyStoringPowerMatchups } from "./trainer-path-effects.mjs";
@@ -967,30 +968,6 @@ const LABELS = {
  * GENERIC
  * ============================================================ */
 
-const HTML_ENTITIES = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  "\"": "&quot;",
-  "'": "&#039;"
-};
-
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  ).replace(
-    /[&<>"']/g,
-    character =>
-      HTML_ENTITIES[
-        character
-      ]
-  );
-}
 
 
 function getLanguage() {

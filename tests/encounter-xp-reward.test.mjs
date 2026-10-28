@@ -47,3 +47,16 @@ test("names without their level suffix, where the level is shown apart", async (
   assert.deepEqual(["Toxel (Lv. 5)", "Xiaomi (Nv. 10)", "Cutie", "Mr. Mime (Lv 3)"].map(withoutLevel),
     ["Toxel", "Xiaomi", "Cutie", "Mr. Mime"]);
 });
+
+test("one claimer per share: the owner, or the GM only while no owning player is online", async () => {
+  const { canClaimReward } = await import("../scripts/encounter-xp-reward.mjs");
+  const player = { id: "p", isGM: false, active: true };
+  const gm = { id: "g", isGM: true, active: true };
+  const stranger = { id: "s", isGM: false, active: true };
+  const owned = { testUserPermission: user => user === player || user === gm };
+  assert.equal(canClaimReward(owned, player, [player, gm]), true);
+  assert.equal(canClaimReward(owned, gm, [player, gm]), false);
+  assert.equal(canClaimReward(owned, gm, [{ ...player, active: false }, gm]), true);
+  assert.equal(canClaimReward(owned, stranger, [player, gm, stranger]), false);
+  assert.equal(canClaimReward(null, gm, [gm]), false);
+});

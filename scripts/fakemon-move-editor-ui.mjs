@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   POKEMON_TYPES
 } from "./types.mjs";
@@ -1160,36 +1161,6 @@ function normalizeId(
     .toLowerCase();
 }
 
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-}
 
 
 function escapeAttribute(

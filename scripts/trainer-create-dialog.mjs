@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   createTrainer
 } from "./trainer-service.mjs";
@@ -163,15 +164,6 @@ const ENVIRONMENT_LABELS =
       forest: "Forest",
       mountain: "Mountain"
     }
-  });
-
-const HTML_ENTITIES =
-  Object.freeze({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    "\"": "&quot;",
-    "'": "&#039;"
   });
 
 const LABELS = {
@@ -647,22 +639,6 @@ function getLanguage() {
     : "es";
 }
 
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  ).replace(
-    /[&<>"']/g,
-    character =>
-      HTML_ENTITIES[
-        character
-      ]
-  );
-}
 
 
 function localizedName(

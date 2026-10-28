@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   isAttackHit,
   isMeleeAttack,
@@ -448,36 +449,6 @@ function abilityDisplayName(
  * Las Abilities opcionales deben consultar al propietario
  * del Pokémon antes de tirar.
  * ============================================================ */
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-}
 
 
 function reactiveDecisionUser(

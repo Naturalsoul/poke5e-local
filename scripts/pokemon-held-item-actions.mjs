@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import { getPokemonHeldItem } from "./pokemon-held-item-service.mjs";
 import { canCurrentUserOperateTrainerPokemon } from "./trainer-ownership-service.mjs";
 import { isPokemonActor } from "./trainer-party-service.mjs";
@@ -25,11 +26,6 @@ const LABELS = {
       minute: "Minute", hour: "Hour", special: "Special", legendary: "Legendary action", lair: "Lair action" }
   }
 };
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-}
 
 function charges(uses) {
   const max = Number(uses?.max);

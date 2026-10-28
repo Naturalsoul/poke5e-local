@@ -206,6 +206,16 @@ export async function claimReward(message, uuid) {
   return { actor, before, after, gained, lost: entry.xp - gained };
 }
 
+/**
+ * One person claims each Pokémon's share: its owner, or the GM only while no owning player is online. With two
+ * people able to click, both could see it unclaimed and the XP would go in twice.
+ */
+export function canClaimReward(actor, user = game.user, users = game.users) {
+  if (!actor?.testUserPermission?.(user, "OWNER")) {return false;}
+  if (!user.isGM) {return true;}
+  return !users.some(other => !other.isGM && other.active && actor.testUserPermission(other, "OWNER"));
+}
+
 function onRenderChatMessage(message, html) {
   if (!message.getFlag?.(MODULE_ID, "reward")) {return;}
   for (const button of html.querySelectorAll('[data-action="poke5e-claim-xp"]')) {
@@ -217,8 +227,7 @@ function onRenderChatMessage(message, html) {
       button.replaceWith(badge);
       continue;
     }
-    // Its owner gives it (the GM too, for an absent player).
-    button.disabled = !actor?.isOwner;
+    button.disabled = !canClaimReward(actor);
     button.addEventListener("click", async () => {
       button.disabled = true;
       try {

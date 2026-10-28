@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   getPokemonEvolutionPreview
 } from "./pokemon-evolution-service.mjs";
@@ -44,18 +45,6 @@ function getLanguage() {
   }
 }
 
-
-function escapeHtml(
-  value
-) {
-
-  return foundry.utils.escapeHTML(
-    String(
-      value ??
-      ""
-    )
-  );
-}
 
 
 function localized(

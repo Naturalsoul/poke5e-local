@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import { TRAINER_PATH_ACTION_ICONS, TRAINER_PATH_ACTION_RESOURCES, availableTrainerPathActions, trainerPathActionLabel } from "./trainer-path-actions.mjs";
 import {
   getTrainerLevel
@@ -332,14 +333,6 @@ const RESOURCE_LABELS =
       })
   });
 
-const HTML_ENTITIES = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  "\"": "&quot;",
-  "'": "&#039;"
-};
-
 
 function getLanguage() {
 
@@ -351,22 +344,6 @@ function getLanguage() {
     : "es";
 }
 
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  ).replace(
-    /[&<>"']/g,
-    character =>
-      HTML_ENTITIES[
-        character
-      ]
-  );
-}
 
 
 function pokemonFromUuid(

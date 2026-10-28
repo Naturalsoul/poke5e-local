@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   buildFakemonBalanceRecommendation
 } from "./fakemon-balance-profiler.mjs";
@@ -4075,36 +4076,6 @@ function wizardTitle(
   );
 }
 
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-}
 
 
 function escapeAttribute(

@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   importPokemon,
   loadDatabase
@@ -7225,36 +7226,6 @@ function normalizeSearch(
     .toLowerCase();
 }
 
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-}
 
 
 function escapeAttribute(

@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import { calculatePokemonDefenses, hasStab } from "./types.mjs";
 import { pokemonAbilityIcon } from "./pokemon-ability-icons.mjs";
 import { buildMoveStatusEffects } from "./status-effects.mjs";
@@ -5073,49 +5074,6 @@ function toHtml(
         }</p>`
     )
     .join("");
-}
-
-function escapeHtml(
-  value
-) {
-  const text =
-    String(
-      value ?? ""
-    );
-
-  if (
-    globalThis
-      .foundry
-      ?.utils
-      ?.escapeHTML
-  ) {
-    return foundry.utils
-      .escapeHTML(
-        text
-      );
-  }
-
-  return text
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
 }
 
 function resolveMoveIcon(

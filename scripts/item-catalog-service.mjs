@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   buildAbilityCatalogItem,
   buildAbilityItem,
@@ -857,49 +858,6 @@ function localized(
     fallback ??
     ""
   );
-}
-
-function escapeHtml(
-  value
-) {
-  const text =
-    String(
-      value ??
-      ""
-    );
-
-  if (
-    globalThis.foundry
-      ?.utils
-      ?.escapeHTML
-  ) {
-    return foundry.utils
-      .escapeHTML(
-        text
-      );
-  }
-
-  return text
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
 }
 
 function paragraphsToHtml(
