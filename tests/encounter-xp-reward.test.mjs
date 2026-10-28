@@ -29,11 +29,11 @@ test("a Pokémon receives its share once; a second claim is refused", async () =
   assert.deepEqual(goomy.getFlag(M, "claimedRewards"), ["msg1"]);
 });
 
-test("at the trainer's level the XP past the next threshold comes back as lost", async () => {
+test("at the trainer's level a Pokémon gains nothing: all the XP comes back as lost", async () => {
   const houndoom = pokemon("Actor.houndoom", 9);
   const result = await claimReward(card("msg2", [{ uuid: houndoom.uuid, xp: 30000 }]), houndoom.uuid);
-  const room = getPokemonExperienceThreshold(10) - getPokemonExperienceThreshold(9);
-  assert.equal(result.lost, 30000 - room);
+  assert.deepEqual([result.gained, result.lost], [0, 30000]);
+  assert.equal(result.after.total, getPokemonExperienceThreshold(9));
   assert.equal(result.after.atLevelCap, true);
   assert.equal(result.after.readyToLevel, false);
 });

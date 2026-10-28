@@ -401,14 +401,13 @@ export async function setPokemonExperience(
    * porque Nv.3 comienza en 800 XP.
    */
   /*
-   * Lo que pase del umbral del nivel siguiente al de
-   * su Entrenador se pierde: la barra se queda llena.
+   * Lo que pase del umbral del nivel de su Entrenador
+   * se pierde: al tope no gana XP.
    */
   const ceiling =
-    currentState.levelCap != null &&
-    currentState.levelCap < MAX_POKEMON_LEVEL
+    currentState.levelCap != null
       ? getPokemonExperienceThreshold(
-        currentState.levelCap + 1
+        currentState.levelCap
       )
       : Infinity;
 

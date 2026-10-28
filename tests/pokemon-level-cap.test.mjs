@@ -36,12 +36,13 @@ test("a Pokémon at its trainer's level can't be ready to level, whatever its XP
   assert.equal(getPokemonExperienceState(pokemon(8, seraphina, getPokemonExperienceThreshold(9))).readyToLevel, true);
 });
 
-test("XP past the next threshold of the trainer's level is lost", async () => {
+test("XP past the threshold of the trainer's level is lost", async () => {
   const seraphina = trainer(9);
   register(seraphina);
   const goomy = pokemon(8, seraphina, getPokemonExperienceThreshold(8));
   const state = await setPokemonExperience(goomy, getPokemonExperienceThreshold(12));
-  assert.equal(state.total, getPokemonExperienceThreshold(10));
+  assert.equal(state.total, getPokemonExperienceThreshold(9));
+  assert.equal(state.readyToLevel, true);
 });
 
 test("wild and rival Pokémon (no trainer) have no cap", async () => {

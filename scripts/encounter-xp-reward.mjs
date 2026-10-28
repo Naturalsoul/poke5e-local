@@ -202,7 +202,8 @@ export async function claimReward(message, uuid) {
   const before = getPokemonExperienceState(actor);
   await actor.setFlag(MODULE_ID, CLAIMED, [...(actor.getFlag(MODULE_ID, CLAIMED) ?? []), message.id]);
   const after = await addPokemonExperience(actor, entry.xp);
-  return { actor, before, after, gained: entry.xp, lost: entry.xp - (after.total - before.total) };
+  const gained = after.total - before.total;
+  return { actor, before, after, gained, lost: entry.xp - gained };
 }
 
 function onRenderChatMessage(message, html) {
