@@ -4,6 +4,12 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.44.1] — 2026-10-27
+
+- **Tope de nivel:** un Pokémon al nivel de su Entrenador ya no gana XP (antes llenaba la barra hasta el nivel
+  siguiente). Por debajo del tope, la XP llega justo hasta poder subir al nivel del Entrenador y el resto se pierde.
+  La animación de la recompensa muestra solo la XP que de verdad entra y avisa de la pérdida.
+
 ## [0.44.0] — 2026-10-22
 
 - **Derribado automático:**
