@@ -113,10 +113,10 @@ const LABELS = {
       "daño por Envenenado",
 
     paralysisRoll:
-      "Chequeo de Parálisis",
+      "Chequeo de Parálisis (con 1 queda paralizado)",
 
     asleepRoll:
-      "Chequeo de Dormido",
+      "Chequeo de Dormido (con 11 o más despierta)",
 
     wakesUp:
       "se despierta",
@@ -125,7 +125,7 @@ const LABELS = {
       "continúa dormido",
 
     shedSkinRoll:
-      "Shed Skin",
+      "Shed Skin (con 4 se cura)",
 
     shedSkinCured:
       "muda la piel y se cura de",
@@ -183,10 +183,10 @@ const LABELS = {
       "Poisoned damage",
 
     paralysisRoll:
-      "Paralysis Check",
+      "Paralysis Check (a 1 paralyzes it)",
 
     asleepRoll:
-      "Asleep Check",
+      "Asleep Check (11 or more wakes it up)",
 
     wakesUp:
       "wakes up",
@@ -195,7 +195,7 @@ const LABELS = {
       "remains asleep",
 
     shedSkinRoll:
-      "Shed Skin",
+      "Shed Skin (a 4 cures it)",
 
     shedSkinCured:
       "sheds its skin and is cured of",

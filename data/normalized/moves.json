@@ -13767,7 +13767,16 @@
         "en": "The damage dice roll for this move changes to 2d10 at level 5, 3d10 at level 10, and 4d12 at level 17.",
         "es": "La tirada de curación de este movimiento pasa a ser 2d10 al nivel 5, 3d10 al nivel 10 y 4d12 al nivel 17."
       },
-      "damage": null,
+      "damage": {
+        "dice": {
+          "1": "2d8",
+          "5": "2d10",
+          "10": "3d10",
+          "17": "4d12"
+        },
+        "modifier": "MOVE",
+        "type": "healing"
+      },
       "save": null,
       "attack": null,
       "tm": null
@@ -34204,7 +34213,16 @@
         "en": "The damage dice roll for this move changes to 2d10 at level 5, 3d10 at level 10, and 4d12 at level 17.",
         "es": "La tirada de recuperación de este movimiento pasa a ser 2d10 al nivel 5, 3d10 al nivel 10 y 4d12 al nivel 17."
       },
-      "damage": null,
+      "damage": {
+        "dice": {
+          "1": "2d8",
+          "5": "2d10",
+          "10": "3d10",
+          "17": "4d12"
+        },
+        "modifier": "MOVE",
+        "type": "healing"
+      },
       "save": null,
       "attack": null,
       "tm": null
@@ -39335,7 +39353,16 @@
         "en": "The healing dice roll for this move changes to 2d8 at level 5, 2d12 at level 10, and 6d6 at level 17.",
         "es": "La tirada de dados de curación para este movimiento pasa a ser 2d8 al nivel 5, 2d12 al nivel 10 y 6d6 al nivel 17."
       },
-      "damage": null,
+      "damage": {
+        "dice": {
+          "1": "1d12",
+          "5": "2d8",
+          "10": "2d12",
+          "17": "6d6"
+        },
+        "modifier": "MOVE",
+        "type": "healing"
+      },
       "save": null,
       "attack": null,
       "tm": null

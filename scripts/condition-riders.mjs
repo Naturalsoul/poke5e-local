@@ -88,7 +88,7 @@ const conditions = (actor, condition) => Array.from(actor?.effects ?? []).filter
   effect.getFlag?.(MODULE_ID, "kind") === CONDITION_KIND && (!condition || effect.getFlag(MODULE_ID, "condition") === condition));
 
 async function chat(actor, html) {
-  await ChatMessage.implementation.create({ speaker: ChatMessage.implementation.getSpeaker({ actor }), content: `<p>${html}</p>` });
+  await ChatMessage.implementation.create({ speaker: ChatMessage.implementation.getSpeaker({ actor }), content: `<div class="poke5e-turn-message">${html}</div>` });
 }
 
 // Mean Look: the switch and recall services refuse while it lasts (a fainted Pokémon still goes back).

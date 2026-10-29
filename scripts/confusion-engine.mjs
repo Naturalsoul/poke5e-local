@@ -518,10 +518,25 @@ async function updateConfusionState(
  * CONFUSION TABLE RESULT
  * ============================================================ */
 
+const RESULT_LABELS = {
+  1: "selfStruggle",
+  2: "targetStruggle",
+  3: "locked"
+};
+
+
+// The roll card shows only the number: this message says which row of the table it hit.
 async function handleConfusionResult(
   actor,
   total
 ) {
+
+  await chat(
+    actor,
+    `<strong>${label("roll")}: ${total}</strong> — ` +
+      `<strong>${actor.name}</strong> ${label(RESULT_LABELS[total] ?? "normal")}.`
+  );
+
 
   switch (
     total
@@ -551,22 +566,6 @@ async function handleConfusionResult(
 
       await createConfusionTurnLock(
         actor
-      );
-
-
-      await chat(
-        actor,
-        `<strong>${actor.name}</strong> ${label("locked")}.`
-      );
-
-      return;
-
-
-    default:
-
-      await chat(
-        actor,
-        `<strong>${actor.name}</strong> ${label("normal")}.`
       );
   }
 }

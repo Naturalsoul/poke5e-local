@@ -4,6 +4,40 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.46.3] — 2026-10-29
+
+- Los mensajes de los riders de Moves y de condiciones (Clear Smog, Incinerate, curas de estado, Purify, Salt Cure,
+  salvaciones para librarse) llevan el mismo estilo que los demás mensajes automáticos del módulo.
+
+## [0.46.2] — 2026-10-29
+
+- **Mensajes del módulo en el chat:** los mensajes automáticos (estados, Habilidades, clima, objetos equipados) llevan
+  una franja de color a la izquierda y un fondo suave, para distinguirlos de los mensajes de los jugadores. El texto
+  mantiene el color del chat, así que se lee en modo claro y oscuro. Estilos nuevos en `styles/chat.css`.
+
+## [0.46.1] — 2026-10-29
+
+- **Mensajes de estados:** el chequeo de Confusión ahora dice qué número salió y qué significa
+  (`Chequeo de Confusión: 3 — … no puede moverse ni realizar acciones este turno`), también con 1 y 2, que antes
+  pasaban directo a Struggle sin explicarlo. Las tiradas de Dormido, Paralizado y Shed Skin dicen en su título qué
+  número hace falta.
+
+## [0.46.0] — 2026-10-29
+
+- **Curación con clima y terreno:** Synthesis duplica sus dados con sol, Shore Up suma MOVE otra vez en tormenta de
+  arena y Floral Healing en Terreno de Hierba.
+- Synthesis, Shore Up y Floral Healing no traían su fórmula de curación en los datos; ahora la traen, con sus dados
+  por nivel. Los Pokémon que ya los tenían deben volver a aprenderlos para que la ficha tire la curación.
+
+## [0.45.0] — 2026-10-29
+
+- **Moves con clima y terreno:** Solar Beam y Solar Blade (sol) y Electro Shot (lluvia) suman MOVE otra vez;
+  Hydro Steam (sol) y Psyblade (Terreno Eléctrico) tiran con ventaja; Expanding Force suma 1d6 en Terreno Psíquico;
+  Terrain Pulse toma el tipo del terreno; Misty Explosion hace la mitad si su usuario tiene menos de la mitad de PG y
+  no está en Terreno Brumoso. Steel Roller e Ice Spinner quitan el terreno, y Steel Roller solo se puede usar con uno
+  activo. El terreno solo cuenta para el usuario si está en el suelo.
+- Grassy Glide y Rising Voltage quedan como manuales: mover la ficha y elegir los objetivos es cosa del jugador.
+
 ## [0.44.8] — 2026-10-29
 
 - **Limpieza:** el HTML de la ventana del Encounter Planner (unas 1.400 líneas de `_renderHTML`) pasa a

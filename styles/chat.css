@@ -1,0 +1,25 @@
+/* ============================================================
+ * POKE5E — CHAT NOTES
+ *
+ * The module's automatic messages (statuses, Abilities, weather,
+ * held items) next to the players' own. Text keeps the chat's
+ * colour so it reads in Foundry's light and dark modes; only the
+ * left rule and the tint mark it as the module's.
+ * ============================================================ */
+
+.chat-message .poke5e-turn-message {
+  margin: 2px 0;
+  padding: 6px 8px;
+  border-left: 3px solid var(--poke5e-ui-brass);
+  border-radius: 0 4px 4px 0;
+  background: color-mix(in srgb, var(--poke5e-ui-brass) 12%, transparent);
+  line-height: 1.4;
+}
+
+.chat-message .poke5e-turn-message p {
+  margin: 0;
+}
+
+.chat-message .poke5e-turn-message p + p {
+  margin-top: 4px;
+}

@@ -6,6 +6,7 @@ import {
   isMoveLocked
 } from "./move-lock-runtime.mjs";
 import { getLanguage as language } from "./i18n.mjs";
+import { activeTerrain } from "./battlefield-service.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -35,6 +36,14 @@ const MOVE_REQUIREMENTS =
     ]
   ]);
 
+// Steel Roller: only while a terrain is active.
+const TERRAIN_MOVES =
+  new Set(["steel-roller"]);
+
+const moveSourceId = activity =>
+  activity?.item?.getFlag?.(MODULE_ID, "kind") === "move"
+    ? activity.item.getFlag(MODULE_ID, "sourceId")
+    : null;
 
 /* ============================================================
  * MENSAJES
@@ -54,7 +63,9 @@ const FAILURE_MESSAGES = {
       "el objetivo debe estar Dormido o contar como Dormido",
 
     "move-locked":
-      "no puede usar este movimiento durante este turno por Cuerpo Maldito"
+      "no puede usar este movimiento durante este turno por Cuerpo Maldito",
+    "no-terrain":
+      "solo se puede usar con un terreno activo"
   },
 
 
@@ -70,7 +81,9 @@ const FAILURE_MESSAGES = {
       "the target must be Asleep or count as Asleep",
 
     "move-locked":
-      "cannot use this move during this turn because of Cursed Body"
+      "cannot use this move during this turn because of Cursed Body",
+    "no-terrain":
+      "can only be used while a terrain is active"
   }
 };
 
@@ -429,6 +442,18 @@ function onPreUseActivity(
     )
   ) {
 
+    return false;
+  }
+
+  if (
+    TERRAIN_MOVES.has(moveSourceId(activity)) &&
+    !activeTerrain()
+  ) {
+
+    notifyFailure(
+      activity.item,
+      "no-terrain"
+    );
     return false;
   }
 
