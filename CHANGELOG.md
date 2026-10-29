@@ -4,6 +4,12 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.44.5] — 2026-10-29
+
+- **Limpieza:** el Encounter Planner se separa por tarea. `encounter-planner.mjs` queda solo con la ventana;
+  los datos del encuentro van a `encounter-planner-data.mjs`, el HTML a `encounter-planner-markup.mjs` y el
+  scroll y el foco a `encounter-planner-ui-state.mjs`. El código se movió sin cambios y ahora tiene tests.
+
 ## [0.44.4] — 2026-10-29
 
 - **Limpieza:** 104 copias de helpers pasan a ser una sola cada una: el idioma (`i18n.mjs`), quién corre la
