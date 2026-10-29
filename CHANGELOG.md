@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.44.7] — 2026-10-29
+
+- **Limpieza:** los listeners del Encounter Planner, que estaban todos en `_onRender` (unas 1.670 líneas), pasan a
+  diez métodos, uno por sección del panel: pestañas, encuentros guardados, nombre y ubicación, tirada salvaje,
+  grupo, tirada de Entrenadores, Entrenadores, filas de Pokémon, opciones de creación y acciones. El código se movió
+  sin cambios.
+
 ## [0.44.6] — 2026-10-29
 
 - **Limpieza:** las tiradas del Encounter Planner (encuentro salvaje, Entrenadores por rango, reroll de un equipo

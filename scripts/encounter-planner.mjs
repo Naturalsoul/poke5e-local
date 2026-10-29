@@ -1954,10 +1954,38 @@ export class PokemonEncounterPlanner
       options
     );
 
-
     const root =
       this.element;
 
+    this.#bindStudioViewListeners(root);
+
+    this.#bindSavedEncounterListeners(root, context);
+
+    this.#bindIdentityListeners(root);
+
+    this.#bindWildRandomListeners(root);
+
+    this.#bindPartyListeners(root);
+
+    this.#bindTrainerRandomListeners(root);
+
+    this.#bindTrainerListeners(root);
+
+    this.#bindPokemonRowListeners(root);
+
+    this.#bindGenerationOptionListeners(root);
+
+    this.#bindActionListeners(root);
+
+    restorePlannerUiState(
+      this.renderUiState
+    );
+
+    this.renderUiState =
+      null;
+  }
+
+  #bindStudioViewListeners(root) {
     root.querySelectorAll(
       '[data-action="switch-studio-tab"]'
     ).forEach(
@@ -2043,7 +2071,9 @@ export class PokemonEncounterPlanner
         );
       }
     );
+  }
 
+  #bindSavedEncounterListeners(root, context) {
     root.querySelector(
       '[data-role="existing-encounter-location"]'
     )?.addEventListener(
@@ -2114,7 +2144,6 @@ export class PokemonEncounterPlanner
       }
     );
 
-
     root.querySelector(
       '[data-action="load-encounter"]'
     )?.addEventListener(
@@ -2146,7 +2175,9 @@ export class PokemonEncounterPlanner
         this.#newEncounter();
       }
     );
+  }
 
+  #bindIdentityListeners(root) {
     root.querySelector(
       '[data-role="encounter-type"]'
     )?.addEventListener(
@@ -2194,6 +2225,53 @@ export class PokemonEncounterPlanner
     );
 
     root.querySelector(
+      '[data-role="encounter-location"]'
+    )?.addEventListener(
+      "input",
+
+      event => {
+
+        this._encounterState.location =
+          event.currentTarget.value;
+
+
+        this.#refreshIdentityUi(
+          root
+        );
+      }
+    );
+
+    root.querySelector(
+      '[data-action="toggle-optional"]'
+    )?.addEventListener(
+      "click",
+
+      () => {
+        void this
+          .#toggleOptional();
+      }
+    );
+
+    root.querySelector(
+      '[data-role="encounter-name"]'
+    )?.addEventListener(
+      "input",
+
+      event => {
+
+        this._encounterState.name =
+          event.currentTarget.value;
+
+
+        this.#refreshIdentityUi(
+          root
+        );
+      }
+    );
+  }
+
+  #bindWildRandomListeners(root) {
+    root.querySelector(
       '[data-role="random-region"]'
     )?.addEventListener(
       "change",
@@ -2232,7 +2310,6 @@ export class PokemonEncounterPlanner
       }
     );
 
-
     root.querySelector(
       '[data-role="random-biome"]'
     )?.addEventListener(
@@ -2251,7 +2328,6 @@ export class PokemonEncounterPlanner
         );
       }
     );
-
 
     root.querySelector(
       '[data-role="random-min-level"]'
@@ -2288,7 +2364,6 @@ export class PokemonEncounterPlanner
       }
     );
 
-
     root.querySelector(
       '[data-role="random-max-level"]'
     )?.addEventListener(
@@ -2323,7 +2398,6 @@ export class PokemonEncounterPlanner
         );
       }
     );
-
 
     root.querySelector(
       '[data-role="random-size"]'
@@ -2392,7 +2466,6 @@ export class PokemonEncounterPlanner
         );
       }
     );
-
 
     root.querySelector(
       '[data-role="random-max-sr"]'
@@ -2476,7 +2549,10 @@ export class PokemonEncounterPlanner
         }
       );
     }
+  }
 
+  // Party size, level and team, the rivals' boosts and the Detect party buttons.
+  #bindPartyListeners(root) {
     for (
       const [
         role,
@@ -2559,42 +2635,6 @@ export class PokemonEncounterPlanner
       );
     }
 
-    // A rank brings its extras; they can still be changed by hand.
-    root.querySelector(
-      '[data-role="trainer-random-rank"]'
-    )?.addEventListener(
-      "change",
-
-      event => {
-        const rank =
-          getTrainerRank(
-            event.currentTarget.value
-          );
-
-        Object.assign(
-          this._encounterState,
-          {
-            trainerRandomRank:
-              rank.id,
-            boostStats:
-              rank.extras.statBonus ??
-              0,
-            boostCoverage:
-              rank.extras.coverage ===
-                true,
-            boostItems:
-              rank.extras.items ===
-                true
-          }
-        );
-
-        void this.render({
-          force:
-            true
-        });
-      }
-    );
-
     for (
       const button
       of root.querySelectorAll(
@@ -2639,6 +2679,44 @@ export class PokemonEncounterPlanner
         }
       );
     }
+  }
+
+  #bindTrainerRandomListeners(root) {
+    // A rank brings its extras; they can still be changed by hand.
+    root.querySelector(
+      '[data-role="trainer-random-rank"]'
+    )?.addEventListener(
+      "change",
+
+      event => {
+        const rank =
+          getTrainerRank(
+            event.currentTarget.value
+          );
+
+        Object.assign(
+          this._encounterState,
+          {
+            trainerRandomRank:
+              rank.id,
+            boostStats:
+              rank.extras.statBonus ??
+              0,
+            boostCoverage:
+              rank.extras.coverage ===
+                true,
+            boostItems:
+              rank.extras.items ===
+                true
+          }
+        );
+
+        void this.render({
+          force:
+            true
+        });
+      }
+    );
 
     root.querySelector(
       '[data-role="trainer-random-region"]'
@@ -2658,7 +2736,6 @@ export class PokemonEncounterPlanner
         );
       }
     );
-
 
     for (
       const [
@@ -2684,7 +2761,6 @@ export class PokemonEncounterPlanner
       );
     }
 
-
     root.querySelector(
       '[data-role="trainer-random-pokemon-count"]'
     )?.addEventListener(
@@ -2703,7 +2779,6 @@ export class PokemonEncounterPlanner
         );
       }
     );
-
 
     root.querySelector(
       '[data-role="trainer-random-archetype"]'
@@ -2797,7 +2872,6 @@ export class PokemonEncounterPlanner
       }
     );
 
-
     root.querySelector(
       '[data-action="trainer-mixed-select-all"]'
     )?.addEventListener(
@@ -2814,7 +2888,6 @@ export class PokemonEncounterPlanner
         );
       }
     );
-
 
     root.querySelector(
       '[data-action="trainer-mixed-select-none"]'
@@ -2838,7 +2911,9 @@ export class PokemonEncounterPlanner
         this.#generateRandomTrainerEncounter();
       }
     );
+  }
 
+  #bindTrainerListeners(root) {
     root.querySelector(
       '[data-action="add-trainer"]'
     )?.addEventListener(
@@ -2848,7 +2923,6 @@ export class PokemonEncounterPlanner
         this.#addTrainer();
       }
     );
-
 
     root.querySelectorAll(
       '[data-role="trainer-name"]'
@@ -2955,7 +3029,6 @@ export class PokemonEncounterPlanner
       }
     );
 
-
     root.querySelectorAll(
       '[data-role="trainer-on-field"]'
     ).forEach(
@@ -3024,7 +3097,6 @@ export class PokemonEncounterPlanner
       }
     );
 
-
     root.querySelectorAll(
       '[data-action="reroll-trainer-team"]'
     ).forEach(
@@ -3065,7 +3137,6 @@ export class PokemonEncounterPlanner
       }
     );
 
-
     root.querySelector(
       '[data-role="trainer-target"]'
     )?.addEventListener(
@@ -3079,59 +3150,14 @@ export class PokemonEncounterPlanner
           );
       }
     );
+  }
 
-    root.querySelector(
-      '[data-role="encounter-location"]'
-    )?.addEventListener(
-      "input",
-
-      event => {
-
-        this._encounterState.location =
-          event.currentTarget.value;
-
-
-        this.#refreshIdentityUi(
-          root
-        );
-      }
-    );
-
-
-    root.querySelector(
-      '[data-action="toggle-optional"]'
-    )?.addEventListener(
-      "click",
-
-      () => {
-        void this
-          .#toggleOptional();
-      }
-    );
-
-    root.querySelector(
-      '[data-role="encounter-name"]'
-    )?.addEventListener(
-      "input",
-
-      event => {
-
-        this._encounterState.name =
-          event.currentTarget.value;
-
-
-        this.#refreshIdentityUi(
-          root
-        );
-      }
-    );
-
-
+  // Search, add, edit, remove and lock rows; row inputs are delegated from root so re-rendered rows keep working.
+  #bindPokemonRowListeners(root) {
     const searchInput =
       root.querySelector(
         '[data-role="pokemon-search"]'
       );
-
 
     searchInput?.addEventListener(
       "input",
@@ -3147,7 +3173,6 @@ export class PokemonEncounterPlanner
         );
       }
     );
-
 
     root.addEventListener(
       "click",
@@ -3196,7 +3221,6 @@ export class PokemonEncounterPlanner
         ","
       );
 
-
     root.addEventListener(
       "input",
 
@@ -3228,7 +3252,6 @@ export class PokemonEncounterPlanner
         );
       }
     );
-
 
     root.addEventListener(
       "change",
@@ -3341,7 +3364,9 @@ export class PokemonEncounterPlanner
         );
       }
     );
+  }
 
+  #bindGenerationOptionListeners(root) {
     root.querySelector(
       '[data-role="reroll-moves"]'
     )?.addEventListener(
@@ -3385,7 +3410,6 @@ export class PokemonEncounterPlanner
       }
     );
 
-
     root.querySelector(
       '[data-role="allow-encounter-items"]'
     )?.addEventListener(
@@ -3411,7 +3435,6 @@ export class PokemonEncounterPlanner
         );
       }
     );
-
 
     root.querySelector(
       '[data-role="encounter-item-chance"]'
@@ -3442,7 +3465,6 @@ export class PokemonEncounterPlanner
       }
     );
 
-
     const itemWeightRoles = {
 
       "encounter-item-weight-berry":
@@ -3457,7 +3479,6 @@ export class PokemonEncounterPlanner
       "encounter-item-weight-held-item":
         "held-item"
     };
-
 
     for (
       const [
@@ -3533,7 +3554,6 @@ export class PokemonEncounterPlanner
       }
     );
 
-
     root.querySelector(
       '[data-role="hidden-ability-chance"]'
     )?.addEventListener(
@@ -3559,7 +3579,10 @@ export class PokemonEncounterPlanner
           );
       }
     );
+  }
 
+  // Difficulty steps, the XP reward and creating the encounter.
+  #bindActionListeners(root) {
     for (
       const button
       of root.querySelectorAll(
@@ -3610,15 +3633,6 @@ export class PokemonEncounterPlanner
           .#generateEncounter();
       }
     );
-
-
-    restorePlannerUiState(
-      this.renderUiState
-    );
-
-
-    this.renderUiState =
-      null;
   }
 
   #activateStudioTab(
