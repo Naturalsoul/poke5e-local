@@ -4,6 +4,12 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.44.8] — 2026-10-29
+
+- **Limpieza:** el HTML de la ventana del Encounter Planner (unas 1.400 líneas de `_renderHTML`) pasa a
+  `renderPlannerContent` en `encounter-planner-markup.mjs`. La ventana solo calcula el grupo, los extras, los pasos
+  y la dificultad, y se los pasa. El HTML que sale es el mismo y ahora tiene un test.
+
 ## [0.44.7] — 2026-10-29
 
 - **Limpieza:** los listeners del Encounter Planner, que estaban todos en `_onRender` (unas 1.670 líneas), pasan a

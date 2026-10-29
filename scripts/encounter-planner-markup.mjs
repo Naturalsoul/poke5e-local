@@ -15,6 +15,7 @@ import {
 } from "./encounter-trainer-archetypes.mjs";
 import { clampInteger } from "./numbers.mjs";
 import {
+  SEARCH_LIMIT,
   MIXED_TRAINER_ARCHETYPE_ID,
   canGenerateRandomEncounter,
   canGenerateRandomTrainerEncounter,
@@ -2855,4 +2856,1409 @@ export function formatNumber(
       ) ||
       0
     );
+}
+
+// The planner window's whole body. `view` carries what only the window can compute (party, boosts, panels).
+export function renderPlannerContent(
+  state,
+  context,
+  view
+) {
+    const trainerEncounter =
+      state.type === "trainer";
+
+    const { itemPolicy } = view;
+
+    const activeStudioTab =
+      state.activeTab;
+
+    const compositionView =
+      state.compositionView;
+
+    const searchResultsMarkup =
+      renderSearchResultsMarkup({
+        search:
+          state.search,
+
+        searchResults:
+          context.searchResults,
+
+        language:
+          context.language
+      });
+
+    const savedLocationOptions =
+      renderSavedEncounterLocationOptions(
+        context.savedEncounterLocations,
+        state
+          .selectedEncounterLocation
+      );
+
+    const existingOptions =
+      renderSavedEncounterOptions(
+        context.savedEncountersForLocation,
+        state
+          .selectedEncounterKey
+      );
+
+    const editingLabel =
+      state.encounterKey
+
+        ? (
+            `Editando: ` +
+            `${state.location} — ` +
+            `${state.name}`
+          )
+
+        : "Nuevo encuentro";
+
+    const displayName =
+      state.name
+        .trim() ||
+      "Nuevo encuentro";
+
+    const displayLocation =
+      state.location
+        .trim() ||
+      "Sin ubicación";
+
+    const compositionSummary =
+      buildCompositionSummary({
+        encounterType:
+          state.type,
+
+        rowCount:
+          context.rows.length,
+
+        trainerCount:
+          state
+            .trainers
+            .length,
+
+        tokens:
+          context.totals.tokens
+      });
+
+    const encounterCompositionMarkup =
+      renderEncounterComposition({
+        rows:
+          context.rows,
+
+        encounterType:
+          state.type,
+
+        trainers:
+          state
+            .trainers,
+
+        compositionView,
+
+        collapsedTrainerIds:
+          state
+            .collapsedTrainerIds,
+
+        boosts:
+          view.boosts
+      });
+
+    return `
+      <section
+        class="poke5e-encounter-planner__content"
+        data-encounter-type="${escapeHtml(
+          state.type
+        )}"
+      >
+
+        <aside class="poke5e-encounter-planner__sidebar">
+          <header class="poke5e-encounter-planner__hero">
+
+            <div class="poke5e-encounter-planner__hero-icon">
+
+              <i
+                class="poke5e-icon-ultraball"
+                aria-hidden="true"
+              ></i>
+
+            </div>
+
+
+            <div class="poke5e-encounter-planner__hero-body">
+
+              <small class="poke5e-encounter-planner__eyebrow">
+                Encounter Studio
+              </small>
+
+              <h2 data-role="header-name">
+                ${escapeHtml(displayName)}
+              </h2>
+
+              <span class="poke5e-encounter-planner__location">
+
+                <i
+                  class="fa-solid fa-location-dot"
+                  aria-hidden="true"
+                ></i>
+
+                <span data-role="header-location">
+                  ${escapeHtml(displayLocation)}
+                </span>
+
+              </span>
+
+            </div>
+
+
+            <span
+              class="poke5e-encounter-planner__type-badge"
+              data-role="encounter-type-badge"
+              data-encounter-type="${escapeHtml(
+                state.type
+              )}"
+            >
+
+              <i
+                class="${
+                  trainerEncounter
+                    ? "fa-solid fa-user"
+                    : "fa-solid fa-leaf"
+                }"
+                aria-hidden="true"
+              ></i>
+
+              <span>
+                ${
+                  trainerEncounter
+                    ? "Entrenador"
+                    : "Salvaje"
+                }
+              </span>
+
+            </span>
+
+          </header>
+
+
+          <section class="poke5e-encounter-planner__panel">
+
+            <header class="poke5e-encounter-planner__panel-header">
+
+              <i
+                class="fa-solid fa-box-archive"
+                aria-hidden="true"
+              ></i>
+
+              <h3>
+                Encuentros guardados
+              </h3>
+
+              <small data-role="editing-label">
+                ${escapeHtml(editingLabel)}
+              </small>
+
+            </header>
+
+
+            <div class="poke5e-encounter-planner__saved-grid">
+
+              <div>
+
+                <label>
+                  Ubicación
+
+                  <select data-role="existing-encounter-location">
+
+                    <option value="">
+                      Seleccionar ubicación…
+                    </option>
+
+                    ${savedLocationOptions}
+
+                  </select>
+
+                </label>
+
+
+                <label>
+                  Encuentro
+
+                  <select
+                    data-role="existing-encounter"
+                    ${
+                      state.selectedEncounterLocation
+                        ? ""
+                        : " disabled"
+                    }
+                  >
+
+                    <option value="">
+                      Seleccionar encuentro…
+                    </option>
+
+                    ${existingOptions}
+
+                  </select>
+
+                </label>
+
+              </div>
+
+
+              <button
+                type="button"
+                data-action="load-encounter"
+                ${
+                  state.selectedEncounterKey
+                    ? ""
+                    : " disabled"
+                }
+              >
+
+                <i
+                  class="fa-solid fa-folder-open"
+                  aria-hidden="true"
+                ></i>
+
+                Cargar
+
+              </button>
+
+              <button
+                type="button"
+                data-action="delete-encounter"
+                title="Eliminar encuentro"
+                aria-label="Eliminar encuentro"
+                ${
+                  state.selectedEncounterKey
+                    ? ""
+                    : " disabled"
+                }
+              >
+
+                <i
+                  class="fa-solid fa-trash"
+                  aria-hidden="true"
+                ></i>
+
+                Eliminar
+
+              </button>
+
+              <button
+                type="button"
+                data-action="new-encounter"
+              >
+
+                <i
+                  class="fa-solid fa-plus"
+                  aria-hidden="true"
+                ></i>
+
+                Nuevo
+
+              </button>
+
+            </div>
+
+            <div data-role="route-summary">
+              ${view.routeSummary}
+            </div>
+
+          </section>
+
+
+          <section class="poke5e-encounter-planner__panel">
+
+            <header class="poke5e-encounter-planner__panel-header">
+
+              <i
+                class="fa-solid fa-sliders"
+                aria-hidden="true"
+              ></i>
+
+              <h3>
+                Configuración
+              </h3>
+
+            </header>
+
+
+            <div class="poke5e-encounter-planner__config-grid">
+
+              <label>
+                Tipo
+
+                <select data-role="encounter-type">
+
+                  <option
+                    value="wild"
+                    ${
+                      state.type ===
+                        "wild"
+                        ? " selected"
+                        : ""
+                    }
+                  >
+                    Pokémon salvajes
+                  </option>
+
+                  <option
+                    value="trainer"
+                    ${
+                      trainerEncounter
+                        ? " selected"
+                        : ""
+                    }
+                  >
+                    Entrenador
+                  </option>
+
+                </select>
+
+              </label>
+
+
+              <label>
+                Ubicación
+
+                <input
+                  type="text"
+                  data-role="encounter-location"
+                  placeholder="Ej. Ruta 3"
+                  value="${escapeHtml(
+                    state.location
+                  )}"
+                >
+
+              </label>
+
+
+              <label>
+                Nombre del encuentro
+
+                <input
+                  type="text"
+                  data-role="encounter-name"
+                  placeholder="Ej. Emboscada al atardecer"
+                  value="${escapeHtml(
+                    state.name
+                  )}"
+                >
+
+              </label>
+
+            </div>
+
+          </section>
+
+        </aside>
+
+        <main class="poke5e-encounter-planner__workspace">
+          <div class="poke5e-encounter-planner__workspace-toolbar">
+            <header class="poke5e-encounter-planner__workspace-header">
+
+              <div>
+
+                <small>
+                  Encounter Workspace
+                </small>
+
+                <h2>
+                  Diseño del encuentro
+                </h2>
+
+                <span>
+                  Compón, genera y configura antes de crear Actors.
+                </span>
+
+              </div>
+
+
+              <div class="poke5e-encounter-planner__workspace-actions">
+
+                <button
+                  type="button"
+                  class="poke5e-encounter-planner__optional-toggle${state.optional ? " is-active" : ""}"
+                  data-action="toggle-optional"
+                  aria-pressed="${state.optional ? "true" : "false"}"
+                  title="Un encuentro opcional no hace falta para avanzar; el resumen de la ruta lo cuenta aparte. En un encuentro guardado, se guarda al momento."
+                >
+                  <i
+                    class="fa-solid ${state.optional ? "fa-route" : "fa-flag-checkered"}"
+                    aria-hidden="true"
+                  ></i>
+
+                  ${state.optional ? "Opcional" : "Obligatorio"}
+                </button>
+
+                <span class="poke5e-encounter-planner__workspace-counter">
+
+                  <i
+                    class="fa-solid fa-paw"
+                    aria-hidden="true"
+                  ></i>
+
+                  ${context.rows.length} fila(s)
+
+                </span>
+
+              </div>
+
+            </header>
+
+
+            <nav
+              class="poke5e-encounter-planner__studio-tabs"
+              role="tablist"
+              aria-label="Secciones del Encounter Studio"
+            >
+
+              <button
+                type="button"
+                class="poke5e-encounter-planner__studio-tab${
+                  activeStudioTab ===
+                    "composition"
+                    ? " is-active"
+                    : ""
+                }"
+                data-action="switch-studio-tab"
+                data-tab="composition"
+                role="tab"
+                aria-selected="${
+                  activeStudioTab ===
+                    "composition"
+                    ? "true"
+                    : "false"
+                }"
+              >
+                <i
+                  class="fa-solid fa-paw"
+                  aria-hidden="true"
+                ></i>
+
+                Composición
+              </button>
+
+
+              <button
+                type="button"
+                class="poke5e-encounter-planner__studio-tab${
+                  activeStudioTab ===
+                    "generator"
+                    ? " is-active"
+                    : ""
+                }"
+                data-action="switch-studio-tab"
+                data-tab="generator"
+                role="tab"
+                aria-selected="${
+                  activeStudioTab ===
+                    "generator"
+                    ? "true"
+                    : "false"
+                }"
+              >
+                <i
+                  class="fa-solid fa-dice-d20"
+                  aria-hidden="true"
+                ></i>
+
+                Generador
+              </button>
+
+
+              <button
+                type="button"
+                class="poke5e-encounter-planner__studio-tab${
+                  activeStudioTab ===
+                    "trainers"
+                    ? " is-active"
+                    : ""
+                }"
+                data-action="switch-studio-tab"
+                data-tab="trainers"
+                role="tab"
+                aria-selected="${
+                  activeStudioTab ===
+                    "trainers"
+                    ? "true"
+                    : "false"
+                }"
+                ${trainerEncounter ? "" : "hidden"}
+              >
+                <i
+                  class="fa-solid fa-users"
+                  aria-hidden="true"
+                ></i>
+
+                Entrenadores
+              </button>
+
+
+              <button
+                type="button"
+                class="poke5e-encounter-planner__studio-tab${
+                  activeStudioTab ===
+                    "options"
+                    ? " is-active"
+                    : ""
+                }"
+                data-action="switch-studio-tab"
+                data-tab="options"
+                role="tab"
+                aria-selected="${
+                  activeStudioTab ===
+                    "options"
+                    ? "true"
+                    : "false"
+                }"
+              >
+                <i
+                  class="fa-solid fa-sliders"
+                  aria-hidden="true"
+                ></i>
+
+                Opciones
+              </button>
+
+            </nav>
+
+          </div>
+
+          <section
+            class="poke5e-encounter-planner__studio-panel"
+            data-studio-tab="generator"
+            role="tabpanel"
+            ${activeStudioTab === "generator" ? "" : "hidden"}
+          >
+            ${renderRandomEncounterControls({
+              regions:
+                context.wildRandomRegions,
+
+              biomes:
+                context.randomBiomes,
+
+              region:
+                state
+                  .randomRegion,
+
+              biome:
+                state
+                  .randomBiome,
+
+              minLevel:
+                state
+                  .randomMinLevel,
+
+              maxLevel:
+                state
+                  .randomMaxLevel,
+
+              size:
+                state
+                  .randomSize,
+
+              srValues:
+                context.randomSrValues,
+
+              minSr:
+                state
+                  .randomMinSr,
+
+              maxSr:
+                state
+                  .randomMaxSr,
+
+              difficulty:
+                state
+                  .randomDifficulty,
+
+              party:
+                view.party,
+
+              candidateCount:
+                context.randomCandidateCount,
+
+              lockedCount:
+                context.randomLockedCount,
+
+              visible:
+                !trainerEncounter
+            })}
+
+            ${renderTrainerRandomControls({
+              regions:
+                context.randomRegions,
+
+              region:
+                state
+                  .trainerRandomRegion,
+
+              trainerCount:
+                state
+                  .trainerRandomCount,
+
+              onField:
+                state
+                  .trainerRandomOnField,
+
+              pokemonCount:
+                state
+                  .trainerRandomPokemonCount,
+
+              candidateCount:
+                context.trainerRandomCandidateCount,
+
+              visible:
+                trainerEncounter,
+
+              archetypeGroups:
+                context.trainerArchetypeGroups,
+
+              archetype:
+                context.selectedTrainerArchetype,
+
+              archetypeId:
+                state
+                  .trainerRandomArchetype,
+
+              mixedArchetypeIds:
+                context.trainerRandomMixedArchetypes,
+
+              language:
+                context.language,
+              rank:
+                state
+                  .trainerRandomRank,
+              party:
+                view.party,
+              boosts:
+                view.boosts,
+              weakTo:
+                state
+                  .partyWeakTo ??
+                []
+            })}
+
+            ${view.stepPanel}
+
+          </section>
+
+          <section
+            class="poke5e-encounter-planner__studio-panel"
+            data-studio-tab="trainers"
+            role="tabpanel"
+            ${activeStudioTab === "trainers" ? "" : "hidden"}
+          >
+            ${renderTrainerControls({
+              trainers:
+                state.trainers,
+
+              selectedTrainerId:
+                state
+                  .selectedTrainerId,
+
+              rows:
+                state.rows,
+
+              archetypes:
+                context.trainerArchetypes,
+
+              candidateCount:
+                context.trainerRandomCandidateCount,
+
+              language:
+                context.language,
+
+              visible:
+                trainerEncounter
+            })}
+          </section>
+
+          <section
+            class="
+              poke5e-encounter-planner__studio-panel
+              poke5e-encounter-planner__composition
+            "
+            data-studio-tab="composition"
+            role="tabpanel"
+            ${activeStudioTab === "composition" ? "" : "hidden"}
+          >
+
+            <section class="poke5e-encounter-planner__composition-shell">
+
+              <header class="poke5e-encounter-planner__composition-header">
+
+                <div>
+
+                  <span class="poke5e-encounter-planner__composition-icon">
+                    <i
+                      class="poke5e-icon-pokeball"
+                      aria-hidden="true"
+                    ></i>
+                  </span>
+
+                  <div>
+                    <small>Composición</small>
+
+                    <h3>
+                      Pokémon del encuentro
+                    </h3>
+
+                    <span>
+                      Edita nivel, cantidad, resultado de combate y recursos generados.
+                    </span>
+                  </div>
+
+                </div>
+
+
+                <div class="poke5e-encounter-planner__composition-tools">
+                  <span
+                    class="poke5e-encounter-planner__composition-count"
+                    data-role="composition-summary"
+                  >
+                    ${escapeHtml(compositionSummary)}
+                  </span>
+
+
+                  <div
+                    class="poke5e-encounter-planner__composition-view-switch"
+                    role="group"
+                    aria-label="Vista de composición"
+                  >
+
+                    <button
+                      type="button"
+                      class="poke5e-encounter-planner__composition-view-button${
+                        compositionView ===
+                          "cards"
+                          ? " is-active"
+                          : ""
+                      }"
+                      data-action="switch-composition-view"
+                      data-role="composition-view-cards"
+                      data-view="cards"
+                      aria-pressed="${
+                        compositionView ===
+                          "cards"
+                          ? "true"
+                          : "false"
+                      }"
+                      title="Vista detallada"
+                    >
+                      <i
+                        class="fa-solid fa-table-cells-large"
+                        aria-hidden="true"
+                      ></i>
+
+                      Detallada
+                    </button>
+
+
+                    <button
+                      type="button"
+                      class="poke5e-encounter-planner__composition-view-button${
+                        compositionView ===
+                          "compact"
+                          ? " is-active"
+                          : ""
+                      }"
+                      data-action="switch-composition-view"
+                      data-role="composition-view-compact"
+                      data-view="compact"
+                      aria-pressed="${
+                        compositionView ===
+                          "compact"
+                          ? "true"
+                          : "false"
+                      }"
+                      title="Vista compacta"
+                    >
+                      <i
+                        class="fa-solid fa-bars"
+                        aria-hidden="true"
+                      ></i>
+
+                      Compacta
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </header>
+
+
+              <div class="poke5e-encounter-planner__composition-search">
+
+                <div class="poke5e-encounter-planner__search">
+
+                  <i
+                    class="fa-solid fa-magnifying-glass"
+                    aria-hidden="true"
+                  ></i>
+
+                  <input
+                    type="search"
+                    data-role="pokemon-search"
+                    placeholder="Buscar Pokémon para agregar por nombre, ID o Pokédex"
+                    value="${escapeHtml(
+                      state.search
+                    )}"
+                  >
+
+                  <span class="poke5e-encounter-planner__search-limit">
+                    Máx. ${SEARCH_LIMIT}
+                  </span>
+
+                </div>
+
+
+                <div
+                  class="poke5e-encounter-planner__search-results"
+                  data-role="pokemon-search-results"
+                  ${
+                    state.search.trim()
+                      ? ""
+                      : "hidden"
+                  }
+                >
+                  ${searchResultsMarkup}
+                </div>
+
+              </div>
+              ${encounterCompositionMarkup}
+            </section>
+
+          </section>
+
+          <section
+            class="poke5e-encounter-planner__studio-panel"
+            data-studio-tab="options"
+            role="tabpanel"
+            ${activeStudioTab === "options" ? "" : "hidden"}
+          >
+
+            <section class="poke5e-encounter-planner__options">
+
+              <div class="poke5e-encounter-planner__options-intro">
+
+                <span class="poke5e-encounter-planner__options-icon">
+                  <i
+                    class="fa-solid fa-sliders"
+                    aria-hidden="true"
+                  ></i>
+                </span>
+
+                <div>
+                  <strong>
+                    Opciones de generación
+                  </strong>
+
+                  <span class="hint">
+                    Configura qué puede regenerarse y las probabilidades
+                    especiales antes de crear o actualizar el encuentro.
+                  </span>
+                </div>
+
+              </div>
+
+
+              <div class="poke5e-encounter-planner__options-grid">
+
+                <fieldset
+                  class="
+                    poke5e-encounter-planner__option-group
+                    poke5e-encounter-planner__option-group--reroll
+                  "
+                >
+
+                  <legend>
+                    <i
+                      class="fa-solid fa-dice"
+                      aria-hidden="true"
+                    ></i>
+
+                    Regeneración
+                  </legend>
+
+
+                  <div class="poke5e-encounter-planner__toggle-list">
+
+                    <label class="poke5e-encounter-planner__toggle">
+
+                      <input
+                        type="checkbox"
+                        data-role="reroll-moves"
+                        ${
+                          state.rerollMoves
+                            ? " checked"
+                            : ""
+                        }
+                      >
+
+                      <span>
+                        <strong>Moves</strong>
+                        <small>Generar nuevamente los movimientos.</small>
+                      </span>
+
+                    </label>
+
+
+                    <label class="poke5e-encounter-planner__toggle">
+
+                      <input
+                        type="checkbox"
+                        data-role="reroll-abilities"
+                        ${
+                          state.rerollAbilities
+                            ? " checked"
+                            : ""
+                        }
+                      >
+
+                      <span>
+                        <strong>Habilidades</strong>
+                        <small>Volver a resolver la Ability activa.</small>
+                      </span>
+
+                    </label>
+
+
+                    <label class="poke5e-encounter-planner__toggle">
+
+                      <input
+                        type="checkbox"
+                        data-role="reroll-items"
+                        ${
+                          state.rerollItems
+                            ? " checked"
+                            : ""
+                        }
+                      >
+
+                      <span>
+                        <strong>Objetos</strong>
+                        <small>Volver a sortear el objeto transportado.</small>
+                      </span>
+
+                    </label>
+
+                  </div>
+
+                </fieldset>
+
+
+                <fieldset
+                  class="
+                    poke5e-encounter-planner__option-group
+                    poke5e-encounter-planner__option-group--items
+                  "
+                >
+
+                  <legend>
+                    <i
+                      class="fa-solid fa-box-archive"
+                      aria-hidden="true"
+                    ></i>
+
+                    Objetos
+                  </legend>
+
+
+                  <div class="poke5e-encounter-planner__option-group-header">
+
+                    <label class="poke5e-encounter-planner__toggle">
+
+                      <input
+                        type="checkbox"
+                        data-role="allow-encounter-items"
+                        ${
+                          itemPolicy.enabled
+                            ? " checked"
+                            : ""
+                        }
+                      >
+
+                      <span>
+                        <strong>Permitir objetos</strong>
+                        <small>Máximo un objeto por Actor Pokémon.</small>
+                      </span>
+
+                    </label>
+
+
+                    <label class="poke5e-encounter-planner__compact-field">
+
+                      <span>Probabilidad</span>
+
+                      <span class="poke5e-encounter-planner__input-suffix">
+
+                        <input
+                          type="number"
+                          data-role="encounter-item-chance"
+                          min="0"
+                          max="100"
+                          step="1"
+                          value="${itemPolicy.chancePercent}"
+                          ${
+                            itemPolicy.enabled
+                              ? ""
+                              : " disabled"
+                          }
+                        >
+
+                        <span>%</span>
+
+                      </span>
+
+                    </label>
+
+                  </div>
+
+
+                  <div class="poke5e-encounter-planner__weight-grid">
+
+                    <label class="poke5e-encounter-planner__weight-field">
+                      <span>Bayas</span>
+
+                      <input
+                        type="number"
+                        data-role="encounter-item-weight-berry"
+                        min="0"
+                        max="100"
+                        step="1"
+                        value="${itemPolicy.categoryWeights.berry}"
+                        ${
+                          itemPolicy.enabled
+                            ? ""
+                            : " disabled"
+                        }
+                      >
+                    </label>
+
+
+                    <label class="poke5e-encounter-planner__weight-field">
+                      <span>Medicina</span>
+
+                      <input
+                        type="number"
+                        data-role="encounter-item-weight-medicine"
+                        min="0"
+                        max="100"
+                        step="1"
+                        value="${itemPolicy.categoryWeights.medicine}"
+                        ${
+                          itemPolicy.enabled
+                            ? ""
+                            : " disabled"
+                        }
+                      >
+                    </label>
+
+
+                    <label class="poke5e-encounter-planner__weight-field">
+                      <span>Poké Ball</span>
+
+                      <input
+                        type="number"
+                        data-role="encounter-item-weight-pokeball"
+                        min="0"
+                        max="100"
+                        step="1"
+                        value="${itemPolicy.categoryWeights.pokeball}"
+                        ${
+                          itemPolicy.enabled
+                            ? ""
+                            : " disabled"
+                        }
+                      >
+                    </label>
+
+
+                    <label class="poke5e-encounter-planner__weight-field">
+                      <span>Held Item</span>
+
+                      <input
+                        type="number"
+                        data-role="encounter-item-weight-held-item"
+                        min="0"
+                        max="100"
+                        step="1"
+                        value="${itemPolicy.categoryWeights["held-item"]}"
+                        ${
+                          itemPolicy.enabled
+                            ? ""
+                            : " disabled"
+                        }
+                      >
+                    </label>
+
+                  </div>
+
+                </fieldset>
+
+
+                <fieldset
+                  class="
+                    poke5e-encounter-planner__option-group
+                    poke5e-encounter-planner__option-group--abilities
+                  "
+                >
+
+                  <legend>
+                    <i
+                      class="fa-solid fa-wand-magic-sparkles"
+                      aria-hidden="true"
+                    ></i>
+
+                    Habilidades
+                  </legend>
+
+
+                  <div class="poke5e-encounter-planner__ability-options">
+
+                    <label class="poke5e-encounter-planner__toggle">
+
+                      <input
+                        type="checkbox"
+                        data-role="allow-hidden-abilities"
+                        ${
+                          state.allowHiddenAbilities
+                            ? " checked"
+                            : ""
+                        }
+                      >
+
+                      <span>
+                        <strong>Permitir ocultas</strong>
+                        <small>Incluye Hidden Abilities en la tirada.</small>
+                      </span>
+
+                    </label>
+
+
+                    <label class="poke5e-encounter-planner__compact-field">
+
+                      <span>Probabilidad oculta</span>
+
+                      <span class="poke5e-encounter-planner__input-suffix">
+
+                        <input
+                          type="number"
+                          data-role="hidden-ability-chance"
+                          min="0"
+                          max="100"
+                          step="1"
+                          value="${state.hiddenAbilityChancePercent}"
+                          ${
+                            state.allowHiddenAbilities
+                              ? ""
+                              : " disabled"
+                          }
+                        >
+
+                        <span>%</span>
+
+                      </span>
+
+                    </label>
+
+                  </div>
+
+                </fieldset>
+
+              </div>
+
+            </section>
+          </section>
+
+          <footer class="poke5e-encounter-planner__footer">
+            <div class="poke5e-encounter-planner__statusbar">
+              <div
+                class="
+                  poke5e-encounter-planner__status-item
+                  poke5e-encounter-planner__status-item--tokens
+                "
+              >
+
+                <i
+                  class="fa-solid fa-cubes"
+                  aria-hidden="true"
+                ></i>
+
+                <span>
+                  Tokens
+                </span>
+
+                <strong data-total="tokens">
+                  ${formatNumber(context.totals.tokens)}
+                </strong>
+
+              </div>
+
+
+              <div
+                class="
+                  poke5e-encounter-planner__status-item
+                  poke5e-encounter-planner__status-item--defeat
+                "
+              >
+
+                <i
+                  class="fa-solid fa-burst"
+                  aria-hidden="true"
+                ></i>
+
+                <span>
+                  EXP derrota
+                </span>
+
+                <strong data-total="defeated">
+                  ${formatNumber(context.totals.defeated)}
+                </strong>
+
+              </div>
+
+
+              <div
+                class="
+                  poke5e-encounter-planner__status-item
+                  poke5e-encounter-planner__status-item--capture
+                "
+              >
+
+                <i
+                  class="fa-solid fa-circle-dot"
+                  aria-hidden="true"
+                ></i>
+
+                <span>
+                  EXP captura
+                </span>
+
+                <strong data-total="captured">
+                  ${formatNumber(context.totals.captured)}
+                </strong>
+
+              </div>
+
+
+              <div
+                class="
+                  poke5e-encounter-planner__status-item
+                  poke5e-encounter-planner__status-item--earned
+                "
+              >
+
+                <i
+                  class="fa-solid fa-star"
+                  aria-hidden="true"
+                ></i>
+
+                <span>
+                  EXP obtenida
+                </span>
+
+                <strong data-total="earned">
+                  ${formatNumber(context.totals.earned)}
+                </strong>
+
+              </div>
+
+
+              <div
+                class="
+                  poke5e-encounter-planner__status-item
+                  poke5e-encounter-planner__status-item--difficulty
+                "
+                data-role="difficulty-status"
+                data-tier="${view.difficulty.tier}"
+                title="${view.difficulty.title}"
+              >
+
+                <i
+                  class="fa-solid fa-skull"
+                  aria-hidden="true"
+                ></i>
+
+                <span>
+                  Dificultad
+                </span>
+
+                <strong data-total="difficulty">
+                  ${view.difficulty.label}
+                </strong>
+
+              </div>
+
+
+              <div
+                class="
+                  poke5e-encounter-planner__status-item
+                  poke5e-encounter-planner__status-item--progress
+                "
+                data-role="progress-status"
+                title="${escapeHtml(view.progress.title)}"
+              >
+
+                <i
+                  class="fa-solid fa-arrow-trend-up"
+                  aria-hidden="true"
+                ></i>
+
+                <span>
+                  Avance
+                </span>
+
+                <strong data-total="progress">
+                  ${view.progress.label}
+                </strong>
+
+              </div>
+
+            </div>
+            <button
+              type="button"
+              data-action="publish-reward"
+              title="Tras el combate: marca los Pokémon que participaron y publica en el chat la XP de cada uno; cada jugador la recibe."
+              ${context.rows.length ? "" : " disabled"}
+            >
+              <i
+                class="fa-solid fa-star"
+                aria-hidden="true"
+              ></i>
+              Publicar recompensa
+            </button>
+
+            <button
+              type="button"
+              data-action="generate"
+              ${
+                state.busy ||
+                !context.rows.length
+                  ? " disabled"
+                  : ""
+              }
+            >
+
+              <i
+                class="fa-solid fa-wand-magic-sparkles"
+                aria-hidden="true"
+              ></i>
+
+              ${
+                state.busy
+                  ? "Generando…"
+                  : "Generar / actualizar encuentro"
+              }
+
+            </button>
+
+          </footer>
+
+        </main>
+
+      </section>
+    `;
 }

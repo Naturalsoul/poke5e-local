@@ -15,6 +15,9 @@ import { clampInteger } from "./numbers.mjs";
 const MODULE_ID =
   "poke5e-local";
 
+export const SEARCH_LIMIT =
+  60;
+
 const ENCOUNTER_STUDIO_TABS =
   new Set([
     "composition",
