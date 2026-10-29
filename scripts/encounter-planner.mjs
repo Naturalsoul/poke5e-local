@@ -20,19 +20,12 @@ import {
   calculatePokemonEncounterXp
 } from "./encounter-xp-service.mjs";
 import { EncounterRandomCatalog } from "./encounter-random-catalog.mjs";
-import { generateRandomEncounterRows } from "./encounter-randomizer.mjs";
-import { getTrainerLevelRule } from "./trainer-rules.mjs";
 import {
-  DIFFICULTIES,
   encounterDifficulty,
-  generateForDifficulty,
   getTrainerRank,
   rankLevels
 } from "./encounter-difficulty.mjs";
-import {
-  generateRandomTrainerEncounter,
-  rerollRandomTrainerTeam
-} from "./encounter-trainer-randomizer.mjs";
+import { generateRandomTrainerEncounter } from "./encounter-trainer-randomizer.mjs";
 import {
   getTrainerArchetype,
   getTrainerArchetypeDescription,
@@ -45,7 +38,6 @@ import { clampInteger } from "./numbers.mjs";
 import {
   MIXED_TRAINER_ARCHETYPE_ID,
   buildEncounterDefinition,
-  buildEncounterRowAbilityKey,
   buildSavedEncounterLocations,
   calculateEncounterTotals,
   canGenerateRandomEncounter,
@@ -68,8 +60,6 @@ import {
   getTrainerRerollUiState,
   getWildRandomBiomeOptions,
   getWildRandomRegionOptions,
-  mergeTrainerRerollRows,
-  monotypePool,
   normalizeEncounterCompositionView,
   normalizeEncounterStudioTab,
   normalizeOptionalCanonicalId,
@@ -79,9 +69,7 @@ import {
   optionalNumber,
   prepareEncounterRow,
   resolveTrainerRandomArchetypes,
-  rollForDifficulty,
-  validateTrainerState,
-  withAce
+  validateTrainerState
 } from "./encounter-planner-data.mjs";
 import {
   buildCompositionSummary,
@@ -100,6 +88,16 @@ import {
   capturePlannerUiState,
   restorePlannerUiState
 } from "./encounter-planner-ui-state.mjs";
+import {
+  buildGenerationOptions,
+  buildTrainerRoster,
+  plannerBoosts,
+  rerollTrainerTeamRows,
+  rollTrainerEncounter,
+  rollWildEncounterRows,
+  trainerCandidatePool,
+  trainerTeamLevels
+} from "./encounter-planner-generation.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -4026,13 +4024,9 @@ export class PokemonEncounterPlanner
     }
 
 
-    this.rowSequence +=
-      1;
-
-
     this._encounterState.rows.push({
       id:
-        `row-${this.rowSequence}`,
+        this.#nextRowId(),
 
       pokemonId:
         String(
@@ -4553,13 +4547,9 @@ export class PokemonEncounterPlanner
                 entry,
                 index
               ) => {
-                this.rowSequence +=
-                  1;
-
-
                 return {
                   id:
-                    `row-${this.rowSequence}`,
+                    this.#nextRowId(),
 
                   pokemonId:
                     entry.pokemonId,
@@ -4632,13 +4622,9 @@ export class PokemonEncounterPlanner
     this._encounterState.rows =
       encounter.pokemon.map(
         entry => {
-          this.rowSequence +=
-            1;
-
-
           return {
             id:
-              `row-${this.rowSequence}`,
+              this.#nextRowId(),
 
             pokemonId:
               entry.pokemonId,
@@ -5003,52 +4989,11 @@ export class PokemonEncounterPlanner
       )
     ).max
   ) {
-    return {
-      region:
-        this._encounterState
-          .trainerRandomRegion,
-
-      maxLevel,
-
-      minSr:
-        null,
-
-      maxSr:
-        getTrainerLevelRule(
-          maxLevel
-        ).maxSr
-    };
+    return trainerCandidatePool(this._encounterState, maxLevel);
   }
 
-  // The trainer rivals' extras: +1/+2 to their scores, a super effective Move, an item or berry each.
   #boosts() {
-    return {
-      statBonus:
-        Number(
-          this._encounterState
-            .boostStats
-        ) || 0,
-
-      coverage:
-        this._encounterState
-          .boostCoverage ===
-          true,
-
-      items:
-        this._encounterState
-          .boostItems ===
-          true,
-
-      bestMoves:
-        this._encounterState
-          .boostBestMoves ===
-          true,
-
-      tmMoves:
-        this._encounterState
-          .boostTmMoves ===
-          true
-    };
+    return plannerBoosts(this._encounterState);
   }
 
   #pokemonTypes(
@@ -5371,12 +5316,9 @@ export class PokemonEncounterPlanner
     trainerId,
     pokemon
   ) {
-    this.rowSequence +=
-      1;
-
     return {
       id:
-        `row-${this.rowSequence}`,
+        this.#nextRowId(),
       trainerId,
       ...pokemon,
       abilityId:
@@ -7345,970 +7287,156 @@ export class PokemonEncounterPlanner
     );
   }
 
+  #nextRowId() {
+    this.rowSequence += 1;
+    return `row-${this.rowSequence}`;
+  }
+
   #rerollTrainerTeam(
     trainerId
   ) {
-    if (
-      this._encounterState.type !==
-        "trainer"
-    ) {
+    if (this._encounterState.type !== "trainer") {
       return;
     }
 
-
-    const trainer =
-      this.#getTrainer(
-        trainerId
-      );
-
-
+    const trainer = this.#getTrainer(trainerId);
     if (!trainer) {
-      ui.notifications.warn(
-        "El Entrenador seleccionado ya no existe."
-      );
-
+      ui.notifications.warn("El Entrenador seleccionado ya no existe.");
       return;
     }
 
-
-    // A reroll keeps the team's strength: its levels, or the party's when it has none.
-    const levels =
-      this._encounterState
-        .rows
-        .filter(
-          row =>
-            row.trainerId ===
-              trainer.id
-        )
-        .map(
-          row =>
-            clampInteger(
-              row.level,
-              1,
-              20,
-              1
-            )
-        );
-
-    const maxLevel =
-      levels.length
-        ? Math.max(
-            ...levels
-          )
-        : this.#party().level;
-
-    const minLevel =
-      levels.length
-        ? Math.min(
-            ...levels
-          )
-        : Math.max(
-            1,
-            maxLevel - 3
-          );
+    const state = this._encounterState;
+    const hasTeam = state.rows.some(row => row.trainerId === trainer.id);
+    const { minLevel, maxLevel } = trainerTeamLevels(state.rows, trainer.id, hasTeam ? null : this.#party().level);
 
     try {
-      const candidates =
-        this.randomCatalog
-          .trainerCandidates(
-            this.#trainerPool(
-              maxLevel
-            )
-          );
+      const { generatedRows, lockedCount, rows } = rerollTrainerTeamRows({
+        trainer,
+        rows: state.rows,
+        candidates: this.randomCatalog.trainerCandidates(this.#trainerPool(maxLevel)),
+        minLevel,
+        maxLevel,
+        nextRowId: () => this.#nextRowId()
+      });
 
-      const currentRows =
-        this._encounterState
-          .rows
-          .filter(
-            row =>
-              row.trainerId ===
-                trainer.id
-          );
-
-
-      const lockedRows =
-        currentRows.filter(
-          row =>
-            row.locked ===
-              true
-        );
-
-
-      const result =
-        rerollRandomTrainerTeam({
-          candidates,
-
-          lockedPokemon:
-            lockedRows.map(
-              row => ({
-                pokemonId:
-                  row.pokemonId,
-
-                quantity:
-                  row.quantity,
-
-                ace:
-                  row.ace ===
-                    true
-              })
-            ),
-
-          currentTeamSize:
-            countTrainerRowQuantity(
-              currentRows
-            ),
-
-          pokemonPerTrainer:
-            normalizeTrainerTeamSize(
-              trainer.teamSize
-            ),
-
-          minLevel,
-          maxLevel,
-
-          archetypeId:
-            getTrainerArchetype(
-              trainer.archetypeId
-            ).id
-        });
-
-
-      const generatedRows =
-        result.pokemon.map(
-          pokemon => {
-            this.rowSequence +=
-              1;
-
-
-            return {
-              id:
-                `row-${this.rowSequence}`,
-
-              trainerId:
-                trainer.id,
-
-              ...pokemon,
-
-              abilityId:
-                null,
-
-              itemId:
-                null,
-
-              itemResolved:
-                false,
-            };
-          }
-        );
-
-
-      if (
-        !generatedRows.length
-      ) {
-        ui.notifications.info(
-          `El equipo de "${trainer.name}" no tiene cupos sin bloquear para regenerar.`
-        );
-
+      if (!generatedRows.length) {
+        ui.notifications.info(`El equipo de "${trainer.name}" no tiene cupos sin bloquear para regenerar.`);
         return;
       }
 
-
-      const replacementRows =
-        mergeTrainerRerollRows(
-          currentRows,
-          generatedRows
-        );
-
-
-      this.#replaceTrainerRows(
-        trainer.id,
-        replacementRows
-      );
-
-
-      const lockedCount =
-        countTrainerRowQuantity(
-          lockedRows
-        );
-
-
+      state.rows = rows;
       ui.notifications.info(
-        `Equipo de "${trainer.name}": ` +
-        `${generatedRows.length} Pokémon regenerado(s)` +
-        (
-          lockedCount
-            ? ` · ${lockedCount} bloqueado(s).`
-            : "."
-        )
+        `Equipo de "${trainer.name}": ${generatedRows.length} Pokémon regenerado(s)` +
+        (lockedCount ? ` · ${lockedCount} bloqueado(s).` : ".")
       );
-
-
-      void this.render({
-        force:
-          true
-      });
-
-    } catch (
-      error
-    ) {
-      console.error(
-        `[${MODULE_ID}] Error regenerando equipo de Entrenador`,
-        error
-      );
-
-
+      void this.render({ force: true });
+    } catch (error) {
+      console.error(`[${MODULE_ID}] Error regenerando equipo de Entrenador`, error);
       ui.notifications.warn(
-        error instanceof Error
-          ? error.message
-          : "No se pudo regenerar el equipo del Entrenador."
+        error instanceof Error ? error.message : "No se pudo regenerar el equipo del Entrenador."
       );
     }
-  }
-
-
-  #replaceTrainerRows(
-    trainerId,
-    generatedRows
-  ) {
-    const nextRows =
-      [];
-
-
-    let inserted =
-      false;
-
-
-    for (
-      const row
-      of this._encounterState.rows
-    ) {
-      if (
-        row.trainerId ===
-          trainerId
-      ) {
-        if (!inserted) {
-          nextRows.push(
-            ...generatedRows
-          );
-
-          inserted =
-            true;
-        }
-
-
-        continue;
-      }
-
-
-      nextRows.push(
-        row
-      );
-    }
-
-
-    if (!inserted) {
-      nextRows.push(
-        ...generatedRows
-      );
-    }
-
-
-    this._encounterState.rows =
-      nextRows;
   }
 
   #generateRandomTrainerEncounter() {
-    if (
-      this._encounterState.type !==
-        "trainer"
-    ) {
+    if (this._encounterState.type !== "trainer") {
       ui.notifications.warn(
         "La generación aleatoria de Entrenadores solo está disponible en encuentros de Entrenador."
       );
-
       return;
     }
 
-
-    const party =
-      this.#party();
-
-    const rank =
-      getTrainerRank(
-        this._encounterState
-          .trainerRandomRank
-      );
-
-    const levels =
-      rankLevels(
-        party.level,
-        rank
-      );
-
-    const boosts =
-      this.#boosts();
-
-    const pick = (
-      [
-        min,
-        max
-      ]
-    ) =>
-      min +
-      Math.floor(
-        Math.random() *
-        (max - min + 1)
-      );
-
-    // "auto" takes the rank's range; otherwise the number chosen.
-    const chosen = (
-      value,
-      range
-    ) =>
-      value === "auto"
-        ? pick(
-            range
-          )
-        : clampInteger(
-            value,
-            1,
-            6,
-            1
-          );
-
-    let failure =
-      null;
+    const state = this._encounterState;
+    const party = this.#party();
+    const rank = getTrainerRank(state.trainerRandomRank);
+    const levels = rankLevels(party.level, rank);
 
     try {
-      const candidates =
-        this.randomCatalog
-          .trainerCandidates(
-            this.#trainerPool(
-              levels.max
-            )
-          );
-
-      // One roll: team, Pokémon on the field and (for Gym Leaders and the Elite Four) one type for every trainer.
-      const roll = trainerCount => {
-        const options = {
-          trainerCount,
-          pokemonPerTrainer:
-            String(
-              chosen(
-                this._encounterState
-                  .trainerRandomPokemonCount,
-                rank.team
-              )
-            ),
-          minLevel:
-            levels.min,
-          maxLevel:
-            levels.max,
-          archetypeId:
-            this._encounterState
-              .trainerRandomArchetype,
-          archetypeIds:
-            this._encounterState
-              .trainerRandomArchetype ===
-                MIXED_TRAINER_ARCHETYPE_ID
-              ? this._encounterState
-                  .trainerRandomMixedArchetypes
-              : []
-        };
-
-        const typed =
-          rank.monotype
-            ? monotypePool(
-                candidates,
-                Number(
-                  options.pokemonPerTrainer
-                )
-              )
-            : candidates;
-
-        let generated;
-
-        try {
-          generated =
-            generateRandomTrainerEncounter({
-              ...options,
-              candidates:
-                typed
-            });
-        } catch (
-          error
-        ) {
-          failure =
-            error;
-
-          if (typed === candidates) {
-            return [];
-          }
-
-          try {
-            generated =
-              generateRandomTrainerEncounter({
-                ...options,
-                candidates
-              });
-          } catch (
-            fallbackError
-          ) {
-            failure =
-              fallbackError;
-
-            return [];
-          }
-        }
-
-        const onField =
-          chosen(
-            this._encounterState
-              .trainerRandomOnField,
-            rank.onField
-          );
-
-        return generated.map(
-          (
-            trainer,
-            trainerIndex
-          ) => withAce(
-            {
-              ...trainer,
-              onField:
-                Math.min(
-                  onField,
-                  trainer.pokemon.length
-                )
-            },
-            // The boss's ace only: the others are their gym helpers.
-            trainerIndex === 0
-              ? levels.ace
-              : null,
-            pick
-          )
-        );
-      };
-
-      const measure = generated =>
-        encounterDifficulty(
-          party,
-          generated.flatMap(
-            trainer =>
-              trainer.pokemon.map(
-                pokemon => ({
-                  ...pokemon,
-                  types:
-                    this.#pokemonTypes(
-                      pokemon.pokemonId
-                    )
-                })
-              )
-          ),
-          {
-            boosts,
-
-            onField:
-              Math.max(
-                1,
-                generated.reduce(
-                  (
-                    total,
-                    trainer
-                  ) =>
-                    total +
-                    trainer.onField,
-                  0
-                )
-              )
-          }
-        );
-
-      // Fewest trainers first: helpers join only when the rival alone can't reach the rank's difficulty.
-      const trainerCounts =
-        this._encounterState
-          .trainerRandomCount ===
-          "auto"
-          ? Array.from(
-              {
-                length:
-                  rank.trainers[1] -
-                  rank.trainers[0] +
-                  1
-              },
-              (
-                _,
-                index
-              ) =>
-                rank.trainers[0] +
-                index
-            )
-          : [
-              chosen(
-                this._encounterState
-                  .trainerRandomCount,
-                rank.trainers
-              )
-            ];
-
-      let best =
-        null;
-
-      for (const trainerCount of trainerCounts) {
-        const attempt =
-          generateForDifficulty(
-            () =>
-              roll(
-                trainerCount
-              ),
-            measure,
-            rank.target,
-            100
-          );
-
-        if (
-          !best ||
-          attempt.distance <
-            best.distance
-        ) {
-          best =
-            attempt;
-        }
-
-        if (best.distance === 0) {
-          break;
-        }
-      }
-
-      const generatedTrainers =
-        best.result;
-
-      if (!generatedTrainers.length) {
-        throw failure ??
-          new Error(
-            "No hay especies compatibles para estos Entrenadores."
-          );
-      }
-
-      if (best.distance > 0) {
-        const wanted =
-          DIFFICULTIES.find(
-            entry =>
-              entry.id ===
-                rank.target
-          )?.label;
-
-        ui.notifications.warn(
-          `${rank.label} apunta a ${wanted} y con este grupo queda ${best.tier.label}. Prueba fijar más o menos Pokémon por Entrenador o en campo.`
-        );
-      }
-
-      /*
-      * Conservamos también los IDs actuales como
-      * reservados para que un reroll completo no
-      * pueda reutilizar accidentalmente la identidad
-      * de un Trainer anterior del mismo encuentro.
-      */
-      const reservedIds =
-        new Set(
-          this._encounterState
-            .trainers
-            .map(
-              trainer =>
-                trainer.id
-            )
-        );
-
-
-      const trainers =
-        [];
-
-
-      const rows =
-        [];
-
-      const archetypeCounters =
-        new Map();
-
-      generatedTrainers.forEach(
-        generatedTrainer => {
-          const trainerId =
-            this.#allocateTrainerId(
-              reservedIds
-            );
-
-
-          reservedIds.add(
-            trainerId
-          );
-
-
-          const generatedArchetype =
-            getTrainerArchetype(
-              generatedTrainer.archetypeId
-            );
-
-
-          const archetypeCount =
-            (
-              archetypeCounters.get(
-                generatedArchetype.id
-              ) ??
-              0
-            ) +
-            1;
-
-
-          archetypeCounters.set(
-            generatedArchetype.id,
-            archetypeCount
-          );
-
-
-          const archetypeLabel =
-            getTrainerArchetypeLabel(
-              generatedArchetype,
-              getLanguage()
-            );
-
-
-          trainers.push({
-            id:
-              trainerId,
-
-            name:
-              `${archetypeLabel} ${archetypeCount}`,
-
-            archetypeId:
-              generatedArchetype.id,
-
-            teamSize:
-              normalizeTrainerTeamSize(
-                this._encounterState
-                  .trainerRandomPokemonCount
-              ),
-            onField:
-              generatedTrainer.onField
-          });
-
-
-          generatedTrainer.pokemon.forEach(
-            pokemon => {
-              this.rowSequence +=
-                1;
-
-
-              rows.push({
-                id:
-                  `row-${this.rowSequence}`,
-
-                trainerId,
-
-                ...pokemon,
-
-                abilityId:
-                  null,
-
-                itemId:
-                  null,
-
-                itemResolved:
-                  false,
-              });
-            }
-          );
-        }
-      );
-
-
-      this._encounterState.trainers =
-        trainers;
-      this._encounterState.rows =
-        rows;
-      this._encounterState.stepHistory =
-        [];
-      this._encounterState.selectedTrainerId =
-        trainers[0]?.id ??
-        "";
-
-      this._encounterState.search =
-        "";
-
-
-      ui.notifications.info(
-        `Encuentro aleatorio: ${trainers.length} Entrenador(es), ${rows.length} Pokémon.`
-      );
-
-
-      void this.render({
-        force:
-          true
+      const { generatedTrainers, missedTarget } = rollTrainerEncounter({
+        state,
+        party,
+        rank,
+        levels,
+        boosts: this.#boosts(),
+        candidates: this.randomCatalog.trainerCandidates(this.#trainerPool(levels.max)),
+        pokemonTypes: pokemonId => this.#pokemonTypes(pokemonId)
       });
 
-    } catch (
-      error
-    ) {
-      console.error(
-        `[${MODULE_ID}] Error generando Entrenadores aleatorios`,
-        error
-      );
+      if (missedTarget) {
+        ui.notifications.warn(
+          `${rank.label} apunta a ${missedTarget.wanted} y con este grupo queda ${missedTarget.reached}. ` +
+          "Prueba fijar más o menos Pokémon por Entrenador o en campo."
+        );
+      }
 
+      // Current ids stay reserved so a full reroll never reuses an earlier Trainer's identity.
+      const reservedIds = new Set(state.trainers.map(trainer => trainer.id));
+      const { trainers, rows } = buildTrainerRoster({
+        generatedTrainers,
+        teamSize: state.trainerRandomPokemonCount,
+        language: getLanguage(),
+        nextTrainerId: () => {
+          const id = this.#allocateTrainerId(reservedIds);
+          reservedIds.add(id);
+          return id;
+        },
+        nextRowId: () => this.#nextRowId()
+      });
 
+      state.trainers = trainers;
+      state.rows = rows;
+      state.stepHistory = [];
+      state.selectedTrainerId = trainers[0]?.id ?? "";
+      state.search = "";
+      ui.notifications.info(`Encuentro aleatorio: ${trainers.length} Entrenador(es), ${rows.length} Pokémon.`);
+      void this.render({ force: true });
+    } catch (error) {
+      console.error(`[${MODULE_ID}] Error generando Entrenadores aleatorios`, error);
       ui.notifications.warn(
-        error instanceof Error
-          ? error.message
-          : "No se pudo generar el encuentro aleatorio de Entrenadores."
+        error instanceof Error ? error.message : "No se pudo generar el encuentro aleatorio de Entrenadores."
       );
     }
   }
 
   #generateRandomEncounter() {
-    if (
-      this._encounterState.type !==
-        "wild"
-    ) {
-      ui.notifications.warn(
-        "La generación aleatoria está disponible solo para encuentros salvajes."
-      );
-
+    if (this._encounterState.type !== "wild") {
+      ui.notifications.warn("La generación aleatoria está disponible solo para encuentros salvajes.");
       return;
     }
 
-
-    const minLevel =
-      clampInteger(
-        this._encounterState
-          .randomMinLevel,
-        1,
-        20,
-        1
-      );
-
-
-    const maxLevel =
-      clampInteger(
-        this._encounterState
-          .randomMaxLevel,
-        1,
-        20,
-        5
-      );
-
-
-    if (
-      minLevel >
-      maxLevel
-    ) {
-      ui.notifications.warn(
-        "El nivel mínimo no puede ser mayor que el nivel máximo."
-      );
-
+    const state = this._encounterState;
+    const minLevel = clampInteger(state.randomMinLevel, 1, 20, 1);
+    const maxLevel = clampInteger(state.randomMaxLevel, 1, 20, 5);
+    if (minLevel > maxLevel) {
+      ui.notifications.warn("El nivel mínimo no puede ser mayor que el nivel máximo.");
       return;
     }
-
 
     try {
-      const candidates =
-        this.randomCatalog
-          .candidates({
-            region:
-              this._encounterState
-                .randomRegion,
-
-            biome:
-              this._encounterState
-                .randomBiome,
-
-            maxLevel,
-
-            minSr:
-              this._encounterState
-                .randomMinSr,
-
-            maxSr:
-              this._encounterState
-                .randomMaxSr
-          });
-
-
-      const lockedRows =
-        this._encounterState.rows
-          .filter(
-            row =>
-              row.locked ===
-                true
-          );
-
-
-      const lockedAbilityIds =
-        new Map(
-          lockedRows.map(
-            row => [
-              buildEncounterRowAbilityKey(
-                row
-              ),
-
-              normalizeOptionalCanonicalId(
-                row.abilityId
-              )
-            ]
-          )
-        );
-
-      const lockedItemStates =
-        new Map(
-          lockedRows.map(
-            row => [
-
-              buildEncounterRowAbilityKey(
-                row
-              ),
-
-              {
-                itemId:
-                  normalizeOptionalCanonicalId(
-                    row.itemId
-                  ),
-
-                itemResolved:
-                  row.itemResolved ===
-                    true ||
-                  Boolean(
-                    row.itemId
-                  )
-              }
-            ]
-          )
-        );
-
-
-      const options = {
-        candidates,
+      const rows = rollWildEncounterRows({
+        state,
+        candidates: this.randomCatalog.candidates({
+          region: state.randomRegion,
+          biome: state.randomBiome,
+          maxLevel,
+          minSr: state.randomMinSr,
+          maxSr: state.randomMaxSr
+        }),
+        party: this.#party(),
         minLevel,
         maxLevel,
-
-        size:
-          this._encounterState
-            .randomSize,
-
-        lockedRows
-      };
-
-      const difficulty =
-        this._encounterState
-          .randomDifficulty;
-
-      const party =
-        this.#party();
-
-      const generatedRows =
-        rollForDifficulty(
-          () =>
-            generateRandomEncounterRows(
-              options
-            ),
-          rows =>
-            encounterDifficulty(
-              party,
-              rows
-            ),
-          difficulty,
-          "Prueba otro rango de niveles o tamaño."
-        );
-
-
-      this._encounterState.rows =
-        generatedRows.map(
-          row => {
-            this.rowSequence +=
-              1;
-
-
-            return {
-              id:
-                `row-${this.rowSequence}`,
-
-              trainerId:
-                null,
-
-              ...row,
-
-              abilityId:
-                row.locked ===
-                  true
-                  ? lockedAbilityIds.get(
-                      buildEncounterRowAbilityKey(
-                        row
-                      )
-                    ) ??
-                    null
-                  : null,
-
-              itemId:
-                row.locked ===
-                  true
-                  ? lockedItemStates.get(
-                      buildEncounterRowAbilityKey(
-                        row
-                      )
-                    )?.itemId ??
-                    null
-                  : null,
-
-              itemResolved:
-                row.locked ===
-                  true
-                  ? lockedItemStates.get(
-                      buildEncounterRowAbilityKey(
-                        row
-                      )
-                    )?.itemResolved ===
-                    true
-                  : false,
-            };
-          }
-        );
-
-
-      this._encounterState.search =
-        "";
-
-
-      const total =
-        generatedRows.reduce(
-          (
-            sum,
-            row
-          ) =>
-            sum +
-            row.quantity,
-          0
-        );
-
-
-      ui.notifications.info(
-        `Encuentro aleatorio: ${generatedRows.length} especie(s), ${total} Pokémon.`
-      );
-
-
-      void this.render({
-        force:
-          true
+        nextRowId: () => this.#nextRowId()
       });
 
-    } catch (
-      error
-    ) {
-      console.error(
-        `[${MODULE_ID}] Error generando encuentro aleatorio`,
-        error
-      );
-
-
+      state.rows = rows;
+      state.search = "";
+      const total = rows.reduce((sum, row) => sum + row.quantity, 0);
+      ui.notifications.info(`Encuentro aleatorio: ${rows.length} especie(s), ${total} Pokémon.`);
+      void this.render({ force: true });
+    } catch (error) {
+      console.error(`[${MODULE_ID}] Error generando encuentro aleatorio`, error);
       ui.notifications.warn(
-        error instanceof Error
-          ? error.message
-          : "No se pudo generar el encuentro aleatorio."
+        error instanceof Error ? error.message : "No se pudo generar el encuentro aleatorio."
       );
     }
   }
@@ -8404,53 +7532,7 @@ export class PokemonEncounterPlanner
       const result =
         await service.generate(
           definition,
-          {
-            rerollMoves:
-              this._encounterState
-                .rerollMoves,
-
-            rerollAbilities:
-              this._encounterState
-                .rerollAbilities,
-
-            allowHiddenAbilities:
-              this._encounterState
-                .allowHiddenAbilities,
-
-            hiddenAbilityChancePercent:
-              this._encounterState
-                .hiddenAbilityChancePercent,
-
-            rerollItems:
-              this._encounterState
-                .rerollItems,
-
-            itemPolicy:
-              getPlannerItemPolicy(
-                this._encounterState
-              ),
-
-            boosts: {
-              statBonus:
-                this.#boosts().statBonus,
-
-              coverageTypes:
-                this.#boosts().coverage
-                  ? this._encounterState
-                      .partyWeakTo ??
-                    []
-                  : [],
-
-              guaranteedItems:
-                this.#boosts().items,
-
-              bestMoves:
-                this.#boosts().bestMoves,
-
-              tmMoves:
-                this.#boosts().tmMoves
-            }
-          }
+          buildGenerationOptions(this._encounterState)
         );
 
 

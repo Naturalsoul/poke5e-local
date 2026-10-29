@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.44.6] — 2026-10-29
+
+- **Limpieza:** las tiradas del Encounter Planner (encuentro salvaje, Entrenadores por rango, reroll de un equipo
+  y las opciones para crear el encuentro) pasan a `encounter-planner-generation.mjs`, sin depender de la ventana y
+  con tests. La ventana solo junta lo que eligió el GM, pide la tirada y avisa del resultado. Las tiradas no
+  cambian.
+
 ## [0.44.5] — 2026-10-29
 
 - **Limpieza:** el Encounter Planner se separa por tarea. `encounter-planner.mjs` queda solo con la ventana;

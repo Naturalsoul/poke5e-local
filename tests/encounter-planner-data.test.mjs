@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   buildEncounterDefinition,
-  mergeTrainerRerollRows,
   validateTrainerState
 } from "../scripts/encounter-planner-data.mjs";
+import { mergeTrainerRerollRows } from "../scripts/encounter-planner-generation.mjs";
 
 test("a reroll keeps locked rows in place and fills the rest in order", () => {
   const current = [{ id: "a", locked: true }, { id: "b" }, { id: "c", locked: true }, { id: "d" }];

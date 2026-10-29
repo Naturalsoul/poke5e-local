@@ -4,11 +4,7 @@ import {
   RANDOM_REGION_ALL
 } from "./encounter-random-catalog.mjs";
 import { RANDOM_ENCOUNTER_SIZES } from "./encounter-randomizer.mjs";
-import {
-  DIFFICULTIES,
-  detectEncounterParty,
-  generateForDifficulty
-} from "./encounter-difficulty.mjs";
+import { detectEncounterParty } from "./encounter-difficulty.mjs";
 import {
   getTrainerArchetype,
   listTrainerArchetypes
@@ -369,137 +365,6 @@ export function getDefaultWildRandomBiome(
           RANDOM_BIOME_ROUTE
     ) ??
     RANDOM_BIOME_ROUTE
-  );
-}
-
-// One random roll, or (with a difficulty) the closest of many to it, warning when the filters can't reach it.
-export function rollForDifficulty(
-  generate,
-  measure,
-  difficulty,
-  advice
-) {
-  if (!difficulty) {
-    return generate();
-  }
-
-  const best =
-    generateForDifficulty(
-      generate,
-      measure,
-      difficulty
-    );
-
-  if (best.distance > 0) {
-    const wanted =
-      DIFFICULTIES.find(
-        entry =>
-          entry.id ===
-            difficulty
-      )?.label;
-
-    ui.notifications.warn(
-      `Con estos filtros no se llega a ${wanted}: queda ${best.tier.label}. ${advice}`
-    );
-  }
-
-  return best.result;
-}
-
-// The trainer's ace, at the rank's ace level: the one the archetype chose, or else its last Pokémon.
-export function withAce(
-  trainer,
-  aceLevels,
-  pick
-) {
-  if (!aceLevels) {
-    return trainer;
-  }
-
-  const marked =
-    trainer.pokemon.findIndex(
-      pokemon =>
-        pokemon.ace
-    );
-
-  const aceIndex =
-    marked >= 0
-      ? marked
-      : trainer.pokemon.length - 1;
-
-  return {
-    ...trainer,
-    pokemon:
-      trainer.pokemon.map(
-        (
-          pokemon,
-          index
-        ) =>
-          index ===
-            aceIndex
-            ? {
-                ...pokemon,
-                level:
-                  pick(
-                    aceLevels
-                  ),
-                ace:
-                  true
-              }
-            : pokemon
-      )
-  };
-}
-
-// Candidates of one type with enough species for a team: a random one of those types, or all when none has.
-export function monotypePool(
-  candidates,
-  teamSize
-) {
-  const counts =
-    new Map();
-
-  for (const pokemon of candidates) {
-    for (const type of pokemon.types ?? []) {
-      counts.set(
-        type,
-        (counts.get(type) ?? 0) + 1
-      );
-    }
-  }
-
-  const types =
-    [
-      ...counts
-    ]
-      .filter(
-        ([, count]) =>
-          count >=
-            teamSize
-      )
-      .map(
-        ([type]) =>
-          type
-      );
-
-  if (!types.length) {
-    return candidates;
-  }
-
-  const type =
-    types[
-      Math.floor(
-        Math.random() *
-        types.length
-      )
-    ];
-
-  return candidates.filter(
-    pokemon =>
-      (pokemon.types ?? [])
-        .includes(
-          type
-        )
   );
 }
 
@@ -1088,66 +953,6 @@ export function getTrainerRerollUiState({
         ? "Regenerar solo los Pokémon no bloqueados de este Entrenador"
         : "Regenerar solo el equipo de este Entrenador"
   };
-}
-
-export function mergeTrainerRerollRows(
-  currentRows,
-  generatedRows
-) {
-  const merged =
-    [];
-
-
-  let generatedIndex =
-    0;
-
-
-  for (
-    const row
-    of currentRows ??
-    []
-  ) {
-    if (
-      row.locked ===
-        true
-    ) {
-      merged.push(
-        row
-      );
-
-      continue;
-    }
-
-
-    if (
-      generatedIndex <
-        generatedRows.length
-    ) {
-      merged.push(
-        generatedRows[
-          generatedIndex
-        ]
-      );
-
-      generatedIndex +=
-        1;
-    }
-  }
-
-
-  if (
-    generatedIndex <
-      generatedRows.length
-  ) {
-    merged.push(
-      ...generatedRows.slice(
-        generatedIndex
-      )
-    );
-  }
-
-
-  return merged;
 }
 
 export function validateTrainerState(
@@ -1842,22 +1647,6 @@ export function localized(
 
   return String(
     fallback
-  );
-}
-
-export function buildEncounterRowAbilityKey(
-  row
-) {
-  return (
-    `${String(
-      row?.pokemonId ??
-      ""
-    )}@${clampInteger(
-      row?.level,
-      1,
-      20,
-      1
-    )}`
   );
 }
 
