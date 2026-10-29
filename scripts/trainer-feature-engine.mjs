@@ -23,6 +23,7 @@ import {
 } from "./trainer-service.mjs";
 
 import { RANGER_PARTNER_FLAG } from "./trainer-path-actions.mjs";
+import { getLanguage } from "./i18n.mjs";
 
 
 const MODULE_ID =
@@ -652,17 +653,6 @@ function getPokemonResearcherContext(
 
     resource
   };
-}
-
-
-function getLanguage() {
-
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-    ? "en"
-    : "es";
 }
 
 
@@ -2005,7 +1995,7 @@ function onPreRollSkill(
     )
   ) {
     appendGeneralistBonus(config);
-    return;
+    return true;
   }
 
   const pokemon =
@@ -2018,7 +2008,7 @@ function onPreRollSkill(
     )
   ) {
 
-    return;
+    return true;
   }
 
 
@@ -2113,6 +2103,8 @@ function onPreRollSkill(
 
   const partnerBonus = getPokemonPartnerBonus(pokemon);
   if (partnerBonus !== 0) {appendRollBonus(config, partnerBonus);}
+
+  return true;
 }
 
 function appendGeneralistBonus(config) {
@@ -2358,7 +2350,7 @@ function onPreRollDamage(
     ]
   ) {
 
-    return;
+    return true;
   }
 
 
@@ -2370,7 +2362,7 @@ function onPreRollDamage(
 
   if (!opportunity) {
 
-    return;
+    return true;
   }
 
 

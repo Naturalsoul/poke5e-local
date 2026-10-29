@@ -1,3 +1,5 @@
+import { normalizeId } from "./ids.mjs";
+
 const PHYSICAL_POWER_ABILITIES =
   new Set([
     "str",
@@ -2132,17 +2134,4 @@ function roundScore(
     ) /
     100
   );
-}
-
-
-function normalizeId(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
 }

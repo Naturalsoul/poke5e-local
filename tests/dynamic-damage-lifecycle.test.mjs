@@ -74,7 +74,7 @@ function dynamicItem(kind, formula, actor, extra = {}) {
     documentName: "Item",
     actor,
     getFlag(moduleId, key) {
-      if (moduleId !== "poke5e-local") return undefined;
+      if (moduleId !== "poke5e-local") {return undefined;}
       return flags[key];
     }
   };
@@ -120,7 +120,7 @@ function resolveDynamic(item) {
   };
 }
 
-function applyRolloutDamage({ source, item, target, resolution, before = 20, after = 15 }) {
+function applyRolloutDamage({ item, target, resolution, before = 20, after = 15 }) {
   target.system = {
     attributes: {
       hp: {
@@ -330,7 +330,7 @@ function outrageEffect(actor) {
     disabled: false,
     deleted: false,
     getFlag(moduleId, key) {
-      if (moduleId !== "poke5e-local") return undefined;
+      if (moduleId !== "poke5e-local") {return undefined;}
       return flags[key];
     },
     async setFlag(moduleId, key, value) {

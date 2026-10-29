@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   buildPokemonMedia
 } from "./builder.mjs";
@@ -37,7 +38,7 @@ export function renderFakemonEditorIdentity({
           data-studio-identity-portrait
           ${
             portrait
-              ? `src="${escapeAttribute(
+              ? `src="${escapeHtml(
                   portrait
                 )}"`
               : ""
@@ -159,7 +160,7 @@ export function renderFakemonSpeciesThumbnail(
           ? `
             <img
               data-species-thumbnail
-              src="${escapeAttribute(
+              src="${escapeHtml(
                 thumbnail
               )}"
               alt=""
@@ -733,7 +734,7 @@ function renderIdentityTypeBadges(
       type => `
         <span
           class="fakemon-studio__type-badge"
-          data-type="${escapeAttribute(
+          data-type="${escapeHtml(
             type
           )}"
         >
@@ -765,46 +766,5 @@ function pokemonTypeLabel(
       type
     ]?.en ??
     type
-  );
-}
-
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-}
-
-
-function escapeAttribute(
-  value
-) {
-
-  return escapeHtml(
-    value
   );
 }

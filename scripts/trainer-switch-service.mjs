@@ -5,11 +5,11 @@ import {
 
 import {
   getPokemonTrainerUuid,
-  getTrainerPartyState,
-  isPokemonActor,
+  getTrainerPartyState,
   isPokemonActive,
   isPokemonInParty,
-  setTrainerActivePokemonUuids
+  setTrainerActivePokemonUuids,
+  assertPokemon
 } from "./trainer-party-service.mjs";
 
 import {
@@ -40,23 +40,6 @@ function assertTrainer(
 
     throw new Error(
       `${trainer?.name ?? "Actor"} no es un Trainer Poke5e.`
-    );
-  }
-}
-
-
-function assertPokemon(
-  pokemon
-) {
-
-  if (
-    !isPokemonActor(
-      pokemon
-    )
-  ) {
-
-    throw new Error(
-      `${pokemon?.name ?? "Actor"} no es un Pokémon Poke5e.`
     );
   }
 }

@@ -10,36 +10,13 @@ import {
 import {
   refreshEndOfNextTurnDuration
 } from "./turn-duration-runtime.mjs";
+import { getLanguage as language } from "./i18n.mjs";
 
 const MODULE_ID =
   "poke5e-local";
 
 const FLINCHED_STATUS =
   "flinched";
-
-
-/* ============================================================
- * LANGUAGE
- * ============================================================ */
-
-function language() {
-
-  try {
-
-    return game.settings.get(
-      MODULE_ID,
-      "language"
-    ) === "en"
-
-      ? "en"
-
-      : "es";
-
-  } catch {
-
-    return "es";
-  }
-}
 
 
 /* ============================================================

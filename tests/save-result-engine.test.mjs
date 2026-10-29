@@ -100,11 +100,11 @@ globalThis.ChatMessage = {
   }
 };
 
-function moveItem(sourceActor, sourceId) {
+function moveItem(actorRef, sourceId) {
   return {
     uuid: `Item.${sourceId}`,
     name: sourceId,
-    actor: sourceActor,
+    actor: actorRef,
     documentName: "Item",
     getFlag(moduleId, key) {
       if (moduleId !== "poke5e-local") {

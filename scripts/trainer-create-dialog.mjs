@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   createTrainer
 } from "./trainer-service.mjs";
@@ -10,6 +11,7 @@ import {
   TRAINER_SPECIALIZATIONS,
   getTrainerProgressionLimits
 } from "./trainer-rules.mjs";
+import { getLanguage } from "./i18n.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -163,15 +165,6 @@ const ENVIRONMENT_LABELS =
       forest: "Forest",
       mountain: "Mountain"
     }
-  });
-
-const HTML_ENTITIES =
-  Object.freeze({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    "\"": "&quot;",
-    "'": "&#039;"
   });
 
 const LABELS = {
@@ -636,33 +629,6 @@ const LABELS = {
   }
 };
 
-
-function getLanguage() {
-
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-    ? "en"
-    : "es";
-}
-
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  ).replace(
-    /[&<>"']/g,
-    character =>
-      HTML_ENTITIES[
-        character
-      ]
-  );
-}
 
 
 function localizedName(
@@ -2700,8 +2666,7 @@ function syncLimitedGroups(
 
 function syncConditionalPanels(
   root,
-  form,
-  labels
+  form
 ) {
 
   const originId =
@@ -3409,8 +3374,7 @@ function syncWizard(
 
   syncConditionalPanels(
     root,
-    form,
-    labels
+    form
   );
 
   syncLimitedGroups(

@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   getPokemonLevelUpPreview,
   levelUpPokemon
@@ -6,6 +7,7 @@ import {
 import {
   openPokemonEvolutionDialog
 } from "./pokemon-evolution-dialog.mjs";
+import { getLanguage } from "./i18n.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -19,35 +21,6 @@ const ABILITY_IDS = [
   "cha"
 ];
 
-function getLanguage() {
-
-  try {
-
-    return game.settings.get(
-      MODULE_ID,
-      "language"
-    ) === "en"
-      ? "en"
-      : "es";
-
-  } catch {
-
-    return "es";
-  }
-}
-
-
-function escapeHtml(
-  value
-) {
-
-  return foundry.utils.escapeHTML(
-    String(
-      value ??
-      ""
-    )
-  );
-}
 
 
 function signedNumber(

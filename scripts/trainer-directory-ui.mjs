@@ -5,6 +5,7 @@ import {
 import {
   openTrainerPartyDialog
 } from "./trainer-party-dialog.mjs";
+import { getLanguage } from "./i18n.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -52,20 +53,6 @@ const LABELS = {
       "The Trainer interface could not be opened."
   }
 };
-
-
-/* ============================================================
- * LANGUAGE
- * ============================================================ */
-
-function getLanguage() {
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-    ? "en"
-    : "es";
-}
 
 
 /* ============================================================

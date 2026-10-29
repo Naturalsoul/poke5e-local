@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import { trainerFeatureIcon } from "./trainer-feature-icons.mjs";
 import {
   TRAINER_SKILLS,
@@ -6,6 +7,7 @@ import {
   getTrainerProgressionLimits,
   getTrainerSpecialization
 } from "./trainer-rules.mjs";
+import { getLanguage } from "./i18n.mjs";
 
 
 const MODULE_ID =
@@ -712,64 +714,6 @@ const PATH_LEVEL_5_FEATURES =
       }
     });
 
-function getLanguage() {
-
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-    ? "en"
-    : "es";
-}
-
-
-function escapeHtml(
-  value
-) {
-
-  const text =
-    String(
-      value ??
-      ""
-    );
-
-
-  if (
-    globalThis
-      .foundry
-      ?.utils
-      ?.escapeHTML
-  ) {
-
-    return foundry.utils
-      .escapeHTML(
-        text
-      );
-  }
-
-
-  return text
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-}
 
 
 function paragraphs(

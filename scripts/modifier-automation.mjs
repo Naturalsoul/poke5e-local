@@ -6,6 +6,7 @@ import { buildAttackOutcome, isNaturalAttackAtLeast } from "./attack-outcome-eng
 import { afterPaint, waitForVisibleResult } from "./chat-roll-display.mjs";
 import { isPokemonActor } from "./trainer-party-service.mjs";
 import { CONDITION_KIND } from "./condition-riders.mjs";
+import { actorFromUuid } from "./foundry-runtime.mjs";
 
 const MODULE_ID = "poke5e-local";
 const NATURAL_AT_LEAST_TRIGGER = /^natural-attack-(\d+)\+$/;
@@ -19,11 +20,6 @@ let registered = false;
 
 function authority() {
   return game.user.isGM && (!game.users?.activeGM || game.users.activeGM.id === game.user.id);
-}
-
-function actorFromUuid(uuid) {
-  const doc = uuid ? fromUuidSync(uuid, { strict: false }) : null;
-  return doc?.actor ?? doc;
 }
 
 function attackApplication(message, roll, item, template) {

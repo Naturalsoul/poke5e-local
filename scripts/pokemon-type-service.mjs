@@ -8,7 +8,8 @@ import {
 } from "./types.mjs";
 
 import {
-  isPokemonActor
+  isPokemonActor,
+  assertPokemon
 } from "./trainer-party-service.mjs";
 
 
@@ -19,27 +20,6 @@ const VALID_TYPES =
   new Set(
     POKEMON_TYPE_IDS
   );
-
-
-/* ============================================================
- * VALIDATION
- * ============================================================ */
-
-function assertPokemon(
-  pokemon
-) {
-
-  if (
-    !isPokemonActor(
-      pokemon
-    )
-  ) {
-
-    throw new Error(
-      `${pokemon?.name ?? "Actor"} no es un Pokémon Poke5e.`
-    );
-  }
-}
 
 
 function assertGm() {

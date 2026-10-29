@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 const SKILL_OPTIONS = [
   {
     id: "acrobatics",
@@ -181,7 +182,7 @@ export function renderFakemonStatsDatalists(
         MOVEMENT_OPTIONS
           .map(
             option => `
-              <option value="${escapeAttribute(
+              <option value="${escapeHtml(
                 option.id
               )}">
                 ${escapeHtml(
@@ -202,7 +203,7 @@ export function renderFakemonStatsDatalists(
         SENSE_OPTIONS
           .map(
             sense => `
-              <option value="${escapeAttribute(
+              <option value="${escapeHtml(
                 sense
               )}">
                 ${escapeHtml(
@@ -333,7 +334,7 @@ export function renderFakemonProficiencies({
           <input
             type="text"
             data-role="skills-extra"
-            value="${escapeAttribute(
+            value="${escapeHtml(
               customSkills.join(
                 ", "
               )
@@ -433,7 +434,7 @@ export function renderFakemonSpeedRow(
         data-field="type"
         list="fakemon-studio-movement-types"
         placeholder="walking"
-        value="${escapeAttribute(
+        value="${escapeHtml(
           row.type ??
           "walking"
         )}"
@@ -446,7 +447,7 @@ export function renderFakemonSpeedRow(
         data-field="value"
         min="0"
         step="1"
-        value="${escapeAttribute(
+        value="${escapeHtml(
           row.value ??
           0
         )}"
@@ -503,7 +504,7 @@ export function renderFakemonSenseRow(
         data-field="type"
         list="fakemon-studio-sense-types"
         placeholder="darkvision"
-        value="${escapeAttribute(
+        value="${escapeHtml(
           row.type ??
           ""
         )}"
@@ -516,7 +517,7 @@ export function renderFakemonSenseRow(
         data-field="value"
         min="0"
         step="1"
-        value="${escapeAttribute(
+        value="${escapeHtml(
           row.value ??
           0
         )}"
@@ -547,10 +548,10 @@ function renderChoice({
 
       <input
         type="checkbox"
-        data-role="${escapeAttribute(
+        data-role="${escapeHtml(
           role
         )}"
-        value="${escapeAttribute(
+        value="${escapeHtml(
           value
         )}"
         ${checked ? "checked" : ""}
@@ -586,7 +587,7 @@ function renderRemoveButton(
     <button
       type="button"
       class="fakemon-studio__remove"
-      data-action="${escapeAttribute(
+      data-action="${escapeHtml(
         action
       )}"
       data-index="${index}"
@@ -636,46 +637,5 @@ function localizedLabel(
     definition?.es ??
     definition?.id ??
     ""
-  );
-}
-
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-}
-
-
-function escapeAttribute(
-  value
-) {
-
-  return escapeHtml(
-    value
   );
 }

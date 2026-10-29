@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   buildAbilityCatalogItem,
   buildAbilityItem,
@@ -21,6 +22,7 @@ import { heldItemConfiguration } from "./held-item-config.mjs";
 import {
   isPokemonActor
 } from "./trainer-party-service.mjs";
+import { getLanguage as currentLanguage } from "./i18n.mjs";
 
 const MODULE_ID = "poke5e-local";
 const POKE5E_DATA_PATH =
@@ -815,19 +817,6 @@ async function ensureMoveFolders(
   };
 }
 
-function currentLanguage() {
-  try {
-    return game.settings.get(
-      MODULE_ID,
-      "language"
-    ) === "en"
-      ? "en"
-      : "es";
-  } catch {
-    return "es";
-  }
-}
-
 function localized(
   value,
   language,
@@ -857,49 +846,6 @@ function localized(
     fallback ??
     ""
   );
-}
-
-function escapeHtml(
-  value
-) {
-  const text =
-    String(
-      value ??
-      ""
-    );
-
-  if (
-    globalThis.foundry
-      ?.utils
-      ?.escapeHTML
-  ) {
-    return foundry.utils
-      .escapeHTML(
-        text
-      );
-  }
-
-  return text
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
 }
 
 function paragraphsToHtml(
@@ -1778,7 +1724,7 @@ function adaptMoveTemplateToPokemon(
     scope.kind !==
     "move-template"
   ) {
-    return;
+    return true;
   }
 
   const actor =
@@ -1789,7 +1735,7 @@ function adaptMoveTemplateToPokemon(
    * existe un preCreateItem.
    */
   if (!actor) {
-    return;
+    return true;
   }
 
   if (
@@ -1874,6 +1820,8 @@ function adaptMoveTemplateToPokemon(
 
     return false;
   }
+
+  return true;
 }
 
 
@@ -1974,14 +1922,14 @@ function adaptAbilityTemplateToPokemon(
     scope.kind !==
     "ability-template"
   ) {
-    return;
+    return true;
   }
 
   const actor =
     item.parent;
 
   if (!actor) {
-    return;
+    return true;
   }
 
   if (
@@ -2061,6 +2009,8 @@ function adaptAbilityTemplateToPokemon(
 
     return false;
   }
+
+  return true;
 }
 
 

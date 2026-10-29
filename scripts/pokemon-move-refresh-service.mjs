@@ -5,6 +5,7 @@ import {
 import {
   isPokemonActor
 } from "./trainer-party-service.mjs";
+import { getLanguage as currentLanguage } from "./i18n.mjs";
 
 
 const MODULE_ID =
@@ -18,24 +19,6 @@ const ABILITY_IDS = [
   "wis",
   "cha"
 ];
-
-
-/* ============================================================
- * CONTEXT
- * ============================================================ */
-
-function currentLanguage() {
-  try {
-    return game.settings.get(
-      MODULE_ID,
-      "language"
-    ) === "en"
-      ? "en"
-      : "es";
-  } catch {
-    return "es";
-  }
-}
 
 
 function pokemonLevel(

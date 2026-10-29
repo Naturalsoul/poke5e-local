@@ -7,27 +7,11 @@ import {
 import {
   isPokemonActor
 } from "./trainer-party-service.mjs";
+import { isAuthority } from "./foundry-runtime.mjs";
 
 
 const MODULE_ID =
   "poke5e-local";
-
-
-function isAuthority() {
-
-  const activeGM =
-    game.users.activeGM;
-
-
-  if (activeGM) {
-
-    return activeGM.id ===
-      game.user.id;
-  }
-
-
-  return game.user.isGM;
-}
 
 
 function isWildPokemonActor(

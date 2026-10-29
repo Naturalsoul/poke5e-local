@@ -12,6 +12,7 @@ import {
   getPokemonMoveLimit,
   setPokemonKnownMoveIds
 } from "./pokemon-move-service.mjs";
+import { normalizeId } from "./ids.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -24,17 +25,6 @@ const POKEMON_SHEET_CLASS_ID =
 
 const POKEMON_SHEET_TEMPLATE =
   `modules/${MODULE_ID}/templates/actors/pokemon-summary-tab.hbs`;
-
-function normalizeCanonicalId(
-  value
-) {
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
-}
 
 
 function getModuleLanguage() {
@@ -50,7 +40,7 @@ function getModuleLanguage() {
 function getItemSourceId(
   item
 ) {
-  return normalizeCanonicalId(
+  return normalizeId(
     item?.getFlag(
       MODULE_ID,
       "sourceId"
@@ -222,7 +212,7 @@ export class PokemonActorSheet
       );
 
     const sourceId =
-      normalizeCanonicalId(
+      normalizeId(
         moveDefinition?.id ??
         getItemSourceId(
           item

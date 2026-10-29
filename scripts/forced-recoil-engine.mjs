@@ -1,4 +1,5 @@
 import { publishRollBeforeDamage } from "./chat-roll-display.mjs";
+import { getLanguage as language } from "./i18n.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -65,23 +66,6 @@ const LABELS = {
       "the recoil movement could not be completed"
   }
 };
-
-
-/* ============================================================
- * LANGUAGE
- * ============================================================ */
-
-function language() {
-
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-
-    ? "en"
-
-    : "es";
-}
 
 
 function label(

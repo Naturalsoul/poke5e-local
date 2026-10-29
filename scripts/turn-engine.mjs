@@ -41,6 +41,8 @@ import { processProtectStartTurn } from "./protect-moves.mjs";
 import {
   isPokemonActor
 } from "./trainer-party-service.mjs";
+import { getLanguage as language } from "./i18n.mjs";
+import { isAuthority } from "./foundry-runtime.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -235,52 +237,6 @@ const LABELS = {
         "becomes"
   }
 };
-
-
-/* ============================================================
- * AUTORIDAD
- *
- * combatTurnChange ocurre en todos los clientes.
- *
- * Solo un GM debe modificar Actors.
- * ============================================================ */
-
-function isAuthority() {
-
-  const activeGM =
-    game.users.activeGM;
-
-
-  if (activeGM) {
-
-    return (
-      activeGM.id ===
-      game.user.id
-    );
-  }
-
-
-  return game.user.isGM;
-}
-
-
-/* ============================================================
- * IDIOMA
- * ============================================================ */
-
-function language() {
-
-  const configured =
-    game.settings.get(
-      MODULE_ID,
-      "language"
-    );
-
-
-  return configured === "en"
-    ? "en"
-    : "es";
-}
 
 
 function label(
@@ -2346,7 +2302,7 @@ function onPreCreateActiveEffect(
     )
   ) {
 
-    return;
+    return true;
   }
 
 
@@ -2363,7 +2319,7 @@ function onPreCreateActiveEffect(
 
   if (!status) {
 
-    return;
+    return true;
   }
 
 
@@ -2469,6 +2425,8 @@ function onPreCreateActiveEffect(
 
     return false;
   }
+
+  return true;
 }
 
 /* ============================================================

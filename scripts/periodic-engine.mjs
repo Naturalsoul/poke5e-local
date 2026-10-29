@@ -3,6 +3,7 @@ import { isPokemonActor } from "./trainer-party-service.mjs";
 import { buildMoveItemForActor } from "./builder.mjs";
 import { bindingDefinition } from "./binding-rules.mjs";
 import { publishRollBeforeDamage } from "./chat-roll-display.mjs";
+import { isAuthority, actorFromUuid } from "./foundry-runtime.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -34,29 +35,6 @@ export function validateBindingContinuation(activity) {
     ? "Select the creature still affected by this binding. Remove its binding effect when it escapes."
     : "Selecciona la criatura que sigue atrapada por este movimiento. Elimina su efecto cuando escape.");
   return false;
-}
-
-
-/* ============================================================
- * AUTHORITY
- * ============================================================ */
-
-function isAuthority() {
-
-  const activeGM =
-    game.users.activeGM;
-
-
-  if (activeGM) {
-
-    return (
-      activeGM.id ===
-      game.user.id
-    );
-  }
-
-
-  return game.user.isGM;
 }
 
 
@@ -157,53 +135,6 @@ function allActors() {
   return [
     ...actors.values()
   ];
-}
-
-
-/* ============================================================
- * RESOLVER ACTOR UUID
- * ============================================================ */
-
-function actorFromUuid(
-  uuid
-) {
-
-  if (!uuid) {
-
-    return null;
-  }
-
-
-  try {
-
-    const document =
-      fromUuidSync(
-        uuid,
-        {
-          strict:
-            false
-        }
-      );
-
-
-    if (
-      document?.documentName ===
-      "Actor"
-    ) {
-
-      return document;
-    }
-
-
-    return (
-      document?.actor ??
-      null
-    );
-
-  } catch {
-
-    return null;
-  }
 }
 
 /* ============================================================

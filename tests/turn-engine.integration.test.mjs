@@ -110,7 +110,7 @@ function statusEffect(actor, status, {
             : status
     ]),
     getFlag(moduleId, key) {
-      if (moduleId !== "poke5e-local") return undefined;
+      if (moduleId !== "poke5e-local") {return undefined;}
       return flags[key];
     },
     async update(data) {
@@ -193,7 +193,7 @@ function pokemonActor({
     assert.equal(documentName, "ActiveEffect");
     for (const update of updates) {
       const effect = this.effects.find(entry => entry.id === update._id);
-      if (!effect) continue;
+      if (!effect) {continue;}
       await effect.update(update);
     }
     return updates;

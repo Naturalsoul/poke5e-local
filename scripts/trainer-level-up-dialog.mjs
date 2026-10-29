@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   getTrainerLevelUpPreview,
   levelUpTrainer
@@ -16,10 +17,8 @@ import {
 import {
   getTrainerProgressionState
 } from "./trainer-progression-service.mjs";
+import { getLanguage } from "./i18n.mjs";
 
-
-const MODULE_ID =
-  "poke5e-local";
 
 const ABILITY_IDS = [
   "str",
@@ -30,28 +29,6 @@ const ABILITY_IDS = [
   "cha"
 ];
 
-function getLanguage() {
-
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-    ? "en"
-    : "es";
-}
-
-
-function escapeHtml(
-  value
-) {
-
-  return foundry.utils.escapeHTML(
-    String(
-      value ??
-      ""
-    )
-  );
-}
 
 function abilityScoreIncreaseMarkup(
   preview,
@@ -1393,7 +1370,7 @@ function readTrainerChoices(
       "hobbyist"
   ) {
 
-    const specializationId =
+    const hobbyistChoiceId =
       String(
         form.elements
           .hobbyistSpecializationId
@@ -1421,7 +1398,7 @@ function readTrainerChoices(
 
 
     if (
-      !specializationId ||
+      !hobbyistChoiceId ||
       !skill1 ||
       !skill2 ||
       skill1 ===
@@ -1438,7 +1415,7 @@ function readTrainerChoices(
 
     pathChoices
       .hobbyistSpecializationId =
-        specializationId;
+        hobbyistChoiceId;
 
 
     pathChoices

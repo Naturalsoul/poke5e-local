@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   ensureTrainerState,
   isTrainerActor
@@ -24,6 +25,7 @@ import {
 import {
   acquireWildPokemonToken
 } from "./trainer-wild-pokemon-service.mjs";
+import { getLanguage } from "./i18n.mjs";
 
 const MODULE_ID = "poke5e-local";
 const MANAGER_CLASS = "poke5e-trainer-manager";
@@ -387,14 +389,6 @@ const LABELS = {
  * CONSTANTS
  * ============================================================ */
 
-const HTML_ENTITIES = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  "\"": "&quot;",
-  "'": "&#039;"
-};
-
 
 const ACTION_HANDLERS = {
   "party-to-pc":
@@ -415,35 +409,8 @@ const ACTION_HANDLERS = {
 
 
 /* ============================================================
- * LANGUAGE
- * ============================================================ */
-
-function getLanguage() {
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-    ? "en"
-    : "es";
-}
-
-
-/* ============================================================
  * HTML
  * ============================================================ */
-
-function escapeHtml(value) {
-  return String(
-    value ??
-    ""
-  ).replace(
-    /[&<>"']/g,
-    character =>
-      HTML_ENTITIES[
-        character
-      ]
-  );
-}
 
 
 function pokemonImage(pokemon) {

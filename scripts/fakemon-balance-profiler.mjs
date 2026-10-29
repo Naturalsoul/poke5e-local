@@ -1,6 +1,7 @@
 import {
   createFakemonDesignIntent
 } from "./fakemon-design-profile.mjs";
+import { normalizeId } from "./ids.mjs";
 
 
 const ABILITY_IDS = [
@@ -1594,19 +1595,6 @@ function finite(
       value
     )
   );
-}
-
-
-function normalizeId(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
 }
 
 

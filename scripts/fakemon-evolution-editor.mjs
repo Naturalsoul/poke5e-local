@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   FAKEMON_EVOLUTION_ABILITY_SCORE_MODES,
   FAKEMON_EVOLUTION_CONDITION_TYPES
@@ -1623,7 +1624,7 @@ function renderEvolutionCard({
                   <button
                     type="button"
                     data-evolution-action="edit"
-                    data-evolution-identity="${escapeAttribute(
+                    data-evolution-identity="${escapeHtml(
                       identity
                     )}"
                     title="Editar Evolution"
@@ -1634,13 +1635,13 @@ function renderEvolutionCard({
                   <button
                     type="button"
                     data-evolution-action="delete"
-                    data-evolution-id="${escapeAttribute(
+                    data-evolution-id="${escapeHtml(
                       evolution.id
                     )}"
-                    data-evolution-from="${escapeAttribute(
+                    data-evolution-from="${escapeHtml(
                       evolution.from
                     )}"
-                    data-evolution-to="${escapeAttribute(
+                    data-evolution-to="${escapeHtml(
                       evolution.to
                     )}"
                     title="Eliminar Evolution"
@@ -1908,7 +1909,7 @@ function renderEvolutionForm({
             data-role="evolution-points"
             min="0"
             step="1"
-            value="${escapeAttribute(
+            value="${escapeHtml(
               points
             )}"
           >
@@ -1986,7 +1987,7 @@ function renderAbilityScoreModeOptions(
     .map(
       mode => `
         <option
-          value="${escapeAttribute(
+          value="${escapeHtml(
             mode
           )}"
           ${mode === normalized ? "selected" : ""}
@@ -2025,7 +2026,7 @@ function renderConditionRow({
       class="fakemon-studio__evolution-condition"
       data-role="evolution-condition-row"
       data-index="${index}"
-      data-condition-type="${escapeAttribute(
+      data-condition-type="${escapeHtml(
         type
       )}"
     >
@@ -2049,7 +2050,7 @@ function renderConditionRow({
               .map(
                 conditionType => `
                   <option
-                    value="${escapeAttribute(
+                    value="${escapeHtml(
                       conditionType
                     )}"
                     ${
@@ -2130,7 +2131,7 @@ function renderConditionValue({
           min="1"
           max="20"
           step="1"
-          value="${escapeAttribute(
+          value="${escapeHtml(
             value
           )}"
         >
@@ -2183,7 +2184,7 @@ function renderConditionValue({
           data-role="evolution-condition-value"
           list="fakemon-evolution-moves"
           placeholder="move-id"
-          value="${escapeAttribute(
+          value="${escapeHtml(
             value
           )}"
         >
@@ -2214,7 +2215,7 @@ function renderConditionValue({
               .map(
                 pokemonType => `
                   <option
-                    value="${escapeAttribute(
+                    value="${escapeHtml(
                       pokemonType
                     )}"
                     ${
@@ -2264,7 +2265,7 @@ function renderConditionValue({
           data-role="evolution-condition-value"
           list="fakemon-evolution-items"
           placeholder="item-id"
-          value="${escapeAttribute(
+          value="${escapeHtml(
             value
           )}"
         >
@@ -2291,7 +2292,7 @@ function renderConditionValue({
           data-role="evolution-condition-value"
           min="0"
           step="1"
-          value="${escapeAttribute(
+          value="${escapeHtml(
             value
           )}"
         >
@@ -2318,7 +2319,7 @@ function renderConditionValue({
           data-role="evolution-condition-value"
           list="fakemon-evolution-times"
           placeholder="day / night / morning / afternoon"
-          value="${escapeAttribute(
+          value="${escapeHtml(
             value
           )}"
         >
@@ -2338,7 +2339,7 @@ function renderConditionValue({
       <textarea
         data-role="evolution-condition-value"
         rows="2"
-        placeholder="${escapeAttribute(
+        placeholder="${escapeHtml(
           conditionPlaceholder(
             language
           )
@@ -2378,7 +2379,7 @@ function renderEvolutionDatalists({
           )
           .map(
             entry => `
-              <option value="${escapeAttribute(
+              <option value="${escapeHtml(
                 entry.id
               )}">
                 ${escapeHtml(
@@ -2409,7 +2410,7 @@ function renderEvolutionDatalists({
           )
           .map(
             entry => `
-              <option value="${escapeAttribute(
+              <option value="${escapeHtml(
                 entry.id
               )}">
                 ${escapeHtml(
@@ -2440,7 +2441,7 @@ function renderEvolutionDatalists({
           )
           .map(
             entry => `
-              <option value="${escapeAttribute(
+              <option value="${escapeHtml(
                 entry.id
               )}">
                 ${escapeHtml(
@@ -2468,7 +2469,7 @@ function renderEvolutionDatalists({
           .map(
             option => `
               <option
-                value="${escapeAttribute(
+                value="${escapeHtml(
                   option.value
                 )}"
               >
@@ -2514,23 +2515,23 @@ function renderEvolutionTextField({
 
       <input
         type="text"
-        data-role="${escapeAttribute(
+        data-role="${escapeHtml(
           role
         )}"
-        value="${escapeAttribute(
+        value="${escapeHtml(
           value
         )}"
         ${
           list
 
-            ? `list="${escapeAttribute(
+            ? `list="${escapeHtml(
                 list
               )}"`
 
             : ""
         }
         ${readonly ? "readonly" : ""}
-        placeholder="${escapeAttribute(
+        placeholder="${escapeHtml(
           placeholder
         )}"
       >
@@ -2561,7 +2562,7 @@ function renderEvolutionValidation(
   return `
     <div
       class="fakemon-studio__validation"
-      data-kind="${escapeAttribute(
+      data-kind="${escapeHtml(
         validation.kind
       )}"
     >
@@ -2607,7 +2608,7 @@ function renderConditionBadges(
       condition => `
         <span
           class="fakemon-studio__evolution-condition-badge"
-          data-type="${escapeAttribute(
+          data-type="${escapeHtml(
             condition?.type ??
             ""
           )}"
@@ -2787,7 +2788,7 @@ function renderGenderOptions(
 
       ? `
           <option
-            value="${escapeAttribute(
+            value="${escapeHtml(
               selectedValue
             )}"
             selected
@@ -2808,7 +2809,7 @@ function renderGenderOptions(
       .map(
         option => `
           <option
-            value="${escapeAttribute(
+            value="${escapeHtml(
               option.value
             )}"
             ${
@@ -3217,45 +3218,4 @@ function emptyToNull(
 
   return text ||
     null;
-}
-
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ??
-      ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-}
-
-
-function escapeAttribute(
-  value
-) {
-
-  return escapeHtml(
-    value
-  );
 }

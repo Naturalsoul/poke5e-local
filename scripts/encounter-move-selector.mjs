@@ -1,3 +1,5 @@
+import { clampInteger } from "./numbers.mjs";
+
 const MAX_MOVES = 4;
 const STRUGGLE_MOVE_ID =
   "struggle";
@@ -314,32 +316,4 @@ function shuffle(
   }
 
   return result;
-}
-
-function clampInteger(
-  value,
-  min,
-  max,
-  fallback
-) {
-  const numeric =
-    Number(value);
-
-  if (
-    !Number.isFinite(
-      numeric
-    )
-  ) {
-    return fallback;
-  }
-
-  return Math.min(
-    max,
-    Math.max(
-      min,
-      Math.trunc(
-        numeric
-      )
-    )
-  );
 }

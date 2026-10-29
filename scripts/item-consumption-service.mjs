@@ -1,5 +1,7 @@
+import { escapeHtml } from "./html.mjs";
 import { prepareCapture } from "./pokemon-capture-service.mjs";
 import { refundItemHealingBonuses, resolveItemHealingBonuses } from "./trainer-feature-engine.mjs";
+import { getLanguage as currentLanguage } from "./i18n.mjs";
 const MODULE_ID =
   "poke5e-local";
 
@@ -32,28 +34,6 @@ const bypassConsumableCards =
 
 let registered =
   false;
-
-
-/* ============================================================
- * LANGUAGE
- * ============================================================ */
-
-function currentLanguage() {
-
-  try {
-
-    return game.settings.get(
-      MODULE_ID,
-      "language"
-    ) === "en"
-      ? "en"
-      : "es";
-
-  } catch {
-
-    return "es";
-  }
-}
 
 
 function labels() {
@@ -397,18 +377,6 @@ function localizedRollLabel(
 /* ============================================================
  * CONFIRMATION
  * ============================================================ */
-
-function escapeHtml(
-  value
-) {
-
-  return foundry.utils.escapeHTML(
-    String(
-      value ??
-      ""
-    )
-  );
-}
 
 
 function confirmationContent(
@@ -1001,7 +969,7 @@ function onPreDisplayCard(
     )
   ) {
 
-    return;
+    return true;
   }
 
 
@@ -1023,7 +991,7 @@ function onPreDisplayCard(
     )
   ) {
 
-    return;
+    return true;
   }
 
 

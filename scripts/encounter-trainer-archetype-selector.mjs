@@ -1,3 +1,5 @@
+import { clampInteger } from "./numbers.mjs";
+
 export function selectTrainerArchetypePokemon({
   candidates,
   count,
@@ -281,39 +283,6 @@ function normalizeRandom(
     Math.max(
       0,
       value
-    )
-  );
-}
-
-
-function clampInteger(
-  value,
-  min,
-  max,
-  fallback
-) {
-  const numeric =
-    Number(
-      value
-    );
-
-
-  if (
-    !Number.isFinite(
-      numeric
-    )
-  ) {
-    return fallback;
-  }
-
-
-  return Math.min(
-    max,
-    Math.max(
-      min,
-      Math.trunc(
-        numeric
-      )
     )
   );
 }

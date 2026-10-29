@@ -7,6 +7,7 @@ import {
 import {
   isPokemonActor
 } from "./trainer-party-service.mjs";
+import { getLanguage as language } from "./i18n.mjs";
 
 
 const MODULE_ID =
@@ -68,19 +69,6 @@ const LABELS = {
       "typeless damage from Struggle."
   }
 };
-
-
-function language() {
-
-  return (
-    game.settings.get(
-      MODULE_ID,
-      "language"
-    ) === "en"
-      ? "en"
-      : "es"
-  );
-}
 
 
 function label(

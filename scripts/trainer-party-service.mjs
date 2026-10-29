@@ -61,7 +61,7 @@ function assertTrainer(
 }
 
 
-function assertPokemon(
+export function assertPokemon(
   pokemon
 ) {
 

@@ -1,6 +1,8 @@
+import { escapeHtml } from "./html.mjs";
 import {
   POKEMON_TYPES
 } from "./types.mjs";
+import { normalizeId } from "./ids.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -190,7 +192,7 @@ function renderMoveDropZone({
   return `
     <div
       class="fakemon-studio__move-drop-zone"
-      data-fakemon-drop-zone="${escapeAttribute(
+      data-fakemon-drop-zone="${escapeHtml(
         zone
       )}"
     >
@@ -276,15 +278,15 @@ function renderMoveReference({
   return `
     <article
       class="fakemon-studio__move-card"
-      data-role="${escapeAttribute(
+      data-role="${escapeHtml(
         moveRowRole(
           kind
         )
       )}"
-      data-type="${escapeAttribute(
+      data-type="${escapeHtml(
         type
       )}"
-      style="--fakemon-move-type-color: ${escapeAttribute(
+      style="--fakemon-move-type-color: ${escapeHtml(
         moveTypeColor(
           type
         )
@@ -294,14 +296,14 @@ function renderMoveReference({
       <input
         type="hidden"
         data-field="moveId"
-        value="${escapeAttribute(
+        value="${escapeHtml(
           moveId
         )}"
       >
 
 
       <img
-        src="${escapeAttribute(
+        src="${escapeHtml(
           resolveMoveIcon(
             type
           )
@@ -390,7 +392,7 @@ function renderUnresolvedMove({
         fakemon-studio__move-card
         fakemon-studio__move-card--unresolved
       "
-      data-role="${escapeAttribute(
+      data-role="${escapeHtml(
         moveRowRole(
           kind
         )
@@ -412,7 +414,7 @@ function renderUnresolvedMove({
           data-reference-kind="move"
           list="fakemon-studio-moves"
           placeholder="move-id"
-          value="${escapeAttribute(
+          value="${escapeHtml(
             reference?.moveId ??
             ""
           )}"
@@ -470,7 +472,7 @@ function renderMoveControls({
             min="1"
             max="20"
             step="1"
-            value="${escapeAttribute(
+            value="${escapeHtml(
               reference?.level ??
               1
             )}"
@@ -515,7 +517,7 @@ function renderMoveControls({
             data-field="id"
             min="0"
             step="1"
-            value="${escapeAttribute(
+            value="${escapeHtml(
               reference?.id ??
               0
             )}"
@@ -536,7 +538,7 @@ function renderMoveControls({
             data-field="cost"
             min="0"
             step="1"
-            value="${escapeAttribute(
+            value="${escapeHtml(
               reference?.cost ??
               0
             )}"
@@ -617,7 +619,7 @@ function renderMovePowerAbilities(
               abilityId => `
                 <strong
                   class="fakemon-studio__move-power-ability"
-                  data-ability="${escapeAttribute(
+                  data-ability="${escapeHtml(
                     abilityId
                   )}"
                 >
@@ -669,14 +671,14 @@ function renderRemoveButton(
     <button
       type="button"
       class="fakemon-studio__remove"
-      data-action="${escapeAttribute(
+      data-action="${escapeHtml(
         action
       )}"
       data-index="${index}"
-      title="${escapeAttribute(
+      title="${escapeHtml(
         title
       )}"
-      aria-label="${escapeAttribute(
+      aria-label="${escapeHtml(
         title
       )}"
     >
@@ -1145,58 +1147,4 @@ function localizedText(
     resolved ??
     fallback
   ).trim();
-}
-
-
-function normalizeId(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
-}
-
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-}
-
-
-function escapeAttribute(
-  value
-) {
-
-  return escapeHtml(
-    value
-  );
 }

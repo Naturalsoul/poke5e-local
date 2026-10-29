@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import { pokemonAbilityIcon } from "./pokemon-ability-icons.mjs";
 
 const MODULE_ID =
@@ -347,14 +348,14 @@ function renderAbilityReference({
       <input
         type="hidden"
         data-field="id"
-        value="${escapeAttribute(
+        value="${escapeHtml(
           abilityId
         )}"
       >
 
 
       <img
-        src="${escapeAttribute(
+        src="${escapeHtml(
           pokemonAbilityIcon(
             abilityId
           ) ??
@@ -473,7 +474,7 @@ function renderUnresolvedAbility({
           data-reference-kind="ability"
           list="fakemon-studio-abilities"
           placeholder="ability-id"
-          value="${escapeAttribute(
+          value="${escapeHtml(
             reference?.id ??
             ""
           )}"
@@ -630,49 +631,4 @@ function localizedText(
     resolved ??
     fallback
   ).trim();
-}
-
-
-/* ============================================================
- * ESCAPE
- * ============================================================ */
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-}
-
-
-function escapeAttribute(
-  value
-) {
-
-  return escapeHtml(
-    value
-  );
 }

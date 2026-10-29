@@ -1,3 +1,5 @@
+import { normalizeId } from "./ids.mjs";
+
 export function listEncounterAbilities({
   pokemon,
   abilities,
@@ -93,7 +95,7 @@ export function selectEncounterAbility({
 
 
   const currentId =
-    normalizeCanonicalId(
+    normalizeId(
       currentAbilityId
     );
 
@@ -103,7 +105,7 @@ export function selectEncounterAbility({
     preferred.length > 1
       ? preferred.filter(
           candidate =>
-            normalizeCanonicalId(
+            normalizeId(
               candidate.ability.id
             ) !==
             currentId
@@ -238,7 +240,7 @@ function createAbilityIndex(
       )
       .map(
         ability => [
-          normalizeCanonicalId(
+          normalizeId(
             ability.id
           ),
           ability
@@ -264,7 +266,7 @@ function normalizeAbilityReferences(
     .map(
       entry => ({
         id:
-          normalizeCanonicalId(
+          normalizeId(
             typeof entry ===
               "string"
               ? entry
@@ -316,18 +318,6 @@ function normalizePercentage(
       numeric
     )
   );
-}
-
-
-function normalizeCanonicalId(
-  value
-) {
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
 }
 
 

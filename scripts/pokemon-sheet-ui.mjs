@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import { bondMarkup } from "./pokemon-bond-service.mjs";
 import { activeAbilityButton } from "./active-ability-service.mjs";
 import { applyStoringPowerMatchups } from "./trainer-path-effects.mjs";
@@ -76,6 +77,7 @@ import {
   getPokemonConcentrations
 } from "./pokemon-concentration-service.mjs";
 import { pokemonMoveEffectsMarkup } from "./pokemon-move-effects.mjs";
+import { getLanguage } from "./i18n.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -961,49 +963,6 @@ const LABELS = {
       "End concentration",
   }
 };
-
-
-/* ============================================================
- * GENERIC
- * ============================================================ */
-
-const HTML_ENTITIES = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  "\"": "&quot;",
-  "'": "&#039;"
-};
-
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  ).replace(
-    /[&<>"']/g,
-    character =>
-      HTML_ENTITIES[
-        character
-      ]
-  );
-}
-
-
-function getLanguage() {
-
-  return (
-    game.settings.get(
-      MODULE_ID,
-      "language"
-    ) === "en"
-  )
-    ? "en"
-    : "es";
-}
 
 
 function signedNumber(

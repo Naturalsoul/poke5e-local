@@ -4,6 +4,56 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.44.8] — 2026-10-29
+
+- **Limpieza:** el HTML de la ventana del Encounter Planner (unas 1.400 líneas de `_renderHTML`) pasa a
+  `renderPlannerContent` en `encounter-planner-markup.mjs`. La ventana solo calcula el grupo, los extras, los pasos
+  y la dificultad, y se los pasa. El HTML que sale es el mismo y ahora tiene un test.
+
+## [0.44.7] — 2026-10-29
+
+- **Limpieza:** los listeners del Encounter Planner, que estaban todos en `_onRender` (unas 1.670 líneas), pasan a
+  diez métodos, uno por sección del panel: pestañas, encuentros guardados, nombre y ubicación, tirada salvaje,
+  grupo, tirada de Entrenadores, Entrenadores, filas de Pokémon, opciones de creación y acciones. El código se movió
+  sin cambios.
+
+## [0.44.6] — 2026-10-29
+
+- **Limpieza:** las tiradas del Encounter Planner (encuentro salvaje, Entrenadores por rango, reroll de un equipo
+  y las opciones para crear el encuentro) pasan a `encounter-planner-generation.mjs`, sin depender de la ventana y
+  con tests. La ventana solo junta lo que eligió el GM, pide la tirada y avisa del resultado. Las tiradas no
+  cambian.
+
+## [0.44.5] — 2026-10-29
+
+- **Limpieza:** el Encounter Planner se separa por tarea. `encounter-planner.mjs` queda solo con la ventana;
+  los datos del encuentro van a `encounter-planner-data.mjs`, el HTML a `encounter-planner-markup.mjs` y el
+  scroll y el foco a `encounter-planner-ui-state.mjs`. El código se movió sin cambios y ahora tiene tests.
+
+## [0.44.4] — 2026-10-29
+
+- **Limpieza:** 104 copias de helpers pasan a ser una sola cada una: el idioma (`i18n.mjs`), quién corre la
+  automatización y cómo se encuentra el Actor de un UUID (`foundry-runtime.mjs`), los ids (`ids.mjs`), los
+  redondeos de daño (`numbers.mjs`) y `assertPokemon`. Son unas 2.100 líneas menos.
+- **Idioma:** si el ajuste de idioma aún no está registrado, todas las ventanas usan español. Antes algunas
+  daban error.
+
+## [0.44.3] — 2026-10-29
+
+- **Desplegar Pokémon:** si tu rol de Foundry no puede crear Tokens, el aviso sale antes de elegir dónde
+  desplegar, con el mismo mensaje que ya usaba Retirar. Antes Foundry rechazaba el Token con un error genérico.
+- **Limpieza:** el lint queda sin errores. Se borran dos funciones que nunca se llamaban y parámetros sin uso, y
+  los hooks devuelven `true` de forma explícita cuando dejan seguir la acción. El juego no cambia.
+
+## [0.44.2] — 2026-10-28
+
+- **Chat seguro:** antes de guardar un mensaje se le quita lo que podría ejecutar código (`<script>`, `<iframe>`,
+  atributos `on…` y enlaces `javascript:`). Un nombre de Pokémon u objeto escrito con HTML ya no corre en el
+  navegador de los demás. Los mensajes normales no cambian.
+- **Recompensa de XP:** cada parte de la carta la recibe una sola persona: el dueño del Pokémon, o el GM solo si
+  ningún jugador dueño está conectado. Antes, si el jugador y el GM pulsaban a la vez, la XP podía entrar dos veces.
+- **Limpieza:** las 26 copias de `escapeHtml` pasan a ser una sola, en `scripts/html.mjs`.
+
 ## [0.44.1] — 2026-10-27
 
 - **Tope de nivel:** un Pokémon al nivel de su Entrenador ya no gana XP (antes llenaba la barra hasta el nivel

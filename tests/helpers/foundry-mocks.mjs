@@ -173,7 +173,7 @@ export class MockRoll {
       throw new Error(`Invalid formula: ${this.formula}`);
     }
 
-    let expression = this.formula.replace(
+    const expression = this.formula.replace(
       /(\d+)d(\d+)/gi,
       (_match, count, sides) => {
         const dice = Number(count);

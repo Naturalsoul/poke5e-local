@@ -20,6 +20,8 @@ import {
   BERSERK_ABILITY_ID,
   hasActiveBerserk
 } from "./berserk-runtime.mjs";
+import { actorFromUuid } from "./foundry-runtime.mjs";
+import { getLanguage as language } from "./i18n.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -81,19 +83,6 @@ const ANGER_POINT_MESSAGES =
         "On its following turn, the damage dice of one Move will be doubled."
     }
   });
-
-
-function language() {
-
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-
-    ? "en"
-
-    : "es";
-}
 
 
 /* ============================================================
@@ -196,48 +185,6 @@ function abilityDisplayName(
     ability?.name ??
     abilityId
   );
-}
-
-function actorFromUuid(
-  uuid
-) {
-
-  if (!uuid) {
-
-    return null;
-  }
-
-
-  try {
-
-    const document =
-      fromUuidSync(
-        uuid,
-        {
-          strict:
-            false
-        }
-      );
-
-
-    if (
-      document?.documentName ===
-        "Actor"
-    ) {
-
-      return document;
-    }
-
-
-    return (
-      document?.actor ??
-      null
-    );
-
-  } catch {
-
-    return null;
-  }
 }
 
 

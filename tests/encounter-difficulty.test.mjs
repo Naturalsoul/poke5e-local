@@ -97,7 +97,10 @@ test("coverage brings a super effective damaging Move into the four", async () =
   const pokemon = { id: "x", learnset: { level: [{ level: 1, moveIds: moves.map(each => each.id) }] } };
   for (let seed = 0; seed < 20; seed++) {
     let n = seed;
-    const random = () => ((n = (n * 9301 + 49297) % 233280) / 233280);
+    const random = () => {
+      n = (n * 9301 + 49297) % 233280;
+      return n / 233280;
+    };
     const ids = selectEncounterMoves({ pokemon, moves, level: 5, coverageTypes: ["fire"], random }).map(each => each.id);
     assert.equal(ids.length, 4);
     assert.ok(ids.includes("ember"), `ember with seed ${seed}: ${ids}`);

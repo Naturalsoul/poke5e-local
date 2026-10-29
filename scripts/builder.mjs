@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import { calculatePokemonDefenses, hasStab } from "./types.mjs";
 import { pokemonAbilityIcon } from "./pokemon-ability-icons.mjs";
 import { buildMoveStatusEffects } from "./status-effects.mjs";
@@ -26,6 +27,8 @@ import {
   STRUGGLE_MOVE_ID,
   STRUGGLE_RULE
 } from "./struggle-rules.mjs";
+import { clampInteger } from "./numbers.mjs";
+import { normalizeId } from "./ids.mjs";
 
 const MODULE_ID = "poke5e-local";
 const BUILDER_VERSION = "0.18.23";
@@ -481,7 +484,7 @@ function buildMovePokemonSnapshotFromActor(
 
   return {
     id:
-      normalizeCanonicalId(
+      normalizeId(
         actor.getFlag(
           MODULE_ID,
           "sourceId"
@@ -941,7 +944,7 @@ function createBuildContext({
     grantedHiddenAbilityIds,
 
     requestedActiveAbilityId:
-      normalizeCanonicalId(
+      normalizeId(
         activeAbilityId
       ),
 
@@ -1371,18 +1374,6 @@ function getSystemMoves(
   return [
     struggle
   ];
-}
-
-
-function normalizeCanonicalId(
-  value
-) {
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
 }
 
 function normalizeAbilityRefs(
@@ -5075,49 +5066,6 @@ function toHtml(
     .join("");
 }
 
-function escapeHtml(
-  value
-) {
-  const text =
-    String(
-      value ?? ""
-    );
-
-  if (
-    globalThis
-      .foundry
-      ?.utils
-      ?.escapeHTML
-  ) {
-    return foundry.utils
-      .escapeHTML(
-        text
-      );
-  }
-
-  return text
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-}
-
 function resolveMoveIcon(
   moveType
 ) {
@@ -5197,25 +5145,6 @@ function normalizeStringArray(
       )
       .filter(Boolean)
   );
-}
-
-function validOrFallbackFormula(
-  candidate,
-  fallback
-) {
-  const formula =
-    String(
-      candidate ?? ""
-    ).trim();
-
-  return (
-    formula &&
-    isValidFoundryFormula(
-      formula
-    )
-  )
-    ? formula
-    : fallback;
 }
 
 function emptyDamagePart() {
@@ -5315,33 +5244,4 @@ function nonNegativeNumber(
         numeric
       )
     : fallback;
-}
-
-function clampInteger(
-  value,
-  min,
-  max,
-  fallback
-) {
-  const numeric =
-    Number(value);
-
-  if (
-    !Number.isFinite(
-      numeric
-    )
-  ) {
-    return fallback;
-  }
-
-  return Math.min(
-    max,
-
-    Math.max(
-      min,
-      Math.trunc(
-        numeric
-      )
-    )
-  );
 }

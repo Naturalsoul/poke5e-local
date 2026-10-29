@@ -1,6 +1,7 @@
 import {
   buildMoveMechanicalProfile
 } from "./move-mechanical-profile.mjs";
+import { normalizeId } from "./ids.mjs";
 
 
 const ARCHETYPE_ROLE_PREFERENCES =
@@ -443,17 +444,4 @@ function clamp01(
         : 0
     )
   );
-}
-
-
-function normalizeId(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
 }

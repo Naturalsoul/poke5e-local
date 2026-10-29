@@ -28,6 +28,7 @@ import {
 import {
   isPokemonActor
 } from "./trainer-party-service.mjs";
+import { actorFromUuid } from "./foundry-runtime.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -209,52 +210,6 @@ function validateDataModel(
       `${label}: DataModel lanzó una validación estricta.`,
       error.message
     );
-  }
-}
-
-
-/* ============================================================
- * ACTOR SELECTION
- * ============================================================ */
-
-function actorFromUuid(
-  uuid
-) {
-
-  if (!uuid) {
-
-    return null;
-  }
-
-
-  try {
-
-    const document =
-      fromUuidSync(
-        uuid,
-        {
-          strict: false
-        }
-      );
-
-
-    if (
-      document?.documentName ===
-        "Actor"
-    ) {
-
-      return document;
-    }
-
-
-    return (
-      document?.actor ??
-      null
-    );
-
-  } catch {
-
-    return null;
   }
 }
 

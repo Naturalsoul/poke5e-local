@@ -38,6 +38,7 @@ import {
   evolutionAbilityScoreMode,
   resolveEvolutionAbilityScores
 } from "./pokemon-evolution-rules.mjs";
+import { getLanguage as currentLanguage } from "./i18n.mjs";
 
 
 const MODULE_ID =
@@ -189,28 +190,6 @@ function resolveEvolutionLevel(
 
 
   return requestedLevel;
-}
-
-
-/* ============================================================
- * STATE READERS
- * ============================================================ */
-
-function currentLanguage() {
-
-  try {
-
-    return game.settings.get(
-      MODULE_ID,
-      "language"
-    ) === "en"
-      ? "en"
-      : "es";
-
-  } catch {
-
-    return "es";
-  }
 }
 
 
@@ -2460,7 +2439,7 @@ async function consumeEvolutionItemUnit(
 
 async function consumeRequiredEvolutionItems(
   pokemon,
-  requiredItemIds
+  itemIds
 ) {
 
   const requestedIds =
@@ -2468,9 +2447,9 @@ async function consumeRequiredEvolutionItems(
       ...new Set(
         (
           Array.isArray(
-            requiredItemIds
+            itemIds
           )
-            ? requiredItemIds
+            ? itemIds
             : []
         )
           .map(

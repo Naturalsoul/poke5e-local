@@ -9,6 +9,7 @@ const FRACTION_VALUES =
   ]);
 
 import { getPokemonExperienceThreshold } from "./pokemon-experience-service.mjs";
+import { clampInteger } from "./numbers.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -237,33 +238,5 @@ export function parseSpeciesRating(
 
   throw new Error(
     `SR Pokémon inválido: ${String(value)}`
-  );
-}
-
-function clampInteger(
-  value,
-  min,
-  max,
-  fallback
-) {
-  const numeric =
-    Number(value);
-
-  if (
-    !Number.isFinite(
-      numeric
-    )
-  ) {
-    return fallback;
-  }
-
-  return Math.min(
-    max,
-    Math.max(
-      min,
-      Math.trunc(
-        numeric
-      )
-    )
   );
 }

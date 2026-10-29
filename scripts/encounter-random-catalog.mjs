@@ -1,3 +1,5 @@
+import { clampInteger } from "./numbers.mjs";
+
 export const RANDOM_REGION_ALL =
   "__all-regions__";
 
@@ -443,38 +445,5 @@ function getPokemonMinimumLevel(
     1,
     20,
     1
-  );
-}
-
-
-function clampInteger(
-  value,
-  min,
-  max,
-  fallback
-) {
-  const numeric =
-    Number(
-      value
-    );
-
-
-  if (
-    !Number.isFinite(
-      numeric
-    )
-  ) {
-    return fallback;
-  }
-
-
-  return Math.min(
-    max,
-    Math.max(
-      min,
-      Math.trunc(
-        numeric
-      )
-    )
   );
 }

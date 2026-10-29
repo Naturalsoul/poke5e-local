@@ -41,9 +41,9 @@ function dreamEaterActivity() {
     name: "Dream Eater",
     documentName: "Item",
     getFlag(moduleId, key) {
-      if (moduleId !== "poke5e-local") return undefined;
-      if (key === "kind") return "move";
-      if (key === "sourceId") return "dream-eater";
+      if (moduleId !== "poke5e-local") {return undefined;}
+      if (key === "kind") {return "move";}
+      if (key === "sourceId") {return "dream-eater";}
       return undefined;
     }
   };

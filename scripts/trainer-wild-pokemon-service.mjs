@@ -30,8 +30,7 @@ import {
   assignPokemonToTrainer,
   getTrainerPartyState,
   getTrainerPokeslotLimit,
-  isPokemonActor,
-  removePokemonFromParty
+  isPokemonActor
 } from "./trainer-party-service.mjs";
 
 import {
@@ -51,6 +50,7 @@ import {
   assignPokemonGender,
   getPokemonGender
 } from "./gender-runtime.mjs";
+import { normalizeId } from "./ids.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -186,18 +186,6 @@ function resolveWildIdentity(
   };
 }
 
-function normalizeCanonicalId(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
-}
-
 
 function itemKind(
   item
@@ -217,7 +205,7 @@ function itemSourceId(
   item
 ) {
 
-  return normalizeCanonicalId(
+  return normalizeId(
     item?.getFlag?.(
       MODULE_ID,
       "sourceId"
@@ -311,7 +299,7 @@ function resolveWildAbilityState(
 
 
   const activeAbilityId =
-    normalizeCanonicalId(
+    normalizeId(
       actor.getFlag(
         MODULE_ID,
         "activeAbilityId"
@@ -1181,52 +1169,6 @@ async function deleteCreatedPokemon(
      * para reparación manual por el GM.
      */
   }
-}
-
-async function cleanupCreatedPokemon(
-  trainer,
-  pokemon
-) {
-
-  if (!pokemon?.id) {
-
-    return;
-  }
-
-
-  try {
-
-    const state =
-      getTrainerPartyState(
-        trainer
-      );
-
-
-    if (
-      state.pokemonUuids.includes(
-        pokemon.uuid
-      )
-    ) {
-
-      await removePokemonFromParty(
-        trainer,
-        pokemon
-      );
-    }
-
-  } catch {
-
-    /*
-     * La limpieza del Party State es best-effort.
-     * El error original de adquisición conserva
-     * prioridad para el GM.
-     */
-  }
-
-
-  await deleteCreatedPokemon(
-    pokemon
-  );
 }
 
 export async function acquireWildPokemonToken(

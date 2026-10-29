@@ -14,6 +14,8 @@ import {
 import {
   isPokemonActor
 } from "./trainer-party-service.mjs";
+import { getLanguage as language } from "./i18n.mjs";
+import { isAuthority } from "./foundry-runtime.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -133,48 +135,6 @@ const LABELS = {
       "Cannot take actions this turn because of Confusion."
   }
 };
-
-
-/* ============================================================
- * AUTHORITY
- * ============================================================ */
-
-function isAuthority() {
-
-  const activeGM =
-    game.users.activeGM;
-
-
-  if (activeGM) {
-
-    return (
-      activeGM.id ===
-      game.user.id
-    );
-  }
-
-
-  return game.user.isGM;
-}
-
-
-/* ============================================================
- * LANGUAGE
- * ============================================================ */
-
-function language() {
-
-  return (
-    game.settings.get(
-      MODULE_ID,
-      "language"
-    ) === "en"
-
-      ? "en"
-
-      : "es"
-  );
-}
 
 
 function label(

@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import {
   getPokemonEvolutionPreview
 } from "./pokemon-evolution-service.mjs";
@@ -6,9 +7,7 @@ import {
   analyzeEvolutionAbilityScoreAllocation,
   evolutionAbilityScorePolicy
 } from "./pokemon-evolution-rules.mjs";
-
-const MODULE_ID =
-  "poke5e-local";
+import { getLanguage } from "./i18n.mjs";
 
 const SKIP_EVOLUTION =
   "__skip__";
@@ -22,40 +21,6 @@ const ABILITY_IDS = [
   "cha"
 ];
 
-
-/* ============================================================
- * BASICS
- * ============================================================ */
-
-function getLanguage() {
-
-  try {
-
-    return game.settings.get(
-      MODULE_ID,
-      "language"
-    ) === "en"
-      ? "en"
-      : "es";
-
-  } catch {
-
-    return "es";
-  }
-}
-
-
-function escapeHtml(
-  value
-) {
-
-  return foundry.utils.escapeHTML(
-    String(
-      value ??
-      ""
-    )
-  );
-}
 
 
 function localized(

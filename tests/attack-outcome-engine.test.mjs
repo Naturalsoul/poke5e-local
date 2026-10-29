@@ -13,8 +13,8 @@ function item() {
   return {
     uuid: "Item.tackle",
     getFlag(moduleId, key) {
-      if (moduleId !== "poke5e-local") return undefined;
-      if (key === "sourceId") return "tackle";
+      if (moduleId !== "poke5e-local") {return undefined;}
+      if (key === "sourceId") {return "tackle";}
       return undefined;
     }
   };

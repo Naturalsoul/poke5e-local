@@ -1,3 +1,4 @@
+import { escapeHtml } from "./html.mjs";
 import { TRAINER_PATH_ACTION_ICONS, TRAINER_PATH_ACTION_RESOURCES, availableTrainerPathActions, trainerPathActionLabel } from "./trainer-path-actions.mjs";
 import {
   getTrainerLevel
@@ -24,6 +25,7 @@ import {
 import {
   MAX_SUPPORTED_TRAINER_LEVEL
 } from "./trainer-rules.mjs";
+import { getLanguage } from "./i18n.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -332,41 +334,6 @@ const RESOURCE_LABELS =
       })
   });
 
-const HTML_ENTITIES = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  "\"": "&quot;",
-  "'": "&#039;"
-};
-
-
-function getLanguage() {
-
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-    ? "en"
-    : "es";
-}
-
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  ).replace(
-    /[&<>"']/g,
-    character =>
-      HTML_ENTITIES[
-        character
-      ]
-  );
-}
 
 
 function pokemonFromUuid(

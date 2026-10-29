@@ -1,3 +1,5 @@
+import { clampInteger } from "./numbers.mjs";
+
 export const RANDOM_ENCOUNTER_SIZES = Object.freeze({
   small: Object.freeze({
     speciesMin: 1,
@@ -585,38 +587,5 @@ function getPokemonMinimumLevel(
     1,
     20,
     1
-  );
-}
-
-
-function clampInteger(
-  value,
-  min,
-  max,
-  fallback
-) {
-  const numeric =
-    Number(
-      value
-    );
-
-
-  if (
-    !Number.isFinite(
-      numeric
-    )
-  ) {
-    return fallback;
-  }
-
-
-  return Math.min(
-    max,
-    Math.max(
-      min,
-      Math.trunc(
-        numeric
-      )
-    )
   );
 }

@@ -5,6 +5,7 @@ import {
 import {
   selectEncounterAbility
 } from "./encounter-ability-selector.mjs";
+import { normalizeId } from "./ids.mjs";
 
 
 const MODULE_ID =
@@ -36,7 +37,7 @@ export class EncounterAbilityService {
           )
           .map(
             ability => [
-              normalizeCanonicalId(
+              normalizeId(
                 ability.id
               ),
               ability
@@ -96,19 +97,19 @@ export class EncounterAbilityService {
 
 
     const requestedId =
-      normalizeCanonicalId(
+      normalizeId(
         requestedAbilityId
       );
 
 
     const storedId =
-      normalizeCanonicalId(
+      normalizeId(
         stored?.abilityId
       );
 
 
     const activeId =
-      normalizeCanonicalId(
+      normalizeId(
         actor.getFlag(
           MODULE_ID,
           "activeAbilityId"
@@ -191,7 +192,7 @@ export class EncounterAbilityService {
 
 
     const abilityId =
-      normalizeCanonicalId(
+      normalizeId(
         selectedAbility.id
       );
 
@@ -298,13 +299,13 @@ export class EncounterAbilityService {
 
 
       const beforeAbilityId =
-        normalizeCanonicalId(
+        normalizeId(
           encounter.abilityId
         );
 
 
       const beforeActiveAbilityId =
-        normalizeCanonicalId(
+        normalizeId(
           actor.getFlag(
             MODULE_ID,
             "activeAbilityId"
@@ -366,7 +367,7 @@ export class EncounterAbilityService {
 
 
         const afterActiveAbilityId =
-          normalizeCanonicalId(
+          normalizeId(
             actor.getFlag(
               MODULE_ID,
               "activeAbilityId"
@@ -495,7 +496,7 @@ function getPokemonAbilityReferences(
       : []
   ) {
     const id =
-      normalizeCanonicalId(
+      normalizeId(
         typeof entry ===
           "string"
           ? entry
@@ -543,7 +544,7 @@ function getActorAbilityIds(
       )
       .map(
         item =>
-          normalizeCanonicalId(
+          normalizeId(
             item.getFlag(
               MODULE_ID,
               "sourceId"
@@ -606,7 +607,7 @@ async function synchronizeEncounterAbility({
   const selectedManagedItem =
     managedItems.find(
       item =>
-        normalizeCanonicalId(
+        normalizeId(
           item.getFlag(
             MODULE_ID,
             "sourceId"
@@ -625,7 +626,7 @@ async function synchronizeEncounterAbility({
         ) ===
           "ability" &&
 
-        normalizeCanonicalId(
+        normalizeId(
           item.getFlag(
             MODULE_ID,
             "sourceId"
@@ -722,7 +723,7 @@ async function synchronizeEncounterAbility({
 
 
   const activeAbilityId =
-    normalizeCanonicalId(
+    normalizeId(
       actor.getFlag(
         MODULE_ID,
         "activeAbilityId"
@@ -745,16 +746,4 @@ async function synchronizeEncounterAbility({
   return {
     createdItem
   };
-}
-
-
-function normalizeCanonicalId(
-  value
-) {
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
 }
