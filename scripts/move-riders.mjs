@@ -67,7 +67,7 @@ const actorFromUuid = uuid => {
 };
 
 async function chat(actor, html) {
-  await ChatMessage.implementation.create({ speaker: ChatMessage.implementation.getSpeaker({ actor }), content: `<p>${html}</p>` });
+  await ChatMessage.implementation.create({ speaker: ChatMessage.implementation.getSpeaker({ actor }), content: `<div class="poke5e-turn-message">${html}</div>` });
 }
 
 export const MISS_RIDERS = Object.freeze({

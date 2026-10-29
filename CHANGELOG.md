@@ -4,6 +4,11 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.46.3] — 2026-10-29
+
+- Los mensajes de los riders de Moves y de condiciones (Clear Smog, Incinerate, curas de estado, Purify, Salt Cure,
+  salvaciones para librarse) llevan el mismo estilo que los demás mensajes automáticos del módulo.
+
 ## [0.46.2] — 2026-10-29
 
 - **Mensajes del módulo en el chat:** los mensajes automáticos (estados, Habilidades, clima, objetos equipados) llevan
