@@ -1,6 +1,7 @@
 import {
   normalizeFakemonSpecies
 } from "./fakemon-model.mjs";
+import { normalizeId } from "./ids.mjs";
 
 
 export function getOfficialTemplateSpecies(
@@ -190,17 +191,4 @@ function compareSpecies(
         "base"
     }
   );
-}
-
-
-function normalizeId(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
 }

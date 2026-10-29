@@ -34,6 +34,7 @@ import {
 import {
   canCurrentUserOperateTrainerPokemon
 } from "./trainer-ownership-service.mjs";
+import { getLanguage } from "./i18n.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -136,17 +137,6 @@ const LABELS = {
       "There is no active Scene where the Pokémon can be deployed.",
   }
 };
-
-
-function getLanguage() {
-
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-    ? "en"
-    : "es";
-}
 
 
 function getLabels() {

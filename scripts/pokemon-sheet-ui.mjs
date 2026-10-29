@@ -77,6 +77,7 @@ import {
   getPokemonConcentrations
 } from "./pokemon-concentration-service.mjs";
 import { pokemonMoveEffectsMarkup } from "./pokemon-move-effects.mjs";
+import { getLanguage } from "./i18n.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -962,25 +963,6 @@ const LABELS = {
       "End concentration",
   }
 };
-
-
-/* ============================================================
- * GENERIC
- * ============================================================ */
-
-
-
-function getLanguage() {
-
-  return (
-    game.settings.get(
-      MODULE_ID,
-      "language"
-    ) === "en"
-  )
-    ? "en"
-    : "es";
-}
 
 
 function signedNumber(

@@ -5,6 +5,7 @@ import {
   crossedHpThreshold,
   projectedPokemonHpState
 } from "./hp-runtime.mjs";
+import { getLanguage as language } from "./i18n.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -48,23 +49,6 @@ const HP_THRESHOLD_HANDLERS =
       activateAngerShell
     ]
   ]);
-
-
-/* ============================================================
- * LANGUAGE
- * ============================================================ */
-
-function language() {
-
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-
-    ? "en"
-
-    : "es";
-}
 
 
 /* ============================================================

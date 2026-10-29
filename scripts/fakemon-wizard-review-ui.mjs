@@ -2,6 +2,7 @@ import { escapeHtml } from "./html.mjs";
 import {
   POKEMON_TYPES
 } from "./types.mjs";
+import { normalizeId } from "./ids.mjs";
 
 const {
   DialogV2
@@ -233,7 +234,7 @@ function renderReview({
 
           <span
             class="fakemon-wizard__confidence"
-            data-level="${escapeAttribute(
+            data-level="${escapeHtml(
               summary.confidence
             )}"
           >
@@ -1313,7 +1314,7 @@ function renderChecks(
               entry => `
                 <div
                   class="fakemon-wizard__review-check"
-                  data-status="${escapeAttribute(
+                  data-status="${escapeHtml(
                     entry.status
                   )}"
                 >
@@ -2085,28 +2086,4 @@ function renderProgress(
 
     </div>
   `;
-}
-
-
-function normalizeId(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
-}
-
-
-
-function escapeAttribute(
-  value
-) {
-
-  return escapeHtml(
-    value
-  );
 }

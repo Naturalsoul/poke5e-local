@@ -10,7 +10,8 @@ import {
 
 import {
   getPokemonTrainerUuid,
-  isPokemonActor
+  isPokemonActor,
+  assertPokemon
 } from "./trainer-party-service.mjs";
 
 import {
@@ -36,27 +37,6 @@ function normalizeLanguage(
   return value === "en"
     ? "en"
     : "es";
-}
-
-
-/* ============================================================
- * VALIDATION
- * ============================================================ */
-
-function assertPokemon(
-  pokemon
-) {
-
-  if (
-    !isPokemonActor(
-      pokemon
-    )
-  ) {
-
-    throw new Error(
-      `${pokemon?.name ?? "Actor"} no es un Pokémon Poke5e.`
-    );
-  }
 }
 
 function isGmManualPoisonOverride(

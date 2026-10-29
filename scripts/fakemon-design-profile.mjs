@@ -1,6 +1,7 @@
 import {
   POKEMON_TYPE_IDS
 } from "./types.mjs";
+import { normalizeId } from "./ids.mjs";
 
 
 export const FAKEMON_ARCHETYPE_IDS =
@@ -710,19 +711,6 @@ function normalizeDimension(
       numeric
     )
   );
-}
-
-
-function normalizeId(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
 }
 
 

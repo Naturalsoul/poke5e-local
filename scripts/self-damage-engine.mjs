@@ -1,3 +1,7 @@
+import { fractionalAmount } from "./numbers.mjs";
+
+import { getLanguage as language } from "./i18n.mjs";
+
 const MODULE_ID =
   "poke5e-local";
 
@@ -55,23 +59,6 @@ const LABELS = {
       "from"
   }
 };
-
-
-/* ============================================================
- * LANGUAGE
- * ============================================================ */
-
-function language() {
-
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-
-    ? "en"
-
-    : "es";
-}
 
 
 function label(
@@ -392,63 +379,6 @@ async function clearPendingMarker(
       MODULE_ID,
       PENDING_FLAG
     );
-  }
-}
-
-
-/* ============================================================
- * FRACTIONAL AMOUNT
- * ============================================================ */
-
-function fractionalAmount(
-  basisValue,
-  fraction,
-  mode
-) {
-
-  const raw =
-
-    Math.max(
-      0,
-      Number(
-        basisValue
-      )
-    )
-
-    *
-
-    Math.max(
-      0,
-      Number(
-        fraction
-      )
-    );
-
-
-  switch (
-    mode
-  ) {
-
-    case "ceil":
-
-      return Math.ceil(
-        raw
-      );
-
-
-    case "round":
-
-      return Math.round(
-        raw
-      );
-
-
-    case "floor":
-    default:
-
-      return Math.floor(
-        raw
-      );
   }
 }
 

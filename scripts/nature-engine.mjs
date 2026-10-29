@@ -6,47 +6,12 @@ import {
 import {
   localizedNatureName
 } from "./nature-rules.mjs";
+import { getLanguage as currentLanguage } from "./i18n.mjs";
+import { isAuthority } from "./foundry-runtime.mjs";
 
 
 const MODULE_ID =
   "poke5e-local";
-
-
-function isAuthority() {
-
-  const activeGM =
-    game.users.activeGM;
-
-
-  if (activeGM) {
-
-    return activeGM.id ===
-      game.user.id;
-  }
-
-
-  return game.user.isGM;
-}
-
-
-function currentLanguage() {
-
-  try {
-
-    return game.settings.get(
-      MODULE_ID,
-      "language"
-    ) === "en"
-
-      ? "en"
-
-      : "es";
-
-  } catch {
-
-    return "es";
-  }
-}
 
 
 function isWildPokemonActor(

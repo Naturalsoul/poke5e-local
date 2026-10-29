@@ -11,6 +11,8 @@ import {
 import {
   buildPokemonStatusEffect
 } from "./status-effects.mjs";
+import { actorFromUuid } from "./foundry-runtime.mjs";
+import { getLanguage as language } from "./i18n.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -48,77 +50,6 @@ const OFFENSIVE_HIT_ABILITY_DEFINITIONS =
       })
     ]
   ]);
-
-
-/* ============================================================
- * LANGUAGE
- * ============================================================ */
-
-function language() {
-
-  try {
-
-    return game.settings.get(
-      MODULE_ID,
-      "language"
-    ) === "en"
-
-      ? "en"
-
-      : "es";
-
-  } catch {
-
-    return "es";
-  }
-}
-
-
-/* ============================================================
- * UUID -> ACTOR
- * ============================================================ */
-
-function actorFromUuid(
-  uuid
-) {
-
-  if (!uuid) {
-
-    return null;
-  }
-
-
-  try {
-
-    const document =
-      fromUuidSync(
-        uuid,
-        {
-          strict:
-            false
-        }
-      );
-
-
-    if (
-      document?.documentName ===
-        "Actor"
-    ) {
-
-      return document;
-    }
-
-
-    return (
-      document?.actor ??
-      null
-    );
-
-  } catch {
-
-    return null;
-  }
-}
 
 
 /* ============================================================

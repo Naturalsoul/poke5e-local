@@ -1,3 +1,5 @@
+import { normalizeId } from "./ids.mjs";
+
 const POKE5E_UNLOCK_LEVELS =
   Object.freeze([
     2,
@@ -1725,17 +1727,4 @@ function clamp(
       value
     )
   );
-}
-
-
-function normalizeId(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
 }

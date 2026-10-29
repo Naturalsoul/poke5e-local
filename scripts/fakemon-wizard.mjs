@@ -1779,7 +1779,7 @@ function renderEvolutionSetup({
           list="fakemon-wizard-evolution-source-list"
           autocomplete="off"
           placeholder="growlithe"
-          value="${escapeAttribute(
+          value="${escapeHtml(
             sourceId
           )}"
         >
@@ -1790,7 +1790,7 @@ function renderEvolutionSetup({
             species
               .map(
                 entry => `
-                  <option value="${escapeAttribute(
+                  <option value="${escapeHtml(
                     entry.id
                   )}">
                     ${escapeHtml(
@@ -1946,7 +1946,7 @@ function renderEvolutionOriginOptions(
     .map(
       id => `
         <option
-          value="${escapeAttribute(
+          value="${escapeHtml(
             id
           )}"
           ${id === selected ? "selected" : ""}
@@ -1997,7 +1997,7 @@ function renderMutationDegreeOptions(
     .map(
       id => `
         <option
-          value="${escapeAttribute(
+          value="${escapeHtml(
             id
           )}"
           ${id === selected ? "selected" : ""}
@@ -2614,7 +2614,7 @@ function renderConceptStep(
             name="name"
             placeholder="Drakeon"
             autocomplete="off"
-            value="${escapeAttribute(
+            value="${escapeHtml(
               name
             )}"
           >
@@ -2753,7 +2753,7 @@ function renderRoleStep(
                   <input
                     type="radio"
                     name="primaryArchetype"
-                    value="${escapeAttribute(
+                    value="${escapeHtml(
                       archetype.id
                     )}"
                     ${archetype.id === primaryArchetype ? "checked" : ""}
@@ -2806,7 +2806,7 @@ function renderRoleStep(
               .map(
                 archetype => `
                   <option
-                    value="${escapeAttribute(
+                    value="${escapeHtml(
                       archetype.id
                     )}"
                     ${archetype.id === secondaryArchetype ? "selected" : ""}
@@ -3042,7 +3042,7 @@ function renderRecommendationStep({
 
         <span
           class="fakemon-wizard__confidence"
-          data-level="${escapeAttribute(
+          data-level="${escapeHtml(
             recommendation.confidence.level
           )}"
         >
@@ -3778,7 +3778,7 @@ function renderPriorityField(
         )}
       </span>
 
-      <select name="${escapeAttribute(
+      <select name="${escapeHtml(
         name
       )}">
 
@@ -3919,7 +3919,7 @@ function renderTypeOptions(
       .map(
         type => `
           <option
-            value="${escapeAttribute(
+            value="${escapeHtml(
               type
             )}"
             ${type === selected ? "selected" : ""}
@@ -3984,7 +3984,7 @@ function renderStageOptions(
         label
       ]) => `
         <option
-          value="${escapeAttribute(
+          value="${escapeHtml(
             value
           )}"
           ${value === selectedValue ? "selected" : ""}
@@ -4070,16 +4070,5 @@ function wizardTitle(
     language === "en"
       ? `Fakemon Wizard · Step ${step}/${total}`
       : `Fakemon Wizard · Paso ${step}/${total}`
-  );
-}
-
-
-
-function escapeAttribute(
-  value
-) {
-
-  return escapeHtml(
-    value
   );
 }

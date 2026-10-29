@@ -1,3 +1,5 @@
+import { normalizeId } from "./ids.mjs";
+
 const MODULE_ID = "poke5e-local";
 
 
@@ -76,23 +78,6 @@ const STATUS_IMMUNITY_ABILITIES = Object.freeze({
   burned: new Set(["water-veil", "heatproof", "water-bubble", "thermal-exchange", "good-as-gold", "purifying-salt"]),
   confused: new Set(["own-tempo", "good-as-gold"])
 });
-
-
-/* ============================================================
- * NORMALIZE
- * ============================================================ */
-
-function normalizeId(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
-}
 
 
 /* ============================================================

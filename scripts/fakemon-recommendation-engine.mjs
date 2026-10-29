@@ -5,6 +5,7 @@ import {
 import {
   evaluateFakemonMoveMechanics
 } from "./fakemon-move-role-scorer.mjs";
+import { normalizeId } from "./ids.mjs";
 
 const PHYSICAL_POWER_ABILITIES =
   new Set([
@@ -4027,17 +4028,4 @@ function clamp(
       value
     )
   );
-}
-
-
-function normalizeId(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
 }

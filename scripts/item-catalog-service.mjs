@@ -22,6 +22,7 @@ import { heldItemConfiguration } from "./held-item-config.mjs";
 import {
   isPokemonActor
 } from "./trainer-party-service.mjs";
+import { getLanguage as currentLanguage } from "./i18n.mjs";
 
 const MODULE_ID = "poke5e-local";
 const POKE5E_DATA_PATH =
@@ -814,19 +815,6 @@ async function ensureMoveFolders(
     byType,
     changed
   };
-}
-
-function currentLanguage() {
-  try {
-    return game.settings.get(
-      MODULE_ID,
-      "language"
-    ) === "en"
-      ? "en"
-      : "es";
-  } catch {
-    return "es";
-  }
 }
 
 function localized(

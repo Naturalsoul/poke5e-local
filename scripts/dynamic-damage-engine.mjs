@@ -1,6 +1,8 @@
 import {
   resolveStabAbilityBoost
 } from "./stab-ability-runtime.mjs";
+import { getLanguage as language } from "./i18n.mjs";
+import { isAuthority, actorFromUuid } from "./foundry-runtime.mjs";
 
 const MODULE_ID = "poke5e-local";
 const ROLLOUT_MAX_STAGE = 5;
@@ -69,29 +71,6 @@ const DYNAMIC_DAMAGE_HANDLERS =
       resolveOutrageDamage
     ]
   ]);
-
-
-/* ============================================================
- * AUTHORITY
- * ============================================================ */
-
-function isAuthority() {
-
-  const activeGM =
-    game.users.activeGM;
-
-
-  if (activeGM) {
-
-    return (
-      activeGM.id ===
-      game.user.id
-    );
-  }
-
-
-  return game.user.isGM;
-}
 
 
 /* ============================================================
@@ -1753,28 +1732,6 @@ function replacementRoll(
 
 
 /* ============================================================
- * LANGUAGE
- * ============================================================ */
-
-function language() {
-
-  try {
-
-    return game.settings.get(
-      MODULE_ID,
-      "language"
-    ) === "en"
-      ? "en"
-      : "es";
-
-  } catch {
-
-    return "es";
-  }
-}
-
-
-/* ============================================================
  * CHAT FLAVOR
  * ============================================================ */
 
@@ -1965,52 +1922,6 @@ function annotateMessage(
     data.flavor
       ? `${data.flavor}<br>${flavor}`
       : flavor;
-}
-
-
-/* ============================================================
- * ACTOR UUID
- * ============================================================ */
-
-function actorFromUuid(
-  uuid
-) {
-
-  if (!uuid) {
-
-    return null;
-  }
-
-
-  try {
-
-    const document =
-      fromUuidSync(
-        uuid,
-        {
-          strict: false
-        }
-      );
-
-
-    if (
-      document?.documentName ===
-      "Actor"
-    ) {
-
-      return document;
-    }
-
-
-    return (
-      document?.actor ??
-      null
-    );
-
-  } catch {
-
-    return null;
-  }
 }
 
 

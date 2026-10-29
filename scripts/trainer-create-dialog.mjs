@@ -11,6 +11,7 @@ import {
   TRAINER_SPECIALIZATIONS,
   getTrainerProgressionLimits
 } from "./trainer-rules.mjs";
+import { getLanguage } from "./i18n.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -627,17 +628,6 @@ const LABELS = {
       "The Trainer could not be created."
   }
 };
-
-
-function getLanguage() {
-
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-    ? "en"
-    : "es";
-}
 
 
 

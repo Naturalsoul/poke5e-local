@@ -1,6 +1,4 @@
-import {
-  isPokemonActor
-} from "./trainer-party-service.mjs";
+import { assertPokemon } from "./trainer-party-service.mjs";
 
 
 const MODULE_ID =
@@ -83,27 +81,6 @@ export function getPokemonLevelCap(
       ) || 1
     )
   );
-}
-
-
-/* ============================================================
- * VALIDATION
- * ============================================================ */
-
-function assertPokemon(
-  pokemon
-) {
-
-  if (
-    !isPokemonActor(
-      pokemon
-    )
-  ) {
-
-    throw new Error(
-      `${pokemon?.name ?? "Actor"} no es un Pokémon Poke5e.`
-    );
-  }
 }
 
 

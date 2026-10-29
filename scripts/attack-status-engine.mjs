@@ -6,6 +6,7 @@ import {
 } from "./attack-outcome-engine.mjs";
 import { publishRollBeforeDamage } from "./chat-roll-display.mjs";
 import { createStatusEffect } from "./status-effects.mjs";
+import { actorFromUuid } from "./foundry-runtime.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -125,56 +126,6 @@ function matchesAttackTrigger(
     Number(
       naturalAtLeast[1]
     )
-  );
-}
-
-
-/* ============================================================
- * UUID → ACTOR
- * ============================================================ */
-
-function actorFromUuid(
-  uuid
-) {
-
-  if (!uuid) {
-
-    return null;
-  }
-
-
-  let document;
-
-
-  try {
-
-    document =
-      fromUuidSync(
-        uuid,
-        {
-          strict:
-            false
-        }
-      );
-
-  } catch {
-
-    return null;
-  }
-
-
-  if (
-    document?.documentName ===
-    "Actor"
-  ) {
-
-    return document;
-  }
-
-
-  return (
-    document?.actor ??
-    null
   );
 }
 

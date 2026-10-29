@@ -25,6 +25,7 @@ import {
 import {
   MAX_SUPPORTED_TRAINER_LEVEL
 } from "./trainer-rules.mjs";
+import { getLanguage } from "./i18n.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -332,17 +333,6 @@ const RESOURCE_LABELS =
           "Cheerleader"
       })
   });
-
-
-function getLanguage() {
-
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-    ? "en"
-    : "es";
-}
 
 
 

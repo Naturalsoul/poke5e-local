@@ -23,6 +23,7 @@ import {
 } from "./trainer-service.mjs";
 
 import { RANGER_PARTNER_FLAG } from "./trainer-path-actions.mjs";
+import { getLanguage } from "./i18n.mjs";
 
 
 const MODULE_ID =
@@ -652,17 +653,6 @@ function getPokemonResearcherContext(
 
     resource
   };
-}
-
-
-function getLanguage() {
-
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-    ? "en"
-    : "es";
 }
 
 

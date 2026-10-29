@@ -5,6 +5,7 @@ import {
 import {
   selectTrainerArchetypePokemon
 } from "./encounter-trainer-archetype-selector.mjs";
+import { clampInteger } from "./numbers.mjs";
 
 
 export function generateRandomTrainerEncounter({
@@ -1031,38 +1032,5 @@ function getPokemonMinimumLevel(
     1,
     20,
     1
-  );
-}
-
-
-function clampInteger(
-  value,
-  min,
-  max,
-  fallback
-) {
-  const numeric =
-    Number(
-      value
-    );
-
-
-  if (
-    !Number.isFinite(
-      numeric
-    )
-  ) {
-    return fallback;
-  }
-
-
-  return Math.min(
-    max,
-    Math.max(
-      min,
-      Math.trunc(
-        numeric
-      )
-    )
   );
 }

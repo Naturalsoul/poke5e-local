@@ -78,6 +78,7 @@ import {
 import {
   getDefaultEncounterItemPolicy
 } from "./encounter-item-policy.mjs";
+import { clampInteger } from "./numbers.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -855,7 +856,7 @@ export class PokemonEncounterPlanner
     return `
       <section
         class="poke5e-encounter-planner__content"
-        data-encounter-type="${escapeAttribute(
+        data-encounter-type="${escapeHtml(
           this._encounterState.type
         )}"
       >
@@ -902,7 +903,7 @@ export class PokemonEncounterPlanner
             <span
               class="poke5e-encounter-planner__type-badge"
               data-role="encounter-type-badge"
-              data-encounter-type="${escapeAttribute(
+              data-encounter-type="${escapeHtml(
                 this._encounterState.type
               )}"
             >
@@ -1115,7 +1116,7 @@ export class PokemonEncounterPlanner
                   type="text"
                   data-role="encounter-location"
                   placeholder="Ej. Ruta 3"
-                  value="${escapeAttribute(
+                  value="${escapeHtml(
                     this._encounterState.location
                   )}"
                 >
@@ -1130,7 +1131,7 @@ export class PokemonEncounterPlanner
                   type="text"
                   data-role="encounter-name"
                   placeholder="Ej. Emboscada al atardecer"
-                  value="${escapeAttribute(
+                  value="${escapeHtml(
                     this._encounterState.name
                   )}"
                 >
@@ -1593,7 +1594,7 @@ export class PokemonEncounterPlanner
                     type="search"
                     data-role="pokemon-search"
                     placeholder="Buscar Pokémon para agregar por nombre, ID o Pokédex"
-                    value="${escapeAttribute(
+                    value="${escapeHtml(
                       this._encounterState.search
                     )}"
                   >
@@ -2090,7 +2091,7 @@ export class PokemonEncounterPlanner
                   poke5e-encounter-planner__status-item--progress
                 "
                 data-role="progress-status"
-                title="${escapeAttribute(this.#describeProgress(context.rows).title)}"
+                title="${escapeHtml(this.#describeProgress(context.rows).title)}"
               >
 
                 <i
@@ -5548,7 +5549,7 @@ export class PokemonEncounterPlanner
     return `
       <p
         class="poke5e-encounter-planner__route-summary"
-        title="Lo que gana ${escapeAttribute(party.strongest.name)} (Nv. ${party.strongest.level}) si combate en todos, con ${party.participants} Pokémon que participan."
+        title="Lo que gana ${escapeHtml(party.strongest.name)} (Nv. ${party.strongest.level}) si combate en todos, con ${party.participants} Pokémon que participan."
       >
         <i class="fa-solid fa-route" aria-hidden="true"></i>
         ${totals.mandatory.count} obligatorio(s): +${percent(totals.mandatory.xp)} ·
@@ -8906,7 +8907,7 @@ function renderSavedEncounterLocationOptions(
 
         return (
           `<option ` +
-          `value="${escapeAttribute(location.key)}"` +
+          `value="${escapeHtml(location.key)}"` +
           `${selected}>` +
           `${escapeHtml(location.label)} (${location.count})` +
           `</option>`
@@ -8947,7 +8948,7 @@ function renderSavedEncounterOptions(
 
         return (
           `<option ` +
-          `value="${escapeAttribute(encounter.key)}"` +
+          `value="${escapeHtml(encounter.key)}"` +
           `${selected}>` +
           `${escapeHtml(encounter.name)}` +
           `${encounter.optional ? " (opcional)" : ""}` +
@@ -9217,7 +9218,7 @@ function renderRandomSelectOptions(
 
         return `
           <option
-            value="${escapeAttribute(value)}"
+            value="${escapeHtml(value)}"
             ${selected}
           >
             ${escapeHtml(
@@ -9277,7 +9278,7 @@ function renderRandomSrOptions(
     options.push(
       `
         <option
-          value="${escapeAttribute(normalizedValue)}"
+          value="${escapeHtml(normalizedValue)}"
           ${selected}
         >
           ${escapeHtml(
@@ -9929,7 +9930,7 @@ function renderStepPanel({
             data-action="apply-step"
             data-step="${step.id}"
             data-tier="${tier?.id ?? ""}"
-            title="${escapeAttribute(step.hint)}"
+            title="${escapeHtml(step.hint)}"
             ${state ? "" : " disabled"}
           >
             <strong>${escapeHtml(step.label)}</strong>
@@ -9971,7 +9972,7 @@ function renderStepPanel({
           class="is-primary"
           data-action="apply-step"
           data-step="next"
-          title="${escapeAttribute(
+          title="${escapeHtml(
             climb
               ? `Con lo más suave primero: ${climb.steps.map(step => step.label).join(", ")}.`
               : "Ya no quedan cambios que suban la dificultad."
@@ -10310,7 +10311,7 @@ function renderTrainerRegionOptions(
     options.push(
       `
         <option
-          value="${escapeAttribute(value)}"
+          value="${escapeHtml(value)}"
           ${selected}
         >
           ${escapeHtml(
@@ -10360,7 +10361,7 @@ function renderTrainerArchetypeOptions(
     groupedOptions +
     `
       <optgroup
-        label="${escapeAttribute(
+        label="${escapeHtml(
           specialLabel
         )}"
       >
@@ -10408,7 +10409,7 @@ function renderTrainerArchetypeGroupOptions(
 
                 return `
                   <option
-                    value="${escapeAttribute(
+                    value="${escapeHtml(
                       archetype.id
                     )}"
                     ${selected}
@@ -10433,7 +10434,7 @@ function renderTrainerArchetypeGroupOptions(
 
         return `
           <optgroup
-            label="${escapeAttribute(
+            label="${escapeHtml(
               getTrainerArchetypeGroupLabel(
                 group,
                 language
@@ -10498,7 +10499,7 @@ function renderTrainerMixedArchetypeOptions(
                   <label
                     class="poke5e-encounter-planner__trainer-mixed-option"
                     data-role="trainer-mixed-option"
-                    data-search="${escapeAttribute(
+                    data-search="${escapeHtml(
                       searchText
                     )}"
                   >
@@ -10506,7 +10507,7 @@ function renderTrainerMixedArchetypeOptions(
                     <input
                       type="checkbox"
                       data-role="trainer-mixed-archetype"
-                      value="${escapeAttribute(
+                      value="${escapeHtml(
                         archetype.id
                       )}"
                       ${selected.has(archetype.id) ? " checked" : ""}
@@ -10920,7 +10921,7 @@ function renderTrainerControls({
               return `
                 <article
                   class="poke5e-encounter-planner__trainer-card"
-                  data-trainer-id="${escapeAttribute(
+                  data-trainer-id="${escapeHtml(
                     trainer.id
                   )}"
                 >
@@ -10943,10 +10944,10 @@ function renderTrainerControls({
                       <input
                         type="text"
                         data-role="trainer-name"
-                        data-trainer-id="${escapeAttribute(
+                        data-trainer-id="${escapeHtml(
                           trainer.id
                         )}"
-                        value="${escapeAttribute(
+                        value="${escapeHtml(
                           trainer.name
                         )}"
                       >
@@ -10960,7 +10961,7 @@ function renderTrainerControls({
 
                         <select
                           data-role="trainer-archetype"
-                          data-trainer-id="${escapeAttribute(
+                          data-trainer-id="${escapeHtml(
                             trainer.id
                           )}"
                         >
@@ -10974,7 +10975,7 @@ function renderTrainerControls({
 
                         <select
                           data-role="trainer-team-size"
-                          data-trainer-id="${escapeAttribute(
+                          data-trainer-id="${escapeHtml(
                             trainer.id
                           )}"
                         >
@@ -10988,7 +10989,7 @@ function renderTrainerControls({
 
                         <select
                           data-role="trainer-on-field"
-                          data-trainer-id="${escapeAttribute(
+                          data-trainer-id="${escapeHtml(
                             trainer.id
                           )}"
                         >
@@ -11009,10 +11010,10 @@ function renderTrainerControls({
                         type="button"
                         class="poke5e-encounter-planner__trainer-reroll"
                         data-action="reroll-trainer-team"
-                        data-trainer-id="${escapeAttribute(
+                        data-trainer-id="${escapeHtml(
                           trainer.id
                         )}"
-                        title="${escapeAttribute(
+                        title="${escapeHtml(
                           rerollState.title
                         )}"
                         ${rerollState.canReroll ? "" : " disabled"}
@@ -11059,7 +11060,7 @@ function renderTrainerControls({
                     type="button"
                     class="poke5e-encounter-planner__trainer-remove"
                     data-action="remove-trainer"
-                    data-trainer-id="${escapeAttribute(
+                    data-trainer-id="${escapeHtml(
                       trainer.id
                     )}"
                     title="Eliminar entrenador"
@@ -11109,7 +11110,7 @@ function renderTrainerControls({
 
           return `
             <option
-              value="${escapeAttribute(
+              value="${escapeHtml(
                 trainer.id
               )}"
               ${selected}
@@ -12093,7 +12094,7 @@ function renderSearchResultCard(
       <button
         type="button"
         data-action="add-pokemon"
-        data-pokemon-id="${escapeAttribute(
+        data-pokemon-id="${escapeHtml(
           pokemon.id
         )}"
       >
@@ -12456,7 +12457,7 @@ function renderTrainerCompositionGroup({
           ? " is-collapsed"
           : ""
       }"
-      data-trainer-group-id="${escapeAttribute(
+      data-trainer-group-id="${escapeHtml(
         trainerId
       )}"
     >
@@ -12489,7 +12490,7 @@ function renderTrainerCompositionGroup({
 
             <strong
               data-role="composition-trainer-name"
-              data-trainer-id="${escapeAttribute(
+              data-trainer-id="${escapeHtml(
                 trainerId
               )}"
             >
@@ -12515,7 +12516,7 @@ function renderTrainerCompositionGroup({
                   type="button"
                   class="poke5e-encounter-planner__trainer-collapse"
                   data-action="toggle-trainer-composition"
-                  data-trainer-id="${escapeAttribute(
+                  data-trainer-id="${escapeHtml(
                     trainerId
                   )}"
                   aria-expanded="${
@@ -12643,10 +12644,10 @@ function renderEncounterCard(
           ? " is-compact"
           : ""
       }"
-      data-encounter-row-id="${escapeAttribute(
+      data-encounter-row-id="${escapeHtml(
         row.id
       )}"
-      data-trainer-id="${escapeAttribute(
+      data-trainer-id="${escapeHtml(
         row.trainerId ??
         ""
       )}"
@@ -12729,13 +12730,13 @@ function renderEncounterCard(
                 : ""
             }"
             data-action="toggle-random-lock"
-            data-row-id="${escapeAttribute(row.id)}"
-            data-trainer-id="${escapeAttribute(
+            data-row-id="${escapeHtml(row.id)}"
+            data-trainer-id="${escapeHtml(
               row.trainerId ??
               ""
             )}"
-            title="${escapeAttribute(lockTitle)}"
-            aria-label="${escapeAttribute(lockTitle)}"
+            title="${escapeHtml(lockTitle)}"
+            aria-label="${escapeHtml(lockTitle)}"
             aria-pressed="${
               row.locked ===
                 true
@@ -12760,7 +12761,7 @@ function renderEncounterCard(
           <button
             type="button"
             data-action="remove-pokemon"
-            data-row-id="${escapeAttribute(row.id)}"
+            data-row-id="${escapeHtml(row.id)}"
             title="Quitar del encuentro"
             aria-label="Quitar del encuentro"
           >
@@ -12785,7 +12786,7 @@ function renderEncounterCard(
           <input
             type="number"
             data-role="encounter-level"
-            data-row-id="${escapeAttribute(row.id)}"
+            data-row-id="${escapeHtml(row.id)}"
             min="${minimumLevel}"
             max="20"
             step="1"
@@ -12800,7 +12801,7 @@ function renderEncounterCard(
           <input
             type="number"
             data-role="encounter-quantity"
-            data-row-id="${escapeAttribute(row.id)}"
+            data-row-id="${escapeHtml(row.id)}"
             min="1"
             max="999"
             step="1"
@@ -12844,7 +12845,7 @@ function renderEncounterCard(
           <input
             type="number"
             data-role="encounter-defeated"
-            data-row-id="${escapeAttribute(row.id)}"
+            data-row-id="${escapeHtml(row.id)}"
             min="0"
             max="${row.quantity}"
             step="1"
@@ -12859,7 +12860,7 @@ function renderEncounterCard(
           <input
             type="number"
             data-role="encounter-captured"
-            data-row-id="${escapeAttribute(row.id)}"
+            data-row-id="${escapeHtml(row.id)}"
             min="0"
             max="${Math.max(
               0,
@@ -13525,7 +13526,7 @@ function renderTypeChips(
             type => `
               <span
                 class="poke5e-encounter-planner__type-chip"
-                data-type="${escapeAttribute(type)}"
+                data-type="${escapeHtml(type)}"
               >
                 ${escapeHtml(type)}
               </span>
@@ -13616,48 +13617,4 @@ function normalizeSearch(
     )
     .trim()
     .toLowerCase();
-}
-
-
-function clampInteger(
-  value,
-  min,
-  max,
-  fallback
-) {
-  const numeric =
-    Number(
-      value
-    );
-
-
-  if (
-    !Number.isFinite(
-      numeric
-    )
-  ) {
-    return fallback;
-  }
-
-
-  return Math.min(
-    max,
-
-    Math.max(
-      min,
-      Math.trunc(
-        numeric
-      )
-    )
-  );
-}
-
-
-
-function escapeAttribute(
-  value
-) {
-  return escapeHtml(
-    value
-  );
 }

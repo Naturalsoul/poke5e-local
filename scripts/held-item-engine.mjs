@@ -7,6 +7,7 @@ import { heldItemConfiguration, isHeldItemHealing } from "./held-item-config.mjs
 import { registerBerryHealingChat } from "./berry-healing.mjs";
 import { applyBindingDamageBonus, captureBindingDamage, recordBindingDamage, synchronizeBindingMoves } from "./periodic-engine.mjs";
 import { publishRollBeforeDamage } from "./chat-roll-display.mjs";
+import { isAuthority } from "./foundry-runtime.mjs";
 
 const MODULE_ID = "poke5e-local";
 const pendingActors = new Map();
@@ -368,10 +369,6 @@ export async function processHeldItemEndTurn(actor) {
       await actor.createEmbeddedDocuments("ActiveEffect", [{ ...effect, origin: held.uuid }]);
     }
   }
-}
-
-function isAuthority() {
-  return game.users?.activeGM?.id === game.user.id || (!game.users?.activeGM && game.user.isGM);
 }
 
 export function synchronizeHeldItemPassives(actor) {

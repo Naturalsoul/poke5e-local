@@ -3,6 +3,7 @@ import {
   normalizeEncounterItemId,
   normalizeTrainerArchetypeId
 } from "./encounter-model.mjs";
+import { clampInteger } from "./numbers.mjs";
 
 const MODULE_ID = "poke5e-local";
 
@@ -733,35 +734,6 @@ function positiveInteger(
     0,
     Math.trunc(
       numeric
-    )
-  );
-}
-
-
-function clampInteger(
-  value,
-  min,
-  max,
-  fallback
-) {
-  const numeric =
-    Number(value);
-
-  if (
-    !Number.isFinite(
-      numeric
-    )
-  ) {
-    return fallback;
-  }
-
-  return Math.min(
-    max,
-    Math.max(
-      min,
-      Math.trunc(
-        numeric
-      )
     )
   );
 }

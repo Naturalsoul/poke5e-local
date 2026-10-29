@@ -7,7 +7,8 @@ import {
 } from "./pokemon-move-refresh-service.mjs";
 
 import {
-  isPokemonActor
+  isPokemonActor,
+  assertPokemon
 } from "./trainer-party-service.mjs";
 
 
@@ -31,27 +32,6 @@ const ABILITY_IDS = [
   "wis",
   "cha"
 ];
-
-
-/* ============================================================
- * VALIDATION
- * ============================================================ */
-
-function assertPokemon(
-  pokemon
-) {
-
-  if (
-    !isPokemonActor(
-      pokemon
-    )
-  ) {
-
-    throw new TypeError(
-      `${pokemon?.name ?? "Actor"} no es un Pokémon Poke5e.`
-    );
-  }
-}
 
 
 function assertGm() {

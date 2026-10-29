@@ -361,7 +361,7 @@ function renderVariant({
   return `
     <section
       class="fakemon-studio__media-variant"
-      data-kind="${escapeAttribute(
+      data-kind="${escapeHtml(
         kind
       )}"
     >
@@ -411,10 +411,10 @@ function renderPreviewCard(
   return `
     <article
       class="fakemon-studio__media-card"
-      data-media-preview-card="${escapeAttribute(
+      data-media-preview-card="${escapeHtml(
         preview.key
       )}"
-      data-state="${escapeAttribute(
+      data-state="${escapeHtml(
         preview.state
       )}"
     >
@@ -436,7 +436,7 @@ function renderPreviewCard(
 
         <span
           class="fakemon-studio__media-status"
-          data-media-preview-status="${escapeAttribute(
+          data-media-preview-status="${escapeHtml(
             preview.key
           )}"
         >
@@ -458,7 +458,7 @@ function renderPreviewCard(
 
         <div
           class="fakemon-studio__media-placeholder"
-          data-media-preview-placeholder="${escapeAttribute(
+          data-media-preview-placeholder="${escapeHtml(
             preview.key
           )}"
           ${hasSource ? "hidden" : ""}
@@ -491,19 +491,19 @@ function renderPreviewCard(
 
           <input
             type="text"
-            name="fakemon-media-${escapeAttribute(
+            name="fakemon-media-${escapeHtml(
               preview.role
             )}"
-            data-role="${escapeAttribute(
+            data-role="${escapeHtml(
               preview.role
             )}"
-            value="${escapeAttribute(
+            value="${escapeHtml(
               preview.rawValue
             )}"
-            placeholder="${escapeAttribute(
+            placeholder="${escapeHtml(
               preview.placeholder
             )}"
-            aria-label="Ruta ${escapeAttribute(
+            aria-label="Ruta ${escapeHtml(
               preview.title
             )}"
           >
@@ -513,11 +513,11 @@ function renderPreviewCard(
             type="button"
             class="fakemon-studio__media-browse"
             data-action="browse-media"
-            data-media-role="${escapeAttribute(
+            data-media-role="${escapeHtml(
               preview.role
             )}"
             title="Seleccionar archivo"
-            aria-label="Seleccionar ${escapeAttribute(
+            aria-label="Seleccionar ${escapeHtml(
               preview.title
             )}"
           >
@@ -546,15 +546,15 @@ function renderPreviewAsset(
 
   const commonAttributes =
     `
-      data-media-preview-element="${escapeAttribute(
+      data-media-preview-element="${escapeHtml(
         preview.key
       )}"
-      data-media-preview-type="${escapeAttribute(
+      data-media-preview-type="${escapeHtml(
         preview.previewType
       )}"
       ${
         hasSource
-          ? `src="${escapeAttribute(
+          ? `src="${escapeHtml(
               preview.src
             )}"`
           : ""
@@ -577,7 +577,7 @@ function renderPreviewAsset(
         playsinline
         preload="metadata"
         style="width:100%;height:100%;padding:8px;object-fit:contain;box-sizing:border-box;"
-        aria-label="Preview ${escapeAttribute(
+        aria-label="Preview ${escapeHtml(
           preview.title
         )}"
       ></video>
@@ -588,7 +588,7 @@ function renderPreviewAsset(
   return `
     <img
       ${commonAttributes}
-      alt="Preview ${escapeAttribute(
+      alt="Preview ${escapeHtml(
         preview.title
       )}"
     >
@@ -1270,15 +1270,4 @@ function normalizeMediaDraft(
         ""
       ).trim()
   };
-}
-
-
-
-function escapeAttribute(
-  value
-) {
-
-  return escapeHtml(
-    value
-  );
 }

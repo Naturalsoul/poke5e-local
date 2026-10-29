@@ -2,9 +2,8 @@ import {
   STRUGGLE_MOVE_ID
 } from "./struggle-rules.mjs";
 
-import {
-  isPokemonActor
-} from "./trainer-party-service.mjs";
+import { assertPokemon } from "./trainer-party-service.mjs";
+import { normalizeId } from "./ids.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -20,37 +19,6 @@ const MAX_EXTRA_MOVE_SLOTS =
   DEFAULT_MOVE_LIMIT;
 
 
-/* ============================================================
- * VALIDATION
- * ============================================================ */
-
-function assertPokemon(
-  pokemon
-) {
-  if (
-    !isPokemonActor(
-      pokemon
-    )
-  ) {
-    throw new Error(
-      `${pokemon?.name ?? "Actor"} no es un Pokémon Poke5e.`
-    );
-  }
-}
-
-
-function normalizeCanonicalId(
-  value
-) {
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
-}
-
-
 function uniqueCanonicalIds(
   values
 ) {
@@ -58,7 +26,7 @@ function uniqueCanonicalIds(
     ...new Set(
       values
         .map(
-          normalizeCanonicalId
+          normalizeId
         )
         .filter(Boolean)
     )
@@ -85,7 +53,7 @@ function getMoveSourceId(
   }
 
   return (
-    normalizeCanonicalId(
+    normalizeId(
       item.getFlag(
         MODULE_ID,
         "sourceId"
@@ -392,7 +360,7 @@ export function isPokemonMoveKnown(
   const moveId =
     typeof moveOrId ===
       "string"
-      ? normalizeCanonicalId(
+      ? normalizeId(
           moveOrId
         )
       : getMoveSourceId(

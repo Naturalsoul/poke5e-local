@@ -2,6 +2,7 @@ import { escapeHtml } from "./html.mjs";
 import {
   POKEMON_TYPES
 } from "./types.mjs";
+import { normalizeId } from "./ids.mjs";
 
 const {
   DialogV2
@@ -802,7 +803,7 @@ function renderAbility({
       <input
         type="checkbox"
         name="abilityIds"
-        value="${escapeAttribute(
+        value="${escapeHtml(
           entry.id
         )}"
         ${
@@ -916,10 +917,10 @@ function renderMove({
 
       <input
         type="checkbox"
-        name="${escapeAttribute(
+        name="${escapeHtml(
           inputName
         )}"
-        value="${escapeAttribute(
+        value="${escapeHtml(
           moveId
         )}"
         ${
@@ -957,7 +958,7 @@ function renderMove({
 
           <em
             class="fakemon-wizard__move-type"
-            style="--wizard-type-color: ${escapeAttribute(
+            style="--wizard-type-color: ${escapeHtml(
               POKEMON_TYPES[
                 type
               ]?.color ??
@@ -1144,7 +1145,7 @@ function renderAbilityTypeAffinities(
         return `
           <em
             class="fakemon-wizard__move-type"
-            style="--wizard-type-color: ${escapeAttribute(
+            style="--wizard-type-color: ${escapeHtml(
               POKEMON_TYPES[
                 type
               ]?.color ??
@@ -1722,29 +1723,5 @@ function typeLabel(
       type
     ]?.en ??
     type
-  );
-}
-
-
-function normalizeId(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
-}
-
-
-
-function escapeAttribute(
-  value
-) {
-
-  return escapeHtml(
-    value
   );
 }

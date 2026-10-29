@@ -5,6 +5,7 @@ import {
 import {
   isMoveLocked
 } from "./move-lock-runtime.mjs";
+import { getLanguage as language } from "./i18n.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -72,23 +73,6 @@ const FAILURE_MESSAGES = {
       "cannot use this move during this turn because of Cursed Body"
   }
 };
-
-
-/* ============================================================
- * IDIOMA
- * ============================================================ */
-
-function language() {
-
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-
-    ? "en"
-
-    : "es";
-}
 
 
 /* ============================================================

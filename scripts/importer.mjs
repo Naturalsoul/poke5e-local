@@ -1224,7 +1224,7 @@ export class Poke5eImporter extends ApplicationV2 {
               : "";
 
           return (
-            `<option value="${escapeAttribute(type)}"${selected}>` +
+            `<option value="${escapeHtml(type)}"${selected}>` +
             `${escapeHtml(TYPE_LABELS[state.language][type])}` +
             `</option>`
           );
@@ -1240,7 +1240,7 @@ export class Poke5eImporter extends ApplicationV2 {
               : "";
 
           return (
-            `<option value="${escapeAttribute(sr)}"${selected}>` +
+            `<option value="${escapeHtml(sr)}"${selected}>` +
             `SR ${escapeHtml(sr)}` +
             `</option>`
           );
@@ -1316,12 +1316,12 @@ export class Poke5eImporter extends ApplicationV2 {
               : "";
 
           return `
-            <tr data-pokemon-id="${escapeAttribute(id)}">
+            <tr data-pokemon-id="${escapeHtml(id)}">
               <td>
                 <input
                   type="checkbox"
                   data-role="pokemon-checkbox"
-                  value="${escapeAttribute(id)}"
+                  value="${escapeHtml(id)}"
                   ${checked}
                 >
               </td>
@@ -1352,7 +1352,7 @@ export class Poke5eImporter extends ApplicationV2 {
                 <input
                   type="number"
                   data-role="level-input"
-                  data-pokemon-id="${escapeAttribute(id)}"
+                  data-pokemon-id="${escapeHtml(id)}"
                   min="${minimumLevel}"
                   max="20"
                   step="1"
@@ -1376,7 +1376,7 @@ export class Poke5eImporter extends ApplicationV2 {
             type="search"
             data-role="search"
             placeholder="Buscar por nombre, ID o Pokédex"
-            value="${escapeAttribute(state.search)}"
+            value="${escapeHtml(state.search)}"
           >
 
           <select data-role="type-filter">
@@ -5709,14 +5709,6 @@ function finiteNumber(
   )
     ? numeric
     : fallback;
-}
-
-function escapeAttribute(
-  value
-) {
-  return escapeHtml(
-    value
-  );
 }
 
 /* ============================================================

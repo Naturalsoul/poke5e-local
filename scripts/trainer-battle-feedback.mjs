@@ -15,10 +15,8 @@ import {
 import {
   isTrainerActor
 } from "./trainer-service.mjs";
+import { getLanguage } from "./i18n.mjs";
 
-
-const MODULE_ID =
-  "poke5e-local";
 
 const ROOT_CLASS =
   "poke5e-trainer-command-center";
@@ -87,21 +85,6 @@ const LABELS = {
         `${pokemon.name} fainted!`
   }
 };
-
-
-/* ============================================================
- * LANGUAGE
- * ============================================================ */
-
-function getLanguage() {
-
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-    ? "en"
-    : "es";
-}
 
 
 /* ============================================================

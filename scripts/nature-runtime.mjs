@@ -10,6 +10,7 @@ import {
 import {
   refreshPokemonMoves
 } from "./pokemon-move-refresh-service.mjs";
+import { getLanguage as currentLanguage } from "./i18n.mjs";
 
 
 const MODULE_ID =
@@ -41,30 +42,6 @@ function assertPokemonActor(
     throw new TypeError(
       `${actor?.name ?? "Actor"} no es un Pokémon Poke5e.`
     );
-  }
-}
-
-
-/* ============================================================
- * LANGUAGE
- * ============================================================ */
-
-function currentLanguage() {
-
-  try {
-
-    return game.settings.get(
-      MODULE_ID,
-      "language"
-    ) === "en"
-
-      ? "en"
-
-      : "es";
-
-  } catch {
-
-    return "es";
   }
 }
 

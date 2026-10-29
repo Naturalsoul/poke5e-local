@@ -1,3 +1,7 @@
+import { fractionalAmount } from "./numbers.mjs";
+
+import { actorFromUuid } from "./foundry-runtime.mjs";
+
 const MODULE_ID = "poke5e-local";
 
 /*
@@ -731,38 +735,6 @@ function originatingMoveItem(
   }
 }
 
-function actorFromUuid(
-  uuid
-) {
-  if (!uuid) {
-    return null;
-  }
-
-  try {
-    const document =
-      fromUuidSync(
-        uuid,
-        {
-          strict: false
-        }
-      );
-
-    if (
-      document?.documentName ===
-      "Actor"
-    ) {
-      return document;
-    }
-
-    return (
-      document?.actor ??
-      null
-    );
-  } catch {
-    return null;
-  }
-}
-
 /* ============================================================
  * DAMAGE HELPERS
  * ============================================================ */
@@ -819,37 +791,6 @@ function actualDamageFromUpdates(
       afterTemp
     )
   );
-}
-
-function fractionalAmount(
-  damage,
-  fraction,
-  mode
-) {
-  const raw =
-    Math.max(
-      0,
-      Number(
-        damage
-      )
-    ) *
-    Math.max(
-      0,
-      Number(
-        fraction
-      )
-    );
-
-  switch (mode) {
-    case "ceil":
-      return Math.ceil(raw);
-
-    case "round":
-      return Math.round(raw);
-
-    default:
-      return Math.floor(raw);
-  }
 }
 
 function pokemonLevel(

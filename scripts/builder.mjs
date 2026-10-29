@@ -27,6 +27,8 @@ import {
   STRUGGLE_MOVE_ID,
   STRUGGLE_RULE
 } from "./struggle-rules.mjs";
+import { clampInteger } from "./numbers.mjs";
+import { normalizeId } from "./ids.mjs";
 
 const MODULE_ID = "poke5e-local";
 const BUILDER_VERSION = "0.18.23";
@@ -482,7 +484,7 @@ function buildMovePokemonSnapshotFromActor(
 
   return {
     id:
-      normalizeCanonicalId(
+      normalizeId(
         actor.getFlag(
           MODULE_ID,
           "sourceId"
@@ -942,7 +944,7 @@ function createBuildContext({
     grantedHiddenAbilityIds,
 
     requestedActiveAbilityId:
-      normalizeCanonicalId(
+      normalizeId(
         activeAbilityId
       ),
 
@@ -1372,18 +1374,6 @@ function getSystemMoves(
   return [
     struggle
   ];
-}
-
-
-function normalizeCanonicalId(
-  value
-) {
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
 }
 
 function normalizeAbilityRefs(
@@ -5254,33 +5244,4 @@ function nonNegativeNumber(
         numeric
       )
     : fallback;
-}
-
-function clampInteger(
-  value,
-  min,
-  max,
-  fallback
-) {
-  const numeric =
-    Number(value);
-
-  if (
-    !Number.isFinite(
-      numeric
-    )
-  ) {
-    return fallback;
-  }
-
-  return Math.min(
-    max,
-
-    Math.max(
-      min,
-      Math.trunc(
-        numeric
-      )
-    )
-  );
 }

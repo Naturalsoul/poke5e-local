@@ -1,5 +1,6 @@
 import { AUTOMATED_MODIFIER_MOVES } from "./modifier-effects.mjs";
 import { refreshEndOfNextTurnDuration } from "./turn-duration-runtime.mjs";
+import { actorFromUuid } from "./foundry-runtime.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -707,73 +708,6 @@ export async function applyPokemonMoveModifier(
 
 
   return result;
-}
-
-
-/* ============================================================
- * RESOLVER UN UUID A ACTOR
- * ============================================================ */
-
-function actorFromUuid(
-  uuid
-) {
-
-  if (!uuid) {
-    return null;
-  }
-
-
-  let document;
-
-
-  try {
-
-    document =
-      fromUuidSync(
-        uuid,
-        {
-          strict:
-            false
-        }
-      );
-
-  } catch {
-
-    return null;
-  }
-
-
-  if (!document) {
-    return null;
-  }
-
-
-  /*
-   * Actor directamente.
-   */
-
-  if (
-    document.documentName ===
-    "Actor"
-  ) {
-
-    return document;
-  }
-
-
-  /*
-   * TokenDocument.
-   */
-
-  if (
-    document.actor
-  ) {
-
-    return document.actor;
-  }
-
-
-  return null;
 }
 
 

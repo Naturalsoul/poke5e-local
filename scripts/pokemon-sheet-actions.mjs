@@ -73,6 +73,7 @@ import {
 import {
   evolvePokemonOnDemand
 } from "./pokemon-evolution-service.mjs";
+import { normalizeId } from "./ids.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -703,22 +704,6 @@ async function openInspectableItem({
   );
 }
 
-/* ============================================================
- * ITEM DELETE
- * ============================================================ */
-
-function normalizeCanonicalId(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
-}
-
 
 function resolveDeletableItem(
   pokemon,
@@ -746,7 +731,7 @@ function resolveDeletableItem(
 
 
   const sourceId =
-    normalizeCanonicalId(
+    normalizeId(
       item.getFlag(
         MODULE_ID,
         "sourceId"

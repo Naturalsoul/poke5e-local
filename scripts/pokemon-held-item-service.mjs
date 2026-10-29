@@ -1,6 +1,7 @@
 import {
   getPokemonTrainerUuid,
-  isPokemonActor
+  isPokemonActor,
+  assertPokemon
 } from "./trainer-party-service.mjs";
 
 import {
@@ -270,27 +271,6 @@ export function transferTrainerBerryToPokemon(pokemon, trainer, itemId) {
     }
     return created;
   });
-}
-
-
-/* ============================================================
- * VALIDATION
- * ============================================================ */
-
-function assertPokemon(
-  pokemon
-) {
-
-  if (
-    !isPokemonActor(
-      pokemon
-    )
-  ) {
-
-    throw new Error(
-      `${pokemon?.name ?? "Actor"} no es un Pokémon Poke5e.`
-    );
-  }
 }
 
 

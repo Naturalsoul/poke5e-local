@@ -348,14 +348,14 @@ function renderAbilityReference({
       <input
         type="hidden"
         data-field="id"
-        value="${escapeAttribute(
+        value="${escapeHtml(
           abilityId
         )}"
       >
 
 
       <img
-        src="${escapeAttribute(
+        src="${escapeHtml(
           pokemonAbilityIcon(
             abilityId
           ) ??
@@ -474,7 +474,7 @@ function renderUnresolvedAbility({
           data-reference-kind="ability"
           list="fakemon-studio-abilities"
           placeholder="ability-id"
-          value="${escapeAttribute(
+          value="${escapeHtml(
             reference?.id ??
             ""
           )}"
@@ -631,19 +631,4 @@ function localizedText(
     resolved ??
     fallback
   ).trim();
-}
-
-
-/* ============================================================
- * ESCAPE
- * ============================================================ */
-
-
-function escapeAttribute(
-  value
-) {
-
-  return escapeHtml(
-    value
-  );
 }

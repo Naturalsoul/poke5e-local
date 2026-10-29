@@ -26,6 +26,8 @@ import {
 } from "./move-lock-runtime.mjs";
 
 import { heldItemPreventsContactReactions } from "./held-item-engine.mjs";
+import { actorFromUuid } from "./foundry-runtime.mjs";
+import { getLanguage as language } from "./i18n.mjs";
 
 const CONTACT_REACTIVE_ABILITIES = new Set(["static", "poison-point", "effect-spore", "flame-body", "gooey", "rough-skin", "iron-barbs"]);
 
@@ -254,30 +256,6 @@ const REACTIVE_EFFECT_HANDLERS =
   ]);
 
 
-/* ============================================================
- * LANGUAGE
- * ============================================================ */
-
-function language() {
-
-  try {
-
-    return game.settings.get(
-      MODULE_ID,
-      "language"
-    ) === "en"
-
-      ? "en"
-
-      : "es";
-
-  } catch {
-
-    return "es";
-  }
-}
-
-
 function damageTypeLabel(
   damageType
 ) {
@@ -324,53 +302,6 @@ function damageTypeLabel(
     ] ??
     damageType
   );
-}
-
-
-/* ============================================================
- * ACTOR FROM UUID
- * ============================================================ */
-
-function actorFromUuid(
-  uuid
-) {
-
-  if (!uuid) {
-
-    return null;
-  }
-
-
-  try {
-
-    const document =
-      fromUuidSync(
-        uuid,
-        {
-          strict:
-            false
-        }
-      );
-
-
-    if (
-      document?.documentName ===
-        "Actor"
-    ) {
-
-      return document;
-    }
-
-
-    return (
-      document?.actor ??
-      null
-    );
-
-  } catch {
-
-    return null;
-  }
 }
 
 

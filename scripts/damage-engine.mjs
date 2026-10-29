@@ -14,6 +14,9 @@ import {
 import {
   isPokemonActor
 } from "./trainer-party-service.mjs";
+import { fractionalAmount } from "./numbers.mjs";
+import { actorFromUuid } from "./foundry-runtime.mjs";
+import { getLanguage as language } from "./i18n.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -68,25 +71,6 @@ const LABELS = {
       "for"
   }
 };
-
-
-/* ============================================================
- * IDIOMA
- * ============================================================ */
-
-function language() {
-
-  const configured =
-    game.settings.get(
-      MODULE_ID,
-      "language"
-    );
-
-
-  return configured === "en"
-    ? "en"
-    : "es";
-}
 
 
 function label(
@@ -1323,56 +1307,6 @@ function onPreCalculateBerserkDamage(
   };
 }
 
-/* ============================================================
- * ACTOR DESDE UUID
- * ============================================================ */
-
-function actorFromUuid(
-  uuid
-) {
-
-  if (!uuid) {
-
-    return null;
-  }
-
-
-  try {
-
-    const document =
-      fromUuidSync(
-        uuid,
-        {
-          strict:
-            false
-        }
-      );
-
-
-    if (
-      document?.documentName ===
-      "Actor"
-    ) {
-
-      return document;
-    }
-
-
-    /*
-     * TokenDocument / documento con Actor.
-     */
-
-    return (
-      document?.actor ??
-      null
-    );
-
-  } catch {
-
-    return null;
-  }
-}
-
 
 /* ============================================================
  * ¿EL MOVE PUEDE QUEMAR?
@@ -1777,57 +1711,6 @@ function actualDamageFromUpdates(
       afterTemp
     )
   );
-}
-
-/* ============================================================
- * REDONDEO
- * ============================================================ */
-
-function fractionalAmount(
-  damage,
-  fraction,
-  mode
-) {
-
-  const raw =
-    Math.max(
-      0,
-      Number(damage)
-    )
-
-    *
-
-    Math.max(
-      0,
-      Number(fraction)
-    );
-
-
-  switch (
-    mode
-  ) {
-
-    case "ceil":
-
-      return Math.ceil(
-        raw
-      );
-
-
-    case "round":
-
-      return Math.round(
-        raw
-      );
-
-
-    case "floor":
-    default:
-
-      return Math.floor(
-        raw
-      );
-  }
 }
 
 

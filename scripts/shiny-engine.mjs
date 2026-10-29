@@ -7,6 +7,7 @@ import {
   getPokemonShinyState,
   rollPokemonShiny
 } from "./shiny-runtime.mjs";
+import { isAuthority } from "./foundry-runtime.mjs";
 
 
 const MODULE_ID =
@@ -77,29 +78,6 @@ function configuredRuleId() {
     )?.id ??
     getDefaultShinyRuleId()
   );
-}
-
-
-/* ============================================================
- * AUTHORITY
- * ============================================================ */
-
-function isAuthority() {
-
-  const activeGM =
-    game.users.activeGM;
-
-
-  if (activeGM) {
-
-    return (
-      activeGM.id ===
-      game.user.id
-    );
-  }
-
-
-  return game.user.isGM;
 }
 
 

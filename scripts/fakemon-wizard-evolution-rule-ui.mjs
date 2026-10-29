@@ -362,7 +362,7 @@ function renderEvolutionRuleStep({
             name="evolutionPoints"
             min="0"
             step="1"
-            value="${escapeAttribute(
+            value="${escapeHtml(
               value.evolutionPoints
             )}"
           >
@@ -495,7 +495,7 @@ function renderConditionRow({
           .map(
             option => `
               <option
-                value="${escapeAttribute(option)}"
+                value="${escapeHtml(option)}"
                 ${option === type ? "selected" : ""}
               >
                 ${escapeHtml(
@@ -515,11 +515,11 @@ function renderConditionRow({
       <input
         type="text"
         name="condition-value-${index}"
-        value="${escapeAttribute(
+        value="${escapeHtml(
           condition?.value ??
           ""
         )}"
-        placeholder="${escapeAttribute(
+        placeholder="${escapeHtml(
           CONDITION_PLACEHOLDERS[
             type
           ] ??
@@ -565,7 +565,7 @@ function renderModeOptions(
     .map(
       mode => `
         <option
-          value="${escapeAttribute(mode)}"
+          value="${escapeHtml(mode)}"
           ${mode === selected ? "selected" : ""}
         >
           ${escapeHtml(
@@ -1134,18 +1134,4 @@ function invalid(
 
     message
   };
-}
-
-
-
-function escapeAttribute(
-  value
-) {
-
-  return escapeHtml(
-    value
-  ).replace(
-    /"/g,
-    "&quot;"
-  );
 }

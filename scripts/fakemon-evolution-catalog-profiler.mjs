@@ -1,3 +1,5 @@
+import { normalizeId } from "./ids.mjs";
+
 const CHANNELS =
   Object.freeze([
     "abilities",
@@ -429,17 +431,4 @@ function roundToStep(
       4
     )
   );
-}
-
-
-function normalizeId(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
 }

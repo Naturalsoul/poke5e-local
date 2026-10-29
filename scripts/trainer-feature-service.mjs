@@ -7,6 +7,7 @@ import {
   getTrainerProgressionLimits,
   getTrainerSpecialization
 } from "./trainer-rules.mjs";
+import { getLanguage } from "./i18n.mjs";
 
 
 const MODULE_ID =
@@ -712,16 +713,6 @@ const PATH_LEVEL_5_FEATURES =
         }
       }
     });
-
-function getLanguage() {
-
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-    ? "en"
-    : "es";
-}
 
 
 

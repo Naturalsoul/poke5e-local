@@ -50,6 +50,7 @@ import {
   assignPokemonGender,
   getPokemonGender
 } from "./gender-runtime.mjs";
+import { normalizeId } from "./ids.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -185,18 +186,6 @@ function resolveWildIdentity(
   };
 }
 
-function normalizeCanonicalId(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
-}
-
 
 function itemKind(
   item
@@ -216,7 +205,7 @@ function itemSourceId(
   item
 ) {
 
-  return normalizeCanonicalId(
+  return normalizeId(
     item?.getFlag?.(
       MODULE_ID,
       "sourceId"
@@ -310,7 +299,7 @@ function resolveWildAbilityState(
 
 
   const activeAbilityId =
-    normalizeCanonicalId(
+    normalizeId(
       actor.getFlag(
         MODULE_ID,
         "activeAbilityId"

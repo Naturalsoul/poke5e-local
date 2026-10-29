@@ -1,3 +1,5 @@
+import { normalizeId } from "./ids.mjs";
+
 const MOVE_MECHANICAL_OVERRIDES =
   Object.freeze({
 
@@ -424,17 +426,4 @@ function mechanical(
         ...tags
       ])
   });
-}
-
-
-function normalizeId(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
 }

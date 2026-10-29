@@ -17,10 +17,8 @@ import {
 import {
   getTrainerProgressionState
 } from "./trainer-progression-service.mjs";
+import { getLanguage } from "./i18n.mjs";
 
-
-const MODULE_ID =
-  "poke5e-local";
 
 const ABILITY_IDS = [
   "str",
@@ -30,16 +28,6 @@ const ABILITY_IDS = [
   "wis",
   "cha"
 ];
-
-function getLanguage() {
-
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-    ? "en"
-    : "es";
-}
 
 
 function abilityScoreIncreaseMarkup(

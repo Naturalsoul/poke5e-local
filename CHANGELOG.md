@@ -4,6 +4,14 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.44.4] — 2026-10-29
+
+- **Limpieza:** 104 copias de helpers pasan a ser una sola cada una: el idioma (`i18n.mjs`), quién corre la
+  automatización y cómo se encuentra el Actor de un UUID (`foundry-runtime.mjs`), los ids (`ids.mjs`), los
+  redondeos de daño (`numbers.mjs`) y `assertPokemon`. Son unas 2.100 líneas menos.
+- **Idioma:** si el ajuste de idioma aún no está registrado, todas las ventanas usan español. Antes algunas
+  daban error.
+
 ## [0.44.3] — 2026-10-29
 
 - **Desplegar Pokémon:** si tu rol de Foundry no puede crear Tokens, el aviso sale antes de elegir dónde

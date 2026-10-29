@@ -25,6 +25,7 @@ import {
 import {
   acquireWildPokemonToken
 } from "./trainer-wild-pokemon-service.mjs";
+import { getLanguage } from "./i18n.mjs";
 
 const MODULE_ID = "poke5e-local";
 const MANAGER_CLASS = "poke5e-trainer-manager";
@@ -405,20 +406,6 @@ const ACTION_HANDLERS = {
   release:
     releasePokemonFromTrainer
 };
-
-
-/* ============================================================
- * LANGUAGE
- * ============================================================ */
-
-function getLanguage() {
-  return game.settings.get(
-    MODULE_ID,
-    "language"
-  ) === "en"
-    ? "en"
-    : "es";
-}
 
 
 /* ============================================================

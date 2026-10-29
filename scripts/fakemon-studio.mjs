@@ -82,6 +82,7 @@ import {
   POKEMON_TYPES,
   POKEMON_TYPE_IDS
 } from "./types.mjs";
+import { getLanguage as currentLanguage } from "./i18n.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -415,7 +416,7 @@ export class FakemonStudio
               type="search"
               data-role="species-search"
               placeholder="Buscar Fakemon..."
-              value="${escapeAttribute(
+              value="${escapeHtml(
                 this._studioState.search
               )}"
             >
@@ -4529,7 +4530,7 @@ function renderSpeciesList(
         return `
           <article
             class="fakemon-studio__species-card${selected}"
-            data-search="${escapeAttribute(
+            data-search="${escapeHtml(
               searchText
             )}"
           >
@@ -4538,7 +4539,7 @@ function renderSpeciesList(
               type="button"
               class="fakemon-studio__species-main"
               data-action="edit-species"
-              data-species-id="${escapeAttribute(
+              data-species-id="${escapeHtml(
                 entry.id
               )}"
             >
@@ -4589,7 +4590,7 @@ function renderSpeciesList(
               <button
                 type="button"
                 data-action="duplicate-species"
-                data-species-id="${escapeAttribute(
+                data-species-id="${escapeHtml(
                   entry.id
                 )}"
                 title="Duplicar"
@@ -4601,7 +4602,7 @@ function renderSpeciesList(
               <button
                 type="button"
                 data-action="delete-species"
-                data-species-id="${escapeAttribute(
+                data-species-id="${escapeHtml(
                   entry.id
                 )}"
                 title="Eliminar"
@@ -4732,7 +4733,7 @@ function renderStudioTabs(
                   type="button"
                   class="fakemon-studio__tab${active ? " is-active" : ""}"
                   data-action="switch-tab"
-                  data-tab="${escapeAttribute(
+                  data-tab="${escapeHtml(
                     tab.id
                   )}"
                   aria-selected="${active ? "true" : "false"}"
@@ -5188,7 +5189,7 @@ function renderEditor({
               data-role="ac"
               min="1"
               step="1"
-              value="${escapeAttribute(
+              value="${escapeHtml(
                 draft.combat?.ac ??
                 10
               )}"
@@ -5222,7 +5223,7 @@ function renderEditor({
               data-role="hp"
               min="1"
               step="1"
-              value="${escapeAttribute(
+              value="${escapeHtml(
                 draft.combat?.hp ??
                 10
               )}"
@@ -5829,7 +5830,7 @@ function renderValidation(
   return `
     <div
       class="fakemon-studio__validation"
-      data-kind="${escapeAttribute(
+      data-kind="${escapeHtml(
         validation.kind
       )}"
     >
@@ -5865,7 +5866,7 @@ function renderCatalogDatalists(
       )
       .map(
         move => `
-          <option value="${escapeAttribute(
+          <option value="${escapeHtml(
             move.id
           )}">
             ${escapeHtml(
@@ -5890,7 +5891,7 @@ function renderCatalogDatalists(
       )
       .map(
         ability => `
-          <option value="${escapeAttribute(
+          <option value="${escapeHtml(
             ability.id
           )}">
             ${escapeHtml(
@@ -5944,7 +5945,7 @@ function renderCollectionSection({
 
         <button
           type="button"
-          data-action="${escapeAttribute(
+          data-action="${escapeHtml(
             addAction
           )}"
         >
@@ -6087,12 +6088,12 @@ function renderAbilityStatCard(
 
       <input
         type="number"
-        data-role="attribute-${escapeAttribute(
+        data-role="attribute-${escapeHtml(
           abilityId
         )}"
         min="1"
         step="1"
-        value="${escapeAttribute(
+        value="${escapeHtml(
           value
         )}"
       >
@@ -6125,10 +6126,10 @@ function renderField({
 
       <input
         type="text"
-        data-role="${escapeAttribute(
+        data-role="${escapeHtml(
           role
         )}"
-        value="${escapeAttribute(
+        value="${escapeHtml(
           value ??
           ""
         )}"
@@ -6174,10 +6175,10 @@ function renderNumberField({
 
       <input
         type="number"
-        data-role="${escapeAttribute(
+        data-role="${escapeHtml(
           role
         )}"
-        value="${escapeAttribute(
+        value="${escapeHtml(
           value ??
           ""
         )}"
@@ -6191,7 +6192,7 @@ function renderNumberField({
             ? ""
             : `max="${max}"`
         }
-        step="${escapeAttribute(
+        step="${escapeHtml(
           step
         )}"
       >
@@ -6218,7 +6219,7 @@ function renderTextarea({
 
 
       <textarea
-        data-role="${escapeAttribute(
+        data-role="${escapeHtml(
           role
         )}"
         rows="4"
@@ -6250,7 +6251,7 @@ function renderSelectField({
 
 
       <select
-        data-role="${escapeAttribute(
+        data-role="${escapeHtml(
           role
         )}"
       >
@@ -6260,7 +6261,7 @@ function renderSelectField({
             .map(
               option => `
                 <option
-                  value="${escapeAttribute(
+                  value="${escapeHtml(
                     option.value
                   )}"
                   ${
@@ -6367,7 +6368,7 @@ function renderCheckbox({
 
       <input
         type="checkbox"
-        data-role="${escapeAttribute(
+        data-role="${escapeHtml(
           role
         )}"
         ${checked ? "checked" : ""}
@@ -6846,10 +6847,10 @@ function renderOfficialTemplatePicker(
 
           return `
             <option
-              value="${escapeAttribute(
+              value="${escapeHtml(
                 entry.id
               )}"
-              label="${escapeAttribute(
+              label="${escapeHtml(
                 label
               )}"
             ></option>
@@ -7034,27 +7035,6 @@ function renderBackupRestoreConfirmation({
   `;
 }
 
-/* ============================================================
- * DISPLAY HELPERS
- * ============================================================ */
-
-function currentLanguage() {
-
-  try {
-
-    return game.settings.get(
-      MODULE_ID,
-      "language"
-    ) === "en"
-      ? "en"
-      : "es";
-
-  } catch {
-
-    return "es";
-  }
-}
-
 
 function pokemonTypeLabel(
   type,
@@ -7224,15 +7204,4 @@ function normalizeSearch(
     )
     .trim()
     .toLowerCase();
-}
-
-
-
-function escapeAttribute(
-  value
-) {
-
-  return escapeHtml(
-    value
-  );
 }
