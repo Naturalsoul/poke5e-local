@@ -4,6 +4,12 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.46.2] — 2026-10-29
+
+- **Mensajes del módulo en el chat:** los mensajes automáticos (estados, Habilidades, clima, objetos equipados) llevan
+  una franja de color a la izquierda y un fondo suave, para distinguirlos de los mensajes de los jugadores. El texto
+  mantiene el color del chat, así que se lee en modo claro y oscuro. Estilos nuevos en `styles/chat.css`.
+
 ## [0.46.1] — 2026-10-29
 
 - **Mensajes de estados:** el chequeo de Confusión ahora dice qué número salió y qué significa
