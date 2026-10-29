@@ -347,3 +347,25 @@ test("weather and terrain: MOVE again in sun, Terrain Pulse's type, Misty Explos
   game.user = undefined;
   game.combat = undefined;
 });
+
+test("weather healing: Synthesis doubles its dice in sun, Shore Up and Floral Healing add MOVE again", async () => {
+  const { onPreRollDamageRiders } = await import("../scripts/move-riders.mjs");
+  const user = createFlagDocument({ name: "Hippowdon", system: { attributes: { hp: { value: 10, max: 100 }, prof: 3 }, abilities: { con: { mod: 3 } } },
+    flags: { [M]: { kind: "pokemon", types: ["grass"] } } });
+  const heal = id => {
+    const item = createFlagDocument({ flags: { [M]: { kind: "move", sourceId: id, moveDefinition: { type: "grass", damage: { modifier: "MOVE" }, powerAbilities: ["con"] } } } });
+    const config = { isHealing: true, subject: { item, actor: user }, rolls: [{ parts: ["2d8 + 3"], options: { type: "healing" } }] };
+    onPreRollDamageRiders(config);
+    return config.rolls[0].parts;
+  };
+  const field = state => { game.combat = { getFlag: () => state, combatants: [] }; };
+  field({ weather: { id: "sun" } });
+  assert.deepEqual(heal("synthesis"), ["2d8 + 3", "2d8"]);
+  assert.deepEqual(heal("shore-up"), ["2d8 + 3"]);
+  field({ weather: { id: "sandstorm" }, terrain: { id: "grassy" } });
+  assert.deepEqual(heal("shore-up"), ["2d8 + 3", "3"]);
+  assert.deepEqual(heal("floral-healing"), ["2d8 + 3", "3"]);
+  assert.deepEqual(heal("synthesis"), ["2d8 + 3"]);
+  assert.deepEqual(heal("recover"), ["2d8 + 3"], "other healing stays untouched");
+  game.combat = undefined;
+});

@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.46.0] — 2026-10-29
+
+- **Curación con clima y terreno:** Synthesis duplica sus dados con sol, Shore Up suma MOVE otra vez en tormenta de
+  arena y Floral Healing en Terreno de Hierba.
+- Synthesis, Shore Up y Floral Healing no traían su fórmula de curación en los datos; ahora la traen, con sus dados
+  por nivel. Los Pokémon que ya los tenían deben volver a aprenderlos para que la ficha tire la curación.
+
 ## [0.45.0] — 2026-10-29
 
 - **Moves con clima y terreno:** Solar Beam y Solar Blade (sol) y Electro Shot (lluvia) suman MOVE otra vez;

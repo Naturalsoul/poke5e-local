@@ -43,7 +43,8 @@ import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
  * - Weather and terrain (the user standing on it): Solar Beam and Solar Blade (sun) and Electro Shot (rain) add MOVE
  *   again; Hydro Steam (sun) and Psyblade (Electric Terrain) roll with advantage; Expanding Force adds 1d6 on Psychic
  *   Terrain; Terrain Pulse takes the terrain's type; Misty Explosion deals half unless the user has half its HP or
- *   stands on Misty Terrain. Steel Roller and Ice Spinner end the terrain.
+ *   stands on Misty Terrain. Steel Roller and Ice Spinner end the terrain. Healing: Synthesis doubles its dice in sun,
+ *   Shore Up adds MOVE again in a sandstorm and Floral Healing on Grassy Terrain.
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
@@ -316,6 +317,13 @@ export const DAMAGE_RIDERS = Object.freeze({
   "misty-explosion": ({ user }) => ({ half: !onTerrain(user, "misty") && hpShare(user) !== null && hpShare(user) < 0.5 })
 });
 
+// Healing Moves: each returns the parts added to the healing roll.
+export const HEALING_RIDERS = Object.freeze({
+  synthesis: ({ dice }) => (hasWeather("sun") ? die(dice, 1) : []),
+  "shore-up": ({ user, item }) => (hasWeather("sandstorm") ? [powerModifier(user, item)] : []),
+  "floral-healing": ({ user, item }) => (activeTerrain() === "grassy" ? [powerModifier(user, item)] : [])
+});
+
 // Tail Glow and Calm Mind: a Move of the user's type adds its STAB (proficiency) once more.
 function stabAgain(user, item) {
   const doubled = focusing(user, "tail-glow") || focusing(user, "calm-mind");
@@ -326,7 +334,14 @@ export function onPreRollDamageRiders(config) {
   const activity = config?.subject;
   const item = activity?.item;
   const roll = config?.rolls?.[0];
-  if (!moveId(item) || !roll || config.isHealing) {return;}
+  if (!moveId(item) || !roll) {return;}
+  if (HEALING_RIDERS[moveId(item)]) {
+    const dice = String(roll.parts?.[0] ?? "").match(/(\d+)d(\d+)/);
+    const extra = HEALING_RIDERS[moveId(item)]({ user: activity.actor, item, dice: dice && { number: Number(dice[1]), faces: Number(dice[2]) } });
+    roll.parts = [...(roll.parts ?? []), ...extra.map(String)];
+    return;
+  }
+  if (config.isHealing) {return;}
   const stab = stabAgain(activity.actor, item);
   if (stab) {(roll.parts ??= []).push(String(stab));}
   // Charge Beam's charge: MOVE once more on its damaging Moves.
