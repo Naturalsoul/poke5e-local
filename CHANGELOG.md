@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.46.1] — 2026-10-29
+
+- **Mensajes de estados:** el chequeo de Confusión ahora dice qué número salió y qué significa
+  (`Chequeo de Confusión: 3 — … no puede moverse ni realizar acciones este turno`), también con 1 y 2, que antes
+  pasaban directo a Struggle sin explicarlo. Las tiradas de Dormido, Paralizado y Shed Skin dicen en su título qué
+  número hace falta.
+
 ## [0.46.0] — 2026-10-29
 
 - **Curación con clima y terreno:** Synthesis duplica sus dados con sol, Shore Up suma MOVE otra vez en tormenta de

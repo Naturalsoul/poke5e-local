@@ -256,3 +256,16 @@ test("Confusion result 1 routes into real self Struggle and increments the check
     false
   );
 });
+
+test("each Confusion result says which number came up and what it means", async () => {
+  for (const [total, meaning] of [[1, /contra sí mismo/], [3, /no puede moverse/], [6, /normalmente/]]) {
+    const context = confusionActor();
+    context.actor.createEmbeddedDocuments ??= async () => [];
+    ConfusionRoll.nextTotal = total;
+    messages.length = 0;
+    await processConfusionStartTurn(context.actor);
+    const said = messages.map(message => message.content ?? "").find(content => content.includes("Chequeo de Confusión:"));
+    assert.ok(said?.includes(`Chequeo de Confusión: ${total}</strong>`), `result ${total}`);
+    assert.match(said, meaning);
+  }
+});
