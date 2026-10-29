@@ -2676,8 +2676,7 @@ function syncLimitedGroups(
 
 function syncConditionalPanels(
   root,
-  form,
-  labels
+  form
 ) {
 
   const originId =
@@ -3385,8 +3384,7 @@ function syncWizard(
 
   syncConditionalPanels(
     root,
-    form,
-    labels
+    form
   );
 
   syncLimitedGroups(

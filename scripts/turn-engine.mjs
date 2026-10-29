@@ -2346,7 +2346,7 @@ function onPreCreateActiveEffect(
     )
   ) {
 
-    return;
+    return true;
   }
 
 
@@ -2363,7 +2363,7 @@ function onPreCreateActiveEffect(
 
   if (!status) {
 
-    return;
+    return true;
   }
 
 
@@ -2469,6 +2469,8 @@ function onPreCreateActiveEffect(
 
     return false;
   }
+
+  return true;
 }
 
 /* ============================================================

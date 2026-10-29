@@ -2747,10 +2747,7 @@ function renderRoleStep(
         ${
           archetypes
             .map(
-              (
-                archetype,
-                index
-              ) => `
+              archetype => `
                 <label class="fakemon-wizard__archetype-choice">
 
                   <input

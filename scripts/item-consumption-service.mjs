@@ -990,7 +990,7 @@ function onPreDisplayCard(
     )
   ) {
 
-    return;
+    return true;
   }
 
 
@@ -1012,7 +1012,7 @@ function onPreDisplayCard(
     )
   ) {
 
-    return;
+    return true;
   }
 
 

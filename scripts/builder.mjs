@@ -5157,25 +5157,6 @@ function normalizeStringArray(
   );
 }
 
-function validOrFallbackFormula(
-  candidate,
-  fallback
-) {
-  const formula =
-    String(
-      candidate ?? ""
-    ).trim();
-
-  return (
-    formula &&
-    isValidFoundryFormula(
-      formula
-    )
-  )
-    ? formula
-    : fallback;
-}
-
 function emptyDamagePart() {
   return {
     number: null,

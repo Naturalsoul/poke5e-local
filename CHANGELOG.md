@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.44.3] — 2026-10-29
+
+- **Desplegar Pokémon:** si tu rol de Foundry no puede crear Tokens, el aviso sale antes de elegir dónde
+  desplegar, con el mismo mensaje que ya usaba Retirar. Antes Foundry rechazaba el Token con un error genérico.
+- **Limpieza:** el lint queda sin errores. Se borran dos funciones que nunca se llamaban y parámetros sin uso, y
+  los hooks devuelven `true` de forma explícita cuando dejan seguir la acción. El juego no cambia.
+
 ## [0.44.2] — 2026-10-28
 
 - **Chat seguro:** antes de guardar un mensaje se le quita lo que podría ejecutar código (`<script>`, `<iframe>`,

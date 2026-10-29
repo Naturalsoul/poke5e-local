@@ -1382,7 +1382,7 @@ function readTrainerChoices(
       "hobbyist"
   ) {
 
-    const specializationId =
+    const hobbyistChoiceId =
       String(
         form.elements
           .hobbyistSpecializationId
@@ -1410,7 +1410,7 @@ function readTrainerChoices(
 
 
     if (
-      !specializationId ||
+      !hobbyistChoiceId ||
       !skill1 ||
       !skill2 ||
       skill1 ===
@@ -1427,7 +1427,7 @@ function readTrainerChoices(
 
     pathChoices
       .hobbyistSpecializationId =
-        specializationId;
+        hobbyistChoiceId;
 
 
     pathChoices

@@ -30,8 +30,7 @@ import {
   assignPokemonToTrainer,
   getTrainerPartyState,
   getTrainerPokeslotLimit,
-  isPokemonActor,
-  removePokemonFromParty
+  isPokemonActor
 } from "./trainer-party-service.mjs";
 
 import {
@@ -1181,52 +1180,6 @@ async function deleteCreatedPokemon(
      * para reparación manual por el GM.
      */
   }
-}
-
-async function cleanupCreatedPokemon(
-  trainer,
-  pokemon
-) {
-
-  if (!pokemon?.id) {
-
-    return;
-  }
-
-
-  try {
-
-    const state =
-      getTrainerPartyState(
-        trainer
-      );
-
-
-    if (
-      state.pokemonUuids.includes(
-        pokemon.uuid
-      )
-    ) {
-
-      await removePokemonFromParty(
-        trainer,
-        pokemon
-      );
-    }
-
-  } catch {
-
-    /*
-     * La limpieza del Party State es best-effort.
-     * El error original de adquisición conserva
-     * prioridad para el GM.
-     */
-  }
-
-
-  await deleteCreatedPokemon(
-    pokemon
-  );
 }
 
 export async function acquireWildPokemonToken(

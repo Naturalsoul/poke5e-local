@@ -2220,7 +2220,7 @@ function onPreCalculateOutrageDamage(
       "outrage"
   ) {
 
-    return;
+    return true;
   }
 
 
@@ -2316,7 +2316,7 @@ function onPreCalculateOutrageDamage(
     )
   ) {
 
-    return;
+    return true;
   }
 
 
@@ -2339,7 +2339,7 @@ function onPreCalculateOutrageDamage(
 
   if (!damage) {
 
-    return;
+    return true;
   }
 
 
@@ -2348,6 +2348,8 @@ function onPreCalculateOutrageDamage(
       damage.value
     ) +
     stabBonus;
+
+  return true;
 }
 
 
@@ -3310,7 +3312,7 @@ function onPostRollConfiguration(
     )
   ) {
 
-    return;
+    return true;
   }
 
 
@@ -3322,7 +3324,7 @@ function onPostRollConfiguration(
 
   if (!item) {
 
-    return;
+    return true;
   }
 
 
@@ -3334,7 +3336,7 @@ function onPostRollConfiguration(
 
   if (!definition) {
 
-    return;
+    return true;
   }
 
 
@@ -3429,6 +3431,8 @@ function onPostRollConfiguration(
 
     return false;
   }
+
+  return true;
 }
 
 

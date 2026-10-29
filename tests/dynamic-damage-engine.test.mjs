@@ -67,7 +67,7 @@ function dynamicItem(kind, formula, actor = null) {
     documentName: "Item",
     actor,
     getFlag(moduleId, key) {
-      if (moduleId !== "poke5e-local") return undefined;
+      if (moduleId !== "poke5e-local") {return undefined;}
       return flags[key];
     }
   };

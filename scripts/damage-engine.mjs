@@ -1822,7 +1822,6 @@ function fractionalAmount(
 
 
     case "floor":
-
     default:
 
       return Math.floor(

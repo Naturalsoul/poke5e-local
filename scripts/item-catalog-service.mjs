@@ -1736,7 +1736,7 @@ function adaptMoveTemplateToPokemon(
     scope.kind !==
     "move-template"
   ) {
-    return;
+    return true;
   }
 
   const actor =
@@ -1747,7 +1747,7 @@ function adaptMoveTemplateToPokemon(
    * existe un preCreateItem.
    */
   if (!actor) {
-    return;
+    return true;
   }
 
   if (
@@ -1832,6 +1832,8 @@ function adaptMoveTemplateToPokemon(
 
     return false;
   }
+
+  return true;
 }
 
 
@@ -1932,14 +1934,14 @@ function adaptAbilityTemplateToPokemon(
     scope.kind !==
     "ability-template"
   ) {
-    return;
+    return true;
   }
 
   const actor =
     item.parent;
 
   if (!actor) {
-    return;
+    return true;
   }
 
   if (
@@ -2019,6 +2021,8 @@ function adaptAbilityTemplateToPokemon(
 
     return false;
   }
+
+  return true;
 }
 
 

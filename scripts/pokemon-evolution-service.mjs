@@ -2460,7 +2460,7 @@ async function consumeEvolutionItemUnit(
 
 async function consumeRequiredEvolutionItems(
   pokemon,
-  requiredItemIds
+  itemIds
 ) {
 
   const requestedIds =
@@ -2468,9 +2468,9 @@ async function consumeRequiredEvolutionItems(
       ...new Set(
         (
           Array.isArray(
-            requiredItemIds
+            itemIds
           )
-            ? requiredItemIds
+            ? itemIds
             : []
         )
           .map(

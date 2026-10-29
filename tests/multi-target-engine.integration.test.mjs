@@ -126,7 +126,7 @@ function moveItem(source, id = "absorb") {
     actor: source,
     documentName: "Item",
     getFlag(moduleId, key) {
-      if (moduleId !== "poke5e-local") return undefined;
+      if (moduleId !== "poke5e-local") {return undefined;}
       return flags[key];
     }
   };

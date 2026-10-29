@@ -1574,7 +1574,6 @@ function saveMultiplier(
 
 
     case "none":
-
     default:
 
       return 0;

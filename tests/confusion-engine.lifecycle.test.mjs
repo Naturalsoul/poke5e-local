@@ -115,7 +115,7 @@ function confusedEffect(actor, {
     deleted: false,
     statuses: new Set(["poke5e-confused"]),
     getFlag(moduleId, key) {
-      if (moduleId !== "poke5e-local") return undefined;
+      if (moduleId !== "poke5e-local") {return undefined;}
       return flags[key];
     },
     async setFlag(moduleId, key, value) {

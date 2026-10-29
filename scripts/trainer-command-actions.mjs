@@ -849,6 +849,12 @@ async function executePokemonAction({
     action === "deploy"
   ) {
 
+    assertTokenCreatePermission(
+      pokemon,
+      labels
+    );
+
+
     const placement =
       await resolveDeploymentPosition(
         pokemon,
