@@ -98,3 +98,14 @@ test("Dream Eater blocks an awake target", () => {
   assert.equal(warnings.length, 1);
   assert.match(warnings[0], /Dormido/);
 });
+
+test("Steel Roller needs an active terrain", () => {
+  const item = { name: "Steel Roller", documentName: "Item", getFlag: (_m, key) => ({ kind: "move", sourceId: "steel-roller" })[key] };
+  const handler = hooks.handler("dnd5e.preUseActivity");
+  game.combat = { getFlag: () => ({}) };
+  assert.equal(handler({ item }, {}, {}, null), false);
+  assert.match(warnings.at(-1), /terreno activo/);
+  game.combat = { getFlag: () => ({ terrain: { id: "grassy" } }) };
+  assert.equal(handler({ item }, {}, {}, null), true);
+  game.combat = undefined;
+});

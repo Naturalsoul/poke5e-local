@@ -4,6 +4,15 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.45.0] — 2026-10-29
+
+- **Moves con clima y terreno:** Solar Beam y Solar Blade (sol) y Electro Shot (lluvia) suman MOVE otra vez;
+  Hydro Steam (sol) y Psyblade (Terreno Eléctrico) tiran con ventaja; Expanding Force suma 1d6 en Terreno Psíquico;
+  Terrain Pulse toma el tipo del terreno; Misty Explosion hace la mitad si su usuario tiene menos de la mitad de PG y
+  no está en Terreno Brumoso. Steel Roller e Ice Spinner quitan el terreno, y Steel Roller solo se puede usar con uno
+  activo. El terreno solo cuenta para el usuario si está en el suelo.
+- Grassy Glide y Rising Voltage quedan como manuales: mover la ficha y elegir los objetivos es cosa del jugador.
+
 ## [0.44.8] — 2026-10-29
 
 - **Limpieza:** el HTML de la ventana del Encounter Planner (unas 1.400 líneas de `_renderHTML`) pasa a

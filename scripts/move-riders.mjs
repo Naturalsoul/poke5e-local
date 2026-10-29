@@ -1,4 +1,5 @@
-import { distanceBetween, hasWeather } from "./battlefield-service.mjs";
+import { activeTerrain, distanceBetween, hasWeather, isGrounded, setBattlefield } from "./battlefield-service.mjs";
+import { moveModifier as powerModifier } from "./rider-ability-engine.mjs";
 import { hasPokemonAbility, pokemonTypes } from "./status-runtime.mjs";
 import { battleArmor } from "./passive-ability-engine.mjs";
 import { buildAttackOutcome, subscribeAttackOutcome } from "./attack-outcome-engine.mjs";
@@ -39,6 +40,10 @@ import { endOfNextTurnFlags } from "./turn-duration-runtime.mjs";
  *   targets; if it cures any, the user heals twice its level). Psychic Noise's mark blocks healing.
  * - Damage type picked for the player: Multi-Attack and Revelation Dance (the user's primary type), Techno Blast (its
  *   held Drive) and Weather Ball (the weather, with double dice). Still changeable in the damage dialog.
+ * - Weather and terrain (the user standing on it): Solar Beam and Solar Blade (sun) and Electro Shot (rain) add MOVE
+ *   again; Hydro Steam (sun) and Psyblade (Electric Terrain) roll with advantage; Expanding Force adds 1d6 on Psychic
+ *   Terrain; Terrain Pulse takes the terrain's type; Misty Explosion deals half unless the user has half its HP or
+ *   stands on Misty Terrain. Steel Roller and Ice Spinner end the terrain.
  * ============================================================ */
 
 const MODULE_ID = "poke5e-local";
@@ -102,7 +107,14 @@ const crit19 = ["air-cutter", "aqua-cutter", "attack-order", "blaze-kick", "crab
   "shadow-claw", "slash"];
 export const CRITICAL_RANGES = Object.freeze({ ...Object.fromEntries(crit19.map(id => [id, 19])), "fickle-beam": 17, "frost-breath": 16 });
 
-const ADVANTAGE_MOVES = new Set(["feint-attack"]);
+// Terrain only reaches Pokémon on the ground.
+const onTerrain = (actor, id) => activeTerrain() === id && isGrounded(actor);
+const ADVANTAGE_RIDERS = Object.freeze({
+  "feint-attack": () => true,
+  "lash-out": user => frustrated(user),
+  "hydro-steam": () => hasWeather("sun"),
+  psyblade: user => onTerrain(user, "electric")
+});
 const IGNORE_AC_BOOSTS = new Set(["chip-away", "sacred-sword", "secret-sword", "darkest-lariat"]);
 const focusing = (actor, id) => Array.from(actor?.effects ?? []).some(effect => !effect.disabled && effect.getFlag?.(MODULE_ID, "sourceMove") === id);
 const singleTarget = () => (game.user?.targets?.size === 1 ? [...game.user.targets][0]?.actor ?? null : null);
@@ -115,7 +127,8 @@ export function onPreRollAttackCritical(config) {
   const focused = focusing(user, "focus-energy");
   const laser = Array.from(user?.effects ?? []).find(effect => !effect.disabled && effect.getFlag?.(MODULE_ID, "sourceMove") === "laser-focus");
   const ignoreBoosts = IGNORE_AC_BOOSTS.has(id) && !hasPokemonAbility(user, "unaware");
-  if (!id || (!threshold && !focused && !laser && !ignoreBoosts && !ADVANTAGE_MOVES.has(id) && id !== "lash-out")) {return;}
+  const advantage = ADVANTAGE_RIDERS[id]?.(user) === true;
+  if (!id || (!threshold && !focused && !laser && !ignoreBoosts && !advantage)) {return;}
   const armor = ignoreBoosts ? battleArmor(singleTarget()) : 0;
   // Spent on this attack.
   if (laser) {void laser.delete().catch(error => console.error(`[${MODULE_ID}] laser focus`, error));}
@@ -125,7 +138,7 @@ export function onPreRollAttackCritical(config) {
     if (focused) {rollConfig.options.criticalSuccess = (rollConfig.options.criticalSuccess ?? 20) - 2;}
     if (laser) {rollConfig.options.criticalSuccess = 1;}
     if (armor) {(rollConfig.parts ??= []).push(String(armor));}
-    if (ADVANTAGE_MOVES.has(id) || (id === "lash-out" && frustrated(config.subject.actor))) {rollConfig.options.advantage = true;}
+    if (advantage) {rollConfig.options.advantage = true;}
   }
 }
 
@@ -233,8 +246,13 @@ function heldDriveType(actor) {
 }
 const WEATHER_TYPES = [["sun", "fire"], ["rain", "water"], ["sandstorm", "rock"], ["hail", "ice"], ["snow", "ice"]];
 const weatherType = () => WEATHER_TYPES.find(([weather]) => hasWeather(weather))?.[1] ?? null;
+const TERRAIN_PULSE_TYPES = { electric: "electric", grassy: "grass", misty: "fairy", psychic: "psychic" };
+const terrainPulseType = user => (isGrounded(user) ? TERRAIN_PULSE_TYPES[activeTerrain()] : null) ?? "normal";
+// MOVE for attack and save Moves alike: the best of the Move's power abilities.
+const moveAgainIn = weather => ({ user, item }) => ({ extra: hasWeather(weather) ? [powerModifier(user, item)] : [] });
 
-// Each returns { times, extra, type }: the formula repeated `times` over, plus extra parts, and the damage type.
+// Each returns { times, extra, type, half }: the formula repeated `times` over, plus extra parts, the damage type,
+// and `half` to halve the whole roll.
 export const DAMAGE_RIDERS = Object.freeze({
   brine: ({ target }) => ({ times: hpShare(target) !== null && hpShare(target) < 0.5 ? 2 : 1 }),
   flail: ({ user }) => ({ times: lowHpMultiplier(user) }),
@@ -289,7 +307,13 @@ export const DAMAGE_RIDERS = Object.freeze({
   "fury-cutter": context => doubling(context),
   "ice-ball": context => doubling(context),
   "power-up-punch": ({ user, item, dice }) => ({
-    extra: oneDie(dice, Math.min(dice?.number ?? 0, streak(user, moveId(item), { sameTarget: true }) - 1)) })
+    extra: oneDie(dice, Math.min(dice?.number ?? 0, streak(user, moveId(item), { sameTarget: true }) - 1)) }),
+  "solar-beam": moveAgainIn("sun"),
+  "solar-blade": moveAgainIn("sun"),
+  "electro-shot": moveAgainIn("rain"),
+  "expanding-force": ({ user }) => ({ extra: onTerrain(user, "psychic") ? ["1d6"] : [] }),
+  "terrain-pulse": ({ user }) => ({ type: terrainPulseType(user) }),
+  "misty-explosion": ({ user }) => ({ half: !onTerrain(user, "misty") && hpShare(user) !== null && hpShare(user) < 0.5 })
 });
 
 // Tail Glow and Calm Mind: a Move of the user's type adds its STAB (proficiency) once more.
@@ -311,7 +335,7 @@ export function onPreRollDamageRiders(config) {
   if (!rider) {return;}
   const match = String(roll.parts?.[0] ?? "").match(/(\d+)d(\d+)/);
   const dice = match ? { number: Number(match[1]), faces: Number(match[2]) } : null;
-  const { times = 1, extra = [], type = null, replaceDice = null } = rider({ user: activity.actor, target: singleTarget(), activity, item, dice });
+  const { times = 1, extra = [], type = null, replaceDice = null, half = false } = rider({ user: activity.actor, target: singleTarget(), activity, item, dice });
   if (replaceDice && match) {roll.parts[0] = roll.parts[0].replace(match[0], replaceDice);}
   if (type) {
     roll.options ??= {};
@@ -320,6 +344,7 @@ export function onPreRollDamageRiders(config) {
   }
   const base = [...(roll.parts ?? [])];
   roll.parts = [...Array.from({ length: times }, () => base).flat(), ...extra.filter(Boolean).map(String)];
+  if (half && roll.parts.length) {roll.parts = [`floor((${roll.parts.join(" + ")}) / 2)`];}
 }
 
 async function onAttackMessage(message) {
@@ -353,6 +378,7 @@ async function cureStatuses(actor) {
   return true;
 }
 
+const TERRAIN_BREAKERS = new Set(["steel-roller", "ice-spinner"]);
 const messageTargets = message => Array.from(message.getFlag?.("dnd5e", "targets") ?? []).map(({ uuid }) => actorFromUuid(uuid)).filter(Boolean);
 const CURE_RADIUS = { aromatherapy: 10, "jungle-healing": 15, "heal-bell": 60 };
 
@@ -381,6 +407,7 @@ async function onUsageMessage(message) {
   const item = message.getAssociatedItem?.();
   if (item?.actor && (CURE_RADIUS[moveId(item)] || moveId(item) === "purify")) {await runCures(moveId(item), item.actor, message);}
   if (moveId(item) === "eternabeam" && item.actor) {await item.actor.createEmbeddedDocuments("ActiveEffect", [eternabeamEffect()]);}
+  if (TERRAIN_BREAKERS.has(moveId(item)) && activeTerrain()) {await setBattlefield({ terrain: null });}
 }
 
 function onCreateChatMessage(message) {
