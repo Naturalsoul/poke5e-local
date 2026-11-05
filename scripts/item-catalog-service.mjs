@@ -154,7 +154,7 @@ const PACK_NAME = "poke5e-items";
 const PACK_ID = `world.${PACK_NAME}`;
 const PACK_LABEL = "Poke5e Items";
 const CATALOG_SETTING = "itemCatalogSignature";
-const ITEM_CATALOG_VERSION = "0.4.2";
+const ITEM_CATALOG_VERSION = "0.4.3";
 
 const FOUNDRY_ITEM_TYPES = {
   pokeball: "consumable",
@@ -206,6 +206,13 @@ const CATALOG_FOLDER_DEFINITIONS = [
     names: {
       es: "Equipo de Entrenador",
       en: "Trainer Gear"
+    }
+  },
+  {
+    itemType: "valuable",
+    names: {
+      es: "Objetos valiosos",
+      en: "Valuables"
     }
   },
   {

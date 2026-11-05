@@ -456,6 +456,24 @@ export async function clearPokemonHeldItem(
   return item;
 }
 
+// One-use items: a loaned one also takes the trainer's record, or the item would come back when returned.
+export async function consumePokemonHeldItem(pokemon) {
+  const held = getPokemonHeldItem(pokemon);
+  const loan = held?.getFlag(MODULE_ID, HELD_ITEM_LOAN);
+  const trainer = loan && await fromUuid(loan.trainerUuid);
+  if (!trainer) {
+    await clearPokemonHeldItem(pokemon);
+    return;
+  }
+  await serializeTrainerTransfer(trainer, async () => {
+    for (const copy of await loanBorrowerCopies(held)) {
+      await copy.parent.unsetFlag(MODULE_ID, HELD_ITEM_FLAG);
+      await copy.delete();
+    }
+    await trainer.items.get(loan.trainerItemId)?.delete();
+  });
+}
+
 /* ============================================================
  * TRAINER TRANSFER
  * ============================================================ */

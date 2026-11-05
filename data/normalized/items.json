@@ -127,6 +127,33 @@
       }
     },
     {
+      "id": "adamant-mint",
+      "sourceId": "adamant-mint",
+      "beta": false,
+      "name": {
+        "en": "Adamant Mint",
+        "es": "Adamant Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Adamant (raises STR, lowers WIS), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Firme (sube FUE, baja SAB), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Adamant nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/adamant-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "adrenaline-orb",
       "sourceId": "adrenaline-orb",
       "beta": false,
@@ -157,6 +184,43 @@
           "6c0ded8241c2d453"
         ],
         "descriptionRevision": 2
+      }
+    },
+    {
+      "id": "aguav-berry",
+      "sourceId": "aguav-berry",
+      "beta": false,
+      "name": {
+        "en": "Aguav Berry",
+        "es": "Aguav Berry"
+      },
+      "type": "berry",
+      "sourceType": "berry",
+      "cost": 400,
+      "description": {
+        "en": "Consume to restore 4d4 + 4 HP. Can be consumed as a reaction to dropping below half health.",
+        "es": "Consúmela para recuperar 4d4 + 4 PG. Puede consumirse como reacción al quedar por debajo de la mitad de los PG."
+      },
+      "referenceEffect": "Restores HP at low health.",
+      "rolls": [
+        {
+          "id": "healing",
+          "kind": "healing",
+          "formula": "4d4 + 4",
+          "label": {
+            "en": "Roll healing",
+            "es": "Tirar curación"
+          }
+        }
+      ],
+      "media": {
+        "sprite": "assets/items/aguav-berry/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
       }
     },
     {
@@ -220,6 +284,33 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/antidote/sprite.png"
+      }
+    },
+    {
+      "id": "apicot-berry",
+      "sourceId": "apicot-berry",
+      "beta": false,
+      "name": {
+        "en": "Apicot Berry",
+        "es": "Apicot Berry"
+      },
+      "type": "berry",
+      "sourceType": "berry",
+      "cost": 1000,
+      "description": {
+        "en": "Can be consumed as a reaction to dropping below one quarter of maximum HP. The holder gains +1 to saving throws for 1 minute or until leaving combat.",
+        "es": "Puede consumirse como reacción al quedar por debajo de una cuarta parte de los PG máximos. El portador obtiene +1 a las tiradas de salvación durante 1 minuto o hasta abandonar el combate."
+      },
+      "referenceEffect": "Raises Sp. Def at low health.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/apicot-berry/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -370,6 +461,33 @@
       }
     },
     {
+      "id": "balm-mushroom",
+      "sourceId": "balm-mushroom",
+      "beta": false,
+      "name": {
+        "en": "Balm Mushroom",
+        "es": "Balm Mushroom"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 15000,
+      "description": {
+        "en": "Worth a good price at a shop or to a collector.",
+        "es": "Se vende a buen precio en una tienda o a un coleccionista."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/balm-mushroom/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "berry-juice",
       "sourceId": "berry-juice",
       "beta": false,
@@ -388,6 +506,87 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/berry-juice/sprite.png"
+      }
+    },
+    {
+      "id": "big-mushroom",
+      "sourceId": "big-mushroom",
+      "beta": false,
+      "name": {
+        "en": "Big Mushroom",
+        "es": "Big Mushroom"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 5000,
+      "description": {
+        "en": "Worth a good price at a shop or to a collector.",
+        "es": "Se vende a buen precio en una tienda o a un coleccionista."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/big-mushroom/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "big-nugget",
+      "sourceId": "big-nugget",
+      "beta": false,
+      "name": {
+        "en": "Big Nugget",
+        "es": "Big Nugget"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 40000,
+      "description": {
+        "en": "Worth a good price at a shop or to a collector.",
+        "es": "Se vende a buen precio en una tienda o a un coleccionista."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/big-nugget/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "big-pearl",
+      "sourceId": "big-pearl",
+      "beta": false,
+      "name": {
+        "en": "Big Pearl",
+        "es": "Big Pearl"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 8000,
+      "description": {
+        "en": "Worth a good price at a shop or to a collector.",
+        "es": "Se vende a buen precio en una tienda o a un coleccionista."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/big-pearl/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -628,6 +827,33 @@
       }
     },
     {
+      "id": "bold-mint",
+      "sourceId": "bold-mint",
+      "beta": false,
+      "name": {
+        "en": "Bold Mint",
+        "es": "Bold Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Bold (raises CON, lowers STR), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Osada (sube CON, baja FUE), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Bold nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/bold-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "booster-energy",
       "sourceId": "booster-energy",
       "beta": false,
@@ -663,6 +889,33 @@
       }
     },
     {
+      "id": "brave-mint",
+      "sourceId": "brave-mint",
+      "beta": false,
+      "name": {
+        "en": "Brave Mint",
+        "es": "Brave Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Brave (raises STR, lowers DEX), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Audaz (sube FUE, baja DES), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Brave nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/brave-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "bright-powder",
       "sourceId": "bright-powder",
       "beta": false,
@@ -693,6 +946,33 @@
           "adc2df7fdc13079b"
         ],
         "descriptionRevision": 2
+      }
+    },
+    {
+      "id": "bug-gem",
+      "sourceId": "bug-gem",
+      "beta": false,
+      "name": {
+        "en": "Bug Gem",
+        "es": "Bug Gem"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1000,
+      "description": {
+        "en": "The first time the holder rolls damage for a bug-type move, it adds twice its proficiency bonus to that damage. The gem is consumed.",
+        "es": "La primera vez que el portador tire daño de un movimiento de tipo Bicho, añade el doble de su bonificador de competencia a ese daño. La gema se consume."
+      },
+      "referenceEffect": "Boosts one bug-type move, then is used up.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/bug-gem/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
       }
     },
     {
@@ -798,6 +1078,33 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/calcium/sprite.png"
+      }
+    },
+    {
+      "id": "calm-mint",
+      "sourceId": "calm-mint",
+      "beta": false,
+      "name": {
+        "en": "Calm Mint",
+        "es": "Calm Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Calm (raises CHA, lowers STR), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Serena (sube CAR, baja FUE), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Calm nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/calm-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -924,6 +1231,33 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/carbos/sprite.png"
+      }
+    },
+    {
+      "id": "careful-mint",
+      "sourceId": "careful-mint",
+      "beta": false,
+      "name": {
+        "en": "Careful Mint",
+        "es": "Careful Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Careful (raises CHA, lowers WIS), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Cauta (sube CAR, baja SAB), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Careful nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/careful-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -1191,6 +1525,33 @@
       }
     },
     {
+      "id": "claw-fossil",
+      "sourceId": "claw-fossil",
+      "beta": false,
+      "name": {
+        "en": "Claw Fossil",
+        "es": "Claw Fossil"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 7000,
+      "description": {
+        "en": "A laboratory can revive this fossil as an Anorith.",
+        "es": "Un laboratorio puede revivir este fósil como Anorith."
+      },
+      "referenceEffect": "Revived into Anorith.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/claw-fossil/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "clear-amulet",
       "sourceId": "clear-amulet",
       "beta": false,
@@ -1322,6 +1683,33 @@
       }
     },
     {
+      "id": "comet-shard",
+      "sourceId": "comet-shard",
+      "beta": false,
+      "name": {
+        "en": "Comet Shard",
+        "es": "Comet Shard"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 25000,
+      "description": {
+        "en": "Worth a good price at a shop or to a collector.",
+        "es": "Se vende a buen precio en una tienda o a un coleccionista."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/comet-shard/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "cooking-kit",
       "sourceId": "cooking-kit",
       "beta": false,
@@ -1420,6 +1808,33 @@
       }
     },
     {
+      "id": "custap-berry",
+      "sourceId": "custap-berry",
+      "beta": false,
+      "name": {
+        "en": "Custap Berry",
+        "es": "Custap Berry"
+      },
+      "type": "berry",
+      "sourceType": "berry",
+      "cost": 1000,
+      "description": {
+        "en": "Can be consumed as a reaction to dropping below one quarter of maximum HP. In the next round, the holder acts first, regardless of initiative.",
+        "es": "Puede consumirse como reacción al quedar por debajo de una cuarta parte de los PG máximos. En la siguiente ronda, el portador actúa primero, sin importar la iniciativa."
+      },
+      "referenceEffect": "Lets the holder move first once at low health.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/custap-berry/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "damp-rock",
       "sourceId": "damp-rock",
       "beta": false,
@@ -1438,6 +1853,33 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/damp-rock/sprite.png"
+      }
+    },
+    {
+      "id": "dark-gem",
+      "sourceId": "dark-gem",
+      "beta": false,
+      "name": {
+        "en": "Dark Gem",
+        "es": "Dark Gem"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1000,
+      "description": {
+        "en": "The first time the holder rolls damage for a dark-type move, it adds twice its proficiency bonus to that damage. The gem is consumed.",
+        "es": "La primera vez que el portador tire daño de un movimiento de tipo Siniestro, añade el doble de su bonificador de competencia a ese daño. La gema se consume."
+      },
+      "referenceEffect": "Boosts one dark-type move, then is used up.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/dark-gem/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
       }
     },
     {
@@ -1723,6 +2165,33 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/dragon-fang/sprite.png"
+      }
+    },
+    {
+      "id": "dragon-gem",
+      "sourceId": "dragon-gem",
+      "beta": false,
+      "name": {
+        "en": "Dragon Gem",
+        "es": "Dragon Gem"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1000,
+      "description": {
+        "en": "The first time the holder rolls damage for a dragon-type move, it adds twice its proficiency bonus to that damage. The gem is consumed.",
+        "es": "La primera vez que el portador tire daño de un movimiento de tipo Dragón, añade el doble de su bonificador de competencia a ese daño. La gema se consume."
+      },
+      "referenceEffect": "Boosts one dragon-type move, then is used up.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/dragon-gem/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
       }
     },
     {
@@ -2127,6 +2596,33 @@
       }
     },
     {
+      "id": "electric-gem",
+      "sourceId": "electric-gem",
+      "beta": false,
+      "name": {
+        "en": "Electric Gem",
+        "es": "Electric Gem"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1000,
+      "description": {
+        "en": "The first time the holder rolls damage for a electric-type move, it adds twice its proficiency bonus to that damage. The gem is consumed.",
+        "es": "La primera vez que el portador tire daño de un movimiento de tipo Eléctrico, añade el doble de su bonificador de competencia a ese daño. La gema se consume."
+      },
+      "referenceEffect": "Boosts one electric-type move, then is used up.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/electric-gem/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "electric-memory-disc",
       "sourceId": "electric-memory-disc",
       "beta": false,
@@ -2486,6 +2982,33 @@
       }
     },
     {
+      "id": "fairy-gem",
+      "sourceId": "fairy-gem",
+      "beta": false,
+      "name": {
+        "en": "Fairy Gem",
+        "es": "Fairy Gem"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1000,
+      "description": {
+        "en": "The first time the holder rolls damage for a fairy-type move, it adds twice its proficiency bonus to that damage. The gem is consumed.",
+        "es": "La primera vez que el portador tire daño de un movimiento de tipo Hada, añade el doble de su bonificador de competencia a ese daño. La gema se consume."
+      },
+      "referenceEffect": "Boosts one fairy-type move, then is used up.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/fairy-gem/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "fairy-memory-disc",
       "sourceId": "fairy-memory-disc",
       "beta": false,
@@ -2525,6 +3048,33 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/fast-ball/sprite.png"
+      }
+    },
+    {
+      "id": "fighting-gem",
+      "sourceId": "fighting-gem",
+      "beta": false,
+      "name": {
+        "en": "Fighting Gem",
+        "es": "Fighting Gem"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1000,
+      "description": {
+        "en": "The first time the holder rolls damage for a fighting-type move, it adds twice its proficiency bonus to that damage. The gem is consumed.",
+        "es": "La primera vez que el portador tire daño de un movimiento de tipo Lucha, añade el doble de su bonificador de competencia a ese daño. La gema se consume."
+      },
+      "referenceEffect": "Boosts one fighting-type move, then is used up.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/fighting-gem/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
       }
     },
     {
@@ -2570,6 +3120,43 @@
       }
     },
     {
+      "id": "figy-berry",
+      "sourceId": "figy-berry",
+      "beta": false,
+      "name": {
+        "en": "Figy Berry",
+        "es": "Figy Berry"
+      },
+      "type": "berry",
+      "sourceType": "berry",
+      "cost": 400,
+      "description": {
+        "en": "Consume to restore 4d4 + 4 HP. Can be consumed as a reaction to dropping below half health.",
+        "es": "Consúmela para recuperar 4d4 + 4 PG. Puede consumirse como reacción al quedar por debajo de la mitad de los PG."
+      },
+      "referenceEffect": "Restores HP at low health.",
+      "rolls": [
+        {
+          "id": "healing",
+          "kind": "healing",
+          "formula": "4d4 + 4",
+          "label": {
+            "en": "Roll healing",
+            "es": "Tirar curación"
+          }
+        }
+      ],
+      "media": {
+        "sprite": "assets/items/figy-berry/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "filchers-pack",
       "sourceId": "filchers-pack",
       "beta": false,
@@ -2588,6 +3175,33 @@
       "rolls": [],
       "media": {
         "sprite": null
+      }
+    },
+    {
+      "id": "fire-gem",
+      "sourceId": "fire-gem",
+      "beta": false,
+      "name": {
+        "en": "Fire Gem",
+        "es": "Fire Gem"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1000,
+      "description": {
+        "en": "The first time the holder rolls damage for a fire-type move, it adds twice its proficiency bonus to that damage. The gem is consumed.",
+        "es": "La primera vez que el portador tire daño de un movimiento de tipo Fuego, añade el doble de su bonificador de competencia a ese daño. La gema se consume."
+      },
+      "referenceEffect": "Boosts one fire-type move, then is used up.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/fire-gem/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
       }
     },
     {
@@ -2789,6 +3403,60 @@
           "21d477b62ddf2d86"
         ],
         "descriptionRevision": 2
+      }
+    },
+    {
+      "id": "fluffy-tail",
+      "sourceId": "fluffy-tail",
+      "beta": false,
+      "name": {
+        "en": "Fluffy Tail",
+        "es": "Fluffy Tail"
+      },
+      "type": "trainer-gear",
+      "sourceType": "trainer gear",
+      "cost": 100,
+      "description": {
+        "en": "As Poké Doll, but the saving throw DC is 13.",
+        "es": "Como Poké Doll, pero la CD de la salvación es 13."
+      },
+      "referenceEffect": "Lets the user escape from a wild battle.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/fluffy-tail/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "flying-gem",
+      "sourceId": "flying-gem",
+      "beta": false,
+      "name": {
+        "en": "Flying Gem",
+        "es": "Flying Gem"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1000,
+      "description": {
+        "en": "The first time the holder rolls damage for a flying-type move, it adds twice its proficiency bonus to that damage. The gem is consumed.",
+        "es": "La primera vez que el portador tire daño de un movimiento de tipo Volador, añade el doble de su bonificador de competencia a ese daño. La gema se consume."
+      },
+      "referenceEffect": "Boosts one flying-type move, then is used up.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/flying-gem/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
       }
     },
     {
@@ -3024,6 +3692,33 @@
       }
     },
     {
+      "id": "ganlon-berry",
+      "sourceId": "ganlon-berry",
+      "beta": false,
+      "name": {
+        "en": "Ganlon Berry",
+        "es": "Ganlon Berry"
+      },
+      "type": "berry",
+      "sourceType": "berry",
+      "cost": 1000,
+      "description": {
+        "en": "Can be consumed as a reaction to dropping below one quarter of maximum HP. The holder gains +1 to AC for 1 minute or until leaving combat.",
+        "es": "Puede consumirse como reacción al quedar por debajo de una cuarta parte de los PG máximos. El portador obtiene +1 a la CA durante 1 minuto o hasta abandonar el combate."
+      },
+      "referenceEffect": "Raises Defense at low health.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/ganlon-berry/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "gardeners-kit",
       "sourceId": "gardeners-kit",
       "beta": false,
@@ -3075,6 +3770,60 @@
           "60bf5a780722c40b"
         ],
         "descriptionRevision": 2
+      }
+    },
+    {
+      "id": "gentle-mint",
+      "sourceId": "gentle-mint",
+      "beta": false,
+      "name": {
+        "en": "Gentle Mint",
+        "es": "Gentle Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Gentle (raises CHA, lowers CON), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Amable (sube CAR, baja CON), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Gentle nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/gentle-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "ghost-gem",
+      "sourceId": "ghost-gem",
+      "beta": false,
+      "name": {
+        "en": "Ghost Gem",
+        "es": "Ghost Gem"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1000,
+      "description": {
+        "en": "The first time the holder rolls damage for a ghost-type move, it adds twice its proficiency bonus to that damage. The gem is consumed.",
+        "es": "La primera vez que el portador tire daño de un movimiento de tipo Fantasma, añade el doble de su bonificador de competencia a ese daño. La gema se consume."
+      },
+      "referenceEffect": "Boosts one ghost-type move, then is used up.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/ghost-gem/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
       }
     },
     {
@@ -3199,6 +3948,33 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/gracidea-flower/sprite.png"
+      }
+    },
+    {
+      "id": "grass-gem",
+      "sourceId": "grass-gem",
+      "beta": false,
+      "name": {
+        "en": "Grass Gem",
+        "es": "Grass Gem"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1000,
+      "description": {
+        "en": "The first time the holder rolls damage for a grass-type move, it adds twice its proficiency bonus to that damage. The gem is consumed.",
+        "es": "La primera vez que el portador tire daño de un movimiento de tipo Planta, añade el doble de su bonificador de competencia a ese daño. La gema se consume."
+      },
+      "referenceEffect": "Boosts one grass-type move, then is used up.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/grass-gem/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
       }
     },
     {
@@ -3354,6 +4130,33 @@
       }
     },
     {
+      "id": "ground-gem",
+      "sourceId": "ground-gem",
+      "beta": false,
+      "name": {
+        "en": "Ground Gem",
+        "es": "Ground Gem"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1000,
+      "description": {
+        "en": "The first time the holder rolls damage for a ground-type move, it adds twice its proficiency bonus to that damage. The gem is consumed.",
+        "es": "La primera vez que el portador tire daño de un movimiento de tipo Tierra, añade el doble de su bonificador de competencia a ese daño. La gema se consume."
+      },
+      "referenceEffect": "Boosts one ground-type move, then is used up.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/ground-gem/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "ground-memory-disc",
       "sourceId": "ground-memory-disc",
       "beta": false,
@@ -3459,6 +4262,33 @@
       }
     },
     {
+      "id": "hasty-mint",
+      "sourceId": "hasty-mint",
+      "beta": false,
+      "name": {
+        "en": "Hasty Mint",
+        "es": "Hasty Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Hasty (raises DEX, lowers CON), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Activa (sube DES, baja CON), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Hasty nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/hasty-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "heal-ball",
       "sourceId": "heal-ball",
       "beta": false,
@@ -3552,6 +4382,33 @@
           "914f7b5c50a26a39"
         ],
         "descriptionRevision": 2
+      }
+    },
+    {
+      "id": "heart-scale",
+      "sourceId": "heart-scale",
+      "beta": false,
+      "name": {
+        "en": "Heart Scale",
+        "es": "Heart Scale"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 100,
+      "description": {
+        "en": "A pretty scale that Move Reminders usually accept as payment to teach a Pokémon a move it has forgotten.",
+        "es": "Una escama bonita que los recordadores de movimientos suelen aceptar como pago por enseñarle a un Pokémon un movimiento olvidado."
+      },
+      "referenceEffect": "Traded to relearn a move.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/heart-scale/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -3705,6 +4562,70 @@
       }
     },
     {
+      "id": "iapapa-berry",
+      "sourceId": "iapapa-berry",
+      "beta": false,
+      "name": {
+        "en": "Iapapa Berry",
+        "es": "Iapapa Berry"
+      },
+      "type": "berry",
+      "sourceType": "berry",
+      "cost": 400,
+      "description": {
+        "en": "Consume to restore 4d4 + 4 HP. Can be consumed as a reaction to dropping below half health.",
+        "es": "Consúmela para recuperar 4d4 + 4 PG. Puede consumirse como reacción al quedar por debajo de la mitad de los PG."
+      },
+      "referenceEffect": "Restores HP at low health.",
+      "rolls": [
+        {
+          "id": "healing",
+          "kind": "healing",
+          "formula": "4d4 + 4",
+          "label": {
+            "en": "Roll healing",
+            "es": "Tirar curación"
+          }
+        }
+      ],
+      "media": {
+        "sprite": "assets/items/iapapa-berry/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "ice-gem",
+      "sourceId": "ice-gem",
+      "beta": false,
+      "name": {
+        "en": "Ice Gem",
+        "es": "Ice Gem"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1000,
+      "description": {
+        "en": "The first time the holder rolls damage for a ice-type move, it adds twice its proficiency bonus to that damage. The gem is consumed.",
+        "es": "La primera vez que el portador tire daño de un movimiento de tipo Hielo, añade el doble de su bonificador de competencia a ese daño. La gema se consume."
+      },
+      "referenceEffect": "Boosts one ice-type move, then is used up.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/ice-gem/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "ice-heal",
       "sourceId": "ice-heal",
       "beta": false,
@@ -3831,6 +4752,33 @@
       }
     },
     {
+      "id": "impish-mint",
+      "sourceId": "impish-mint",
+      "beta": false,
+      "name": {
+        "en": "Impish Mint",
+        "es": "Impish Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Impish (raises CON, lowers WIS), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Agitada (sube CON, baja SAB), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Impish nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/impish-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "insect-plate",
       "sourceId": "insect-plate",
       "beta": false,
@@ -3927,6 +4875,60 @@
       }
     },
     {
+      "id": "jaboca-berry",
+      "sourceId": "jaboca-berry",
+      "beta": false,
+      "name": {
+        "en": "Jaboca Berry",
+        "es": "Jaboca Berry"
+      },
+      "type": "berry",
+      "sourceType": "berry",
+      "cost": 500,
+      "description": {
+        "en": "Can be consumed as a reaction to taking damage from a melee attack. The attacker takes typeless damage equal to twice the holder's proficiency bonus.",
+        "es": "Puede consumirse como reacción al recibir daño de un ataque cuerpo a cuerpo. El atacante recibe daño sin tipo igual al doble del bonificador de competencia del portador."
+      },
+      "referenceEffect": "Hurts an attacker that lands a physical hit.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/jaboca-berry/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "jolly-mint",
+      "sourceId": "jolly-mint",
+      "beta": false,
+      "name": {
+        "en": "Jolly Mint",
+        "es": "Jolly Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Jolly (raises DEX, lowers WIS), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Alegre (sube DES, baja SAB), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Jolly nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/jolly-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "kasib-berry",
       "sourceId": "kasib-berry",
       "beta": false,
@@ -3966,6 +4968,33 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/kebia-berry/sprite.png"
+      }
+    },
+    {
+      "id": "kee-berry",
+      "sourceId": "kee-berry",
+      "beta": false,
+      "name": {
+        "en": "Kee Berry",
+        "es": "Kee Berry"
+      },
+      "type": "berry",
+      "sourceType": "berry",
+      "cost": 500,
+      "description": {
+        "en": "Can be consumed as a reaction to being hit by a melee attack. The holder gains +1 to AC for 1 minute or until leaving combat.",
+        "es": "Puede consumirse como reacción al ser impactado por un ataque cuerpo a cuerpo. El portador obtiene +1 a la CA durante 1 minuto o hasta abandonar el combate."
+      },
+      "referenceEffect": "Raises Defense after a physical hit.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/kee-berry/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -4044,6 +5073,33 @@
       }
     },
     {
+      "id": "lansat-berry",
+      "sourceId": "lansat-berry",
+      "beta": false,
+      "name": {
+        "en": "Lansat Berry",
+        "es": "Lansat Berry"
+      },
+      "type": "berry",
+      "sourceType": "berry",
+      "cost": 1000,
+      "description": {
+        "en": "Can be consumed as a reaction to dropping below one quarter of maximum HP. The holder's critical hit range increases by one for 1 minute or until leaving combat.",
+        "es": "Puede consumirse como reacción al quedar por debajo de una cuarta parte de los PG máximos. El rango de crítico del portador aumenta en uno durante 1 minuto o hasta abandonar el combate."
+      },
+      "referenceEffect": "Raises critical-hit ratio at low health.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/lansat-berry/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "lantern",
       "sourceId": "lantern",
       "beta": false,
@@ -4116,6 +5172,60 @@
           "ca40326227bc0a4e"
         ],
         "descriptionRevision": 2
+      }
+    },
+    {
+      "id": "lax-mint",
+      "sourceId": "lax-mint",
+      "beta": false,
+      "name": {
+        "en": "Lax Mint",
+        "es": "Lax Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Lax (raises CON, lowers CHA), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Floja (sube CON, baja CAR), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Lax nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/lax-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "leaders-crest",
+      "sourceId": "leaders-crest",
+      "beta": false,
+      "name": {
+        "en": "Leader's Crest",
+        "es": "Leader's Crest"
+      },
+      "type": "evolution",
+      "sourceType": "evolution",
+      "cost": 0,
+      "description": {
+        "en": "An evolution of Pawniard holding this crest may evolve after defeating, one-on-one, another evolution of Pawniard that is also holding one.",
+        "es": "Una evolución de Pawniard que lleve este emblema puede evolucionar tras derrotar, uno contra uno, a otra evolución de Pawniard que también lleve uno."
+      },
+      "referenceEffect": "Evolves Bisharp into Kingambit.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/leaders-crest/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -4245,6 +5355,33 @@
       }
     },
     {
+      "id": "liechi-berry",
+      "sourceId": "liechi-berry",
+      "beta": false,
+      "name": {
+        "en": "Liechi Berry",
+        "es": "Liechi Berry"
+      },
+      "type": "berry",
+      "sourceType": "berry",
+      "cost": 1000,
+      "description": {
+        "en": "Can be consumed as a reaction to dropping below one quarter of maximum HP. The holder gains +2 to attack rolls for 1 minute or until leaving combat.",
+        "es": "Puede consumirse como reacción al quedar por debajo de una cuarta parte de los PG máximos. El portador obtiene +2 a las tiradas de ataque durante 1 minuto o hasta abandonar el combate."
+      },
+      "referenceEffect": "Raises Attack at low health.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/liechi-berry/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "life-orb",
       "sourceId": "life-orb",
       "beta": false,
@@ -4354,6 +5491,33 @@
           "ebc3d8fd221a5433"
         ],
         "descriptionRevision": 2
+      }
+    },
+    {
+      "id": "lonely-mint",
+      "sourceId": "lonely-mint",
+      "beta": false,
+      "name": {
+        "en": "Lonely Mint",
+        "es": "Lonely Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Lonely (raises STR, lowers CON), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Huraña (sube FUE, baja CON), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Lonely nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/lonely-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -4558,6 +5722,33 @@
       }
     },
     {
+      "id": "maranga-berry",
+      "sourceId": "maranga-berry",
+      "beta": false,
+      "name": {
+        "en": "Maranga Berry",
+        "es": "Maranga Berry"
+      },
+      "type": "berry",
+      "sourceType": "berry",
+      "cost": 500,
+      "description": {
+        "en": "Can be consumed as a reaction to being hit by a ranged attack. The holder gains +1 to saving throws for 1 minute or until leaving combat.",
+        "es": "Puede consumirse como reacción al ser impactado por un ataque a distancia. El portador obtiene +1 a las salvaciones durante 1 minuto o hasta abandonar el combate."
+      },
+      "referenceEffect": "Raises Sp. Def after a special hit.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/maranga-berry/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "master-ball",
       "sourceId": "master-ball",
       "beta": false,
@@ -4743,6 +5934,33 @@
       }
     },
     {
+      "id": "max-repel",
+      "sourceId": "max-repel",
+      "beta": false,
+      "name": {
+        "en": "Max Repel",
+        "es": "Max Repel"
+      },
+      "type": "trainer-gear",
+      "sourceType": "trainer gear",
+      "cost": 900,
+      "description": {
+        "en": "As Repel, but it lasts 8 hours.",
+        "es": "Como Repel, pero dura 8 horas."
+      },
+      "referenceEffect": "Keeps weaker wild Pokémon away for longest.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/max-repel/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "max-revive",
       "sourceId": "max-revive",
       "beta": false,
@@ -4872,6 +6090,33 @@
       }
     },
     {
+      "id": "metal-alloy",
+      "sourceId": "metal-alloy",
+      "beta": false,
+      "name": {
+        "en": "Metal Alloy",
+        "es": "Metal Alloy"
+      },
+      "type": "evolution",
+      "sourceType": "evolution",
+      "cost": 6000,
+      "description": {
+        "en": "A Duraludon may consume the power of this alloy to evolve into Archaludon.",
+        "es": "Un Duraludon puede consumir el poder de esta aleación para evolucionar a Archaludon."
+      },
+      "referenceEffect": "Evolves Duraludon into Archaludon.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/metal-alloy/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "metal-coat",
       "sourceId": "metal-coat",
       "beta": false,
@@ -4949,6 +6194,33 @@
       }
     },
     {
+      "id": "micle-berry",
+      "sourceId": "micle-berry",
+      "beta": false,
+      "name": {
+        "en": "Micle Berry",
+        "es": "Micle Berry"
+      },
+      "type": "berry",
+      "sourceType": "berry",
+      "cost": 1000,
+      "description": {
+        "en": "Can be consumed as a reaction to dropping below one quarter of maximum HP. The holder has advantage on its next attack roll.",
+        "es": "Puede consumirse como reacción al quedar por debajo de una cuarta parte de los PG máximos. El portador tiene ventaja en su siguiente tirada de ataque."
+      },
+      "referenceEffect": "Raises accuracy of the next move at low health.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/micle-berry/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "mighty-candy",
       "sourceId": "mighty-candy",
       "beta": false,
@@ -4967,6 +6239,33 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/mighty-candy/sprite.png"
+      }
+    },
+    {
+      "id": "mild-mint",
+      "sourceId": "mild-mint",
+      "beta": false,
+      "name": {
+        "en": "Mild Mint",
+        "es": "Mild Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Mild (raises WIS, lowers CON), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Afable (sube SAB, baja CON), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Mild nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/mild-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -5063,6 +6362,33 @@
           "bbcdfee69bfe6c97"
         ],
         "descriptionRevision": 2
+      }
+    },
+    {
+      "id": "modest-mint",
+      "sourceId": "modest-mint",
+      "beta": false,
+      "name": {
+        "en": "Modest Mint",
+        "es": "Modest Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Modest (raises WIS, lowers STR), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Modesta (sube SAB, baja FUE), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Modest nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/modest-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -5267,6 +6593,60 @@
       }
     },
     {
+      "id": "naive-mint",
+      "sourceId": "naive-mint",
+      "beta": false,
+      "name": {
+        "en": "Naive Mint",
+        "es": "Naive Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Naive (raises DEX, lowers CHA), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Ingenua (sube DES, baja CAR), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Naive nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/naive-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "naughty-mint",
+      "sourceId": "naughty-mint",
+      "beta": false,
+      "name": {
+        "en": "Naughty Mint",
+        "es": "Naughty Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Naughty (raises STR, lowers CHA), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Pícara (sube FUE, baja CAR), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Naughty nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/naughty-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "nest-ball",
       "sourceId": "nest-ball",
       "beta": false,
@@ -5330,6 +6710,33 @@
       }
     },
     {
+      "id": "normal-gem",
+      "sourceId": "normal-gem",
+      "beta": false,
+      "name": {
+        "en": "Normal Gem",
+        "es": "Normal Gem"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1000,
+      "description": {
+        "en": "The first time the holder rolls damage for a normal-type move, it adds twice its proficiency bonus to that damage. The gem is consumed.",
+        "es": "La primera vez que el portador tire daño de un movimiento de tipo Normal, añade el doble de su bonificador de competencia a ese daño. La gema se consume."
+      },
+      "referenceEffect": "Boosts one normal-type move, then is used up.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/normal-gem/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "normalium-z",
       "sourceId": "normalium-z",
       "beta": false,
@@ -5348,6 +6755,33 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/normalium-z/sprite.png"
+      }
+    },
+    {
+      "id": "nugget",
+      "sourceId": "nugget",
+      "beta": false,
+      "name": {
+        "en": "Nugget",
+        "es": "Nugget"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 10000,
+      "description": {
+        "en": "Worth a good price at a shop or to a collector.",
+        "es": "Se vende a buen precio en una tienda o a un coleccionista."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/nugget/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -5541,6 +6975,60 @@
       }
     },
     {
+      "id": "pearl",
+      "sourceId": "pearl",
+      "beta": false,
+      "name": {
+        "en": "Pearl",
+        "es": "Pearl"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 2000,
+      "description": {
+        "en": "Worth a good price at a shop or to a collector.",
+        "es": "Se vende a buen precio en una tienda o a un coleccionista."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/pearl/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "pearl-string",
+      "sourceId": "pearl-string",
+      "beta": false,
+      "name": {
+        "en": "Pearl String",
+        "es": "Pearl String"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 15000,
+      "description": {
+        "en": "Worth a good price at a shop or to a collector.",
+        "es": "Se vende a buen precio en una tienda o a un coleccionista."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/pearl-string/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "peat-block",
       "sourceId": "peat-block",
       "beta": false,
@@ -5601,6 +7089,33 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/persim-berry/sprite.png"
+      }
+    },
+    {
+      "id": "petaya-berry",
+      "sourceId": "petaya-berry",
+      "beta": false,
+      "name": {
+        "en": "Petaya Berry",
+        "es": "Petaya Berry"
+      },
+      "type": "berry",
+      "sourceType": "berry",
+      "cost": 1000,
+      "description": {
+        "en": "Can be consumed as a reaction to dropping below one quarter of maximum HP. The holder gains +2 to its Move DC for 1 minute or until leaving combat.",
+        "es": "Puede consumirse como reacción al quedar por debajo de una cuarta parte de los PG máximos. El portador obtiene +2 a su CD de Movimiento durante 1 minuto o hasta abandonar el combate."
+      },
+      "referenceEffect": "Raises Sp. Atk at low health.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/petaya-berry/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -5723,6 +7238,33 @@
       }
     },
     {
+      "id": "poison-gem",
+      "sourceId": "poison-gem",
+      "beta": false,
+      "name": {
+        "en": "Poison Gem",
+        "es": "Poison Gem"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1000,
+      "description": {
+        "en": "The first time the holder rolls damage for a poison-type move, it adds twice its proficiency bonus to that damage. The gem is consumed.",
+        "es": "La primera vez que el portador tire daño de un movimiento de tipo Veneno, añade el doble de su bonificador de competencia a ese daño. La gema se consume."
+      },
+      "referenceEffect": "Boosts one poison-type move, then is used up.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/poison-gem/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "poison-memory-disc",
       "sourceId": "poison-memory-disc",
       "beta": false,
@@ -5783,6 +7325,33 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/poke-ball/sprite.png"
+      }
+    },
+    {
+      "id": "poke-doll",
+      "sourceId": "poke-doll",
+      "beta": false,
+      "name": {
+        "en": "Poké Doll",
+        "es": "Poké Doll"
+      },
+      "type": "trainer-gear",
+      "sourceType": "trainer gear",
+      "cost": 300,
+      "description": {
+        "en": "A trainer may use an action to throw this at a wild Pokémon within 30 feet. It must succeed on a DC 15 Wisdom saving throw or be incapacitated until the end of its next turn. Consumed on use.",
+        "es": "Un entrenador puede usar una acción para lanzarlo a un Pokémon salvaje a 30 pies o menos. Debe superar una salvación de Sabiduría CD 15 o quedar incapacitado hasta el final de su siguiente turno. Se consume al usarlo."
+      },
+      "referenceEffect": "Lets the user escape from a wild battle.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/poke-doll/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -5868,6 +7437,33 @@
           "a931a2ab4e5d4ca9"
         ],
         "descriptionRevision": 2
+      }
+    },
+    {
+      "id": "pp-max",
+      "sourceId": "pp-max",
+      "beta": false,
+      "name": {
+        "en": "PP Max",
+        "es": "PP Max"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A trainer may use an action to administer this to a Pokémon. The max PP of one of this Pokémon's moves becomes twice its baseline PP.\n\nThis is a vitamin. Pokémon may only benefit from the effects of three vitamins total.",
+        "es": "Un entrenador puede usar una acción para administrárselo a un Pokémon. Los PP máximos de uno de sus movimientos pasan a ser el doble de sus PP base.\n\nEsto es una vitamina. Un Pokémon solo puede beneficiarse de tres vitaminas en total."
+      },
+      "referenceEffect": "Raises the max PP of a move to its maximum.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/pp-max/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -6029,6 +7625,33 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/protein/sprite.png"
+      }
+    },
+    {
+      "id": "psychic-gem",
+      "sourceId": "psychic-gem",
+      "beta": false,
+      "name": {
+        "en": "Psychic Gem",
+        "es": "Psychic Gem"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1000,
+      "description": {
+        "en": "The first time the holder rolls damage for a psychic-type move, it adds twice its proficiency bonus to that damage. The gem is consumed.",
+        "es": "La primera vez que el portador tire daño de un movimiento de tipo Psíquico, añade el doble de su bonificador de competencia a ese daño. La gema se consume."
+      },
+      "referenceEffect": "Boosts one psychic-type move, then is used up.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/psychic-gem/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
       }
     },
     {
@@ -6223,6 +7846,114 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/quick-claw/sprite.png"
+      }
+    },
+    {
+      "id": "quick-powder",
+      "sourceId": "quick-powder",
+      "beta": false,
+      "name": {
+        "en": "Quick Powder",
+        "es": "Quick Powder"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1200,
+      "description": {
+        "en": "When held by a Ditto, its speed increases by 10 feet.",
+        "es": "Cuando lo lleva un Ditto, su velocidad aumenta en 10 pies."
+      },
+      "referenceEffect": "Doubles the Speed of Ditto.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/quick-powder/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "quiet-mint",
+      "sourceId": "quiet-mint",
+      "beta": false,
+      "name": {
+        "en": "Quiet Mint",
+        "es": "Quiet Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Quiet (raises WIS, lowers DEX), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Mansa (sube SAB, baja DES), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Quiet nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/quiet-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "rare-candy",
+      "sourceId": "rare-candy",
+      "beta": false,
+      "name": {
+        "en": "Rare Candy",
+        "es": "Rare Candy"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 10000,
+      "description": {
+        "en": "During a short or long rest, a Pokémon may consume this candy to gain exactly the experience it needs to reach its next level. It can't be used if the Pokémon is already at its trainer's level.",
+        "es": "Durante un descanso corto o largo, un Pokémon puede consumir este caramelo para ganar exactamente la experiencia que le falta para su siguiente nivel. No se puede usar si el Pokémon ya tiene el nivel de su entrenador."
+      },
+      "referenceEffect": "Raises a Pokémon by one level.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/rare-candy/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "rash-mint",
+      "sourceId": "rash-mint",
+      "beta": false,
+      "name": {
+        "en": "Rash Mint",
+        "es": "Rash Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Rash (raises WIS, lowers CHA), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Alocada (sube SAB, baja CAR), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Rash nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/rash-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -6429,6 +8160,222 @@
       }
     },
     {
+      "id": "relaxed-mint",
+      "sourceId": "relaxed-mint",
+      "beta": false,
+      "name": {
+        "en": "Relaxed Mint",
+        "es": "Relaxed Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Relaxed (raises CON, lowers DEX), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Plácida (sube CON, baja DES), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Relaxed nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/relaxed-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "relic-band",
+      "sourceId": "relic-band",
+      "beta": false,
+      "name": {
+        "en": "Relic Band",
+        "es": "Relic Band"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 200000,
+      "description": {
+        "en": "Worth a good price at a shop or to a collector.",
+        "es": "Se vende a buen precio en una tienda o a un coleccionista."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/relic-band/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "relic-copper",
+      "sourceId": "relic-copper",
+      "beta": false,
+      "name": {
+        "en": "Relic Copper",
+        "es": "Relic Copper"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 2000,
+      "description": {
+        "en": "Worth a good price at a shop or to a collector.",
+        "es": "Se vende a buen precio en una tienda o a un coleccionista."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/relic-copper/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "relic-crown",
+      "sourceId": "relic-crown",
+      "beta": false,
+      "name": {
+        "en": "Relic Crown",
+        "es": "Relic Crown"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 600000,
+      "description": {
+        "en": "Worth a good price at a shop or to a collector.",
+        "es": "Se vende a buen precio en una tienda o a un coleccionista."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/relic-crown/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "relic-gold",
+      "sourceId": "relic-gold",
+      "beta": false,
+      "name": {
+        "en": "Relic Gold",
+        "es": "Relic Gold"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 20000,
+      "description": {
+        "en": "Worth a good price at a shop or to a collector.",
+        "es": "Se vende a buen precio en una tienda o a un coleccionista."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/relic-gold/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "relic-silver",
+      "sourceId": "relic-silver",
+      "beta": false,
+      "name": {
+        "en": "Relic Silver",
+        "es": "Relic Silver"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 10000,
+      "description": {
+        "en": "Worth a good price at a shop or to a collector.",
+        "es": "Se vende a buen precio en una tienda o a un coleccionista."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/relic-silver/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "relic-statue",
+      "sourceId": "relic-statue",
+      "beta": false,
+      "name": {
+        "en": "Relic Statue",
+        "es": "Relic Statue"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 400000,
+      "description": {
+        "en": "Worth a good price at a shop or to a collector.",
+        "es": "Se vende a buen precio en una tienda o a un coleccionista."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/relic-statue/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "relic-vase",
+      "sourceId": "relic-vase",
+      "beta": false,
+      "name": {
+        "en": "Relic Vase",
+        "es": "Relic Vase"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 100000,
+      "description": {
+        "en": "Worth a good price at a shop or to a collector.",
+        "es": "Se vende a buen precio en una tienda o a un coleccionista."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/relic-vase/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "repeat-ball",
       "sourceId": "repeat-ball",
       "beta": false,
@@ -6447,6 +8394,33 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/repeat-ball/sprite.png"
+      }
+    },
+    {
+      "id": "repel",
+      "sourceId": "repel",
+      "beta": false,
+      "name": {
+        "en": "Repel",
+        "es": "Repel"
+      },
+      "type": "trainer-gear",
+      "sourceType": "trainer gear",
+      "cost": 400,
+      "description": {
+        "en": "A trainer may use an action to spray this. For 1 hour, wild Pokémon of lower level than the highest-level Pokémon in the party do not start encounters with the group.",
+        "es": "Un entrenador puede usar una acción para rociarlo. Durante 1 hora, los Pokémon salvajes de nivel inferior al del Pokémon de mayor nivel del grupo no inician encuentros con él."
+      },
+      "referenceEffect": "Keeps weaker wild Pokémon away for a short while.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/repel/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -6622,6 +8596,33 @@
       }
     },
     {
+      "id": "rock-gem",
+      "sourceId": "rock-gem",
+      "beta": false,
+      "name": {
+        "en": "Rock Gem",
+        "es": "Rock Gem"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1000,
+      "description": {
+        "en": "The first time the holder rolls damage for a rock-type move, it adds twice its proficiency bonus to that damage. The gem is consumed.",
+        "es": "La primera vez que el portador tire daño de un movimiento de tipo Roca, añade el doble de su bonificador de competencia a ese daño. La gema se consume."
+      },
+      "referenceEffect": "Boosts one rock-type move, then is used up.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/rock-gem/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "rock-incense",
       "sourceId": "rock-incense",
       "beta": false,
@@ -6762,6 +8763,33 @@
           "c90f4a24a7a2d000"
         ],
         "descriptionRevision": 2
+      }
+    },
+    {
+      "id": "root-fossil",
+      "sourceId": "root-fossil",
+      "beta": false,
+      "name": {
+        "en": "Root Fossil",
+        "es": "Root Fossil"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 7000,
+      "description": {
+        "en": "A laboratory can revive this fossil as a Lileep.",
+        "es": "Un laboratorio puede revivir este fósil como Lileep."
+      },
+      "referenceEffect": "Revived into Lileep.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/root-fossil/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -6917,6 +8945,60 @@
       }
     },
     {
+      "id": "salac-berry",
+      "sourceId": "salac-berry",
+      "beta": false,
+      "name": {
+        "en": "Salac Berry",
+        "es": "Salac Berry"
+      },
+      "type": "berry",
+      "sourceType": "berry",
+      "cost": 1000,
+      "description": {
+        "en": "Can be consumed as a reaction to dropping below one quarter of maximum HP. The holder's speed increases by 10 feet for 1 minute or until leaving combat.",
+        "es": "Puede consumirse como reacción al quedar por debajo de una cuarta parte de los PG máximos. La velocidad del portador aumenta en 10 pies durante 1 minuto o hasta abandonar el combate."
+      },
+      "referenceEffect": "Raises Speed at low health.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/salac-berry/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "sassy-mint",
+      "sourceId": "sassy-mint",
+      "beta": false,
+      "name": {
+        "en": "Sassy Mint",
+        "es": "Sassy Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Sassy (raises CHA, lowers DEX), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Grosera (sube CAR, baja DES), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Sassy nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/sassy-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "scope-lens",
       "sourceId": "scope-lens",
       "beta": false,
@@ -6935,6 +9017,60 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/scope-lens/sprite.png"
+      }
+    },
+    {
+      "id": "scroll-of-darkness",
+      "sourceId": "scroll-of-darkness",
+      "beta": false,
+      "name": {
+        "en": "Scroll of Darkness",
+        "es": "Scroll of Darkness"
+      },
+      "type": "evolution",
+      "sourceType": "evolution",
+      "cost": 0,
+      "description": {
+        "en": "A Kubfu that trains with this scroll may evolve into Single Strike Urshifu.",
+        "es": "Un Kubfu que entrene con este pergamino puede evolucionar a Urshifu Estilo Brusco."
+      },
+      "referenceEffect": "Evolves Kubfu into Single Strike Urshifu.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/scroll-of-darkness/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "scroll-of-waters",
+      "sourceId": "scroll-of-waters",
+      "beta": false,
+      "name": {
+        "en": "Scroll of Waters",
+        "es": "Scroll of Waters"
+      },
+      "type": "evolution",
+      "sourceType": "evolution",
+      "cost": 0,
+      "description": {
+        "en": "A Kubfu that trains with this scroll may evolve into Rapid Strike Urshifu.",
+        "es": "Un Kubfu que entrene con este pergamino puede evolucionar a Urshifu Estilo Fluido."
+      },
+      "referenceEffect": "Evolves Kubfu into Rapid Strike Urshifu.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/scroll-of-waters/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -6968,6 +9104,33 @@
           "f3d8ef0686df8321"
         ],
         "descriptionRevision": 2
+      }
+    },
+    {
+      "id": "serious-mint",
+      "sourceId": "serious-mint",
+      "beta": false,
+      "name": {
+        "en": "Serious Mint",
+        "es": "Serious Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Serious (no ability changes), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Seria (sin cambios de característica), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Serious nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/serious-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -7064,6 +9227,33 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/shiny-stone/sprite.png"
+      }
+    },
+    {
+      "id": "shoal-salt",
+      "sourceId": "shoal-salt",
+      "beta": false,
+      "name": {
+        "en": "Shoal Salt",
+        "es": "Shoal Salt"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 20,
+      "description": {
+        "en": "Salt from the depths of a sea cave. Prized by those who brew or craft with it.",
+        "es": "Sal de lo más profundo de una cueva marina. La aprecian quienes elaboran o fabrican con ella."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/shoal-salt/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -7436,6 +9626,33 @@
       }
     },
     {
+      "id": "soothe-bell",
+      "sourceId": "soothe-bell",
+      "beta": false,
+      "name": {
+        "en": "Soothe Bell",
+        "es": "Soothe Bell"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 5000,
+      "description": {
+        "en": "While holding this bell, the holder counts its Loyalty as 1 higher to meet evolution requirements.",
+        "es": "Mientras lleve esta campana, el portador cuenta su Lealtad como 1 más para cumplir requisitos de evolución."
+      },
+      "referenceEffect": "Makes the holder grow friendly faster.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/soothe-bell/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "spell-tag",
       "sourceId": "spell-tag",
       "beta": false,
@@ -7517,6 +9734,114 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/sport-ball/sprite.png"
+      }
+    },
+    {
+      "id": "star-piece",
+      "sourceId": "star-piece",
+      "beta": false,
+      "name": {
+        "en": "Star Piece",
+        "es": "Star Piece"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 12000,
+      "description": {
+        "en": "Worth a good price at a shop or to a collector.",
+        "es": "Se vende a buen precio en una tienda o a un coleccionista."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/star-piece/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "stardust",
+      "sourceId": "stardust",
+      "beta": false,
+      "name": {
+        "en": "Stardust",
+        "es": "Stardust"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 3000,
+      "description": {
+        "en": "Worth a good price at a shop or to a collector.",
+        "es": "Se vende a buen precio en una tienda o a un coleccionista."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/stardust/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "starf-berry",
+      "sourceId": "starf-berry",
+      "beta": false,
+      "name": {
+        "en": "Starf Berry",
+        "es": "Starf Berry"
+      },
+      "type": "berry",
+      "sourceType": "berry",
+      "cost": 1500,
+      "description": {
+        "en": "Can be consumed as a reaction to dropping below one quarter of maximum HP. Roll 1d5: 1, +2 to attack rolls; 2, +2 to Move DC; 3, +1 to AC; 4, +1 to saving throws; 5, +10 feet of speed for 1 minute or until leaving combat.",
+        "es": "Puede consumirse como reacción al quedar por debajo de una cuarta parte de los PG máximos. Tira 1d5: 1, +2 a las tiradas de ataque; 2, +2 a la CD de Movimiento; 3, +1 a la CA; 4, +1 a las salvaciones; 5, +10 pies de velocidad durante 1 minuto o hasta abandonar el combate."
+      },
+      "referenceEffect": "Sharply raises a random stat at low health.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/starf-berry/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "steel-gem",
+      "sourceId": "steel-gem",
+      "beta": false,
+      "name": {
+        "en": "Steel Gem",
+        "es": "Steel Gem"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1000,
+      "description": {
+        "en": "The first time the holder rolls damage for a steel-type move, it adds twice its proficiency bonus to that damage. The gem is consumed.",
+        "es": "La primera vez que el portador tire daño de un movimiento de tipo Acero, añade el doble de su bonificador de competencia a ese daño. La gema se consume."
+      },
+      "referenceEffect": "Boosts one steel-type move, then is used up.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/steel-gem/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
       }
     },
     {
@@ -7670,6 +9995,33 @@
       }
     },
     {
+      "id": "super-repel",
+      "sourceId": "super-repel",
+      "beta": false,
+      "name": {
+        "en": "Super Repel",
+        "es": "Super Repel"
+      },
+      "type": "trainer-gear",
+      "sourceType": "trainer gear",
+      "cost": 700,
+      "description": {
+        "en": "As Repel, but it lasts 4 hours.",
+        "es": "Como Repel, pero dura 4 horas."
+      },
+      "referenceEffect": "Keeps weaker wild Pokémon away for longer.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/super-repel/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "super-rod",
       "sourceId": "super-rod",
       "beta": false,
@@ -7712,6 +10064,33 @@
       }
     },
     {
+      "id": "sweet-apple",
+      "sourceId": "sweet-apple",
+      "beta": false,
+      "name": {
+        "en": "Sweet Apple",
+        "es": "Sweet Apple"
+      },
+      "type": "evolution",
+      "sourceType": "evolution",
+      "cost": 4000,
+      "description": {
+        "en": "An Applin may inhabit this red apple to evolve into Appletun.",
+        "es": "Un Applin puede habitar esta manzana roja para evolucionar a Appletun."
+      },
+      "referenceEffect": "Evolves Applin into Appletun.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/sweet-apple/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "swift-wing",
       "sourceId": "swift-wing",
       "beta": false,
@@ -7745,6 +10124,33 @@
       }
     },
     {
+      "id": "syrupy-apple",
+      "sourceId": "syrupy-apple",
+      "beta": false,
+      "name": {
+        "en": "Syrupy Apple",
+        "es": "Syrupy Apple"
+      },
+      "type": "evolution",
+      "sourceType": "evolution",
+      "cost": 4000,
+      "description": {
+        "en": "An Applin may inhabit this syrup-covered apple to evolve into Dipplin.",
+        "es": "Un Applin puede habitar esta manzana cubierta de jarabe para evolucionar a Dipplin."
+      },
+      "referenceEffect": "Evolves Applin into Dipplin.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/syrupy-apple/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
       "id": "tanga-berry",
       "sourceId": "tanga-berry",
       "beta": false,
@@ -7763,6 +10169,33 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/tanga-berry/sprite.png"
+      }
+    },
+    {
+      "id": "tart-apple",
+      "sourceId": "tart-apple",
+      "beta": false,
+      "name": {
+        "en": "Tart Apple",
+        "es": "Tart Apple"
+      },
+      "type": "evolution",
+      "sourceType": "evolution",
+      "cost": 4000,
+      "description": {
+        "en": "An Applin may inhabit this green and gold apple to evolve into Flapple.",
+        "es": "Un Applin puede habitar esta manzana verde y dorada para evolucionar a Flapple."
+      },
+      "referenceEffect": "Evolves Applin into Flapple.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/tart-apple/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -7936,6 +10369,60 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/timer-ball/sprite.png"
+      }
+    },
+    {
+      "id": "timid-mint",
+      "sourceId": "timid-mint",
+      "beta": false,
+      "name": {
+        "en": "Timid Mint",
+        "es": "Timid Mint"
+      },
+      "type": "medicine",
+      "sourceType": "medicine",
+      "cost": 20000,
+      "description": {
+        "en": "A Pokémon may consume this mint during a long rest. Its nature becomes Timid (raises DEX, lowers STR), replacing its current one.",
+        "es": "Un Pokémon puede consumir esta menta durante un descanso largo. Su naturaleza pasa a ser Miedosa (sube DES, baja FUE), en lugar de la actual."
+      },
+      "referenceEffect": "Changes the stat effects to those of the Timid nature.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/timid-mint/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
+      }
+    },
+    {
+      "id": "tiny-mushroom",
+      "sourceId": "tiny-mushroom",
+      "beta": false,
+      "name": {
+        "en": "Tiny Mushroom",
+        "es": "Tiny Mushroom"
+      },
+      "type": "valuable",
+      "sourceType": "valuable",
+      "cost": 500,
+      "description": {
+        "en": "Worth a good price at a shop or to a collector.",
+        "es": "Se vende a buen precio en una tienda o a un coleccionista."
+      },
+      "referenceEffect": "A valuable item with no other use.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/tiny-mushroom/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "manual",
+        "basis": "game-reference"
       }
     },
     {
@@ -8160,6 +10647,33 @@
       "rolls": [],
       "media": {
         "sprite": "assets/items/wacan-berry/sprite.png"
+      }
+    },
+    {
+      "id": "water-gem",
+      "sourceId": "water-gem",
+      "beta": false,
+      "name": {
+        "en": "Water Gem",
+        "es": "Water Gem"
+      },
+      "type": "held-item",
+      "sourceType": "held item",
+      "cost": 1000,
+      "description": {
+        "en": "The first time the holder rolls damage for a water-type move, it adds twice its proficiency bonus to that damage. The gem is consumed.",
+        "es": "La primera vez que el portador tire daño de un movimiento de tipo Agua, añade el doble de su bonificador de competencia a ese daño. La gema se consume."
+      },
+      "referenceEffect": "Boosts one water-type move, then is used up.",
+      "rolls": [],
+      "media": {
+        "sprite": "assets/items/water-gem/sprite.png"
+      },
+      "rulesOrigin": {
+        "kind": "homebrew-adaptation",
+        "version": "2026-11-05",
+        "automation": "automatic",
+        "basis": "game-reference"
       }
     },
     {

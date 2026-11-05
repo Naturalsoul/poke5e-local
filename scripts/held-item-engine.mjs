@@ -1,8 +1,8 @@
-import { getPokemonHeldItem } from "./pokemon-held-item-service.mjs";
+import { consumePokemonHeldItem, getPokemonHeldItem } from "./pokemon-held-item-service.mjs";
 import { isPokemonActor } from "./trainer-party-service.mjs";
 import { pokemonTypes } from "./status-runtime.mjs";
 import { buildPokemonStatusEffect } from "./status-effects.mjs";
-import { heldItemCriticalRange, heldItemDamageBonus, PUNCHING_MOVE_IDS } from "./held-item-rules.mjs";
+import { heldItemCriticalRange, heldItemDamageBonus, PUNCHING_MOVE_IDS, TYPE_GEMS } from "./held-item-rules.mjs";
 import { heldItemConfiguration, isHeldItemHealing } from "./held-item-config.mjs";
 import { registerBerryHealingChat } from "./berry-healing.mjs";
 import { applyBindingDamageBonus, captureBindingDamage, recordBindingDamage, synchronizeBindingMoves } from "./periodic-engine.mjs";
@@ -134,6 +134,9 @@ function applyDamageBonus(rolls, activity, held, { actor, useId }) {
     rolls[index].options[MODULE_ID] = { ...rolls[index].options[MODULE_ID], heldItemBonus: { ...marker, deferred: true } };
   } else {
     rolls[index] = replaceRoll(rolls[index], bonus, marker);
+    if (TYPE_GEMS[id]) {
+      run(consumePokemonHeldItem(actor).then(() => announce(actor, held, "potencia el movimiento y se consume", "boosts the move and is used up")));
+    }
   }
 }
 
@@ -485,6 +488,9 @@ function passiveChanges(actor, id) {
   }
   if (id === "metal-powder" && actor.getFlag(MODULE_ID, "sourceId") === "ditto") {
     return [add("system.abilities.con.value", 3)];
+  }
+  if (id === "quick-powder" && actor.getFlag(MODULE_ID, "sourceId") === "ditto") {
+    return [add("system.attributes.movement.walk", 10)];
   }
   return [];
 }

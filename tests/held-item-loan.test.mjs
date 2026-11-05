@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createFlagDocument, createHooks, installFoundryUtils } from "./helpers/foundry-mocks.mjs";
 import {
-  getPokemonHeldItem, reconcilePokemonHeldItemLoan, transferTrainerHeldItemToPokemon,
+  consumePokemonHeldItem, getPokemonHeldItem, reconcilePokemonHeldItemLoan, transferTrainerHeldItemToPokemon,
   transferPokemonHeldItemToTrainer, registerPokemonHeldItemService
 } from "../scripts/pokemon-held-item-service.mjs";
 import { HELD_ITEM_LOAN, LOAN_SYNC_OPTION, registerHeldItemLoanSync } from "../scripts/held-item-loan-sync.mjs";
@@ -240,4 +240,20 @@ test("only the client that gave a Pokémon an item assigns it: the others would 
   created(game.user.id);
   await flush();
   assert.equal(pokemon.getFlag(MODULE_ID, "heldItemId"), berry.id);
+});
+
+test("consuming a loaned one-use item removes it and its record, keeping other units", async () => {
+  const last = fixture();
+  await last.give();
+  await consumePokemonHeldItem(last.pokemon);
+  assert.equal(last.pokemon.items.length, 0);
+  assert.equal(last.pokemon.getFlag(MODULE_ID, "heldItemId"), undefined);
+  assert.equal(last.trainer.items.length, 0);
+
+  const stack = fixture(3);
+  await stack.give();
+  await consumePokemonHeldItem(stack.pokemon);
+  assert.equal(stack.pokemon.items.length, 0);
+  assert.deepEqual(stack.trainer.items.map(item => item.id), [stack.original.id]);
+  assert.equal(stack.original.system.quantity, 2);
 });

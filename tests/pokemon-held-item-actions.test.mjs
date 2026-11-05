@@ -150,10 +150,10 @@ test("escapes activity names and ids before inserting them into the sheet", () =
   assert.match(markup, /data-activity-id="&quot; onclick=&quot;/);
 });
 
-test("all 28 catalog berries have a native one-unit consumption activity in both languages", () => {
+test("all 43 catalog berries have a native one-unit consumption activity in both languages", () => {
   const { items } = JSON.parse(readFileSync(new URL("../data/normalized/items.json", import.meta.url), "utf8"));
   const berries = items.filter(item => item.type === "berry");
-  assert.equal(berries.length, 28);
+  assert.equal(berries.length, 43);
   for (const berry of berries) {
     for (const language of ["es", "en"]) {
       const source = buildPoke5eCatalogItem(berry, language);

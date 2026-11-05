@@ -25,6 +25,9 @@ export const HELD_ITEM_DAMAGE_TYPES = Object.freeze({
   "wave-incense": "water"
 });
 
+export const TYPE_GEMS = Object.freeze(Object.fromEntries(["normal", "fire", "water", "electric", "grass", "ice", "fighting", "poison",
+  "ground", "flying", "psychic", "bug", "rock", "ghost", "dragon", "dark", "steel", "fairy"].map(type => [`${type}-gem`, type])));
+
 // Lista de movimientos de puñetazo; Sucker Punch no pertenece a esta categoría.
 // https://bulbapedia.bulbagarden.net/wiki/Iron_Fist_(Ability)#Affected_moves
 export const PUNCHING_MOVE_IDS = Object.freeze([
@@ -37,6 +40,9 @@ export const PUNCHING_MOVE_IDS = Object.freeze([
 
 export function heldItemDamageBonus(sourceId, { type, scope, proficiency, moveId }) {
   const bonus = Math.max(0, Number(proficiency) || 0);
+  if (TYPE_GEMS[sourceId] === type && type) {
+    return bonus * 2;
+  }
   if (HELD_ITEM_DAMAGE_TYPES[sourceId] === type && type) {
     return bonus;
   }

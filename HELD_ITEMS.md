@@ -28,7 +28,9 @@ Recarga Foundry como GM después de instalar los cambios.
 | Leftovers / Black Sludge de tipo Veneno | Actividad «Recuperar PG»: acción adicional, una carga para curar la competencia, diez cargas y recuperación nativa al amanecer. No supera el máximo ni revive. |
 | Assault Vest | +1 CA y bloqueo de movimientos sin daño. El bono también funciona con CA plana. |
 | Metal Powder | +3 Constitución mediante un efecto activo, únicamente para Ditto. |
-| Las 28 bayas del catálogo | Botón «Consumir baya» como reacción con confirmación previa. Publica la tarjeta y consume una unidad mediante D&D5e; elimina el objeto al agotarse. El contador muestra unidades disponibles. Oran tira `2d4 + 2` y Sitrus publica sus 30 PG fijos: curan al portador cuando se renderiza el resultado en el chat. PP, estados y reducción de daño siguen siendo manuales. |
+| Quick Powder | +10 pies de velocidad mediante un efecto activo, únicamente para Ditto. |
+| Las 18 gemas | Al tirar daño de un movimiento de su tipo, añaden el doble de la competencia y se consumen, también si estaban prestadas por el entrenador. No se activan con Struggle. |
+| Las 43 bayas del catálogo | Botón «Consumir baya» como reacción con confirmación previa. Publica la tarjeta y consume una unidad mediante D&D5e; elimina el objeto al agotarse. El contador muestra unidades disponibles. Oran tira `2d4 + 2` y Sitrus publica sus 30 PG fijos: curan al portador cuando se renderiza el resultado en el chat. PP, estados y reducción de daño siguen siendo manuales. |
 
 Los bonos de daño respetan la prohibición de amplificación de Struggle.
 Life Orb y Shell Bell se activan al **aplicar** el daño de una tarjeta de chat,

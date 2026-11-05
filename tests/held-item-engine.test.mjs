@@ -566,3 +566,32 @@ test("registers native roll and damage hooks only once", () => {
     assert.equal(hooks.get(name).length, 1);
   }
 });
+
+test("a gem doubles the bonus once for its own type and is used up; Quick Powder only helps Ditto", async () => {
+  const actor = pokemon("fire-gem");
+  const water = [new MockRoll("1d6", {}, { type: "water" })];
+  applyHeldItemRollBonuses(water, config(activity(actor)));
+  assert.equal(water[0].formula, "1d6");
+  assert.equal(actor.items.length, 1);
+  const fire = [new MockRoll("1d6", {}, { type: "fire" })];
+  applyHeldItemRollBonuses(fire, config(activity(actor)));
+  assert.equal(fire[0].formula, "(1d6) + 6");
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(actor.items.length, 0);
+  assert.equal(actor.getFlag(MODULE_ID, "heldItemId"), undefined);
+  assert.ok(said("fire-gem"));
+  const again = [new MockRoll("1d6", {}, { type: "fire" })];
+  applyHeldItemRollBonuses(again, config(activity(actor)));
+  assert.equal(again[0].formula, "1d6");
+  const struggle = pokemon("normal-gem");
+  const rolls = [new MockRoll("1d6", {}, { type: "normal" })];
+  applyHeldItemRollBonuses(rolls, config(activity(struggle, { struggle: true })));
+  assert.equal(rolls[0].formula, "1d6");
+  assert.equal(struggle.items.length, 1);
+  const ditto = pokemon("quick-powder", { species: "ditto" });
+  await synchronizeHeldItemPassives(ditto);
+  assert.equal(ditto.writes.at(-1).sources[0].changes[0].key, "system.attributes.movement.walk");
+  const pikachu = pokemon("quick-powder");
+  await synchronizeHeldItemPassives(pikachu);
+  assert.equal(pikachu.writes.length, 0);
+});

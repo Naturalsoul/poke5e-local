@@ -4,6 +4,12 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.62.0] — 2026-11-05
+
+- **Objetos:** 92 objetos nuevos en el catálogo, con su imagen del juego y reglas adaptadas a 5e: los que faltaban para evolucionar (Metal Alloy, los dos pergaminos de Kubfu, Leader's Crest y las manzanas de Applin), 18 gemas, 15 bayas, 21 mentas, Repel, Poké Doll, Fluffy Tail, PP Max, Rare Candy, Soothe Bell, Quick Powder y 22 objetos valiosos y fósiles, en su propia carpeta del compendio.
+- **Gemas:** al tirar daño de un movimiento de su tipo suman el doble de la competencia y se consumen solas, también si el Pokémon las tenía prestadas del entrenador.
+- **Quick Powder:** un Ditto que lo lleve gana 10 pies de velocidad. **Figy, Aguav e Iapapa** curan con el botón «Consumir baya».
+
 ## [0.61.0] — 2026-11-05
 
 - **Objetos:** 38 objetos que mostraban el ícono por defecto ahora tienen su imagen del juego, entre ellos los caramelos, Tera Orb, Pokédex, Dynamax Band y los objetos de evolución de Sinistea y Poltchageist. También se actualizan las copias que ya estaban en fichas de actores o en el mundo, sin tocar las imágenes personalizadas.
