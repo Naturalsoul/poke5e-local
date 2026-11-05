@@ -112,3 +112,15 @@ auditoría. Las decisiones de conversión a 5e son propias de este módulo.
 | `weakness-policy` | Equipable | Referencia interna (`referenceEffect`) |
 | `white-herb` | Equipable | [Consulta](https://bulbapedia.bulbagarden.net/wiki/White_Herb) |
 | `zoom-lens` | Equipable | [Consulta](https://bulbapedia.bulbagarden.net/wiki/Zoom_Lens) |
+
+## Objetos añadidos desde el hack Team Rocket (5 de noviembre de 2026)
+
+Se añadieron 92 objetos que el hack entrega, esconde o vende y que el catálogo no tenía. También son adaptaciones locales. Precios: los del hack, salvo gemas, bayas de combate, manzanas y Quick Powder, ajustados a objetos similares del catálogo.
+
+- Gemas: el doble de la competencia y un solo uso, frente al Charcoal, que es permanente y da la competencia.
+- Bayas de estadística: mismos bonos que las mejoras consumibles de arriba, con el disparador del juego (menos de 1/4 de PG o recibir un golpe).
+- Rare Candy: da justo la experiencia del siguiente nivel y no supera el nivel del entrenador. Se aplica a mano.
+- Mentas: se aplican con el cambio de naturaleza de la ficha.
+- Repel: no impide los encuentros de la historia; solo los salvajes de nivel inferior.
+- Valiosos: sin efecto, se venden o se usan como recompensa.
+- Automáticos: las gemas, Quick Powder, y Figy, Aguav e Iapapa. El resto es manual.

@@ -14,10 +14,11 @@ installFoundryUtils();
 const { items } = JSON.parse(readFileSync(
   new URL("../data/normalized/items.json", import.meta.url), "utf8"
 ));
-const adaptations = items.filter(item => item.rulesOrigin?.kind === "homebrew-adaptation");
+const adaptations = items.filter(item => item.rulesOrigin?.version === "2026-10-17");
+const hackAdditions = items.filter(item => item.rulesOrigin?.version === "2026-11-05");
 
 test("the full item catalog has usable English and Spanish descriptions", () => {
-  assert.equal(items.length, 366);
+  assert.equal(items.length, 458);
   assert.equal(new Set(items.map(item => item.id)).size, items.length);
   for (const item of items) {
     for (const language of ["en", "es"]) {
@@ -226,4 +227,21 @@ test("every item sprite in the catalog exists on disk", () => {
       assert.ok(existsSync(new URL(`../${item.media.sprite}`, import.meta.url)), item.id);
     }
   }
+});
+
+test("the 92 Team Rocket hack additions have a sprite, provenance and every evolution item the rules ask for", () => {
+  assert.equal(hackAdditions.length, 92);
+  const automated = ["figy-berry", "aguav-berry", "iapapa-berry", "quick-powder"];
+  for (const item of hackAdditions) {
+    assert.equal(item.rulesOrigin.kind, "homebrew-adaptation", item.id);
+    assert.equal(item.rulesOrigin.automation, automated.includes(item.id) || item.id.endsWith("-gem") ? "automatic" : "manual", item.id);
+    assert.ok(item.referenceEffect?.trim(), item.id);
+    assert.ok(existsSync(new URL(`../${item.media.sprite}`, import.meta.url)), item.id);
+  }
+  const names = new Set(items.map(item => item.name.en));
+  const evolutions = JSON.parse(readFileSync(new URL("../data/normalized/evolutions.json", import.meta.url), "utf8"));
+  const required = (Array.isArray(evolutions) ? evolutions : Object.values(evolutions).find(Array.isArray))
+    .flatMap(evolution => evolution.conditions).filter(condition => condition.type === "item").map(condition => condition.value);
+  // Toxic Stone has no official sprite and waits on whether Toxeon appears in the campaign.
+  assert.deepEqual([...new Set(required)].filter(name => !names.has(name)), ["Toxic Stone"]);
 });
