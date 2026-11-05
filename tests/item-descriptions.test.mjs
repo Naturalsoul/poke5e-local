@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
 import { installFoundryUtils } from "./helpers/foundry-mocks.mjs";
 import {
   buildPoke5eCatalogItem,
+  synchronizeDefaultIconImages,
   synchronizeMissingCatalogDescriptions
 } from "../scripts/item-catalog-service.mjs";
 import { adaptedItemSource, ADAPTED_ITEM_NOTICES, itemDescriptionFingerprint } from "../scripts/item-description-format.mjs";
@@ -191,4 +192,38 @@ test("existing custom descriptions receive updated automation metadata without b
   assert.equal(item.system.description.value, "<p>Texto personalizado.</p>");
   assert.equal(item.rulesOrigin.automation, "automatic");
   assert.equal(await synchronizeMissingCatalogDescriptions(items), 0);
+});
+
+test("catalog images replace default icons on owned copies but never custom images", async () => {
+  const copy = (sourceId, img, kind = "catalog-item") => ({
+    id: `${sourceId}-${img}`, img,
+    getFlag: (_scope, key) => ({ kind, sourceId })[key]
+  });
+  const updates = [];
+  const actor = {
+    items: [
+      copy("tera-orb", "icons/svg/item-bag.svg"),
+      copy("pokedex", "systems/dnd5e/icons/svg/items/loot.svg"),
+      copy("tera-orb", "worlds/mine/orb.png"),
+      copy("backpack", "icons/svg/item-bag.svg"),
+      copy("tera-orb", "icons/svg/item-bag.svg", "custom")
+    ],
+    async updateEmbeddedDocuments(type, data) { updates.push(...data); }
+  };
+  globalThis.game = { user: { isGM: true }, actors: [actor], items: [], scenes: [] };
+  assert.equal(await synchronizeDefaultIconImages(items), 2);
+  assert.deepEqual(updates.map(update => update.img), [
+    "modules/poke5e-local/assets/items/tera-orb/sprite.png",
+    "modules/poke5e-local/assets/items/pokedex/sprite.png"
+  ]);
+  globalThis.game.user.isGM = false;
+  assert.equal(await synchronizeDefaultIconImages(items), 0);
+});
+
+test("every item sprite in the catalog exists on disk", () => {
+  for (const item of items) {
+    if (item.media?.sprite) {
+      assert.ok(existsSync(new URL(`../${item.media.sprite}`, import.meta.url)), item.id);
+    }
+  }
 });

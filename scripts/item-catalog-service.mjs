@@ -154,7 +154,7 @@ const PACK_NAME = "poke5e-items";
 const PACK_ID = `world.${PACK_NAME}`;
 const PACK_LABEL = "Poke5e Items";
 const CATALOG_SETTING = "itemCatalogSignature";
-const ITEM_CATALOG_VERSION = "0.4.1";
+const ITEM_CATALOG_VERSION = "0.4.2";
 
 const FOUNDRY_ITEM_TYPES = {
   pokeball: "consumable",
@@ -1292,13 +1292,7 @@ function missingCatalogDescriptionUpdates(items, definitions, language) {
   return updates;
 }
 
-export async function synchronizeMissingCatalogDescriptions(catalogItems, language = "es") {
-  if (!game.user.isGM) {
-    return 0;
-  }
-  const definitions = new Map(catalogItems
-    .filter(item => item.rulesOrigin?.kind === "homebrew-adaptation")
-    .map(item => [item.id, item]));
+function actorsWithSyntheticTokens() {
   const actors = new Set(game.actors ?? []);
   for (const scene of game.scenes ?? []) {
     for (const token of scene.tokens ?? []) {
@@ -1307,6 +1301,53 @@ export async function synchronizeMissingCatalogDescriptions(catalogItems, langua
       }
     }
   }
+  return actors;
+}
+
+// Copies already on actors or in the world don't get the compendium's new image; a custom image is never replaced.
+function defaultIconImageUpdates(items, images) {
+  const updates = [];
+  for (const item of items ?? []) {
+    if (item.getFlag(MODULE_ID, "kind") !== "catalog-item" || !/^(systems\/dnd5e\/)?icons\/svg\//.test(item.img ?? "")) {
+      continue;
+    }
+    const img = images.get(item.getFlag(MODULE_ID, "sourceId"));
+    if (img) {
+      updates.push({ _id: item.id, img });
+    }
+  }
+  return updates;
+}
+
+export async function synchronizeDefaultIconImages(catalogItems) {
+  if (!game.user.isGM) {
+    return 0;
+  }
+  const images = new Map(catalogItems.map(item => [item.id, resolveItemImage(item)]));
+  let updated = 0;
+  for (const actor of actorsWithSyntheticTokens()) {
+    const updates = defaultIconImageUpdates(actor.items, images);
+    if (updates.length) {
+      await actor.updateEmbeddedDocuments("Item", updates);
+      updated += updates.length;
+    }
+  }
+  const updates = defaultIconImageUpdates(game.items, images);
+  if (updates.length) {
+    await Item.implementation.updateDocuments(updates);
+    updated += updates.length;
+  }
+  return updated;
+}
+
+export async function synchronizeMissingCatalogDescriptions(catalogItems, language = "es") {
+  if (!game.user.isGM) {
+    return 0;
+  }
+  const definitions = new Map(catalogItems
+    .filter(item => item.rulesOrigin?.kind === "homebrew-adaptation")
+    .map(item => [item.id, item]));
+  const actors = actorsWithSyntheticTokens();
   let updated = 0;
   for (const actor of actors) {
     const updates = missingCatalogDescriptionUpdates(actor.items, definitions, language);
@@ -2748,6 +2789,8 @@ export async function syncPoke5eItemCompendium({
     currentLanguage();
 
   const descriptionsUpdated = await synchronizeMissingCatalogDescriptions(catalog.items, language);
+
+  await synchronizeDefaultIconImages(catalog.items);
 
   const effectiveSignature =
     `${ITEM_CATALOG_VERSION}:${catalog.signature}:${language}`;

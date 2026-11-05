@@ -41,7 +41,7 @@
       "referenceEffect": "Changes an eligible Pokémon's standard Ability to its Hidden Ability; Scarlet and Violet also allow changing back to a standard Ability.",
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/ability-patch/sprite.png"
       },
       "rulesOrigin": {
         "kind": "homebrew-adaptation",
@@ -76,7 +76,7 @@
       "referenceEffect": "Protects the holder's Ability against changes, suppression and effects that ignore Abilities, with specific exceptions such as Transform.",
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/ability-shield/sprite.png"
       },
       "rulesOrigin": {
         "kind": "homebrew-adaptation",
@@ -303,7 +303,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/auspicious-armor/sprite.png"
       }
     },
     {
@@ -495,7 +495,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/black-augurite/sprite.png"
       }
     },
     {
@@ -610,7 +610,7 @@
       "referenceEffect": "Consumed when the holder's move misses due to accuracy or evasion, raising its Speed by two stages.",
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/blunder-policy/sprite.png"
       },
       "rulesOrigin": {
         "kind": "homebrew-adaptation",
@@ -645,7 +645,7 @@
       "referenceEffect": "Consumed to activate Protosynthesis without harsh sunlight or Quark Drive without Electric Terrain.",
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/booster-energy/sprite.png"
       },
       "rulesOrigin": {
         "kind": "homebrew-adaptation",
@@ -1103,7 +1103,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/chipped-pot/sprite.png"
       }
     },
     {
@@ -1208,7 +1208,7 @@
       "referenceEffect": "Prevents stat reductions caused by other Pokémon's moves and Abilities, but not effects that reset stat changes.",
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/clear-amulet/sprite.png"
       },
       "rulesOrigin": {
         "kind": "homebrew-adaptation",
@@ -1360,7 +1360,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/courage-candy/sprite.png"
       }
     },
     {
@@ -1381,7 +1381,7 @@
       "referenceEffect": "Blocks additional effects of other Pokémon's damaging moves, not the damage itself or status moves.",
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/covert-cloak/sprite.png"
       },
       "rulesOrigin": {
         "kind": "homebrew-adaptation",
@@ -1416,7 +1416,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/cracked-pot/sprite.png"
       }
     },
     {
@@ -1932,7 +1932,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/dynamax-band/sprite.png"
       }
     },
     {
@@ -2088,7 +2088,7 @@
       "referenceEffect": "Consumed to switch the holder out when one of its stats is lowered, including by its own moves.",
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/eject-pack/sprite.png"
       },
       "rulesOrigin": {
         "kind": "homebrew-adaptation",
@@ -2440,7 +2440,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/explorers-pack/sprite.png"
       }
     },
     {
@@ -3020,7 +3020,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/galarica-wreath/sprite.png"
       }
     },
     {
@@ -3518,7 +3518,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/health-candy/sprite.png"
       }
     },
     {
@@ -3614,7 +3614,7 @@
       "referenceEffect": "Protects the holder from entry-hazard effects.",
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/heavy-duty-boots/sprite.png"
       },
       "rulesOrigin": {
         "kind": "homebrew-adaptation",
@@ -4339,7 +4339,7 @@
       "referenceEffect": "Makes multi-strike moves hit more times, usually guaranteeing at least four hits when the move allows it.",
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/loaded-dice/sprite.png"
       },
       "rulesOrigin": {
         "kind": "homebrew-adaptation",
@@ -4554,7 +4554,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/malicious-armor/sprite.png"
       }
     },
     {
@@ -4596,7 +4596,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/masterpiece-teacup/sprite.png"
       }
     },
     {
@@ -4669,7 +4669,7 @@
         }
       ],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/max-honey/sprite.png"
       },
       "rulesOrigin": {
         "kind": "homebrew-adaptation",
@@ -4704,7 +4704,7 @@
       "referenceEffect": "In battle, raises Attack, Defense, Special Attack, Special Defense and Speed by one stage. Three portions can make Max Soup for compatible Pokémon.",
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/max-mushrooms/sprite.png"
       },
       "rulesOrigin": {
         "kind": "homebrew-adaptation",
@@ -4966,7 +4966,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/mighty-candy/sprite.png"
       }
     },
     {
@@ -5242,7 +5242,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/n-lunarizer/sprite.png"
       }
     },
     {
@@ -5263,7 +5263,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/n-solarizer/sprite.png"
       }
     },
     {
@@ -5558,7 +5558,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/peat-block/sprite.png"
       }
     },
     {
@@ -5621,7 +5621,7 @@
       "referenceEffect": "Cures non-volatile status conditions and confusion in the games.",
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/pewter-crunchies/sprite.png"
       },
       "rulesOrigin": {
         "kind": "homebrew-adaptation",
@@ -5803,7 +5803,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/pokedex/sprite.png"
       }
     },
     {
@@ -6124,7 +6124,7 @@
       "referenceEffect": "Boosts punching-move power and makes those moves non-contact; stacks with Iron Fist.",
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/punching-glove/sprite.png"
       },
       "rulesOrigin": {
         "kind": "homebrew-adaptation",
@@ -6201,7 +6201,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/quick-candy/sprite.png"
       }
     },
     {
@@ -6747,7 +6747,7 @@
       "referenceEffect": "Consumed to lower the holder's Speed when Trick Room starts or the holder enters battle while it is active.",
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/room-service/sprite.png"
       },
       "rulesOrigin": {
         "kind": "homebrew-adaptation",
@@ -7252,7 +7252,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/smart-candy/sprite.png"
       }
     },
     {
@@ -7708,7 +7708,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/sweet/sprite.png"
       }
     },
     {
@@ -7783,7 +7783,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/tera-orb/sprite.png"
       }
     },
     {
@@ -7879,7 +7879,7 @@
       "referenceEffect": "Consumed after successfully using a sound-based move, raising the holder's Special Attack by one stage.",
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/throat-spray/sprite.png"
       },
       "rulesOrigin": {
         "kind": "homebrew-adaptation",
@@ -7956,7 +7956,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/tough-candy/sprite.png"
       }
     },
     {
@@ -8082,7 +8082,7 @@
       "referenceEffect": null,
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/unremarkable-teacup/sprite.png"
       }
     },
     {
@@ -8124,7 +8124,7 @@
       "referenceEffect": "Prevents most Rain and Harsh Sunlight effects on the holder; other weather remains effective.",
       "rolls": [],
       "media": {
-        "sprite": null
+        "sprite": "assets/items/utility-umbrella/sprite.png"
       },
       "rulesOrigin": {
         "kind": "homebrew-adaptation",

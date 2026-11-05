@@ -4,6 +4,10 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.61.0] — 2026-11-05
+
+- **Objetos:** 38 objetos que mostraban el ícono por defecto ahora tienen su imagen del juego, entre ellos los caramelos, Tera Orb, Pokédex, Dynamax Band y los objetos de evolución de Sinistea y Poltchageist. También se actualizan las copias que ya estaban en fichas de actores o en el mundo, sin tocar las imágenes personalizadas.
+
 ## [0.60.0] — 2026-11-05
 
 - **Mochila:** nuevo botón «Crear objeto» en el bolsillo Equipo, para quien es dueño del entrenador, también los jugadores. Se elige nombre y tipo (botín, equipo, arma, consumible o herramienta), y se abre la ficha del objeto para completarlo.
