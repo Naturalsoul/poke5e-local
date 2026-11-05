@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.52.0] — 2026-11-05
+
+- **PC Pokémon, EXP:** la ficha muestra una barra de EXP bajo la de HP, con la EXP total y la que pide el siguiente nivel.
+  Al elegir un Pokémon se llena la barra de EXP; la de HP ya no se anima.
+- **PC Pokémon, animaciones:** el salto y el llenado ya no se repiten cada vez que la ventana se redibuja con el mismo Pokémon
+  elegido; solo salen al elegir otro.
+
 ## [0.51.0] — 2026-11-05
 
 - **PC Pokémon, animaciones:** la pantalla se enciende al abrir, la caja se desliza al cambiar, el Pokémon elegido da un

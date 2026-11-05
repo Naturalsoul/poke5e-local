@@ -1,6 +1,7 @@
 import { pokemonLevel } from "./encounter-difficulty.mjs";
 import { escapeHtml } from "./html.mjs";
 import { getLanguage } from "./i18n.mjs";
+import { getPokemonExperienceState } from "./pokemon-experience-service.mjs";
 import { getPokemonHeldItem } from "./pokemon-held-item-service.mjs";
 import { applyPcMove, BOX_COLUMNS, BOX_SIZE, moveSlot, pcBoxCount, pcDisplayName, pcMoveContext, planPcMove, spriteGroundShift, staticSpriteSource, trainerPcEntries } from "./pokemon-pc-boxes.mjs";
 import { getPokemonTypes } from "./pokemon-type-service.mjs";
@@ -127,6 +128,13 @@ function hpMarkup(pokemon) {
     <span class="poke5e-pc__hp-numbers">${value}/${max}</span></p>`;
 }
 
+function expMarkup(pokemon) {
+  const { isMaxLevel, nextLevelXp, percent, total } = getPokemonExperienceState(pokemon);
+  return `<p class="poke5e-pc__hp poke5e-pc__exp"><span class="poke5e-pc__hp-track"><b>EXP</b>
+    <span class="poke5e-pc__hp-bar" aria-hidden="true"><span style="width:${percent}%"></span></span></span>
+    <span class="poke5e-pc__hp-numbers">${isMaxLevel ? `${total} MAX` : `${total}/${nextLevelXp}`}</span></p>`;
+}
+
 function statusesMarkup(pokemon) {
   const names = [...(pokemon.effects ?? [])].filter(effect => !effect.disabled && Array.from(effect.statuses ?? []).length).map(effect => effect.name);
   return names.length ? `<p class="poke5e-pc__statuses">${names.map(name => `<span>${escapeHtml(name)}</span>`).join("")}</p>` : "";
@@ -143,7 +151,9 @@ function previewMarkup(entry, pokemon, holding) {
   if (!pokemon) {return `<p class="poke5e-pc__hint">${text.pick}</p>`;}
   let types = [];
   let item = null;
+  let exp = "";
   try {
+    exp = expMarkup(pokemon);
     types = getPokemonTypes(pokemon);
     item = getPokemonHeldItem(pokemon);
   } catch (error) {
@@ -158,6 +168,7 @@ function previewMarkup(entry, pokemon, holding) {
     </div>
     <p class="poke5e-pc__types">${types.map(type => `<span class="poke5e-pc__type" data-type="${escapeHtml(String(type).toLowerCase())}">${escapeHtml(localizedType(type))}</span>`).join("")}</p>
     ${hpMarkup(pokemon)}
+    ${exp}
     ${isFainted(pokemon) ? `<p class="poke5e-pc__fainted">${text.fainted}</p>` : ""}
     ${statusesMarkup(pokemon)}
     <p class="poke5e-pc__item">${item ? `${text.item}: ${escapeHtml(item.name)}` : text.noItem}</p>
@@ -336,8 +347,10 @@ export class PokemonPc extends foundry.applications.api.ApplicationV2 {
     root.querySelector(".poke5e-pc__slot.is-selected")?.classList.remove("is-selected");
     const pokemon = this.entry.pokemon.get(slot.dataset.uuid) ?? null;
     slot.classList.toggle("is-selected", Boolean(pokemon));
+    const changed = this.selectedUuid !== (pokemon?.uuid ?? null);
     this.selectedUuid = pokemon?.uuid ?? null;
-    this.#drawPreview(true);
+    // A render puts the focus back here too: that one must not replay the hop.
+    this.#drawPreview(changed);
   }
 
   #drawPreview(enter = false) {

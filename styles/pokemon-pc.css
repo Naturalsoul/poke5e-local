@@ -183,6 +183,8 @@
 }
 
 .poke5e-pc__hp-track b {
+  /* Wide enough for "EXP", so the HP and EXP bars start at the same place. */
+  min-width: 24px;
   font-size: 11px;
   line-height: 1;
   color: #f2c94c;
@@ -202,6 +204,7 @@
 .poke5e-pc__hp-bar[data-state="high"] span { background: #58c86a; }
 .poke5e-pc__hp-bar[data-state="mid"] span { background: #f0c030; }
 .poke5e-pc__hp-bar[data-state="low"] span { background: #e8503f; }
+.poke5e-pc__exp .poke5e-pc__hp-bar span { background: #4fb0f0; }
 
 .poke5e-pc__hp-numbers {
   display: block;
@@ -604,12 +607,12 @@
     from { translate: -100% 0; opacity: 0; }
   }
 
-  /* A newly picked Pokémon hops on its platform while its HP bar fills. */
+  /* A newly picked Pokémon hops on its platform while its EXP bar fills. */
   .poke5e-pc__preview[data-enter] .poke5e-pc__portrait img {
     animation: poke5e-pc-hop 0.3s steps(4) both;
   }
 
-  .poke5e-pc__preview[data-enter] .poke5e-pc__hp-bar span {
+  .poke5e-pc__preview[data-enter] .poke5e-pc__exp .poke5e-pc__hp-bar span {
     animation: poke5e-pc-fill 0.4s steps(8) both;
   }
 
