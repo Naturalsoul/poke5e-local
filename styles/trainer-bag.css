@@ -9,11 +9,6 @@
   grid-template-columns: 300px minmax(0, 1fr);
 }
 
-.poke5e-bag .poke5e-pc__preview {
-  max-height: 660px;
-  min-height: 0;
-}
-
 .poke5e-bag__stage {
   flex: none;
   display: grid;
@@ -142,11 +137,19 @@
   color: #fff;
 }
 
-/* Four rows fit the window on a small screen; a fuller pocket scrolls. */
+/*
+ * Fixed tracks and height: in a box that scrolls, rows sized from the slots' aspect ratio collapse and the slots overlap.
+ * The cut-off fifth row shows that a fuller pocket scrolls; the gutter keeps the slots from moving when it does.
+ */
 .poke5e-bag__box {
+  flex: none;
+  grid-template-columns: repeat(6, 76px);
+  grid-auto-rows: 76px;
+  justify-content: center;
   align-content: start;
-  max-height: 340px;
+  height: 340px;
   overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 .poke5e-bag .poke5e-pc__box .poke5e-pc__slot {
