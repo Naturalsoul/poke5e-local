@@ -5740,7 +5740,7 @@ function buildPokemonSummary(
     </div>
   `;
 
-  if (currentPokemonSheetDesign() === "pc") {
+  if (currentPokemonSheetDesign() !== "classic") {
     applyPcLayout(root, pokemon, language);
   }
 

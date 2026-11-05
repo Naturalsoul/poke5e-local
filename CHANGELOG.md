@@ -4,6 +4,14 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.54.0] — 2026-11-05
+
+- **Hoja de Pokémon, Pixel Team Rocket:** nuevo diseño en «Poke5e - Hoja de Pokémon», igual a la hoja compacta pero de noche:
+  negro, rojo y latón como la hoja de entrenador, con la R en la pared del escenario.
+- **Hoja de Pokémon, Pixel Base:** la hoja «PC (compacta)» pasa a llamarse así.
+- **Hoja de Pokémon, ajuste:** el diseño ahora lo elige el DM para toda la mesa, ya no cada jugador. Hay que volver a elegirlo una
+  vez, porque arranca en «Clásica».
+
 ## [0.53.0] — 2026-11-05
 
 - **Hoja de Pokémon, diseño PC:** nueva opción «Poke5e - Hoja de Pokémon», por jugador. La hoja «PC (compacta)» usa el papel,
