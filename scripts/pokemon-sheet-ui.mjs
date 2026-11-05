@@ -79,6 +79,8 @@ import {
 import { pokemonMoveEffectsMarkup } from "./pokemon-move-effects.mjs";
 import { getLanguage } from "./i18n.mjs";
 
+import { applyPcLayout, currentPokemonSheetDesign } from "./pokemon-sheet-pc.mjs";
+
 const MODULE_ID =
   "poke5e-local";
 
@@ -5737,6 +5739,10 @@ function buildPokemonSummary(
 
     </div>
   `;
+
+  if (currentPokemonSheetDesign() === "pc") {
+    applyPcLayout(root, pokemon, language);
+  }
 
   activatePokemonSheetActions({
     root,

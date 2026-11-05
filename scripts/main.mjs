@@ -3,6 +3,7 @@ import { registerPokemonPc, togglePokemonPc } from "./pokemon-pc.mjs";
 import { registerMoveAnimations } from "./move-animations.mjs";
 import { registerEncounterXpSettings } from "./encounter-xp-service.mjs";
 import { registerSheetDesign } from "./ui-theme.mjs";
+import { registerPokemonSheetDesign } from "./pokemon-sheet-pc.mjs";
 import { registerBattleHotbar, useBattleHotbarMacro } from "./battle-hotbar.mjs";
 import { registerPassiveAbilityEngine } from "./passive-ability-engine.mjs";
 import { registerActiveAbilityService } from "./active-ability-service.mjs";
@@ -353,6 +354,7 @@ Hooks.once(
     registerPoke5eItemCatalogSettings();
     registerEncounterXpSettings();
     registerSheetDesign();
+    registerPokemonSheetDesign();
     registerPoke5eItemConsumptionService();
     registerBattleTransitionService();
 

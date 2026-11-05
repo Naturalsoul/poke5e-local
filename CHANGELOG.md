@@ -4,6 +4,12 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.53.0] — 2026-11-05
+
+- **Hoja de Pokémon, diseño PC:** nueva opción «Poke5e - Hoja de Pokémon», por jugador. La hoja «PC (compacta)» usa el papel,
+  la tipografía y el escenario de la PC: una ficha fija con sprite, tipos, naturaleza, HP y EXP, y los demás paneles en las
+  pestañas Combate, Estadísticas y Datos. La hoja clásica sigue igual y es la opción por defecto.
+
 ## [0.52.1] — 2026-11-05
 
 - **README:** añade capturas de la PC, las hojas de Pokémon y entrenador, el importador, el planificador de encuentros y

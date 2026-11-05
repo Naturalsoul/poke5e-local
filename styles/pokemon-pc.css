@@ -150,24 +150,24 @@
   text-transform: uppercase;
 }
 
-.poke5e-pc__type[data-type="normal"] { --pc-type: #a8a77a; }
-.poke5e-pc__type[data-type="fire"] { --pc-type: #ee8130; }
-.poke5e-pc__type[data-type="water"] { --pc-type: #6390f0; }
-.poke5e-pc__type[data-type="electric"] { --pc-type: #f7d02c; }
-.poke5e-pc__type[data-type="grass"] { --pc-type: #7ac74c; }
-.poke5e-pc__type[data-type="ice"] { --pc-type: #96d9d6; }
-.poke5e-pc__type[data-type="fighting"] { --pc-type: #b02a25; --pc-type-text: #fff; }
-.poke5e-pc__type[data-type="poison"] { --pc-type: #93368f; --pc-type-text: #fff; }
-.poke5e-pc__type[data-type="ground"] { --pc-type: #e2bf65; }
-.poke5e-pc__type[data-type="flying"] { --pc-type: #a98ff3; }
-.poke5e-pc__type[data-type="psychic"] { --pc-type: #f95587; }
-.poke5e-pc__type[data-type="bug"] { --pc-type: #a6b91a; }
-.poke5e-pc__type[data-type="rock"] { --pc-type: #b6a136; }
-.poke5e-pc__type[data-type="ghost"] { --pc-type: #5f4880; --pc-type-text: #fff; }
-.poke5e-pc__type[data-type="dragon"] { --pc-type: #5a28d6; --pc-type-text: #fff; }
-.poke5e-pc__type[data-type="dark"] { --pc-type: #5c4739; --pc-type-text: #fff; }
-.poke5e-pc__type[data-type="steel"] { --pc-type: #b7b7ce; }
-.poke5e-pc__type[data-type="fairy"] { --pc-type: #e29ac0; }
+:is(.poke5e-pc__type, .poke5e-pokemon-type-badge, .poke5e-pokemon-type-control)[data-type="normal"] { --pc-type: #a8a77a; }
+:is(.poke5e-pc__type, .poke5e-pokemon-type-badge, .poke5e-pokemon-type-control)[data-type="fire"] { --pc-type: #ee8130; }
+:is(.poke5e-pc__type, .poke5e-pokemon-type-badge, .poke5e-pokemon-type-control)[data-type="water"] { --pc-type: #6390f0; }
+:is(.poke5e-pc__type, .poke5e-pokemon-type-badge, .poke5e-pokemon-type-control)[data-type="electric"] { --pc-type: #f7d02c; }
+:is(.poke5e-pc__type, .poke5e-pokemon-type-badge, .poke5e-pokemon-type-control)[data-type="grass"] { --pc-type: #7ac74c; }
+:is(.poke5e-pc__type, .poke5e-pokemon-type-badge, .poke5e-pokemon-type-control)[data-type="ice"] { --pc-type: #96d9d6; }
+:is(.poke5e-pc__type, .poke5e-pokemon-type-badge, .poke5e-pokemon-type-control)[data-type="fighting"] { --pc-type: #b02a25; --pc-type-text: #fff; }
+:is(.poke5e-pc__type, .poke5e-pokemon-type-badge, .poke5e-pokemon-type-control)[data-type="poison"] { --pc-type: #93368f; --pc-type-text: #fff; }
+:is(.poke5e-pc__type, .poke5e-pokemon-type-badge, .poke5e-pokemon-type-control)[data-type="ground"] { --pc-type: #e2bf65; }
+:is(.poke5e-pc__type, .poke5e-pokemon-type-badge, .poke5e-pokemon-type-control)[data-type="flying"] { --pc-type: #a98ff3; }
+:is(.poke5e-pc__type, .poke5e-pokemon-type-badge, .poke5e-pokemon-type-control)[data-type="psychic"] { --pc-type: #f95587; }
+:is(.poke5e-pc__type, .poke5e-pokemon-type-badge, .poke5e-pokemon-type-control)[data-type="bug"] { --pc-type: #a6b91a; }
+:is(.poke5e-pc__type, .poke5e-pokemon-type-badge, .poke5e-pokemon-type-control)[data-type="rock"] { --pc-type: #b6a136; }
+:is(.poke5e-pc__type, .poke5e-pokemon-type-badge, .poke5e-pokemon-type-control)[data-type="ghost"] { --pc-type: #5f4880; --pc-type-text: #fff; }
+:is(.poke5e-pc__type, .poke5e-pokemon-type-badge, .poke5e-pokemon-type-control)[data-type="dragon"] { --pc-type: #5a28d6; --pc-type-text: #fff; }
+:is(.poke5e-pc__type, .poke5e-pokemon-type-badge, .poke5e-pokemon-type-control)[data-type="dark"] { --pc-type: #5c4739; --pc-type-text: #fff; }
+:is(.poke5e-pc__type, .poke5e-pokemon-type-badge, .poke5e-pokemon-type-control)[data-type="steel"] { --pc-type: #b7b7ce; }
+:is(.poke5e-pc__type, .poke5e-pokemon-type-badge, .poke5e-pokemon-type-control)[data-type="fairy"] { --pc-type: #e29ac0; }
 
 /* The battle HP bar: a dark capsule with its gold label. */
 .poke5e-pc__hp {
