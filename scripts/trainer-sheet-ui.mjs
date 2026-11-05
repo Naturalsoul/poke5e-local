@@ -29,6 +29,10 @@ import {
   TrainerActorSheet
 } from "./trainer-actor-sheet.mjs";
 
+import { TrainerPixelSheet } from "./trainer-pixel-sheet.mjs";
+
+import { currentTrainerSheetDesign } from "./trainer-sheet-design.mjs";
+
 import {
   canCurrentUserOperateTrainer
 } from "./trainer-ownership-service.mjs";
@@ -45,6 +49,9 @@ import {
 
 const MODULE_ID =
   "poke5e-local";
+
+const isTrainerSheet = application =>
+  application instanceof TrainerActorSheet || application instanceof TrainerPixelSheet;
 
 
 const SHEET_LABELS = {
@@ -386,9 +393,8 @@ function trainerApplicationForRoot(
   ) {
 
     if (
-      !(
-        application instanceof
-          TrainerActorSheet
+      !isTrainerSheet(
+        application
       ) ||
       application.document
         ?.id !==
@@ -1228,9 +1234,8 @@ function refreshRenderedTrainerHeaderControls(
   ) {
 
     if (
-      !(
-        application instanceof
-          TrainerActorSheet
+      !isTrainerSheet(
+        application
       ) ||
       application.document
         ?.id !==
@@ -1266,9 +1271,8 @@ function onRenderApplicationV2(
 
 
   if (
-    !(
-      application instanceof
-        TrainerActorSheet
+    !isTrainerSheet(
+      application
     ) ||
     !(element instanceof HTMLElement) ||
     !isTrainerActor(
@@ -1278,20 +1282,28 @@ function onRenderApplicationV2(
     return;
   }
 
-  updateTrainerSidebar(
-    element,
-    trainer
-  );
+  const isPixel =
+    application instanceof TrainerPixelSheet;
+
+  // The pixel sheet draws its own sidebar; the rank only belongs to the Team Rocket look.
+  if (!isPixel) {
+    updateTrainerSidebar(
+      element,
+      trainer
+    );
+  }
 
   updateTrainerPokemonCenterHeader(
     element,
     trainer
   );
 
-  renderRocketRank(
-    element,
-    trainer
-  );
+  if (!isPixel || currentTrainerSheetDesign() === "rocket") {
+    renderRocketRank(
+      element,
+      trainer
+    );
+  }
 
   const host =
     element.querySelector(

@@ -1,0 +1,117 @@
+<aside class="poke5e-tps__sidebar">
+  <div class="poke5e-tps__portrait">
+    {{#with portrait}}
+    {{#if isVideo}}
+    <video src="{{ src }}" autoplay muted disablepictureinpicture loop playsinline
+           {{#if @root.editable}}data-action="{{ action }}"{{else}}data-action="showArtwork"{{/if}}
+           {{#if (and @root.editable path)}}data-edit="{{ path }}" data-type="{{ type }}"{{/if}}></video>
+    {{else}}
+    <img src="{{ src }}" alt="{{ @root.actor.name }}"
+         {{#if @root.editable}}data-action="{{ action }}"{{else}}data-action="showArtwork"{{/if}}
+         {{#if (and @root.editable path)}}data-edit="{{ path }}" data-type="{{ type }}"{{/if}}>
+    {{/if}}
+    {{/with}}
+  </div>
+
+  {{#with system.attributes.hp}}
+  <div class="poke5e-tps__hp">
+    <div class="poke5e-tps__hp-title">
+      <b>HP</b>
+      {{#if @root.editable}}
+      <button type="button" class="poke5e-tps__config" data-action="showConfiguration" data-config="hitPoints" data-tooltip="DND5E.HitPointsConfig" aria-label="{{ localize 'DND5E.HitPointsConfig' }}"><i class="fa-solid fa-gear" inert></i></button>
+      {{/if}}
+    </div>
+    <div class="poke5e-tps__hp-bar" role="meter" aria-label="{{ localize 'DND5E.HitPoints' }}" aria-valuemin="0" aria-valuenow="{{ value }}" aria-valuemax="{{ effectiveMax }}">
+      <span style="width: {{ pct }}%"></span>
+    </div>
+    <div class="poke5e-tps__hp-values">
+      <input type="text" name="system.attributes.hp.value" data-dtype="Number" data-max="{{ ifThen effectiveMax effectiveMax max }}" value="{{ value }}" aria-label="{{ localize 'DND5E.HitPointsCurrent' }}">
+      <span>/ {{ effectiveMax }}</span>
+      <input type="text" name="system.attributes.hp.temp" data-dtype="Number" placeholder="{{ localize 'DND5E.TMP' }}" value="{{#if temp}}{{ temp }}{{/if}}" aria-label="{{ localize 'DND5E.HitPointsTemp' }}">
+    </div>
+  </div>
+  {{/with}}
+
+  <dl class="poke5e-tps__stats">
+    <div data-attribution="attributes.ac" data-attribution-caption="DND5E.ArmorClass" data-tooltip-direction="DOWN">
+      <dt>{{ localize "DND5E.AC" }}</dt>
+      <dd>
+        {{ system.attributes.ac.value }}
+        {{#if editable}}<button type="button" class="poke5e-tps__config" data-action="showConfiguration" data-config="armorClass" data-tooltip="DND5E.ArmorConfig" aria-label="{{ localize 'DND5E.ArmorConfig' }}"><i class="fa-solid fa-gear" inert></i></button>{{/if}}
+      </dd>
+    </div>
+    <div>
+      <dt>{{ localize "DND5E.Initiative" }}</dt>
+      <dd>
+        <button type="button" class="poke5e-tps__roll" data-action="roll" data-type="initiative">{{ dnd5e-numberFormat system.attributes.init.total signDisplay="always" }}</button>
+        {{#if editable}}<button type="button" class="poke5e-tps__config" data-action="showConfiguration" data-config="initiative" data-tooltip="DND5E.InitiativeConfig" aria-label="{{ localize 'DND5E.InitiativeConfig' }}"><i class="fa-solid fa-gear" inert></i></button>{{/if}}
+      </dd>
+    </div>
+    <div data-attribution="attributes.movement">
+      <dt>{{ speed.label }}</dt>
+      <dd>
+        {{ speed.value }}
+        {{#if editable}}<button type="button" class="poke5e-tps__config" data-action="showConfiguration" data-config="movement" data-tooltip="DND5E.MOVEMENT.Action.Configure" aria-label="{{ localize 'DND5E.MOVEMENT.Action.Configure' }}"><i class="fa-solid fa-gear" inert></i></button>{{/if}}
+      </dd>
+    </div>
+    <div>
+      <dt>{{ localize "DND5E.ProficiencyBonusAbbr" }}</dt>
+      <dd>{{ dnd5e-numberFormat system.attributes.prof signDisplay="always" }}</dd>
+    </div>
+    {{#with system.attributes.hd}}
+    <div>
+      <dt>{{ localize "DND5E.HitDice" }}</dt>
+      <dd>
+        {{ value }}/{{ max }}
+        {{#if @root.editable}}<button type="button" class="poke5e-tps__config" data-action="showConfiguration" data-config="hitDice" data-tooltip="DND5E.HitDiceConfig" aria-label="{{ localize 'DND5E.HitDiceConfig' }}"><i class="fa-solid fa-gear" inert></i></button>{{/if}}
+      </dd>
+    </div>
+    {{/with}}
+  </dl>
+
+  {{#if exhaustion}}
+  <div class="poke5e-tps__pips" data-prop="system.attributes.exhaustion" role="group" aria-label="{{ localize 'DND5E.Exhaustion' }}">
+    <span>{{ localize "DND5E.Exhaustion" }}</span>
+    {{#each exhaustion.left}}{{> ".pip" }}{{/each}}
+    {{#each exhaustion.right}}{{> ".pip" }}{{/each}}
+  </div>
+  {{/if}}
+
+  {{#if showDeathSaves}}
+  <div class="poke5e-tps__death">
+    <button type="button" class="poke5e-tps__roll" data-action="roll" data-type="deathSave">{{ localize "DND5E.DeathSave" }}</button>
+    <div class="poke5e-tps__pips" data-prop="system.attributes.death.success" role="group" aria-label="{{ localize 'DND5E.DeathSaveSuccesses' }}">
+      <i class="fa-solid fa-check" inert></i>
+      {{#each death.success}}{{> ".pip" }}{{/each}}
+    </div>
+    <div class="poke5e-tps__pips" data-prop="system.attributes.death.failure" role="group" aria-label="{{ localize 'DND5E.DeathSaveFailures' }}">
+      <i class="fa-solid fa-xmark" inert></i>
+      {{#each death.failure}}{{> ".pip" }}{{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  <section class="poke5e-tps__effects">
+    <h3>{{ localize "DND5E.Effects" }}</h3>
+    {{#if trainerEffects.length}}
+    <ul>
+      {{#each trainerEffects}}
+      <li class="{{#if disabled}}is-off{{/if}}" data-effect-uuid="{{ uuid }}">
+        <img src="{{ img }}" alt="">
+        <span title="{{#if source}}{{ source }}{{else}}{{ name }}{{/if}}">{{ name }}</span>
+        {{#if @root.actor.isOwner}}
+        <button type="button" class="poke5e-tps__config" data-action="toggleEffect" aria-pressed="{{#if disabled}}false{{else}}true{{/if}}" data-tooltip="{{#if disabled}}DND5E.EffectEnable{{else}}DND5E.EffectDisable{{/if}}" aria-label="{{#if disabled}}{{ localize 'DND5E.EffectEnable' }}{{else}}{{ localize 'DND5E.EffectDisable' }}{{/if}}"><i class="fa-solid {{#if disabled}}fa-toggle-off{{else}}fa-toggle-on{{/if}}" inert></i></button>
+        <button type="button" class="poke5e-tps__config" data-action="deleteEffect" data-tooltip="DND5E.EffectDelete" aria-label="{{ localize 'DND5E.EffectDelete' }}"><i class="fa-solid fa-trash" inert></i></button>
+        {{/if}}
+      </li>
+      {{/each}}
+    </ul>
+    {{else}}
+    <p>{{ pixelText.noEffects }}</p>
+    {{/if}}
+  </section>
+</aside>
+
+{{#*inline ".pip"}}
+<button type="button" class="poke5e-tps__pip {{ classes }}" data-action="togglePip" data-n="{{ n }}" data-tooltip="{{ tooltip }}" aria-label="{{ label }}" aria-pressed="{{ filled }}"></button>
+{{/inline}}

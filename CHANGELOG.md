@@ -4,6 +4,17 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.55.0] — 2026-11-05
+
+- **Mochila:** nueva ventana para los objetos del entrenador, con el aspecto del PC. Se abre desde los controles de token o
+  desde la hoja Pixel. Tiene bolsillos de Poké Balls, Medicina, Bayas, Objetos y Equipo, y muestra el dinero y la party.
+  Desde ella se usan, equipan y tiran objetos, se cambian cantidades y se dan objetos a un Pokémon o se recuperan.
+  También funciona con la hoja clásica.
+- **Hoja de entrenador, diseños Pixel:** nueva opción «Poke5e - Hoja de entrenador», que elige el DM para toda la mesa y
+  recarga el mundo. Clásica sigue siendo la opción por defecto. Pixel Base y Pixel Team Rocket son una hoja nueva y más
+  pequeña con las pestañas Pokémon, Detalles y Rasgos, y una lista de efectos en la barra lateral.
+  No incluye Inventario, Hechizos, Biografía, Favoritos, Inspiración ni la barra de XP del entrenador.
+
 ## [0.54.0] — 2026-11-05
 
 - **Hoja de Pokémon, Pixel Team Rocket:** nuevo diseño en «Poke5e - Hoja de Pokémon», igual a la hoja compacta pero de noche:

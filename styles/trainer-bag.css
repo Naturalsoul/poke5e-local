@@ -1,0 +1,236 @@
+/* ============================================================
+ * POKE5E — TRAINER BAG
+ * The PC's window (styles/pokemon-pc.css) with what a bag adds:
+ * pockets, stacks, a text panel and money.
+ * ============================================================ */
+
+/* The card holds a long description next to its buttons, so it has to fit the height of the storage column. */
+.poke5e-bag .poke5e-pc__layout {
+  grid-template-columns: 300px minmax(0, 1fr);
+}
+
+.poke5e-bag .poke5e-pc__preview {
+  max-height: 660px;
+  min-height: 0;
+}
+
+.poke5e-bag__stage {
+  flex: none;
+  display: grid;
+  place-items: center;
+  height: 128px;
+  background: var(--pc-paper-shade);
+  box-shadow: inset 0 0 0 2px var(--pc-ink);
+}
+
+.poke5e-bag__stage img {
+  width: 96px;
+  height: 96px;
+  border: 0;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.poke5e-bag__stage--pokemon {
+  height: 220px;
+  background:
+    radial-gradient(ellipse 110px 24px at 50% 88%, #6fa55a 0 96%, transparent 100%),
+    linear-gradient(#bfe2f2 0 60%, #d7edc4 60% 100%);
+}
+
+.poke5e-bag__stage--pokemon img {
+  width: 200px;
+  height: 200px;
+}
+
+.poke5e-bag__fact {
+  flex: none;
+  margin: 0;
+  font-size: 15px;
+  color: var(--pc-muted);
+}
+
+/* Pixel type is hard to read in long text, so the description goes back to Foundry's font. */
+.poke5e-bag__description {
+  flex: 1 1 0;
+  min-height: 120px;
+  overflow-y: auto;
+  font-family: var(--font-primary, sans-serif);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.poke5e-bag__description > :first-child {
+  margin-top: 0;
+}
+
+.poke5e-bag__stepper {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 18px;
+}
+
+.poke5e-bag .poke5e-bag__stepper button {
+  width: 24px;
+  height: 24px;
+  min-height: 0;
+  padding: 0;
+  background: var(--pc-paper-shade);
+  border: 2px solid var(--pc-ink);
+  border-radius: 0;
+  color: var(--pc-ink);
+  font-size: 11px;
+}
+
+.poke5e-bag .poke5e-bag__stepper button:disabled {
+  opacity: 0.45;
+}
+
+.poke5e-bag__actions {
+  flex: none;
+  flex-wrap: wrap;
+}
+
+.poke5e-bag .poke5e-bag__actions button {
+  flex: 1 1 40%;
+}
+
+.poke5e-bag .poke5e-bag__actions button:first-child {
+  background: var(--pc-red);
+  color: #fff;
+}
+
+/* ---------- Pockets ---------- */
+
+.poke5e-bag__tabs {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  background: var(--pc-paper);
+  box-shadow: var(--pc-outline);
+}
+
+.poke5e-bag .poke5e-bag__tab {
+  height: 44px;
+  padding: 0 4px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  color: var(--pc-ink);
+  font-size: 15px;
+  line-height: 1.05;
+}
+
+.poke5e-bag .poke5e-bag__tab small {
+  display: block;
+  font-size: 13px;
+  color: var(--pc-muted);
+}
+
+.poke5e-bag .poke5e-bag__tab:hover {
+  background: var(--pc-paper-shade);
+}
+
+.poke5e-bag .poke5e-bag__tab[aria-pressed="true"] {
+  background: var(--pc-red);
+  color: #fff;
+}
+
+.poke5e-bag .poke5e-bag__tab[aria-pressed="true"] small {
+  color: #fff;
+}
+
+/* Four rows fit the window on a small screen; a fuller pocket scrolls. */
+.poke5e-bag__box {
+  align-content: start;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.poke5e-bag .poke5e-pc__box .poke5e-pc__slot {
+  background-color: rgba(247, 242, 221, 0.14);
+}
+
+.poke5e-bag .poke5e-pc__box .poke5e-pc__slot.is-selected {
+  background-color: rgba(255, 255, 255, 0.34);
+}
+
+.poke5e-bag__item img {
+  padding: 8%;
+}
+
+.poke5e-bag__item.is-spent img {
+  filter: grayscale(1);
+  opacity: 0.55;
+}
+
+.poke5e-bag__quantity {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  min-width: 18px;
+  padding: 0 3px;
+  background: var(--pc-ink);
+  color: var(--pc-paper);
+  font-size: 13px;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.poke5e-bag .poke5e-pc__slot .poke5e-bag__held {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 38%;
+  height: 38%;
+  background: var(--pc-paper);
+  box-shadow: 0 0 0 2px var(--pc-ink);
+}
+
+/* ---------- Money ---------- */
+
+.poke5e-bag__money {
+  background: var(--pc-paper);
+  box-shadow: var(--pc-outline);
+}
+
+.poke5e-bag__coins {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  padding: 6px 8px 8px;
+}
+
+.poke5e-bag__coin {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.poke5e-bag .poke5e-bag__coin input {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 0 4px;
+  background: #fffdf2;
+  border: 2px solid var(--pc-ink);
+  border-radius: 0;
+  color: var(--pc-ink);
+}
+
+.poke5e-bag :is(.poke5e-bag__tab, .poke5e-pc__actions button, .poke5e-bag__stepper button, input, select):focus-visible,
+.poke5e-bag__description:focus-visible {
+  outline: 2px solid var(--pc-red);
+  outline-offset: 1px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .poke5e-bag__item.is-held img {
+    animation: poke5e-pc-shake 0.4s steps(2, jump-none) infinite alternate;
+  }
+}

@@ -1,0 +1,28 @@
+<header class="sheet-header poke5e-tps__header">
+  <div class="left poke5e-tps__identity">
+    {{#if editable}}
+    <input type="text" name="name" class="poke5e-tps__name" value="{{ actor._source.name }}" aria-label="{{ localize 'Name' }}">
+    {{else}}
+    <h2 class="poke5e-tps__name">{{ actor.name }}</h2>
+    {{/if}}
+    {{#if labels.class}}<p class="poke5e-tps__class">{{ labels.class }}</p>{{/if}}
+  </div>
+
+  <div class="poke5e-tps__level" aria-label="{{ localize 'DND5E.LevelNumber' level=trainerLevel }}">
+    <small>{{ localize "DND5E.Level" }}</small>
+    <strong>{{ trainerLevel }}</strong>
+  </div>
+
+  <div class="sheet-header-buttons poke5e-tps__buttons">
+    <button type="button" class="poke5e-tps__button" data-action="openBag" data-tooltip aria-label="{{ pixelText.bag }}">
+      <i class="fa-solid fa-suitcase" inert></i>
+    </button>
+    {{#if showRests}}
+    {{#each CONFIG.restTypes}}
+    <button type="button" class="poke5e-tps__button" data-action="rest" data-type="{{ @key }}" data-tooltip aria-label="{{ localize label }}">
+      <i class="{{ icon }}" inert></i>
+    </button>
+    {{/each}}
+    {{/if}}
+  </div>
+</header>
