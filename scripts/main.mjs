@@ -4,6 +4,8 @@ import { registerMoveAnimations } from "./move-animations.mjs";
 import { registerEncounterXpSettings } from "./encounter-xp-service.mjs";
 import { registerSheetDesign } from "./ui-theme.mjs";
 import { registerPokemonSheetDesign } from "./pokemon-sheet-pc.mjs";
+import { registerTrainerSheetDesign } from "./trainer-sheet-design.mjs";
+import { registerTrainerBag, toggleTrainerBag } from "./trainer-bag.mjs";
 import { registerBattleHotbar, useBattleHotbarMacro } from "./battle-hotbar.mjs";
 import { registerPassiveAbilityEngine } from "./passive-ability-engine.mjs";
 import { registerActiveAbilityService } from "./active-ability-service.mjs";
@@ -355,6 +357,7 @@ Hooks.once(
     registerEncounterXpSettings();
     registerSheetDesign();
     registerPokemonSheetDesign();
+    registerTrainerSheetDesign();
     registerPoke5eItemConsumptionService();
     registerBattleTransitionService();
 
@@ -450,6 +453,7 @@ Hooks.once(
     registerTrainerCombatReactions();
     registerPokemonBondService();
     registerPokemonPc();
+    registerTrainerBag();
     registerBattleHotbar();
     registerPassiveAbilityEngine();
     registerActiveAbilityService();
@@ -691,6 +695,16 @@ Hooks.on(
         button: true,
         visible: true,
         onChange: togglePokemonPc
+      };
+
+      controls.tokens.tools.poke5eBag = {
+        name: "poke5eBag",
+        title: game.settings.get("poke5e-local", "language") === "en" ? "Bag" : "Mochila",
+        icon: "fa-solid fa-suitcase",
+        order: Object.keys(controls.tokens.tools).length,
+        button: true,
+        visible: true,
+        onChange: toggleTrainerBag
       };
   }
 );

@@ -2,15 +2,15 @@ import {
   isTrainerActor
 } from "./trainer-service.mjs";
 
+import { TrainerPixelSheet } from "./trainer-pixel-sheet.mjs";
+import { trainerSheetClassId } from "./trainer-sheet-design.mjs";
+
 
 const MODULE_ID =
   "poke5e-local";
 
 const TRAINER_KIND =
   "trainer";
-
-const TRAINER_SHEET_CLASS_ID =
-  `${MODULE_ID}.TrainerActorSheet`;
 
 const POKEMON_TAB_TEMPLATE =
   `modules/${MODULE_ID}/templates/actors/trainer-pokemon-tab.hbs`;
@@ -162,7 +162,7 @@ function onPreCreateActor(
     flags: {
       core: {
         sheetClass:
-          TRAINER_SHEET_CLASS_ID
+          trainerSheetClassId()
       }
     }
   });
@@ -178,6 +178,10 @@ async function assignTrainerSheetToExistingActors() {
   }
 
 
+  const sheetClass =
+    trainerSheetClassId();
+
+
   const updates =
     game.actors
       .filter(
@@ -189,7 +193,7 @@ async function assignTrainerSheetToExistingActors() {
             "core",
             "sheetClass"
           ) !==
-            TRAINER_SHEET_CLASS_ID
+            sheetClass
       )
       .map(
         trainer => ({
@@ -197,7 +201,7 @@ async function assignTrainerSheetToExistingActors() {
             trainer.id,
 
           "flags.core.sheetClass":
-            TRAINER_SHEET_CLASS_ID
+            sheetClass
         })
       );
 
@@ -248,6 +252,31 @@ export function registerTrainerActorSheet() {
 
         label:
           "Poke5e Trainer"
+      }
+    );
+
+
+  DocumentSheetConfig
+    .registerSheet(
+      Actor,
+      MODULE_ID,
+      TrainerPixelSheet,
+      {
+        types: [
+          "character"
+        ],
+
+        makeDefault:
+          false,
+
+        canConfigure:
+          false,
+
+        canBeDefault:
+          false,
+
+        label:
+          "Poke5e Trainer Pixel"
       }
     );
 

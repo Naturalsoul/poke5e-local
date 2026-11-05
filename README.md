@@ -98,6 +98,7 @@ Sin ellos, el módulo funciona igual; solo se pierde la parte visual.
 
 ### Entrenadores
 - Hoja de entrenador, equipo y PC, despliegue, retirada y cambio de Pokémon, y centro de mando.
+- **Mochila** con el aspecto del PC, y hoja de entrenador Pixel a elección del DM (opción «Poke5e - Hoja de entrenador»).
 - **Todos los caminos de entrenador están automatizados** salvo Pokémon Breeder, que está aparcado (ver
   `tasks/backlog.md`). Incluye las reacciones de combate (Battle Die, Sabotage, Raise Your Defenses…).
 - Suplemento de Bonds (básico) y el camino Commander.
