@@ -1,10 +1,11 @@
 /* ============================================================
- * POKE5E — POKÉMON SHEET, PC DESIGN
+ * POKE5E — POKÉMON SHEET, PIXEL DESIGNS
  * Setting "Hoja de Pokémon" (scripts/pokemon-sheet-pc.mjs).
  *
- * The classic sheet's panels on the PC's paper and ink: its tokens
- * are redefined here, so only layout and hard-coded colours need
- * their own rules.
+ * The classic sheet's panels on the PC's paper and ink ("Pixel Base"):
+ * its tokens are redefined here, so only layout and hard-coded colours
+ * need their own rules. "Pixel Team Rocket" only redefines the --pc-*
+ * colours, at the end of this file.
  * ============================================================ */
 
 .poke5e-pokemon-summary--pc {
@@ -16,15 +17,25 @@
   --pc-red-dark: #8d271f;
   --pc-screen: #3a6596;
   --pc-screen-alt: #416da0;
+  --pc-edge: var(--pc-ink);
+  --pc-field: #fffdf2;
+  --pc-hover: #efe7c6;
+  --pc-track: var(--pc-ink);
+  --pc-proficient: #f2c94c;
+  --pc-proficient-text: #23242c;
+  --pc-stat-down: #245a96;
+  --pc-sky: #bfe2f2;
+  --pc-ground: #d7edc4;
+  --pc-platform: #6fa55a;
   --pc-outline: 0 0 0 2px var(--pc-ink), 0 0 0 4px var(--pc-paper), 0 0 0 6px var(--pc-ink);
 
   --poke5e-ui-bg: var(--pc-paper-shade);
   --poke5e-ui-surface: var(--pc-paper);
   --poke5e-ui-panel: var(--pc-paper);
   --poke5e-ui-panel-alt: var(--pc-paper-shade);
-  --poke5e-ui-border: var(--pc-ink);
-  --poke5e-ui-border-strong: var(--pc-ink);
-  --poke5e-ui-border-bright: var(--pc-ink);
+  --poke5e-ui-border: var(--pc-edge);
+  --poke5e-ui-border-strong: var(--pc-edge);
+  --poke5e-ui-border-bright: var(--pc-edge);
   --poke5e-ui-border-soft: var(--pc-paper-shade);
   --poke5e-ui-text: var(--pc-ink);
   --poke5e-ui-muted: var(--pc-muted);
@@ -33,7 +44,7 @@
   --poke5e-ui-accent: var(--pc-red);
   --poke5e-ui-accent-dark: var(--pc-red-dark);
   --poke5e-ui-on-accent: #fff;
-  --poke5e-ui-gold: #7d5b06;
+  --poke5e-ui-gold: var(--pc-gold, #7d5b06);
   --poke5e-ui-brass: var(--pc-muted);
   --poke5e-ui-shadow: transparent;
   --poke5e-ui-text-2xs: 13px;
@@ -47,8 +58,8 @@
   --poke5e-fr-cream-dark: var(--pc-muted);
   --poke5e-fr-ink: var(--pc-ink);
   --poke5e-fr-muted: var(--pc-muted);
-  --poke5e-fr-border: var(--pc-ink);
-  --poke5e-fr-border-bright: var(--pc-ink);
+  --poke5e-fr-border: var(--pc-edge);
+  --poke5e-fr-border-bright: var(--pc-edge);
   --poke5e-fr-panel: var(--pc-paper);
   --poke5e-fr-panel-alt: var(--pc-paper-shade);
   --poke5e-fr-panel-deep: var(--pc-paper-shade);
@@ -109,15 +120,15 @@
 .poke5e-pokemon-summary--pc :is(button, select) {
   height: 28px;
   min-height: 0;
-  border: 2px solid var(--pc-ink);
+  border: 2px solid var(--pc-edge);
   background: var(--pc-paper-shade);
 }
 
 .poke5e-pokemon-summary--pc input {
   height: 24px;
   padding: 0 4px;
-  border: 2px solid var(--pc-ink);
-  background: #fffdf2;
+  border: 2px solid var(--pc-edge);
+  background: var(--pc-field);
   text-align: right;
 }
 
@@ -128,7 +139,7 @@
 }
 
 .poke5e-pokemon-summary--pc button:hover {
-  background: #efe7c6;
+  background: var(--pc-hover);
   filter: none;
 }
 
@@ -147,7 +158,7 @@
   min-height: 0;
   margin: 0;
   padding: 0 0 0 6px;
-  border: 2px solid var(--pc-ink);
+  border: 2px solid var(--pc-edge);
   background: var(--pc-paper-shade);
   box-shadow: none;
   color: var(--pc-ink);
@@ -214,9 +225,9 @@
   border: 0;
   overflow: hidden;
   background:
-    radial-gradient(ellipse 80px 16px at 50% 90%, #6fa55a 0 96%, transparent 100%),
-    linear-gradient(#bfe2f2 0 58%, #d7edc4 58% 100%);
-  box-shadow: inset 0 0 0 2px var(--pc-ink);
+    radial-gradient(ellipse 80px 16px at 50% 90%, var(--pc-platform) 0 96%, transparent 100%),
+    linear-gradient(var(--pc-sky) 0 58%, var(--pc-ground) 58% 100%);
+  box-shadow: inset 0 0 0 2px var(--pc-edge);
 }
 
 .poke5e-pokemon-summary--pc .poke5e-pokemon-summary__portrait img {
@@ -282,7 +293,7 @@
   margin: 0;
   padding: 0 0 2px;
   border: 0;
-  border-bottom: 2px solid var(--pc-ink);
+  border-bottom: 2px solid var(--pc-edge);
   font-size: 22px;
   color: var(--pc-ink);
 }
@@ -312,7 +323,7 @@
   height: 28px;
   margin: 0;
   padding: 0 4px;
-  border: 2px solid var(--pc-ink);
+  border: 2px solid var(--pc-edge);
   background: none;
   box-shadow: none;
   color: var(--pc-ink);
@@ -413,7 +424,7 @@
 }
 
 .poke5e-pokemon-summary--pc .poke5e-pokemon-nature__modifier--increase { color: var(--pc-red-dark); }
-.poke5e-pokemon-summary--pc .poke5e-pokemon-nature__modifier--decrease { color: #245a96; }
+.poke5e-pokemon-summary--pc .poke5e-pokemon-nature__modifier--decrease { color: var(--pc-stat-down); }
 
 /* HP and EXP: the PC's dark bars. */
 .poke5e-pokemon-summary--pc .poke5e-pokemon-summary__hp {
@@ -425,7 +436,7 @@
   margin: 0;
   padding: 6px 0 0;
   border: 0;
-  border-top: 2px solid var(--pc-ink);
+  border-top: 2px solid var(--pc-edge);
   background: none;
   box-shadow: none;
 }
@@ -476,7 +487,7 @@
   margin: 0;
   padding: 2px;
   border: 0;
-  background: var(--pc-ink);
+  background: var(--pc-track);
   box-shadow: none;
   overflow: hidden;
 }
@@ -610,7 +621,7 @@
   margin: 0 0 8px;
   padding: 0 0 6px;
   border: 0;
-  border-bottom: 2px solid var(--pc-ink);
+  border-bottom: 2px solid var(--pc-edge);
   background: none;
 }
 
@@ -838,7 +849,7 @@
   gap: 4px;
   height: 20px;
   padding: 0 6px;
-  border: 2px solid var(--pc-ink);
+  border: 2px solid var(--pc-edge);
   background: var(--pc-type, #a8a77a);
   box-shadow: none;
   color: var(--pc-type-text, #17171b);
@@ -849,7 +860,7 @@
 }
 
 .poke5e-pokemon-summary--pc .poke5e-pokemon-type-control__swatch {
-  border: 1px solid var(--pc-ink);
+  border: 1px solid var(--pc-edge);
   background: var(--pc-type, #a8a77a);
   box-shadow: none;
 }
@@ -959,7 +970,7 @@
   margin: 4px 0 0;
   padding: 8px 0 0;
   border: 0;
-  border-top: 2px solid var(--pc-ink);
+  border-top: 2px solid var(--pc-edge);
   background: none;
   box-shadow: none;
 }
@@ -991,7 +1002,7 @@
   gap: 6px;
   min-height: 0;
   padding: 6px;
-  border: 2px solid var(--pc-ink);
+  border: 2px solid var(--pc-edge);
   background: none;
   box-shadow: none;
 }
@@ -1109,8 +1120,8 @@
 
 .poke5e-pokemon-summary--pc .poke5e-pokemon-stat__actions button.is-proficient {
   border-color: var(--pc-ink);
-  background: #f2c94c;
-  color: var(--pc-ink);
+  background: var(--pc-proficient);
+  color: var(--pc-proficient-text);
 }
 
 /* Battle numbers: label over value, no boxes. */
@@ -1419,4 +1430,47 @@
 /* The tab already says "Stats". */
 .poke5e-pokemon-summary--pc .poke5e-pokemon-panel:has(.poke5e-pokemon-stats) > header {
   display: none;
+}
+
+/* ---------- Pixel Team Rocket: the same sheet at night, with the trainer sheet's black, red and brass ---------- */
+
+.poke5e-pokemon-summary--rocket {
+  color-scheme: dark;
+  --pc-ink: #efe8d8;
+  --pc-paper: #171a21;
+  --pc-paper-shade: #2a2e38;
+  --pc-muted: #b7bcc5;
+  --pc-red: #c43d3d;
+  --pc-red-dark: #f08a80;
+  --pc-screen: #2a1014;
+  --pc-screen-alt: #33141a;
+  --pc-edge: #c7af73;
+  --pc-field: #0d0f14;
+  --pc-hover: #3a3f4c;
+  --pc-track: #050507;
+  --pc-gold: #e3c26a;
+  --pc-proficient: #c7af73;
+  --pc-proficient-text: #17171b;
+  --pc-stat-down: #83a9dc;
+  --pc-sky: #565b69;
+  --pc-ground: #3f4350;
+  --pc-platform: #7c2a2a;
+  --pc-outline: 0 0 0 2px #050507, 0 0 0 4px #c43d3d, 0 0 0 6px #050507;
+}
+
+/* The R on the hideout's wall, beside the sprite, which would hide it if centred. */
+.poke5e-pokemon-summary--rocket .poke5e-pokemon-summary__portrait::before {
+  content: "R";
+  position: absolute;
+  top: 30px;
+  left: 12px;
+  display: block;
+  font-family: "Pixelify Sans", var(--font-primary, sans-serif);
+  font-size: 64px;
+  line-height: 1;
+  color: #c43d3d;
+}
+
+.poke5e-pokemon-summary--rocket .poke5e-pokemon-summary__portrait img {
+  position: relative;
 }

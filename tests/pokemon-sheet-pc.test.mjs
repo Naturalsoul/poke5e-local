@@ -30,3 +30,35 @@ test("every panel of the classic sheet lands in a tab, or it would vanish from t
   assert.equal(unnamed.length, 2);
   assert.ok(layout.includes(":has(.poke5e-pokemon-stats)") && layout.includes(":has(.poke5e-pokemon-battle-grid)"));
 });
+
+test("each pixel design opens at the compact size, and Pixel Team Rocket is a design of its own", () => {
+  for (const design of ["pc", "rocket"]) {
+    saved = design;
+    assert.equal(currentPokemonSheetDesign(), design);
+    assert.equal(pokemonSheetSize().height, 620);
+  }
+});
+
+function luminance(hex) {
+  const [r, g, b] = [1, 3, 5].map(at => parseInt(hex.slice(at, at + 2), 16) / 255)
+    .map(value => (value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+function contrast(a, b) {
+  const [light, dark] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (light + 0.05) / (dark + 0.05);
+}
+
+test("Pixel Team Rocket's text stays readable on its panels and buttons", () => {
+  const css = readFileSync("styles/pokemon-sheet-pc.css", "utf8");
+  const block = css.slice(css.indexOf(".poke5e-pokemon-summary--rocket {"));
+  const token = name => block.match(new RegExp(`--pc-${name}: (#[0-9a-f]{6})`))[1];
+  for (const text of ["ink", "muted", "red-dark", "gold", "stat-down"]) {
+    for (const surface of ["paper", "paper-shade", "field"]) {
+      assert.ok(contrast(token(text), token(surface)) >= 4.5, `${text} on ${surface}`);
+    }
+  }
+  assert.ok(contrast(token("proficient-text"), token("proficient")) >= 4.5);
+  assert.ok(contrast("#ffffff", token("red")) >= 4.5);
+});
