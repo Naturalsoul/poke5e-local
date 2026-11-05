@@ -4,6 +4,10 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.63.1] — 2026-11-05
+
+- **PC y Mochila:** las dos ventanas se adaptan a pantallas pequeñas. Las casillas y el retrato se achican según el alto y el ancho disponibles, así que en una laptop se ve todo sin desplazarse. Por debajo de 800 px de ancho, la tarjeta y el almacenamiento se apilan en una sola columna con desplazamiento. En pantallas grandes se ven igual que antes.
+
 ## [0.63.0] — 2026-11-05
 
 - **Habilidades:** Ilusión (Zorua, Zoroark) automatizada. Al lanzar o cambiar a uno de ellos, una ventana le pregunta a quien lo despliega si quiere usarla y qué Pokémon de la escena copiar. Su token sale con el nombre, la imagen y el tamaño de ese Pokémon, y el combat tracker, el chat, el retrato de las tarjetas, el aviso de despliegue y el grito también lo muestran; solo su dueño y el GM reciben el aviso del uso. Se puede usar sin límite de veces. Termina al recibir daño de un movimiento, al pasar una hora de tiempo del mundo o al retirarlo, y el token recupera su aspecto.
