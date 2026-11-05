@@ -4,6 +4,10 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.55.1] — 2026-11-05
+
+- **Hoja de entrenador, diseños Pixel:** ya se puede arrastrar por toda la pantalla y abre con su ancho completo. Antes se quedaba pegada al borde izquierdo o se movía muy poco de lado.
+
 ## [0.55.0] — 2026-11-05
 
 - **Mochila:** nueva ventana para los objetos del entrenador, con el aspecto del PC. Se abre desde los controles de token o

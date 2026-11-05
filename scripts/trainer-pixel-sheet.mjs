@@ -78,6 +78,11 @@ export class TrainerPixelSheet extends CharacterActorSheet {
   // dnd5e keeps one saved size for all character sheets; this one must not overwrite what the classic sheet uses.
   _saveSheetPosition = () => {};
 
+  // dnd5e reserves the width of nav.tabs as an overhang beside the window; here the tabs are a row inside it.
+  _updatePosition(position) {
+    return foundry.applications.api.ApplicationV2.prototype._updatePosition.call(this, position);
+  }
+
   _initializeApplicationOptions(options) {
     const applicationOptions = super._initializeApplicationOptions(options);
     Object.assign(applicationOptions.position, SIZE);
