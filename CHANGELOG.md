@@ -4,6 +4,12 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.46.4] — 2026-11-05
+
+- **Recompensa de XP:** al pulsar "Recibir" ya no vuelve a aparecer al final del chat una tarjeta de recompensa antigua
+  del mismo Pokémon. Solo se refrescan las tarjetas cargadas en el chat; las antiguas muestran su estado al subir hasta
+  ellas.
+
 ## [0.46.3] — 2026-10-29
 
 - Los mensajes de los riders de Moves y de condiciones (Clear Smog, Incinerate, curas de estado, Purify, Salt Cure,

@@ -240,11 +240,13 @@ function onRenderChatMessage(message, html) {
   }
 }
 
-// Everyone's card shows who already received it.
+// Everyone's card shows who already received it. Only cards loaded in the log: updateMessage would post the others
+// again at the bottom, and they render up to date when scrolled to anyway.
 function onUpdateActor(actor, changes) {
   if (!foundry.utils.hasProperty(changes, `flags.${MODULE_ID}.${CLAIMED}`)) {return;}
   for (const message of game.messages ?? []) {
-    if (message.getFlag(MODULE_ID, "reward")?.entries?.some(entry => entry.uuid === actor.uuid)) {
+    if (message.getFlag(MODULE_ID, "reward")?.entries?.some(entry => entry.uuid === actor.uuid)
+      && ui.chat?.element?.querySelector(`.message[data-message-id="${message.id}"]`)) {
       ui.chat?.updateMessage?.(message);
     }
   }

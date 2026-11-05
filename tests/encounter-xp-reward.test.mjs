@@ -48,6 +48,31 @@ test("names without their level suffix, where the level is shown apart", async (
     ["Toxel", "Xiaomi", "Cutie", "Mr. Mime"]);
 });
 
+test("a claim refreshes only the cards loaded in the log: updateMessage would post the others again", async () => {
+  const { registerEncounterReward } = await import("../scripts/encounter-xp-reward.mjs");
+  const hooks = {};
+  globalThis.Hooks = { on: (name, listener) => { hooks[name] = listener; } };
+  registerEncounterReward();
+
+  const toxel = { uuid: "Actor.toxel" };
+  const entries = [{ uuid: toxel.uuid, xp: 100 }];
+  game.messages = [card("old", entries), card("new", entries), card("other", [{ uuid: "Actor.goomy", xp: 100 }])];
+  const updated = [];
+  globalThis.ui = {
+    chat: {
+      element: { querySelector: selector => (selector.includes('"old"') ? null : {}) },
+      updateMessage: message => updated.push(message.id)
+    }
+  };
+
+  hooks.updateActor(toxel, { flags: { [M]: { claimedRewards: ["new"] } } });
+  assert.deepEqual(updated, ["new"]);
+
+  updated.length = 0;
+  hooks.updateActor(toxel, { name: "Toxel" });
+  assert.deepEqual(updated, []);
+});
+
 test("one claimer per share: the owner, or the GM only while no owning player is online", async () => {
   const { canClaimReward } = await import("../scripts/encounter-xp-reward.mjs");
   const player = { id: "p", isGM: false, active: true };
