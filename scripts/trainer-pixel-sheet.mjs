@@ -1,4 +1,5 @@
 import { getLanguage } from "./i18n.mjs";
+import { togglePokemonPc } from "./pokemon-pc.mjs";
 import { openTrainerBag } from "./trainer-bag.mjs";
 import { getTrainerLevel } from "./trainer-service.mjs";
 import { currentTrainerSheetDesign } from "./trainer-sheet-design.mjs";
@@ -21,8 +22,8 @@ const TEMPLATES = `modules/${MODULE_ID}/templates/actors`;
 const SIZE = Object.freeze({ width: 900, height: 720 });
 
 const TEXT = {
-  es: { bag: "Mochila", noEffects: "Sin efectos activos." },
-  en: { bag: "Bag", noEffects: "No active effects." }
+  es: { bag: "Mochila", pc: "PC Pokémon", noEffects: "Sin efectos activos." },
+  en: { bag: "Bag", pc: "Pokémon PC", noEffects: "No active effects." }
 };
 
 const CharacterActorSheet = globalThis.dnd5e.applications.actor.CharacterActorSheet;
@@ -46,6 +47,7 @@ export class TrainerPixelSheet extends CharacterActorSheet {
     actions: {
       deleteEffect: TrainerPixelSheet.#deleteEffect,
       openBag: TrainerPixelSheet.#openBag,
+      openPc: TrainerPixelSheet.#openPc,
       toggleEffect: TrainerPixelSheet.#toggleEffect
     }
   };
@@ -127,6 +129,10 @@ export class TrainerPixelSheet extends CharacterActorSheet {
     // Each design has one palette, whatever Foundry theme the player uses: dnd5e's parts of the sheet have to match it.
     this.element.classList.remove("theme-light", "theme-dark");
     this.element.classList.add("themed", rocket ? "theme-dark" : "theme-light");
+  }
+
+  static #openPc() {
+    void togglePokemonPc();
   }
 
   static #openBag() {

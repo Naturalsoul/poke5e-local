@@ -4,6 +4,10 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.58.0] — 2026-11-05
+
+- **Hoja de entrenador, diseños Pixel:** nuevo botón del PC junto al de la Mochila.
+
 ## [0.57.0] — 2026-11-05
 
 - **Hoja de entrenador, diseños Pixel:** las características pasan a la pestaña Detalles, bajo Idiomas, y la pestaña Pokémon gana espacio.

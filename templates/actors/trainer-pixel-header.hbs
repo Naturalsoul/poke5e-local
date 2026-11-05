@@ -17,6 +17,9 @@
     <button type="button" class="poke5e-tps__button" data-action="openBag" data-tooltip aria-label="{{ pixelText.bag }}">
       <i class="fa-solid fa-suitcase" inert></i>
     </button>
+    <button type="button" class="poke5e-tps__button" data-action="openPc" data-tooltip aria-label="{{ pixelText.pc }}">
+      <i class="fa-solid fa-computer" inert></i>
+    </button>
     {{#if showRests}}
     {{#each CONFIG.restTypes}}
     <button type="button" class="poke5e-tps__button" data-action="rest" data-type="{{ @key }}" data-tooltip aria-label="{{ localize label }}">
