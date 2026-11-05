@@ -1,27 +1,49 @@
 import { pokemonLevel } from "./encounter-difficulty.mjs";
 import { escapeHtml } from "./html.mjs";
 import { getLanguage } from "./i18n.mjs";
-import { BOX_COLUMNS, BOX_SIZE, buildPcBoxes, moveSlot, staticSpriteSource, trainerPcEntries } from "./pokemon-pc-boxes.mjs";
+import { getPokemonExperienceState } from "./pokemon-experience-service.mjs";
+import { getPokemonHeldItem } from "./pokemon-held-item-service.mjs";
+import { applyPcMove, BOX_COLUMNS, BOX_SIZE, moveSlot, pcBoxCount, pcDisplayName, pcMoveContext, planPcMove, spriteGroundShift, staticSpriteSource, trainerPcEntries } from "./pokemon-pc-boxes.mjs";
 import { getPokemonTypes } from "./pokemon-type-service.mjs";
+import { getPokemonShinyState } from "./shiny-runtime.mjs";
+import { localizedType } from "./trainer-command-center.mjs";
+import { isPokemonActive } from "./trainer-party-service.mjs";
 
 const APP_ID = "poke5e-pc";
 const FALLBACK_SPRITE = "icons/svg/mystery-man.svg";
+const WALLPAPERS = 8;
+const SPRITE_SAMPLE = 96;
+// Where a sprite's feet touch the platform in .poke5e-pc__portrait, as a share of the image's height.
+const PORTRAIT_GROUND = 0.925;
 
 const LABELS = {
   es: {
     title: "PC Pokémon",
-    box: name => `Caja de ${name}`,
-    page: (page, pages) => `Página ${page} de ${pages}`,
+    box: (box, boxes) => `Caja ${box} de ${boxes}`,
+    trainer: "Entrenador",
     previous: "Caja anterior",
     next: "Caja siguiente",
     party: "Party",
     inParty: "En la party",
     inPc: "En el PC",
+    deployed: "Desplegado",
     level: "Nv.",
+    hp: "HP",
+    fainted: "Debilitado",
+    shiny: "Shiny",
+    item: "Objeto",
+    noItem: "Sin objeto",
     emptySlot: "Casilla vacía",
-    emptyBox: "Esta caja está vacía. Los Pokémon que no estén en la party aparecerán aquí.",
+    emptyBox: "Esta caja está vacía.",
     pick: "Elige un Pokémon para ver sus datos.",
     open: "Abrir ficha",
+    move: "Mover",
+    cancel: "Cancelar",
+    moving: name => `Moviendo a ${name}: elige una casilla. Esc para cancelar.`,
+    keys: "Enter toma y suelta. RePág y AvPág cambian de caja.",
+    active: name => `${name} está desplegado: retíralo antes de sacarlo de la party.`,
+    full: limit => `La party está llena (${limit} Pokéslots).`,
+    moveFailed: "No se pudo mover el Pokémon.",
     noTrainers: "No hay entrenadores que mostrar.",
     noTrainersPlayer: "No tienes ningún entrenador. Pídele al GM que te asigne uno.",
     failed: "No se pudieron cargar las cajas. Revisa la consola (F12) para ver el detalle.",
@@ -30,18 +52,31 @@ const LABELS = {
   },
   en: {
     title: "Pokémon PC",
-    box: name => `${name}'s box`,
-    page: (page, pages) => `Page ${page} of ${pages}`,
+    box: (box, boxes) => `Box ${box} of ${boxes}`,
+    trainer: "Trainer",
     previous: "Previous box",
     next: "Next box",
     party: "Party",
     inParty: "In the party",
     inPc: "In the PC",
+    deployed: "Deployed",
     level: "Lv.",
+    hp: "HP",
+    fainted: "Fainted",
+    shiny: "Shiny",
+    item: "Item",
+    noItem: "No item",
     emptySlot: "Empty slot",
-    emptyBox: "This box is empty. Pokémon outside the party will show up here.",
+    emptyBox: "This box is empty.",
     pick: "Pick a Pokémon to see its details.",
     open: "Open sheet",
+    move: "Move",
+    cancel: "Cancel",
+    moving: name => `Moving ${name}: pick a slot. Esc to cancel.`,
+    keys: "Enter picks up and drops. Page Up and Page Down change box.",
+    active: name => `${name} is deployed: recall it before taking it out of the party.`,
+    full: limit => `The party is full (${limit} Pokéslots).`,
+    moveFailed: "The Pokémon could not be moved.",
     noTrainers: "There are no trainers to show.",
     noTrainersPlayer: "You have no trainer. Ask the GM to assign you one.",
     failed: "The boxes could not be loaded. Check the console (F12) for details.",
@@ -52,40 +87,96 @@ const LABELS = {
 
 const labels = () => LABELS[getLanguage()];
 
+const hpOf = pokemon => {
+  const { value = 0, max = 0 } = pokemon.system?.attributes?.hp ?? {};
+  return { value: Number(value) || 0, max: Number(max) || 0 };
+};
+const isFainted = pokemon => {
+  const { value, max } = hpOf(pokemon);
+  return max > 0 && value <= 0;
+};
+const isShiny = pokemon => getPokemonShinyState(pokemon)?.isShiny === true;
+
+function hpState(ratio) {
+  if (ratio <= 0.2) {return "low";}
+  return ratio <= 0.5 ? "mid" : "high";
+}
+
 function spriteMarkup(pokemon) {
   const fallback = pokemon.img && !/\.webm$/i.test(pokemon.img) ? pokemon.img : FALLBACK_SPRITE;
-  return `<img src="${escapeHtml(staticSpriteSource(pokemon) ?? fallback)}" data-fallback="${escapeHtml(fallback)}" alt="">`;
+  return `<img src="${escapeHtml(staticSpriteSource(pokemon) ?? fallback)}" data-fallback="${escapeHtml(fallback)}" alt="" draggable="false">`;
 }
 
-function slotsMarkup(pokemon, count, focusGroup, selectedUuid) {
+function slotMarkup(pokemon, { zone, index, focus, tabStop, selected, held }) {
   const text = labels();
-  const tabStop = Math.max(0, pokemon.findIndex(each => each.uuid === selectedUuid));
-  return Array.from({ length: count }, (_, index) => {
-    const each = pokemon[index];
-    const name = each ? `${each.name}, ${text.level} ${pokemonLevel(each)}` : text.emptySlot;
-    const selected = each && each.uuid === selectedUuid;
-    return `<button type="button" class="poke5e-pc__slot${selected ? " is-selected" : ""}" tabindex="${index === tabStop ? 0 : -1}"
-      data-pc-slot data-pc-focus="${focusGroup}-${index}" ${each ? `data-uuid="${escapeHtml(each.uuid)}"` : ""}
-      aria-label="${escapeHtml(name)}" ${each ? `title="${escapeHtml(name)}"` : ""}>${each ? spriteMarkup(each) : ""}</button>`;
-  }).join("");
+  const label = pokemon
+    ? [pcDisplayName(pokemon.name), `${text.level} ${pokemonLevel(pokemon)}`, isShiny(pokemon) && text.shiny, isFainted(pokemon) && text.fainted].filter(Boolean).join(", ")
+    : text.emptySlot;
+  const classes = ["poke5e-pc__slot", selected && "is-selected", held && "is-held",
+    pokemon && isFainted(pokemon) && "is-fainted", pokemon && isShiny(pokemon) && "is-shiny"].filter(Boolean).join(" ");
+  return `<button type="button" class="${classes}" tabindex="${tabStop ? 0 : -1}" data-pc-slot data-pc-focus="${focus}"
+    data-pc-zone="${zone}" data-pc-index="${index}" ${pokemon ? `data-uuid="${escapeHtml(pokemon.uuid)}" draggable="true" title="${escapeHtml(label)}"` : ""}
+    aria-label="${escapeHtml(label)}">${pokemon ? spriteMarkup(pokemon) : ""}</button>`;
 }
 
-function previewMarkup(pokemon, inParty) {
+function hpMarkup(pokemon) {
+  const { value, max } = hpOf(pokemon);
+  if (max <= 0) {return "";}
+  const ratio = Math.max(0, Math.min(1, value / max));
+  return `<p class="poke5e-pc__hp"><span class="poke5e-pc__hp-track"><b>${labels().hp}</b>
+    <span class="poke5e-pc__hp-bar" data-state="${hpState(ratio)}" aria-hidden="true"><span style="width:${ratio * 100}%"></span></span></span>
+    <span class="poke5e-pc__hp-numbers">${value}/${max}</span></p>`;
+}
+
+function expMarkup(pokemon) {
+  const { isMaxLevel, nextLevelXp, percent, total } = getPokemonExperienceState(pokemon);
+  return `<p class="poke5e-pc__hp poke5e-pc__exp"><span class="poke5e-pc__hp-track"><b>EXP</b>
+    <span class="poke5e-pc__hp-bar" aria-hidden="true"><span style="width:${percent}%"></span></span></span>
+    <span class="poke5e-pc__hp-numbers">${isMaxLevel ? `${total} MAX` : `${total}/${nextLevelXp}`}</span></p>`;
+}
+
+function statusesMarkup(pokemon) {
+  const names = [...(pokemon.effects ?? [])].filter(effect => !effect.disabled && Array.from(effect.statuses ?? []).length).map(effect => effect.name);
+  return names.length ? `<p class="poke5e-pc__statuses">${names.map(name => `<span>${escapeHtml(name)}</span>`).join("")}</p>` : "";
+}
+
+function placeLabel(entry, pokemon) {
+  const text = labels();
+  if (!entry.party.includes(pokemon)) {return text.inPc;}
+  return isPokemonActive(entry.trainer, pokemon) ? text.deployed : text.inParty;
+}
+
+function previewMarkup(entry, pokemon, holding) {
   const text = labels();
   if (!pokemon) {return `<p class="poke5e-pc__hint">${text.pick}</p>`;}
   let types = [];
+  let item = null;
+  let exp = "";
   try {
+    exp = expMarkup(pokemon);
     types = getPokemonTypes(pokemon);
-  } catch {
-    // A Pokémon with broken type flags is still worth showing.
+    item = getPokemonHeldItem(pokemon);
+  } catch (error) {
+    // A Pokémon with broken flags is still worth showing.
+    console.warn(`[poke5e-local] ${APP_ID}`, error);
   }
   return `
     <div class="poke5e-pc__portrait">${spriteMarkup(pokemon)}</div>
-    <h3 class="poke5e-pc__name">${escapeHtml(pokemon.name)}</h3>
-    <p class="poke5e-pc__level">${text.level} ${pokemonLevel(pokemon)}</p>
-    <p class="poke5e-pc__types">${types.map(type => `<span>${escapeHtml(type)}</span>`).join("")}</p>
-    <p class="poke5e-pc__place">${inParty ? text.inParty : text.inPc}</p>
-    <button type="button" class="poke5e-pc__open" data-action="openSheet" data-pc-focus="open">${text.open}</button>`;
+    <div class="poke5e-pc__nameplate">
+      <h3 class="poke5e-pc__name">${escapeHtml(pcDisplayName(pokemon.name))}${isShiny(pokemon) ? ` <i class="fa-solid fa-star" title="${text.shiny}" aria-label="${text.shiny}"></i>` : ""}</h3>
+      <p class="poke5e-pc__level">${text.level} ${pokemonLevel(pokemon)}</p>
+    </div>
+    <p class="poke5e-pc__types">${types.map(type => `<span class="poke5e-pc__type" data-type="${escapeHtml(String(type).toLowerCase())}">${escapeHtml(localizedType(type))}</span>`).join("")}</p>
+    ${hpMarkup(pokemon)}
+    ${exp}
+    ${isFainted(pokemon) ? `<p class="poke5e-pc__fainted">${text.fainted}</p>` : ""}
+    ${statusesMarkup(pokemon)}
+    <p class="poke5e-pc__item">${item ? `${text.item}: ${escapeHtml(item.name)}` : text.noItem}</p>
+    <p class="poke5e-pc__place">${placeLabel(entry, pokemon)}</p>
+    <div class="poke5e-pc__actions">
+      <button type="button" data-action="toggleMove" data-pc-focus="move">${holding ? text.cancel : text.move}</button>
+      <button type="button" data-action="openSheet" data-pc-focus="open">${text.open}</button>
+    </div>`;
 }
 
 function messageMarkup(message, retry = false) {
@@ -93,29 +184,16 @@ function messageMarkup(message, retry = false) {
     ? `<button type="button" data-action="retry" data-pc-focus="retry">${labels().retry}</button>` : ""}</div>`;
 }
 
-function boxMarkup(box, multipleBoxes, selected) {
+function trainerPickerMarkup(entries, entry) {
+  if (entries.length < 2) {return "";}
+  const options = entries.map(({ trainer }) => `<option value="${escapeHtml(trainer.uuid)}" ${trainer === entry.trainer ? "selected" : ""}>${escapeHtml(trainer.name)}</option>`);
+  return `<label class="poke5e-pc__trainer">${labels().trainer}
+    <select data-pc-trainer data-pc-focus="trainer">${options.join("")}</select></label>`;
+}
+
+function statusMarkup(held) {
   const text = labels();
-  const arrow = (action, icon, label) => `<button type="button" class="poke5e-pc__arrow" data-action="${action}" data-pc-focus="${action}"
-    aria-label="${label}" title="${label}" ${multipleBoxes ? "" : "disabled"}><i class="fa-solid ${icon}" aria-hidden="true"></i></button>`;
-  const uuid = selected?.uuid;
-  return `
-    <section class="poke5e-pc__preview" data-pc-preview>${selected ? previewMarkup(selected, box.party.includes(selected)) : ""}</section>
-    <section class="poke5e-pc__storage">
-      <header class="poke5e-pc__header">
-        ${arrow("previousBox", "fa-caret-left", text.previous)}
-        <h2 class="poke5e-pc__title">${escapeHtml(text.box(box.trainer.name))}${box.pages > 1
-          ? `<small>${text.page(box.page, box.pages)}</small>` : ""}</h2>
-        ${arrow("nextBox", "fa-caret-right", text.next)}
-      </header>
-      <div class="poke5e-pc__box" role="group" aria-label="${escapeHtml(text.box(box.trainer.name))}" data-pc-group data-columns="${BOX_COLUMNS}">
-        ${slotsMarkup(box.pokemon, BOX_SIZE, "box", uuid)}
-      </div>
-      ${box.pokemon.length ? "" : `<p class="poke5e-pc__hint">${text.emptyBox}</p>`}
-      <h3 class="poke5e-pc__party-title">${text.party}</h3>
-      <div class="poke5e-pc__party" role="group" aria-label="${text.party}" data-pc-group data-columns="${BOX_COLUMNS}">
-        ${slotsMarkup(box.party, box.partySlots, "party", uuid)}
-      </div>
-    </section>`;
+  return held ? `<span class="poke5e-pc__sprite-small">${spriteMarkup(held)}</span><span>${escapeHtml(text.moving(pcDisplayName(held.name)))}</span>` : `<span>${text.keys}</span>`;
 }
 
 export class PokemonPc extends foundry.applications.api.ApplicationV2 {
@@ -123,40 +201,85 @@ export class PokemonPc extends foundry.applications.api.ApplicationV2 {
     id: APP_ID,
     classes: ["poke5e-pc"],
     tagName: "div",
-    position: { width: 720, height: "auto" },
+    position: { width: 960, height: "auto" },
     window: { frame: true, positioned: true, resizable: false, icon: "fa-solid fa-computer" },
     actions: {
       previousBox: PokemonPc.#previousBox,
       nextBox: PokemonPc.#nextBox,
       openSheet: PokemonPc.#openSheet,
+      toggleMove: PokemonPc.#toggleMove,
       retry: PokemonPc.#retry
     }
   };
 
+  entry = null;
+  trainerUuid = null;
   boxIndex = 0;
   selectedUuid = null;
-  boxes = [];
+  heldUuid = null;
+  slide = null;
 
   get title() {
     return labels().title;
   }
 
   async _renderHTML() {
+    let entries;
     try {
-      this.boxes = buildPcBoxes(trainerPcEntries());
+      entries = trainerPcEntries();
     } catch (error) {
       console.error(`[poke5e-local] ${APP_ID}`, error);
-      this.boxes = [];
+      this.entry = null;
       return messageMarkup(labels().failed, true);
     }
     const text = labels();
-    if (!this.boxes.length) {return messageMarkup(game.user.isGM ? text.noTrainers : text.noTrainersPlayer);}
-    this.boxIndex = Math.min(this.boxIndex, this.boxes.length - 1);
-    const box = this.#box;
-    const visible = [...box.pokemon, ...box.party];
-    const selected = visible.find(pokemon => pokemon.uuid === this.selectedUuid) ?? visible[0] ?? null;
-    this.selectedUuid = selected?.uuid ?? null;
-    return boxMarkup(box, this.boxes.length > 1, selected);
+    this.entry = entries.find(({ trainer }) => trainer.uuid === this.trainerUuid) ?? entries[0] ?? null;
+    if (!this.entry) {return messageMarkup(game.user.isGM ? text.noTrainers : text.noTrainersPlayer);}
+    this.trainerUuid = this.entry.trainer.uuid;
+    if (!this.entry.pokemon.has(this.heldUuid)) {this.heldUuid = null;}
+    const boxes = pcBoxCount(this.entry.slots);
+    this.boxIndex = Math.min(this.boxIndex, boxes - 1);
+    return this.#markup(entries, boxes);
+  }
+
+  #markup(entries, boxes) {
+    const text = labels();
+    const { entry, boxIndex } = this;
+    // Only the render that changes box scrolls it in, not the ones that follow an actor update.
+    const slide = this.slide ? `data-slide="${this.slide}"` : "";
+    this.slide = null;
+    const offset = boxIndex * BOX_SIZE;
+    const boxUuids = Array.from({ length: BOX_SIZE }, (_, index) => entry.slots[offset + index] ?? null);
+    const partyUuids = Array.from({ length: entry.partySlots }, (_, index) => entry.party[index]?.uuid ?? null);
+    const visible = [...boxUuids, ...partyUuids].filter(Boolean);
+    if (!visible.includes(this.selectedUuid)) {this.selectedUuid = visible[0] ?? null;}
+    const selected = entry.pokemon.get(this.selectedUuid) ?? null;
+    const held = entry.pokemon.get(this.heldUuid) ?? null;
+    const stop = Math.max(0, [...boxUuids, ...partyUuids].indexOf(this.selectedUuid));
+    const slot = (uuid, position, zone, index, focus) => slotMarkup(entry.pokemon.get(uuid), {
+      zone, index, focus, tabStop: position === stop, selected: uuid && uuid === this.selectedUuid, held: uuid && uuid === this.heldUuid
+    });
+    return `
+      <section class="poke5e-pc__preview" data-pc-preview>${selected ? previewMarkup(entry, selected, Boolean(held)) : ""}</section>
+      <section class="poke5e-pc__storage">
+        ${trainerPickerMarkup(entries, entry)}
+        <header class="poke5e-pc__header">
+          <button type="button" class="poke5e-pc__arrow" data-action="previousBox" data-pc-focus="previousBox" aria-label="${text.previous}" title="${text.previous}"><i class="fa-solid fa-caret-left" aria-hidden="true"></i></button>
+          <h2 class="poke5e-pc__title">${text.box(boxIndex + 1, boxes)}${entries.length > 1 ? "" : `<small>${escapeHtml(entry.trainer.name)}</small>`}</h2>
+          <button type="button" class="poke5e-pc__arrow" data-action="nextBox" data-pc-focus="nextBox" aria-label="${text.next}" title="${text.next}"><i class="fa-solid fa-caret-right" aria-hidden="true"></i></button>
+        </header>
+        <div class="poke5e-pc__box" data-wallpaper="${boxIndex % WALLPAPERS}" ${slide} role="group" aria-label="${text.box(boxIndex + 1, boxes)}">
+          ${boxUuids.map((uuid, index) => slot(uuid, index, "box", offset + index, `box-${index}`)).join("")}
+          ${boxUuids.some(Boolean) ? "" : `<p class="poke5e-pc__box-empty">${text.emptyBox}</p>`}
+        </div>
+        <div class="poke5e-pc__tray">
+        <h3 class="poke5e-pc__party-title">${text.party}</h3>
+        <div class="poke5e-pc__party" role="group" aria-label="${text.party}">
+          ${partyUuids.map((uuid, index) => slot(uuid, BOX_SIZE + index, "party", index, `party-${index}`)).join("")}
+        </div>
+        </div>
+        <p class="poke5e-pc__status" role="status" data-pc-status>${statusMarkup(held)}</p>
+      </section>`;
   }
 
   // Replacing the HTML drops the focus; a keyboard user has to stay on the same control.
@@ -169,16 +292,46 @@ export class PokemonPc extends foundry.applications.api.ApplicationV2 {
   _onFirstRender(context, options) {
     super._onFirstRender(context, options);
     const root = this.element;
+    root.classList.add("is-booting");
     // Image errors do not bubble.
     root.addEventListener("error", event => this.#useFallback(event.target), true);
+    root.addEventListener("load", event => this.#groundSprite(event.target), true);
     root.addEventListener("focusin", event => this.#selectSlot(event.target.closest?.("[data-pc-slot]")));
-    root.addEventListener("click", event => event.target.closest("[data-pc-slot]")?.focus());
+    root.addEventListener("click", event => this.#onClick(event));
     root.addEventListener("dblclick", event => this.#openFromSlot(event.target.closest("[data-pc-slot]")));
     root.addEventListener("keydown", event => this.#onKeyDown(event));
+    root.addEventListener("change", event => this.#onChange(event));
+    root.addEventListener("dragstart", event => this.#onDragStart(event));
+    root.addEventListener("dragover", event => {
+      if (event.target.closest("[data-pc-slot]")) {event.preventDefault();}
+    });
+    root.addEventListener("drop", event => {
+      const slot = event.target.closest("[data-pc-slot]");
+      if (!slot) {return;}
+      event.preventDefault();
+      this.#dropOn(slot);
+    });
+    root.addEventListener("dragend", () => {
+      if (this.heldUuid) {this.#setHeld(null);}
+    });
   }
 
-  get #box() {
-    return this.boxes[this.boxIndex];
+  // shortcut: samples the image as a square, so non-square custom art lands a little off; measure its real ratio if it shows.
+  #groundSprite(image) {
+    if (!image.closest?.(".poke5e-pc__portrait")) {return;}
+    const canvas = document.createElement("canvas");
+    canvas.width = SPRITE_SAMPLE;
+    canvas.height = SPRITE_SAMPLE;
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    context.drawImage(image, 0, 0, SPRITE_SAMPLE, SPRITE_SAMPLE);
+    try {
+      const { data } = context.getImageData(0, 0, SPRITE_SAMPLE, SPRITE_SAMPLE);
+      const rendered = image.clientHeight;
+      image.style.transform = `translateY(${spriteGroundShift(data, SPRITE_SAMPLE, rendered, rendered * PORTRAIT_GROUND)}px)`;
+    } catch (error) {
+      // Art hosted on another site cannot be read; it just keeps its own margin.
+      console.warn(`[poke5e-local] ${APP_ID}`, error);
+    }
   }
 
   #useFallback(image) {
@@ -187,47 +340,116 @@ export class PokemonPc extends foundry.applications.api.ApplicationV2 {
     if (next !== image.getAttribute("src")) {image.src = next;}
   }
 
-  #pokemon(uuid) {
-    return uuid ? [...this.#box.pokemon, ...this.#box.party].find(pokemon => pokemon.uuid === uuid) ?? null : null;
-  }
-
   #selectSlot(slot) {
     if (!slot) {return;}
     const root = this.element;
-    for (const each of slot.closest("[data-pc-group]").querySelectorAll("[data-pc-slot]")) {each.tabIndex = each === slot ? 0 : -1;}
+    for (const each of root.querySelectorAll("[data-pc-slot]")) {each.tabIndex = each === slot ? 0 : -1;}
     root.querySelector(".poke5e-pc__slot.is-selected")?.classList.remove("is-selected");
-    const pokemon = this.#pokemon(slot.dataset.uuid);
+    const pokemon = this.entry.pokemon.get(slot.dataset.uuid) ?? null;
     slot.classList.toggle("is-selected", Boolean(pokemon));
+    const changed = this.selectedUuid !== (pokemon?.uuid ?? null);
     this.selectedUuid = pokemon?.uuid ?? null;
-    root.querySelector("[data-pc-preview]").innerHTML = previewMarkup(pokemon, this.#box.party.includes(pokemon));
+    // A render puts the focus back here too: that one must not replay the hop.
+    this.#drawPreview(changed);
+  }
+
+  #drawPreview(enter = false) {
+    const preview = this.element.querySelector("[data-pc-preview]");
+    preview.toggleAttribute("data-enter", enter);
+    const focusKey = preview.contains(document.activeElement) ? document.activeElement.dataset.pcFocus : null;
+    preview.innerHTML = previewMarkup(this.entry, this.entry.pokemon.get(this.selectedUuid) ?? null, Boolean(this.heldUuid));
+    if (focusKey) {preview.querySelector(`[data-pc-focus="${focusKey}"]`)?.focus();}
+  }
+
+  // Redraws in place: a full render would abort a mouse drag in progress.
+  #setHeld(uuid) {
+    this.heldUuid = uuid;
+    const root = this.element;
+    root.querySelector(".poke5e-pc__slot.is-held")?.classList.remove("is-held");
+    if (uuid) {root.querySelector(`[data-uuid="${CSS.escape(uuid)}"]`)?.classList.add("is-held");}
+    root.querySelector("[data-pc-status]").innerHTML = statusMarkup(this.entry.pokemon.get(uuid) ?? null);
+    this.#drawPreview();
+  }
+
+  async #dropOn(slot) {
+    const text = labels();
+    const held = this.entry.pokemon.get(this.heldUuid);
+    if (!held) {return;}
+    const plan = planPcMove(pcMoveContext(this.entry), held.uuid, { zone: slot.dataset.pcZone, index: Number(slot.dataset.pcIndex) });
+    if (plan?.error) {
+      // Whoever is deployed: the Pokémon it would swap out of the party, or the one being dropped.
+      const blocker = slot.dataset.pcZone === "party" ? this.entry.pokemon.get(slot.dataset.uuid) : held;
+      ui.notifications.warn(plan.error === "full" ? text.full(this.entry.limit) : text.active(pcDisplayName(blocker.name)));
+      return;
+    }
+    this.#setHeld(null);
+    if (!plan) {return;}
+    this.selectedUuid = held.uuid;
+    try {
+      await applyPcMove(this.entry, plan);
+    } catch (error) {
+      console.error(`[poke5e-local] ${APP_ID}`, error);
+      ui.notifications.error(text.moveFailed);
+    }
+    await this.render();
+    this.element.querySelector(`[data-uuid="${CSS.escape(held.uuid)}"]`)?.classList.add("is-landing");
   }
 
   #openFromSlot(slot) {
-    if (!slot) {return;}
-    this.#pokemon(slot.dataset.uuid)?.sheet?.render(true);
+    if (!slot || this.heldUuid) {return;}
+    this.entry.pokemon.get(slot.dataset.uuid)?.sheet?.render(true);
   }
 
   #changeBox(step) {
-    if (this.boxes.length < 2) {return;}
-    this.boxIndex = (this.boxIndex + step + this.boxes.length) % this.boxes.length;
+    const boxes = pcBoxCount(this.entry.slots);
+    this.boxIndex = (this.boxIndex + step + boxes) % boxes;
+    this.slide = step > 0 ? "next" : "previous";
     this.selectedUuid = null;
     this.render();
   }
 
-  #onKeyDown(event) {
+  #onClick(event) {
     const slot = event.target.closest("[data-pc-slot]");
-    if (event.key === "PageUp" || event.key === "PageDown") {
+    // Enter and Space already acted on keydown; they also fire a click with detail 0.
+    if (!slot || event.detail === 0) {return;}
+    slot.focus();
+    if (this.heldUuid) {this.#dropOn(slot);}
+  }
+
+  #onChange(event) {
+    if (!event.target.matches("[data-pc-trainer]")) {return;}
+    this.trainerUuid = event.target.value;
+    this.boxIndex = 0;
+    this.selectedUuid = null;
+    this.heldUuid = null;
+    this.render();
+  }
+
+  #onDragStart(event) {
+    const uuid = event.target.closest?.("[data-pc-slot]")?.dataset.uuid;
+    if (!uuid) {return;}
+    // A type of our own: Foundry's canvas ignores the drop if it lands outside the window.
+    event.dataTransfer.setData("application/x-poke5e-pc", uuid);
+    event.dataTransfer.effectAllowed = "move";
+    this.#setHeld(uuid);
+  }
+
+  #onKeyDown(event) {
+    if (!this.entry) {return;}
+    const slot = event.target.closest("[data-pc-slot]");
+    if (event.key === "Escape" && this.heldUuid) {
+      this.#setHeld(null);
+    } else if ((event.key === "PageUp" || event.key === "PageDown") && !event.target.matches("select")) {
       this.#changeBox(event.key === "PageUp" ? -1 : 1);
-    } else if (slot && event.key === "Enter") {
-      this.#openFromSlot(slot);
+    } else if (slot && (event.key === "Enter" || event.key === " ")) {
+      if (this.heldUuid) {this.#dropOn(slot);} else if (slot.dataset.uuid) {this.#setHeld(slot.dataset.uuid);}
     } else if (slot && event.key.startsWith("Arrow")) {
-      const group = slot.closest("[data-pc-group]");
-      const slots = [...group.querySelectorAll("[data-pc-slot]")];
-      slots[moveSlot(slots.indexOf(slot), event.key, Number(group.dataset.columns), slots.length)].focus();
+      const slots = [...this.element.querySelectorAll("[data-pc-slot]")];
+      slots[moveSlot(slots.indexOf(slot), event.key, BOX_COLUMNS, slots.length)].focus();
     } else {
       return;
     }
-    // Foundry pans the canvas with the arrow keys from a listener on window.
+    // Foundry pans the canvas with the arrow keys and closes windows with Esc from a listener on window.
     event.preventDefault();
     event.stopPropagation();
   }
@@ -241,7 +463,11 @@ export class PokemonPc extends foundry.applications.api.ApplicationV2 {
   }
 
   static #openSheet() {
-    this.#pokemon(this.selectedUuid)?.sheet?.render(true);
+    this.entry.pokemon.get(this.selectedUuid)?.sheet?.render(true);
+  }
+
+  static #toggleMove() {
+    this.#setHeld(this.heldUuid ? null : this.selectedUuid);
   }
 
   static #retry() {

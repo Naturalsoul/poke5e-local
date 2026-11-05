@@ -627,7 +627,7 @@ function normalizeType(
 }
 
 
-function localizedType(
+export function localizedType(
   type
 ) {
 

@@ -4,6 +4,57 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.52.1] — 2026-11-05
+
+- **README:** añade capturas de la PC, las hojas de Pokémon y entrenador, el importador, el planificador de encuentros y
+  Fakemon Studio, en `assets/screenshots/`.
+
+## [0.52.0] — 2026-11-05
+
+- **PC Pokémon, EXP:** la ficha muestra una barra de EXP bajo la de HP, con la EXP total y la que pide el siguiente nivel.
+  Al elegir un Pokémon se llena la barra de EXP; la de HP ya no se anima.
+- **PC Pokémon, animaciones:** el salto y el llenado ya no se repiten cada vez que la ventana se redibuja con el mismo Pokémon
+  elegido; solo salen al elegir otro.
+
+## [0.51.0] — 2026-11-05
+
+- **PC Pokémon, animaciones:** la pantalla se enciende al abrir, la caja se desliza al cambiar, el Pokémon elegido da un
+  salto mientras se llena su barra de HP, y los sprites reaccionan al cursor, tiemblan al tomarlos y rebotan al soltarlos.
+  Las estrellas de los shiny parpadean. Todo se mueve por pasos, como un sprite, y se apaga si el sistema pide reducir el
+  movimiento.
+- **PC Pokémon, ventana:** vuelven los iconos de ⋮ y × de la barra de título, que la tipografía pixelada había roto. El
+  título usa la fuente de Foundry.
+
+## [0.50.0] — 2026-11-05
+
+- **PC Pokémon, cajas:** cada entrenador tiene 8 cajas de 30 casillas, cada una con su fondo. Si alguien tuviera más de 240
+  Pokémon en el PC, aparecen las cajas que hagan falta.
+- **PC Pokémon, tipografía:** la ventana usa Pixelify Sans, incluida en el módulo con su licencia OFL en
+  `assets/fonts/pixelify-sans/`, así que no depende de internet.
+
+## [0.49.1] — 2026-11-05
+
+- **PC Pokémon, sprites:** el sprite de la vista previa ya no flota sobre la plataforma. Cada imagen deja un margen distinto
+  bajo los pies, así que ahora se baja o se sube hasta tocarla.
+
+## [0.49.0] — 2026-11-05
+
+- **PC Pokémon, diseño:** la ventana es más ancha y parece la pantalla de un PC del juego: paneles de papel con contorno
+  de tinta y esquinas rectas, un patrón distinto de fondo por caja, un escenario de hierba bajo el sprite, barra de HP de
+  batalla, bandeja de party con la silueta de la Poké Ball en los Pokéslots vacíos y un cuadro de texto abajo.
+- **PC Pokémon, tipos:** la vista previa muestra los tipos en chips de colores.
+- **PC Pokémon, nombres:** ya no repite el nivel cuando el nombre del actor lo trae, como "Eevee (Lv. 6)".
+
+## [0.48.0] — 2026-11-05
+
+- **PC Pokémon, mover:** ya no es solo de lectura. Cada entrenador tiene varias cajas (las que usa, más una vacía) y un
+  selector para cambiar de entrenador. Los Pokémon se mueven entre casillas, cajas y party, arrastrando con el ratón o
+  con "Mover" y Enter; si la casilla está ocupada, intercambian lugar. No se puede pasar del límite de Pokéslots ni sacar
+  de la party a un Pokémon desplegado. Las posiciones se guardan en el entrenador.
+- **PC Pokémon, vista previa:** agrega HP, debilitado, estados, objeto equipado, shiny y si está desplegado.
+- **PC Pokémon, aspecto:** cada caja tiene su fondo, las casillas muestran un cursor, y los debilitados y shiny se
+  distinguen en la cuadrícula.
+
 ## [0.47.0] — 2026-11-05
 
 - **PC Pokémon:** botón nuevo en los controles de Tokens, para GM y jugadores. Abre una ventana al estilo de las cajas de
