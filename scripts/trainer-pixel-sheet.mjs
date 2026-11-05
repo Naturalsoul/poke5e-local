@@ -1,4 +1,5 @@
 import { getLanguage } from "./i18n.mjs";
+import { togglePokemonPc } from "./pokemon-pc.mjs";
 import { openTrainerBag } from "./trainer-bag.mjs";
 import { getTrainerLevel } from "./trainer-service.mjs";
 import { currentTrainerSheetDesign } from "./trainer-sheet-design.mjs";
@@ -21,8 +22,8 @@ const TEMPLATES = `modules/${MODULE_ID}/templates/actors`;
 const SIZE = Object.freeze({ width: 900, height: 720 });
 
 const TEXT = {
-  es: { bag: "Mochila", noEffects: "Sin efectos activos." },
-  en: { bag: "Bag", noEffects: "No active effects." }
+  es: { bag: "Mochila", pc: "PC Pokémon", noEffects: "Sin efectos activos." },
+  en: { bag: "Bag", pc: "Pokémon PC", noEffects: "No active effects." }
 };
 
 const CharacterActorSheet = globalThis.dnd5e.applications.actor.CharacterActorSheet;
@@ -46,6 +47,7 @@ export class TrainerPixelSheet extends CharacterActorSheet {
     actions: {
       deleteEffect: TrainerPixelSheet.#deleteEffect,
       openBag: TrainerPixelSheet.#openBag,
+      openPc: TrainerPixelSheet.#openPc,
       toggleEffect: TrainerPixelSheet.#toggleEffect
     }
   };
@@ -83,6 +85,22 @@ export class TrainerPixelSheet extends CharacterActorSheet {
     return foundry.applications.api.ApplicationV2.prototype._updatePosition.call(this, position);
   }
 
+  // dnd5e draws the ability scores as a part of their own, but they belong under Languages in Details.
+  _replaceHTML(result, content, options) {
+    if (result.abilityScores) {
+      const title = document.createElement("h3");
+      title.className = "icon";
+      title.innerHTML = `<i class="fa-solid fa-dice-d20" inert></i><span class="roboto-upper">${game.i18n.localize("DND5E.Abilities")}</span>`;
+      result.abilityScores.prepend(title);
+    }
+    const column = result.details?.querySelector(".right");
+    if (column) {
+      column.append(result.abilityScores ?? content.querySelector("[data-application-part='abilityScores']"));
+      delete result.abilityScores;
+    }
+    super._replaceHTML(result, content, options);
+  }
+
   _initializeApplicationOptions(options) {
     const applicationOptions = super._initializeApplicationOptions(options);
     Object.assign(applicationOptions.position, SIZE);
@@ -111,6 +129,10 @@ export class TrainerPixelSheet extends CharacterActorSheet {
     // Each design has one palette, whatever Foundry theme the player uses: dnd5e's parts of the sheet have to match it.
     this.element.classList.remove("theme-light", "theme-dark");
     this.element.classList.add("themed", rocket ? "theme-dark" : "theme-light");
+  }
+
+  static #openPc() {
+    void togglePokemonPc();
   }
 
   static #openBag() {

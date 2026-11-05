@@ -9,7 +9,6 @@ import {
 } from "./trainer-progression-service.mjs";
 
 import {
-  getTrainerOwnedPokemon,
   getTrainerPartyState,
   getTrainerPokeslotLimit
 } from "./trainer-party-service.mjs";
@@ -54,10 +53,7 @@ const LABELS = {
       "Despliega un Pokémon de la Party para comenzar.",
 
     party: "Party",
-    pc: "PC",
 
-    emptyPc:
-      "No hay Pokémon guardados en el PC.",
 
     deploy: "Desplegar",
     recall: "Retirar",
@@ -69,8 +65,6 @@ const LABELS = {
     switchIncoming:
       "Entrar",
 
-    toPc: "Al PC",
-    toParty: "A Party",
     activeBadge: "Activo",
 
     openPokemonSheet:
@@ -156,10 +150,7 @@ const LABELS = {
       "Deploy a Party Pokémon to begin.",
 
     party: "Party",
-    pc: "PC",
 
-    emptyPc:
-      "There are no Pokémon stored in the PC.",
 
     deploy: "Deploy",
     recall: "Recall",
@@ -171,8 +162,6 @@ const LABELS = {
     switchIncoming:
       "Switch in",
 
-    toPc: "To PC",
-    toParty: "To Party",
     activeBadge: "Active",
 
     openPokemonSheet:
@@ -360,11 +349,6 @@ function getTrainerView(
       trainer
     );
 
-  const partyUuidSet =
-    new Set(
-      state.pokemonUuids
-    );
-
   const activeUuidSet =
     new Set(
       state.activePokemonUuids
@@ -384,32 +368,11 @@ function getTrainerView(
       )
       .filter(Boolean);
 
-  const pcPokemon =
-    getTrainerOwnedPokemon(
-      trainer
-    )
-      .filter(
-        pokemon =>
-          !partyUuidSet.has(
-            pokemon.uuid
-          )
-      )
-      .sort(
-        (
-          left,
-          right
-        ) =>
-          left.name.localeCompare(
-            right.name
-          )
-      );
-
   return {
     state,
     activeUuidSet,
     partyPokemon,
     activePokemon,
-    pcPokemon,
 
     pokeslotLimit:
       getTrainerPokeslotLimit(
@@ -725,6 +688,7 @@ function pokemonTypeBadgesMarkup(
         <span
           class="poke5e-trainer-type-badge"
           data-pokemon-type="${escapeHtml(type)}"
+          data-type="${escapeHtml(type)}"
         >
           ${escapeHtml(
             localizedType(
@@ -1577,19 +1541,6 @@ function partyCardMarkup(
           primary:
             true
         })}
-
-        ${actionButton({
-          action:
-            "party-to-pc",
-
-          pokemon,
-
-          icon:
-            "fa-solid fa-box-archive",
-
-          label:
-            labels.toPc
-        })}
       `;
     }
   }
@@ -1744,161 +1695,6 @@ function partyMarkup(
           labels,
           editable
         )
-    )
-    .join("");
-}
-
-
-function pcMarkup(
-  view,
-  labels,
-  editable
-) {
-
-  if (
-    !view.pcPokemon.length
-  ) {
-
-    return `
-      <div class="poke5e-trainer-command-pc-empty">
-        ${labels.emptyPc}
-      </div>
-    `;
-  }
-
-
-  return view.pcPokemon
-    .map(
-      pokemon => {
-
-        const hp =
-          pokemonHp(
-            pokemon
-          );
-
-        const level =
-          pokemonLevel(
-            pokemon
-          );
-
-        const primaryType =
-          pokemonPrimaryType(
-            pokemon
-          );
-
-        const hpState =
-          getHpVisualState(
-            hp
-          );
-
-        const fainted =
-          isPokemonFainted(
-            hp
-          );
-
-        const levelUpButton =
-          editable
-            ? pokemonLevelUpButton(
-                pokemon,
-                labels,
-                {
-                  iconOnly: true,
-                  extraClass:
-                    "poke5e-trainer-command-action--level-up"
-                }
-              )
-            : "";
-
-        return `
-          <article
-            class="poke5e-trainer-pc-card${fainted ? " is-fainted" : ""}"
-            data-pokemon-type="${escapeHtml(primaryType)}"
-            data-hp-state="${escapeHtml(hpState)}"
-            data-fainted="${fainted ? "true" : "false"}"
-          >
-
-            <img
-              src="${pokemonImage(pokemon)}"
-              alt="${escapeHtml(pokemon.name)}"
-            >
-
-            <div class="poke5e-trainer-pc-card__body">
-
-              <div class="poke5e-trainer-pc-card__header">
-
-                <div class="poke5e-trainer-pc-card__name">
-
-                  <strong
-                    title="${escapeHtml(pokemon.name)}"
-                  >
-                    ${escapeHtml(pokemon.name)}
-                  </strong>
-
-                  ${
-                    level == null
-                      ? ""
-                      : `
-                        <span class="poke5e-trainer-pc-card__level">
-                          ${labels.level} ${level}
-                        </span>
-                      `
-                  }
-
-                </div>
-
-                ${
-                  levelUpButton
-                    ? `
-                      <div class="poke5e-trainer-pc-card__quick-actions">
-                        ${levelUpButton}
-                      </div>
-                    `
-                    : ""
-                }
-
-              </div>
-
-              <span>
-                ${labels.hp} ${hp.value}/${hp.max}
-              </span>
-
-              ${
-                fainted
-                  ? `
-                    <span class="poke5e-trainer-pc-card__fainted">
-                      ${escapeHtml(labels.fainted)}
-                    </span>
-                  `
-                  : ""
-              }
-
-            </div>
-
-            ${
-              editable
-                ? `
-                  ${actionButton({
-                    action:
-                      "pc-to-party",
-
-                    pokemon,
-
-                    icon:
-                      "fa-solid fa-users",
-
-                    label:
-                      labels.toParty,
-
-                    primary:
-                      true
-                  })}
-                `
-                : ""
-            }
-
-          </article>
-        `;
-      }
     )
     .join("");
 }
@@ -2086,15 +1882,6 @@ export function buildTrainerCommandCenter(
           </strong>
         </span>
 
-        <span>
-          ${labels.pc}
-
-          <strong>
-            ${view.pcPokemon.length}
-          </strong>
-        </span>
-
-
         ${trainerResourceCountersMarkup(
           trainer,
           editable
@@ -2215,41 +2002,6 @@ export function buildTrainerCommandCenter(
       </div>
 
     </section>
-
-
-    <details class="poke5e-trainer-command-pc">
-
-      <summary>
-
-        <span>
-
-          <i
-            class="fa-solid fa-box-archive"
-            aria-hidden="true"
-          ></i>
-
-          ${labels.pc}
-
-        </span>
-
-        <strong>
-          ${view.pcPokemon.length}
-        </strong>
-
-      </summary>
-
-
-      <div class="poke5e-trainer-command-pc__content">
-
-        ${pcMarkup(
-          view,
-          labels,
-          editable
-        )}
-
-      </div>
-
-    </details>
   `;
 
 
