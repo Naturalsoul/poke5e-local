@@ -58,15 +58,6 @@
       <dt>{{ localize "DND5E.ProficiencyBonusAbbr" }}</dt>
       <dd>{{ dnd5e-numberFormat system.attributes.prof signDisplay="always" }}</dd>
     </div>
-    {{#with system.attributes.hd}}
-    <div>
-      <dt>{{ localize "DND5E.HitDice" }}</dt>
-      <dd>
-        {{ value }}/{{ max }}
-        {{#if @root.editable}}<button type="button" class="poke5e-tps__config" data-action="showConfiguration" data-config="hitDice" data-tooltip="DND5E.HitDiceConfig" aria-label="{{ localize 'DND5E.HitDiceConfig' }}"><i class="fa-solid fa-gear" inert></i></button>{{/if}}
-      </dd>
-    </div>
-    {{/with}}
   </dl>
 
   {{#if exhaustion}}

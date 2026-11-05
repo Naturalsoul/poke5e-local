@@ -83,6 +83,22 @@ export class TrainerPixelSheet extends CharacterActorSheet {
     return foundry.applications.api.ApplicationV2.prototype._updatePosition.call(this, position);
   }
 
+  // dnd5e draws the ability scores as a part of their own, but they belong under Languages in Details.
+  _replaceHTML(result, content, options) {
+    if (result.abilityScores) {
+      const title = document.createElement("h3");
+      title.className = "icon";
+      title.innerHTML = `<i class="fa-solid fa-dice-d20" inert></i><span class="roboto-upper">${game.i18n.localize("DND5E.Abilities")}</span>`;
+      result.abilityScores.prepend(title);
+    }
+    const column = result.details?.querySelector(".right");
+    if (column) {
+      column.append(result.abilityScores ?? content.querySelector("[data-application-part='abilityScores']"));
+      delete result.abilityScores;
+    }
+    super._replaceHTML(result, content, options);
+  }
+
   _initializeApplicationOptions(options) {
     const applicationOptions = super._initializeApplicationOptions(options);
     Object.assign(applicationOptions.position, SIZE);

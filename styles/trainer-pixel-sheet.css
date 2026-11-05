@@ -57,9 +57,7 @@
   content: none;
 }
 
-/* dnd5e renders the ability scores last; here they go right under the header. */
 .dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet .window-content > .sheet-header { order: 0; }
-.dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet .window-content > .ability-scores { order: 1; }
 .dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet .window-content > .sheet-body { order: 2; }
 
 /* ---------- Header ---------- */
@@ -156,17 +154,14 @@
   color: var(--pc-ink);
 }
 
-/* ---------- Ability scores, a strip under the header ---------- */
+/* ---------- Ability scores, two columns under Languages (moved by _replaceHTML) ---------- */
 
 .dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet .ability-scores {
   position: static;
   inset: auto;
   width: auto;
   height: auto;
-  margin: 12px 10px 0;
-  padding: 4px;
-  background: var(--pc-paper);
-  box-shadow: var(--pc-outline);
+  margin: 0;
 }
 
 .dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet .ability-scores .rows,
@@ -176,8 +171,12 @@
 
 .dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet .ability-scores {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 4px;
+}
+
+.dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet .ability-scores h3 {
+  grid-column: 1 / -1;
 }
 
 .dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet .ability-score {
@@ -256,9 +255,9 @@
 .poke5e-tps__portrait :is(img, video) {
   display: block;
   width: 100%;
-  height: 150px;
+  height: 260px;
   border: 0;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center top;
   cursor: pointer;
 }
@@ -325,10 +324,6 @@
 .poke5e-tps__stats > div {
   padding: 2px 6px;
   background: var(--pc-paper-shade);
-}
-
-.poke5e-tps__stats > div:last-child:nth-child(odd) {
-  grid-column: 1 / -1;
 }
 
 .poke5e-tps__stats dt {
@@ -580,6 +575,19 @@
 
 .dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet .tab[data-tab="details"] :is(h3, .label, .ability-name, .value, .bonus) {
   color: var(--pc-ink);
+}
+
+.dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet .pills .pill {
+  background: var(--pc-paper-shade);
+  border: 0;
+  border-radius: 0;
+  color: var(--pc-ink);
+}
+
+/* dnd5e's green marks immunities; on its own it blends into a dark panel. */
+.dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet .pills .pill.green {
+  background: #24603a;
+  color: #fff;
 }
 
 /* Words on the screen pattern need a surface of their own. */
@@ -873,11 +881,13 @@
   gap: 4px;
 }
 
+/* Same type colours as the PC and the Pokémon sheet (styles/pokemon-pc.css). */
 .poke5e-trainer-pixel-sheet .poke5e-trainer-type-badge {
   padding: 1px 6px;
-  border: 2px solid var(--pc-edge);
-  border-radius: 0;
+  background: var(--pc-type, #a8a77a);
+  color: var(--pc-type-text, #17171b);
   font-size: 12px;
+  text-transform: uppercase;
 }
 
 .poke5e-trainer-pixel-sheet .poke5e-trainer-command-card__stats,
@@ -935,6 +945,14 @@
   border-color: transparent;
 }
 
+.dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet--rocket .tab[data-tab="details"] .right > :not(filigree-box, .top) {
+  box-shadow: var(--pc-outline);
+}
+
+.poke5e-trainer-pixel-sheet--rocket filigree-box {
+  --filigree-border-color: #3a3f4c;
+}
+
 .poke5e-trainer-pixel-sheet--rocket .poke5e-trainer-command-card--empty {
   border-color: #3a3f4c;
 }
@@ -944,7 +962,7 @@
   margin: 8px 8px 0;
 }
 
-.dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet--rocket :is(.ability-scores, nav.tabs.tabs-right) {
+.dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet--rocket nav.tabs.tabs-right {
   margin: 8px 8px 0;
 }
 

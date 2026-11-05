@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.57.0] — 2026-11-05
+
+- **Hoja de entrenador, diseños Pixel:** las características pasan a la pestaña Detalles, bajo Idiomas, y la pestaña Pokémon gana espacio.
+  El retrato es más alto y llena su marco, y ya no se muestran los dados de golpe.
+- **Hoja de entrenador, diseños Pixel, chips:** los tipos de Pokémon usan los mismos colores que el PC y la hoja de Pokémon; antes salían sin color.
+  Los chips de Detalles son rectos como el resto de la hoja, y las inmunidades se leen mejor.
+
 ## [0.56.0] — 2026-11-05
 
 - **Hoja de entrenador:** se quitan la sección PC y el botón «Al PC», también en la hoja clásica. Esos movimientos se hacen ahora en la ventana del PC.

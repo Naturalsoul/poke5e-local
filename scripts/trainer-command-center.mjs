@@ -688,6 +688,7 @@ function pokemonTypeBadgesMarkup(
         <span
           class="poke5e-trainer-type-badge"
           data-pokemon-type="${escapeHtml(type)}"
+          data-type="${escapeHtml(type)}"
         >
           ${escapeHtml(
             localizedType(
