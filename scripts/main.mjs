@@ -9,6 +9,7 @@ import { registerTrainerBag, toggleTrainerBag } from "./trainer-bag.mjs";
 import { registerBattleHotbar, useBattleHotbarMacro } from "./battle-hotbar.mjs";
 import { registerPassiveAbilityEngine } from "./passive-ability-engine.mjs";
 import { registerActiveAbilityService } from "./active-ability-service.mjs";
+import { registerIllusionAbilityService } from "./illusion-ability-service.mjs";
 import { registerRerollAbilityEngine } from "./reroll-ability-engine.mjs";
 import { registerBerryAbilityEngine } from "./berry-ability-engine.mjs";
 import { registerRiderAbilityEngine } from "./rider-ability-engine.mjs";
@@ -457,6 +458,7 @@ Hooks.once(
     registerBattleHotbar();
     registerPassiveAbilityEngine();
     registerActiveAbilityService();
+    registerIllusionAbilityService();
     registerRerollAbilityEngine();
     registerBerryAbilityEngine();
     registerRiderAbilityEngine();

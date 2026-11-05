@@ -1,3 +1,4 @@
+import { illusionModel, illusionName } from "./illusion-ability-service.mjs";
 import {
   playPokemonCry
 } from "./pokemon-cry-service.mjs";
@@ -285,6 +286,11 @@ function eventIconClass(
 }
 
 
+const disguised =
+  pokemon =>
+    pokemon && { name: illusionName(pokemon) };
+
+
 function eventMessage({
   reason,
   outgoing,
@@ -305,7 +311,7 @@ function eventMessage({
   ) {
 
     return labels.fainted(
-      pokemon
+      disguised(pokemon)
     );
   }
 
@@ -317,7 +323,7 @@ function eventMessage({
   ) {
 
     return labels.deploy(
-      incoming
+      disguised(incoming)
     );
   }
 
@@ -329,7 +335,7 @@ function eventMessage({
   ) {
 
     return labels.recall(
-      outgoing
+      disguised(outgoing)
     );
   }
 
@@ -342,8 +348,8 @@ function eventMessage({
   ) {
 
     return labels.switch(
-      outgoing,
-      incoming
+      disguised(outgoing),
+      disguised(incoming)
     );
   }
 
@@ -794,7 +800,8 @@ async function playBattleAudio(
 
 
     await playPokemonCry(
-      payload.incoming
+      illusionModel(payload.incoming) ??
+        payload.incoming
     );
 
     return;
@@ -840,7 +847,8 @@ async function playBattleAudio(
 
 
     await playPokemonCry(
-      payload.incoming
+      illusionModel(payload.incoming) ??
+        payload.incoming
     );
   }
 }

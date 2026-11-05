@@ -1,3 +1,5 @@
+import { disguiseTokenSource } from "./illusion-ability-service.mjs";
+
 /* ============================================================
  * SCENE
  * ============================================================ */
@@ -142,6 +144,7 @@ export async function deployPokemonToken(
   pokemon,
   {
     position,
+    illusionModelId,
     scene = canvas.scene
   } = {}
 ) {
@@ -231,6 +234,14 @@ export async function deployPokemonToken(
   */
 
   delete tokenSource._id;
+
+
+  await disguiseTokenSource(
+    pokemon,
+    tokenSource,
+    illusionModelId,
+    targetScene
+  );
 
 
   const created =

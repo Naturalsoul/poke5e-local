@@ -25,6 +25,7 @@ import { addFlat, moveModifier } from "./rider-ability-engine.mjs";
  * - saveDisadvantage: the next save against a status from its Moves (Mycelium Might);
  * - damageType: the damage type of its next Move damage roll, chosen when switched on (Download).
  * Others act right away on the targeted creature: Healer (at will) and Curious Medicine (INT mod uses).
+ * Illusion is offered on deploy, at will: see illusion-ability-service.
  * Magic Bounce blocks the next status like Shield Dust and gives it to whoever caused it.
  * Heavy Metal and Steadfast depend on a result already rolled, so they ask (only when
  * they would change it), like the trainer reactions.
@@ -53,7 +54,8 @@ export const ACTIVE_ABILITIES = {
   download: { rest: "short", guard: "damageType", choose: chooseDamageType },
   healer: { act: heal, reach: 5, hint: "touch" },
   "curious-medicine": { rest: "long", act: resetStatChanges, reach: 30, ally: true, self: true, hint: "near",
-    uses: pokemon => Math.max(1, Number(pokemon.system?.abilities?.int?.mod ?? 0)) }
+    uses: pokemon => Math.max(1, Number(pokemon.system?.abilities?.int?.mod ?? 0)) },
+  illusion: { reaction: true, note: "illusionOffer" }
 };
 
 const TEXT = {
@@ -79,6 +81,7 @@ const TEXT = {
   owner: { en: "Only its owner or the GM can switch it on for", es: "Solo su dueño o el GM pueden activarla para" },
   used: { en: "uses", es: "usa" },
   on: { en: "on", es: "activa" },
+  illusionOffer: { en: "Offered when it is deployed", es: "Se ofrece al desplegarlo" },
   reaction: { en: "Offered when it would change a rolled result", es: "Se ofrece cuando cambiaría el resultado de una tirada" }
 };
 
@@ -93,7 +96,7 @@ export function activeAbilityOf(pokemon) {
   return isPokemonActor(pokemon) ? Object.keys(ACTIVE_ABILITIES).find(abilityId => hasPokemonAbility(pokemon, abilityId)) ?? null : null;
 }
 
-function abilityName(pokemon, abilityId) {
+export function abilityName(pokemon, abilityId) {
   return pokemon.items?.find(item => item.getFlag?.(MODULE_ID, "kind") === "ability" && item.getFlag?.(MODULE_ID, "sourceId") === abilityId)?.name ?? abilityId;
 }
 
@@ -421,7 +424,7 @@ export function activeAbilityButton(pokemon) {
   const max = abilityMaxUses(pokemon, abilityId);
   const on = Object.values(guardOf(pokemon)).includes(abilityId);
   const charges = on ? text("on") : usesLabel(left, max);
-  const tooltip = escape(rule.reaction ? text("reaction") : `${en() ? "Use" : "Usar"}: ${abilityName(pokemon, abilityId)}${charges ? ` · ${charges}` : ""}`);
+  const tooltip = escape(rule.reaction ? text(rule.note ?? "reaction") : `${en() ? "Use" : "Usar"}: ${abilityName(pokemon, abilityId)}${charges ? ` · ${charges}` : ""}`);
   const button = rule.reaction ? "" : `
     <button type="button" class="poke5e-pokemon-held-item__use" data-poke5e-ability-action="use" data-actor-uuid="${escape(pokemon.uuid)}"
       ${left && pokemon.isOwner ? "" : "disabled"} title="${tooltip}" aria-label="${tooltip}">

@@ -4,6 +4,10 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.63.0] — 2026-11-05
+
+- **Habilidades:** Ilusión (Zorua, Zoroark) automatizada. Al lanzar o cambiar a uno de ellos, una ventana le pregunta a quien lo despliega si quiere usarla y qué Pokémon de la escena copiar. Su token sale con el nombre, la imagen y el tamaño de ese Pokémon, y el combat tracker, el chat, el retrato de las tarjetas, el aviso de despliegue y el grito también lo muestran; solo su dueño y el GM reciben el aviso del uso. Se puede usar sin límite de veces. Termina al recibir daño de un movimiento, al pasar una hora de tiempo del mundo o al retirarlo, y el token recupera su aspecto.
+
 ## [0.62.0] — 2026-11-05
 
 - **Objetos:** 92 objetos nuevos en el catálogo, con su imagen del juego y reglas adaptadas a 5e: los que faltaban para evolucionar (Metal Alloy, los dos pergaminos de Kubfu, Leader's Crest y las manzanas de Applin), 18 gemas, 15 bayas, 21 mentas, Repel, Poké Doll, Fluffy Tail, PP Max, Rare Candy, Soothe Bell, Quick Powder y 22 objetos valiosos y fósiles, en su propia carpeta del compendio.
