@@ -1,0 +1,233 @@
+/* ============================================================
+ * POKE5E — POKÉMON PC
+ * Preview on the left, the box and the party on the right.
+ * ============================================================ */
+
+.poke5e-pc .window-content {
+  padding: 0;
+  background: var(--poke5e-ui-bg);
+  color: var(--poke5e-ui-text);
+}
+
+.poke5e-pc__layout {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+}
+
+.poke5e-pc__preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 14px;
+  background: var(--poke5e-ui-surface);
+  border-right: 2px solid var(--poke5e-ui-border);
+  text-align: center;
+}
+
+.poke5e-pc__portrait {
+  width: 192px;
+  height: 192px;
+  margin-bottom: 8px;
+  background: var(--poke5e-ui-cream);
+  border: 2px solid var(--poke5e-ui-cream-dark);
+  border-radius: 4px;
+}
+
+.poke5e-pc__portrait img {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.poke5e-pc__name {
+  margin: 0;
+  border: 0;
+  font-size: 18px;
+  overflow-wrap: anywhere;
+  color: var(--poke5e-ui-text);
+}
+
+.poke5e-pc__level,
+.poke5e-pc__place,
+.poke5e-pc__types {
+  margin: 0;
+}
+
+.poke5e-pc__level {
+  font-weight: 700;
+  color: var(--poke5e-ui-cream);
+}
+
+.poke5e-pc__types {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  text-transform: capitalize;
+}
+
+.poke5e-pc__place {
+  margin-bottom: 10px;
+  color: var(--poke5e-ui-muted);
+}
+
+.poke5e-pc__open {
+  width: 100%;
+  margin-top: auto;
+}
+
+.poke5e-pc__storage {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px 16px;
+}
+
+.poke5e-pc__header {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 8px;
+  background: var(--poke5e-ui-cream);
+  border: 2px solid var(--poke5e-ui-cream-dark);
+  border-radius: 4px;
+  color: #22282b;
+}
+
+.poke5e-pc__title {
+  margin: 0;
+  padding: 6px 0;
+  border: 0;
+  font-size: 17px;
+  font-weight: 700;
+  text-align: center;
+  overflow-wrap: anywhere;
+  color: inherit;
+}
+
+.poke5e-pc__title small {
+  display: block;
+  font-size: var(--poke5e-ui-text-xs);
+  font-weight: 400;
+}
+
+.poke5e-pc .poke5e-pc__arrow {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  font-size: 22px;
+  color: inherit;
+}
+
+.poke5e-pc .poke5e-pc__arrow:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.poke5e-pc .poke5e-pc__arrow:disabled {
+  opacity: 0.35;
+}
+
+.poke5e-pc__box,
+.poke5e-pc__party {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.poke5e-pc__box {
+  padding: 8px;
+  background: var(--poke5e-ui-panel);
+  border: 2px solid var(--poke5e-ui-border);
+  border-radius: 4px;
+}
+
+.poke5e-pc .poke5e-pc__slot {
+  width: auto;
+  height: auto;
+  min-height: 44px;
+  aspect-ratio: 1;
+  padding: 0;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 4px;
+}
+
+.poke5e-pc__party .poke5e-pc__slot {
+  background: var(--poke5e-ui-panel);
+}
+
+.poke5e-pc .poke5e-pc__slot:hover {
+  background: var(--poke5e-ui-panel-alt);
+}
+
+.poke5e-pc .poke5e-pc__slot.is-selected {
+  background: var(--poke5e-ui-panel-alt);
+  border-color: var(--poke5e-ui-accent);
+}
+
+.poke5e-pc .poke5e-pc__slot:focus-visible {
+  border-color: var(--poke5e-ui-cream);
+  outline: 2px solid var(--poke5e-ui-accent);
+  outline-offset: 1px;
+}
+
+.poke5e-pc__slot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: contain;
+}
+
+.poke5e-pc__party-title {
+  margin: 0;
+  border: 0;
+  font-size: 14px;
+  color: var(--poke5e-ui-cream);
+}
+
+.poke5e-pc__hint {
+  margin: 0;
+  color: var(--poke5e-ui-muted);
+}
+
+.poke5e-pc__message {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.poke5e-pc__message p {
+  margin: 0;
+}
+
+.poke5e-pc__message button {
+  width: auto;
+  padding-inline: 16px;
+}
+
+@media (max-width: 760px) {
+  .poke5e-pc__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .poke5e-pc__preview {
+    border-right: 0;
+    border-bottom: 2px solid var(--poke5e-ui-border);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .poke5e-pc .poke5e-pc__slot {
+    transition: background-color 80ms linear;
+  }
+}

@@ -1,4 +1,5 @@
 import { registerPokemonBondService } from "./pokemon-bond-service.mjs";
+import { registerPokemonPc, togglePokemonPc } from "./pokemon-pc.mjs";
 import { registerMoveAnimations } from "./move-animations.mjs";
 import { registerEncounterXpSettings } from "./encounter-xp-service.mjs";
 import { registerSheetDesign } from "./ui-theme.mjs";
@@ -446,6 +447,7 @@ Hooks.once(
     registerTrainerReactionService();
     registerTrainerCombatReactions();
     registerPokemonBondService();
+    registerPokemonPc();
     registerBattleHotbar();
     registerPassiveAbilityEngine();
     registerActiveAbilityService();
@@ -678,6 +680,16 @@ Hooks.on(
               openFakemonStudio();
             }
         };
+
+      controls.tokens.tools.poke5ePc = {
+        name: "poke5ePc",
+        title: "PC Pokémon",
+        icon: "fa-solid fa-computer",
+        order: Object.keys(controls.tokens.tools).length,
+        button: true,
+        visible: true,
+        onChange: togglePokemonPc
+      };
   }
 );
 

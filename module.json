@@ -2,7 +2,7 @@
   "id": "poke5e-local",
   "title": "Poke5e Local",
   "description": "Base local de Pokemon 5e para Foundry VTT y D&D5e 5.3.3.",
-  "version": "0.46.4",
+  "version": "0.47.0",
 
   "authors": [
     {
@@ -46,6 +46,7 @@
     "styles/battle-transitions.css",
     "styles/encounter-planner.css",
     "styles/fakemon-studio.css",
-    "styles/chat.css"
+    "styles/chat.css",
+    "styles/pokemon-pc.css"
   ]
 }

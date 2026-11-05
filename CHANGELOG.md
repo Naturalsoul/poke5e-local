@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.47.0] — 2026-11-05
+
+- **PC Pokémon:** botón nuevo en los controles de Tokens, para GM y jugadores. Abre una ventana al estilo de las cajas de
+  los juegos clásicos: una caja por entrenador (con páginas de 30 si no caben), la party abajo y una vista previa con
+  sprite, nivel, tipos y "Abrir ficha". El GM ve todos los entrenadores y cada jugador solo los suyos. Es de solo lectura
+  y usa los sprites estáticos. Con teclado: flechas para moverse, RePág/AvPág para cambiar de caja, Enter para abrir la ficha.
+
 ## [0.46.4] — 2026-11-05
 
 - **Recompensa de XP:** al pulsar "Recibir" ya no vuelve a aparecer al final del chat una tarjeta de recompensa antigua
