@@ -4,6 +4,10 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.59.0] — 2026-11-05
+
+- **PC y Mochila:** íconos propios en pixel art con una Poké Ball: un monitor para el PC y una mochila roja. Se ven en la barra de la escena, en el título de cada ventana y en los botones de la hoja Pixel.
+
 ## [0.58.1] — 2026-11-05
 
 - **Mochila:** con muchos objetos las casillas ya no se pisan unas con otras, y cada clic selecciona el objeto correcto. La ventana mide lo mismo en todos los bolsillos.

@@ -199,7 +199,7 @@ export class PokemonPc extends foundry.applications.api.ApplicationV2 {
     classes: ["poke5e-pc"],
     tagName: "div",
     position: { width: 960, height: "auto" },
-    window: { frame: true, positioned: true, resizable: false, icon: "fa-solid fa-computer" },
+    window: { frame: true, positioned: true, resizable: false, icon: "poke5e-icon-pc" },
     actions: {
       previousBox: PokemonPc.#previousBox,
       nextBox: PokemonPc.#nextBox,

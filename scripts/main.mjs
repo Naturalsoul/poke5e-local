@@ -690,7 +690,7 @@ Hooks.on(
       controls.tokens.tools.poke5ePc = {
         name: "poke5ePc",
         title: "PC Pokémon",
-        icon: "fa-solid fa-computer",
+        icon: "poke5e-icon-pc",
         order: Object.keys(controls.tokens.tools).length,
         button: true,
         visible: true,
@@ -700,7 +700,7 @@ Hooks.on(
       controls.tokens.tools.poke5eBag = {
         name: "poke5eBag",
         title: game.settings.get("poke5e-local", "language") === "en" ? "Bag" : "Mochila",
-        icon: "fa-solid fa-suitcase",
+        icon: "poke5e-icon-bag",
         order: Object.keys(controls.tokens.tools).length,
         button: true,
         visible: true,
