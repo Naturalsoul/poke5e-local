@@ -4,6 +4,16 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.48.0] — 2026-11-05
+
+- **PC Pokémon, mover:** ya no es solo de lectura. Cada entrenador tiene varias cajas (las que usa, más una vacía) y un
+  selector para cambiar de entrenador. Los Pokémon se mueven entre casillas, cajas y party, arrastrando con el ratón o
+  con "Mover" y Enter; si la casilla está ocupada, intercambian lugar. No se puede pasar del límite de Pokéslots ni sacar
+  de la party a un Pokémon desplegado. Las posiciones se guardan en el entrenador.
+- **PC Pokémon, vista previa:** agrega HP, debilitado, estados, objeto equipado, shiny y si está desplegado.
+- **PC Pokémon, aspecto:** cada caja tiene su fondo, las casillas muestran un cursor, y los debilitados y shiny se
+  distinguen en la cuadrícula.
+
 ## [0.47.0] — 2026-11-05
 
 - **PC Pokémon:** botón nuevo en los controles de Tokens, para GM y jugadores. Abre una ventana al estilo de las cajas de

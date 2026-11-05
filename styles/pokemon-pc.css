@@ -31,7 +31,7 @@
   margin-bottom: 8px;
   background: var(--poke5e-ui-cream);
   border: 2px solid var(--poke5e-ui-cream-dark);
-  border-radius: 4px;
+  border-radius: 0;
 }
 
 .poke5e-pc__portrait img {
@@ -74,9 +74,88 @@
   color: var(--poke5e-ui-muted);
 }
 
-.poke5e-pc__open {
+.poke5e-pc__hp,
+.poke5e-pc__fainted,
+.poke5e-pc__statuses,
+.poke5e-pc__item {
+  width: 100%;
+  margin: 0;
+}
+
+.poke5e-pc__hp-bar {
+  display: block;
+  height: 8px;
+  margin-top: 2px;
+  background: var(--poke5e-ui-bg);
+  border: 1px solid var(--poke5e-ui-border-bright);
+}
+
+.poke5e-pc__hp-bar span {
+  display: block;
+  height: 100%;
+}
+
+.poke5e-pc__hp-bar[data-state="high"] span { background: var(--poke5e-ui-success); }
+.poke5e-pc__hp-bar[data-state="mid"] span { background: var(--poke5e-ui-gold); }
+.poke5e-pc__hp-bar[data-state="low"] span { background: var(--poke5e-ui-accent); }
+
+.poke5e-pc__fainted {
+  font-weight: 700;
+  color: var(--poke5e-ui-cream);
+}
+
+.poke5e-pc__statuses {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 8px;
+  font-size: var(--poke5e-ui-text-sm);
+}
+
+.poke5e-pc__actions {
+  display: flex;
+  gap: 6px;
   width: 100%;
   margin-top: auto;
+}
+
+.poke5e-pc__actions button {
+  flex: 1;
+}
+
+.poke5e-pc__trainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--poke5e-ui-cream);
+}
+
+.poke5e-pc__trainer select {
+  flex: 1;
+  min-width: 0;
+}
+
+.poke5e-pc__status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  margin: 0;
+  font-size: var(--poke5e-ui-text-sm);
+  color: var(--poke5e-ui-muted);
+}
+
+.poke5e-pc__sprite-small {
+  flex: none;
+  width: 32px;
+  height: 32px;
+}
+
+.poke5e-pc__sprite-small img {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: contain;
 }
 
 .poke5e-pc__storage {
@@ -93,7 +172,7 @@
   gap: 8px;
   background: var(--poke5e-ui-cream);
   border: 2px solid var(--poke5e-ui-cream-dark);
-  border-radius: 4px;
+  border-radius: 0;
   color: #22282b;
 }
 
@@ -141,10 +220,36 @@
 
 .poke5e-pc__box {
   padding: 8px;
-  background: var(--poke5e-ui-panel);
-  border: 2px solid var(--poke5e-ui-border);
-  border-radius: 4px;
+  background: repeating-linear-gradient(135deg, var(--pc-wall-a) 0 14px, var(--pc-wall-b) 14px 28px);
+  border: 2px solid var(--poke5e-ui-border-bright);
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.35);
 }
+
+/* Over the grid, so the party row does not jump when arrowing into an empty box. */
+.poke5e-pc__box {
+  position: relative;
+}
+
+.poke5e-pc__box-empty {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  padding: 6px 12px;
+  transform: translate(-50%, -50%);
+  background: var(--poke5e-ui-bg);
+  color: var(--poke5e-ui-text);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Wallpapers are what tells the classic PC's boxes apart: each box index gets its own. */
+.poke5e-pc__box[data-wallpaper="0"] { --pc-wall-a: #4f8a5e; --pc-wall-b: #5a9769; }
+.poke5e-pc__box[data-wallpaper="1"] { --pc-wall-a: #4a7fa9; --pc-wall-b: #558bb6; }
+.poke5e-pc__box[data-wallpaper="2"] { --pc-wall-a: #b0654a; --pc-wall-b: #bc7156; }
+.poke5e-pc__box[data-wallpaper="3"] { --pc-wall-a: #b59a45; --pc-wall-b: #c0a650; }
+.poke5e-pc__box[data-wallpaper="4"] { --pc-wall-a: #7f7a6c; --pc-wall-b: #8b8678; }
+.poke5e-pc__box[data-wallpaper="5"] { --pc-wall-a: #62568c; --pc-wall-b: #6e6298; }
 
 .poke5e-pc .poke5e-pc__slot {
   width: auto;
@@ -154,20 +259,56 @@
   padding: 0;
   background: transparent;
   border: 2px solid transparent;
-  border-radius: 4px;
+  border-radius: 0;
 }
 
 .poke5e-pc__party .poke5e-pc__slot {
   background: var(--poke5e-ui-panel);
 }
 
+.poke5e-pc .poke5e-pc__slot {
+  position: relative;
+}
+
 .poke5e-pc .poke5e-pc__slot:hover {
-  background: var(--poke5e-ui-panel-alt);
+  background: rgba(255, 255, 255, 0.22);
 }
 
 .poke5e-pc .poke5e-pc__slot.is-selected {
-  background: var(--poke5e-ui-panel-alt);
-  border-color: var(--poke5e-ui-accent);
+  background: rgba(255, 255, 255, 0.3);
+  border-color: var(--poke5e-ui-cream);
+}
+
+/* The pointer of the classic box cursor. */
+.poke5e-pc .poke5e-pc__slot:focus-visible::before,
+.poke5e-pc .poke5e-pc__slot.is-selected::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: -8px;
+  left: calc(50% - 8px);
+  border: 8px solid transparent;
+  border-top-color: var(--poke5e-ui-accent);
+  border-bottom-width: 0;
+}
+
+.poke5e-pc__slot.is-held img {
+  opacity: 0.35;
+}
+
+.poke5e-pc__slot.is-fainted img {
+  filter: grayscale(1);
+}
+
+.poke5e-pc .poke5e-pc__slot.is-shiny::after {
+  content: "\2605";
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--poke5e-ui-gold);
+  text-shadow: 0 1px 0 #000;
 }
 
 .poke5e-pc .poke5e-pc__slot:focus-visible {

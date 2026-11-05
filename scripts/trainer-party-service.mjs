@@ -235,6 +235,17 @@ export async function setTrainerActivePokemonUuids(
  * POKÉSLOTS
  * ============================================================ */
 
+// Same members, new order; anything else in the list is ignored and nobody is dropped.
+export async function setTrainerPartyOrder(trainer, pokemonUuids) {
+  assertTrainer(trainer);
+  const state = getTrainerPartyState(trainer);
+  const members = new Set(state.pokemonUuids);
+  const ordered = pokemonUuids.filter(uuid => members.has(uuid));
+  const rest = state.pokemonUuids.filter(uuid => !ordered.includes(uuid));
+  return writeTrainerPartyState(trainer, { ...state, pokemonUuids: [...ordered, ...rest] });
+}
+
+
 export function getTrainerPokeslotLimit(
   trainer
 ) {

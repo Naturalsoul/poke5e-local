@@ -1,6 +1,10 @@
 import { canCurrentUserOperateTrainer } from "./trainer-ownership-service.mjs";
-import { getTrainerOwnedPokemon, getTrainerPartyState, getTrainerPokeslotLimit } from "./trainer-party-service.mjs";
+import { addPokemonToParty, getTrainerOwnedPokemon, getTrainerPartyState, getTrainerPokeslotLimit, isPokemonActive,
+  removePokemonFromParty, setTrainerPartyOrder } from "./trainer-party-service.mjs";
 import { isTrainerActor } from "./trainer-service.mjs";
+
+const MODULE_ID = "poke5e-local";
+const SLOTS_FLAG = "pcSlots";
 
 export const BOX_COLUMNS = 6;
 export const BOX_SIZE = BOX_COLUMNS * 5;
@@ -14,6 +18,31 @@ export function staticSpriteSource(pokemon) {
 
 const byName = (left, right) => left.name.localeCompare(right.name);
 
+/**
+ * Where each stored Pokémon sits: an array of UUIDs (or null) whose index counts slots across every box. Saved places
+ * are kept; a Pokémon without one, such as a new capture or one back from the party, takes the first free slot.
+ */
+export function resolvePcLayout(stored, saved) {
+  const storedUuids = new Set(stored.map(pokemon => pokemon.uuid));
+  const placed = new Set();
+  const slots = [];
+  (Array.isArray(saved) ? saved : []).forEach((uuid, index) => {
+    if (!storedUuids.has(uuid) || placed.has(uuid)) {return;}
+    slots[index] = uuid;
+    placed.add(uuid);
+  });
+  let free = 0;
+  for (const { uuid } of stored) {
+    if (placed.has(uuid)) {continue;}
+    while (slots[free]) {free += 1;}
+    slots[free] = uuid;
+  }
+  return Array.from(slots, uuid => uuid ?? null);
+}
+
+// As many boxes as hold someone, plus an empty one to move Pokémon into.
+export const pcBoxCount = slots => Math.ceil(slots.length / BOX_SIZE) + 1;
+
 // The trainers this user may operate, players' first, each with their party and their PC: whatever they own outside it.
 export function trainerPcEntries() {
   const trainers = game.actors.filter(actor => isTrainerActor(actor) && canCurrentUserOperateTrainer(actor));
@@ -21,28 +50,66 @@ export function trainerPcEntries() {
   return trainers.map(trainer => {
     const party = getTrainerPartyState(trainer).pokemonUuids.map(uuid => fromUuidSync(uuid, { strict: false })).filter(Boolean);
     const partyUuids = new Set(party.map(pokemon => pokemon.uuid));
+    const stored = getTrainerOwnedPokemon(trainer).filter(pokemon => !partyUuids.has(pokemon.uuid)).sort(byName);
+    const limit = getTrainerPokeslotLimit(trainer);
     return {
       trainer,
       party,
-      partySlots: Math.max(getTrainerPokeslotLimit(trainer), party.length),
-      stored: getTrainerOwnedPokemon(trainer).filter(pokemon => !partyUuids.has(pokemon.uuid)).sort(byName)
+      limit,
+      partySlots: Math.max(limit, party.length),
+      slots: resolvePcLayout(stored, trainer.getFlag(MODULE_ID, SLOTS_FLAG)),
+      pokemon: new Map([...party, ...stored].map(pokemon => [pokemon.uuid, pokemon]))
     };
   });
 }
 
-// One box per trainer, or as many as their PC fills. A trainer with an empty PC still gets one.
-export function buildPcBoxes(entries) {
-  return entries.flatMap(({ trainer, party, partySlots, stored }) => {
-    const pages = Math.max(1, Math.ceil(stored.length / BOX_SIZE));
-    return Array.from({ length: pages }, (_, index) => ({
-      trainer,
-      party,
-      partySlots,
-      page: index + 1,
-      pages,
-      pokemon: stored.slice(index * BOX_SIZE, (index + 1) * BOX_SIZE)
-    }));
-  });
+/**
+ * The party and slots after dropping `held` on `target` ({ zone: "party" | "box", index }), swapping with whoever is
+ * there. Null when nothing changes, { error } when the rules forbid it: "full" with no Pokéslot left, "active" when a
+ * deployed Pokémon would have to leave the party.
+ */
+export function planPcMove({ party, slots, limit, isActive }, held, { zone, index }) {
+  const nextParty = [...party];
+  const nextSlots = [...slots];
+  const partyIndex = party.indexOf(held);
+  const slotIndex = slots.indexOf(held);
+  const occupant = (zone === "party" ? party[index] : slots[index]) ?? null;
+  if (occupant === held) {return null;}
+
+  if (zone === "party" && partyIndex >= 0) {
+    if (!occupant) {return null;}
+    nextParty[partyIndex] = occupant;
+    nextParty[index] = held;
+  } else if (zone === "party") {
+    if (occupant && isActive(occupant)) {return { error: "active" };}
+    if (!occupant && party.length >= limit) {return { error: "full" };}
+    if (occupant) {nextParty[index] = held;} else {nextParty.push(held);}
+    nextSlots[slotIndex] = occupant;
+  } else if (partyIndex >= 0) {
+    if (isActive(held)) {return { error: "active" };}
+    if (occupant) {nextParty[partyIndex] = occupant;} else {nextParty.splice(partyIndex, 1);}
+    nextSlots[index] = held;
+  } else {
+    nextSlots[slotIndex] = occupant;
+    nextSlots[index] = held;
+  }
+  return { party: nextParty, slots: Array.from(nextSlots, uuid => uuid ?? null) };
+}
+
+export const pcMoveContext = entry => ({
+  party: entry.party.map(pokemon => pokemon.uuid),
+  slots: entry.slots,
+  limit: entry.limit,
+  isActive: uuid => isPokemonActive(entry.trainer, entry.pokemon.get(uuid))
+});
+
+// The slots go first: if a party write fails, a Pokémon still in the party is simply ignored by the layout.
+export async function applyPcMove({ trainer, party, pokemon }, plan) {
+  await trainer.setFlag(MODULE_ID, SLOTS_FLAG, plan.slots);
+  const before = party.map(each => each.uuid);
+  for (const uuid of before.filter(each => !plan.party.includes(each))) {await removePokemonFromParty(trainer, pokemon.get(uuid));}
+  for (const uuid of plan.party.filter(each => !before.includes(each))) {await addPokemonToParty(trainer, pokemon.get(uuid));}
+  await setTrainerPartyOrder(trainer, plan.party);
 }
 
 // The slot an arrow key lands on; it stops at the edges of the grid. Other keys leave it where it is.
