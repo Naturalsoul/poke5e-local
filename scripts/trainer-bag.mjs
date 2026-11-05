@@ -319,7 +319,7 @@ export class TrainerBag extends foundry.applications.api.ApplicationV2 {
       <section class="poke5e-pc__storage">
         ${trainerPickerMarkup(entries, entry)}
         <nav class="poke5e-bag__tabs" aria-label="${text.pockets}">${tabs}</nav>
-        <div class="poke5e-pc__box poke5e-bag__box" data-wallpaper="${pocketIndex}" role="group" aria-label="${escapeHtml(BAG_POCKETS[pocketIndex][language()])}">
+        <div class="poke5e-pc__box poke5e-bag__box" data-wallpaper="${pocketIndex}" data-bag-pocket="${escapeHtml(`${trainer.uuid}/${this.pocketId}`)}" role="group" aria-label="${escapeHtml(BAG_POCKETS[pocketIndex][language()])}">
           ${items}
           ${pocket.length ? "" : `<p class="poke5e-pc__box-empty">${text.empty}</p>`}
         </div>
@@ -332,10 +332,15 @@ export class TrainerBag extends foundry.applications.api.ApplicationV2 {
       </section>`;
   }
 
-  // Replacing the HTML drops the focus; a keyboard user has to stay on the same control.
+  // Replacing the HTML drops the focus and the scroll; the user has to stay on the same control and the same row.
   _replaceHTML(result, content) {
     const focusKey = content.contains(document.activeElement) ? document.activeElement.dataset.pcFocus : null;
+    const oldBox = content.querySelector("[data-bag-pocket]");
+    const pocketKey = oldBox?.dataset.bagPocket;
+    const scrollTop = oldBox?.scrollTop;
     content.innerHTML = `<div class="poke5e-pc__layout">${result}</div>`;
+    const box = content.querySelector("[data-bag-pocket]");
+    if (box && box.dataset.bagPocket === pocketKey) {box.scrollTop = scrollTop;}
     if (this.entry) {this.#drawPreview();}
     if (focusKey) {content.querySelector(`[data-pc-focus="${focusKey}"]`)?.focus();}
   }

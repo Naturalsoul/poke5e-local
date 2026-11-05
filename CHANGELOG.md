@@ -4,6 +4,12 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.58.1] — 2026-11-05
+
+- **Mochila:** con muchos objetos las casillas ya no se pisan unas con otras, y cada clic selecciona el objeto correcto. La ventana mide lo mismo en todos los bolsillos.
+- **Mochila:** cambiar una cantidad o equipar un objeto ya no devuelve la lista arriba del todo. Se sigue en la misma fila; al cambiar de bolsillo o de entrenador sí vuelve al inicio.
+- **Mochila:** con varios entrenadores, la tarjeta del objeto llega hasta abajo, a la misma altura que la columna derecha.
+
 ## [0.58.0] — 2026-11-05
 
 - **Hoja de entrenador, diseños Pixel:** nuevo botón del PC junto al de la Mochila.
