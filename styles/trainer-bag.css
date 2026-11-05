@@ -226,7 +226,36 @@
   color: var(--pc-ink);
 }
 
-.poke5e-bag :is(.poke5e-bag__tab, .poke5e-pc__actions button, .poke5e-bag__stepper button, input, select):focus-visible,
+/* ---------- Footer ---------- */
+
+.poke5e-bag__footer {
+  display: flex;
+  gap: 14px;
+}
+
+.poke5e-bag__footer .poke5e-pc__status {
+  flex: 1;
+  min-width: 0;
+}
+
+.poke5e-bag .poke5e-bag__create {
+  flex: none;
+  width: auto;
+  height: auto;
+  padding: 0 12px;
+  background: var(--pc-red);
+  border: 0;
+  border-radius: 0;
+  box-shadow: var(--pc-outline);
+  color: #fff;
+  font-size: 15px;
+}
+
+.poke5e-bag .poke5e-bag__create:hover {
+  background: var(--pc-red-dark);
+}
+
+.poke5e-bag :is(.poke5e-bag__tab, .poke5e-bag__create, .poke5e-pc__actions button, .poke5e-bag__stepper button, input, select):focus-visible,
 .poke5e-bag__description:focus-visible {
   outline: 2px solid var(--pc-red);
   outline-offset: 1px;

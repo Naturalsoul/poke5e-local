@@ -5,7 +5,7 @@ import { getLanguage } from "./i18n.mjs";
 import { canCurrentUserTransferPokemonHeldItem, getPokemonHeldItem, isTrainerInventoryBerry, isTrainerInventoryHeldItem,
   transferPokemonHeldItemToTrainer, transferTrainerBerryToPokemon, transferTrainerHeldItemToPokemon } from "./pokemon-held-item-service.mjs";
 import { moveSlot, pcDisplayName, staticSpriteSource, trainerPcEntries } from "./pokemon-pc-boxes.mjs";
-import { BAG_COLUMNS, BAG_POCKETS, bagContents, bagSlotCount, canUseBagItem, isEquippable } from "./trainer-bag-rules.mjs";
+import { BAG_COLUMNS, BAG_CREATABLE_TYPES, BAG_CREATE_POCKET, BAG_POCKETS, bagContents, bagSlotCount, canUseBagItem, isEquippable } from "./trainer-bag-rules.mjs";
 
 /* ============================================================
  * TRAINER BAG
@@ -42,6 +42,7 @@ const LABELS = {
     unequip: "Desequipar",
     open: "Abrir ficha",
     drop: "Tirar",
+    create: "Crear objeto",
     uses: "Usos",
     lent: name => `Lo lleva ${name}.`,
     lentUnknown: "Está prestado a un Pokémon.",
@@ -78,6 +79,7 @@ const LABELS = {
     unequip: "Unequip",
     open: "Open sheet",
     drop: "Discard",
+    create: "New item",
     uses: "Uses",
     lent: name => `${name} is holding it.`,
     lentUnknown: "It is lent to a Pokémon.",
@@ -233,6 +235,7 @@ export class TrainerBag extends foundry.applications.api.ApplicationV2 {
     window: { frame: true, positioned: true, resizable: false, icon: "poke5e-icon-bag" },
     actions: {
       changeQuantity: TrainerBag.#changeQuantity,
+      createItem: TrainerBag.#createItem,
       dropItem: TrainerBag.#dropItem,
       openItem: TrainerBag.#openItem,
       openPokemon: TrainerBag.#openPokemon,
@@ -328,7 +331,10 @@ export class TrainerBag extends foundry.applications.api.ApplicationV2 {
           <div class="poke5e-pc__party" role="group" aria-label="${text.party}">${party}</div>
         </div>
         ${moneyMarkup(trainer, trainer.isOwner)}
-        <p class="poke5e-pc__status" role="status" data-pc-status>${statusText(this.#trainer.items.get(this.givingId))}</p>
+        <div class="poke5e-bag__footer">
+          <p class="poke5e-pc__status" role="status" data-pc-status>${statusText(this.#trainer.items.get(this.givingId))}</p>
+          ${this.pocketId === BAG_CREATE_POCKET && trainer.isOwner ? `<button type="button" class="poke5e-bag__create" data-action="createItem" data-pc-focus="create"><i class="fa-solid fa-plus" aria-hidden="true"></i> ${text.create}</button>` : ""}
+        </div>
       </section>`;
   }
 
@@ -535,6 +541,18 @@ export class TrainerBag extends foundry.applications.api.ApplicationV2 {
 
   static #selectPocket(event, target) {
     this.#showPocket(target.dataset.pocket);
+  }
+
+  // The dialog never answers if it is cancelled, so nothing may wait on it. It also opens the new item's sheet.
+  static #createItem() {
+    const trainer = this.#trainer;
+    void this.#run(async () => {
+      const item = await Item.implementation.createDialog({ type: "loot" }, { parent: trainer, types: [...BAG_CREATABLE_TYPES] });
+      if (!item) {return;}
+      this.selectedItemId = item.id;
+      this.selectedPokemonUuid = null;
+      await this.render();
+    });
   }
 
   static #changeQuantity(event, target) {

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { BAG_MIN_SLOTS, bagContents, bagPocketOf, bagSlotCount, canUseBagItem, isEquippable } from "../scripts/trainer-bag-rules.mjs";
+import { BAG_CREATABLE_TYPES, BAG_CREATE_POCKET, BAG_MIN_SLOTS, bagContents, bagPocketOf, bagSlotCount, canUseBagItem, isEquippable } from "../scripts/trainer-bag-rules.mjs";
 
 const item = (name, itemType, system = { quantity: 1 }, type = "consumable") => ({
   name, type, system, getFlag: () => itemType
@@ -46,4 +46,12 @@ test("an item is usable while there is one left, with or without activities", ()
 test("only weapons and armour offer equipping", () => {
   assert.equal(isEquippable(item("Dagger", undefined, { quantity: 1 }, "weapon")), true);
   assert.equal(isEquippable(item("Potion", "medicine")), false);
+});
+
+test("everything a player can create lands in the pocket offered, and has a stack to show", () => {
+  for (const type of BAG_CREATABLE_TYPES) {
+    const created = item("New", undefined, { quantity: 1 }, type);
+    assert.equal(bagPocketOf(created), BAG_CREATE_POCKET);
+    assert.equal(bagContents([created]).get(BAG_CREATE_POCKET).length, 1);
+  }
 });
