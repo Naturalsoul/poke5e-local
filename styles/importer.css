@@ -86,6 +86,34 @@
   content: none !important;
 }
 
+/*
+ * Drawn on a 19-cell grid: at 19px each cell lands on one pixel. In the scene controls the class goes on the button
+ * itself, so only an <i> takes the size, and the button keeps its own background color and states.
+ */
+.poke5e-icon-pc,
+.poke5e-icon-bag {
+  background-position: center !important;
+  background-size: 19px 19px !important;
+  background-repeat: no-repeat !important;
+}
+
+.poke5e-icon-pc {
+  background-image: url("../assets/ui/pc.svg") !important;
+}
+
+.poke5e-icon-bag {
+  background-image: url("../assets/ui/bag.svg") !important;
+}
+
+i.poke5e-icon-pc,
+i.poke5e-icon-bag {
+  display: inline-block;
+  flex: none;
+  width: 19px;
+  height: 19px;
+  vertical-align: middle;
+}
+
 /* ============================================================
  * POKE5E LOCAL — IMPORTER
  * ============================================================ */

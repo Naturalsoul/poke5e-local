@@ -230,7 +230,7 @@ export class TrainerBag extends foundry.applications.api.ApplicationV2 {
     classes: ["poke5e-pc", "poke5e-bag"],
     tagName: "div",
     position: { width: 860, height: "auto" },
-    window: { frame: true, positioned: true, resizable: false, icon: "fa-solid fa-suitcase" },
+    window: { frame: true, positioned: true, resizable: false, icon: "poke5e-icon-bag" },
     actions: {
       changeQuantity: TrainerBag.#changeQuantity,
       dropItem: TrainerBag.#dropItem,
