@@ -4,6 +4,35 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.51.0] — 2026-11-05
+
+- **PC Pokémon, animaciones:** la pantalla se enciende al abrir, la caja se desliza al cambiar, el Pokémon elegido da un
+  salto mientras se llena su barra de HP, y los sprites reaccionan al cursor, tiemblan al tomarlos y rebotan al soltarlos.
+  Las estrellas de los shiny parpadean. Todo se mueve por pasos, como un sprite, y se apaga si el sistema pide reducir el
+  movimiento.
+- **PC Pokémon, ventana:** vuelven los iconos de ⋮ y × de la barra de título, que la tipografía pixelada había roto. El
+  título usa la fuente de Foundry.
+
+## [0.50.0] — 2026-11-05
+
+- **PC Pokémon, cajas:** cada entrenador tiene 8 cajas de 30 casillas, cada una con su fondo. Si alguien tuviera más de 240
+  Pokémon en el PC, aparecen las cajas que hagan falta.
+- **PC Pokémon, tipografía:** la ventana usa Pixelify Sans, incluida en el módulo con su licencia OFL en
+  `assets/fonts/pixelify-sans/`, así que no depende de internet.
+
+## [0.49.1] — 2026-11-05
+
+- **PC Pokémon, sprites:** el sprite de la vista previa ya no flota sobre la plataforma. Cada imagen deja un margen distinto
+  bajo los pies, así que ahora se baja o se sube hasta tocarla.
+
+## [0.49.0] — 2026-11-05
+
+- **PC Pokémon, diseño:** la ventana es más ancha y parece la pantalla de un PC del juego: paneles de papel con contorno
+  de tinta y esquinas rectas, un patrón distinto de fondo por caja, un escenario de hierba bajo el sprite, barra de HP de
+  batalla, bandeja de party con la silueta de la Poké Ball en los Pokéslots vacíos y un cuadro de texto abajo.
+- **PC Pokémon, tipos:** la vista previa muestra los tipos en chips de colores.
+- **PC Pokémon, nombres:** ya no repite el nivel cuando el nombre del actor lo trae, como "Eevee (Lv. 6)".
+
 ## [0.48.0] — 2026-11-05
 
 - **PC Pokémon, mover:** ya no es solo de lectura. Cada entrenador tiene varias cajas (las que usa, más una vacía) y un

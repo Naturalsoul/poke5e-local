@@ -2,7 +2,7 @@ import { pokemonLevel } from "./encounter-difficulty.mjs";
 import { escapeHtml } from "./html.mjs";
 import { getLanguage } from "./i18n.mjs";
 import { getPokemonHeldItem } from "./pokemon-held-item-service.mjs";
-import { applyPcMove, BOX_COLUMNS, BOX_SIZE, moveSlot, pcBoxCount, pcMoveContext, planPcMove, staticSpriteSource, trainerPcEntries } from "./pokemon-pc-boxes.mjs";
+import { applyPcMove, BOX_COLUMNS, BOX_SIZE, moveSlot, pcBoxCount, pcDisplayName, pcMoveContext, planPcMove, spriteGroundShift, staticSpriteSource, trainerPcEntries } from "./pokemon-pc-boxes.mjs";
 import { getPokemonTypes } from "./pokemon-type-service.mjs";
 import { getPokemonShinyState } from "./shiny-runtime.mjs";
 import { localizedType } from "./trainer-command-center.mjs";
@@ -10,7 +10,10 @@ import { isPokemonActive } from "./trainer-party-service.mjs";
 
 const APP_ID = "poke5e-pc";
 const FALLBACK_SPRITE = "icons/svg/mystery-man.svg";
-const WALLPAPERS = 6;
+const WALLPAPERS = 8;
+const SPRITE_SAMPLE = 96;
+// Where a sprite's feet touch the platform in .poke5e-pc__portrait, as a share of the image's height.
+const PORTRAIT_GROUND = 0.925;
 
 const LABELS = {
   es: {
@@ -106,7 +109,7 @@ function spriteMarkup(pokemon) {
 function slotMarkup(pokemon, { zone, index, focus, tabStop, selected, held }) {
   const text = labels();
   const label = pokemon
-    ? [pokemon.name, `${text.level} ${pokemonLevel(pokemon)}`, isShiny(pokemon) && text.shiny, isFainted(pokemon) && text.fainted].filter(Boolean).join(", ")
+    ? [pcDisplayName(pokemon.name), `${text.level} ${pokemonLevel(pokemon)}`, isShiny(pokemon) && text.shiny, isFainted(pokemon) && text.fainted].filter(Boolean).join(", ")
     : text.emptySlot;
   const classes = ["poke5e-pc__slot", selected && "is-selected", held && "is-held",
     pokemon && isFainted(pokemon) && "is-fainted", pokemon && isShiny(pokemon) && "is-shiny"].filter(Boolean).join(" ");
@@ -119,8 +122,9 @@ function hpMarkup(pokemon) {
   const { value, max } = hpOf(pokemon);
   if (max <= 0) {return "";}
   const ratio = Math.max(0, Math.min(1, value / max));
-  return `<p class="poke5e-pc__hp"><span>${labels().hp} ${value}/${max}</span>
-    <span class="poke5e-pc__hp-bar" data-state="${hpState(ratio)}" aria-hidden="true"><span style="width:${ratio * 100}%"></span></span></p>`;
+  return `<p class="poke5e-pc__hp"><span class="poke5e-pc__hp-track"><b>${labels().hp}</b>
+    <span class="poke5e-pc__hp-bar" data-state="${hpState(ratio)}" aria-hidden="true"><span style="width:${ratio * 100}%"></span></span></span>
+    <span class="poke5e-pc__hp-numbers">${value}/${max}</span></p>`;
 }
 
 function statusesMarkup(pokemon) {
@@ -148,9 +152,11 @@ function previewMarkup(entry, pokemon, holding) {
   }
   return `
     <div class="poke5e-pc__portrait">${spriteMarkup(pokemon)}</div>
-    <h3 class="poke5e-pc__name">${escapeHtml(pokemon.name)}${isShiny(pokemon) ? ` <i class="fa-solid fa-star" title="${text.shiny}" aria-label="${text.shiny}"></i>` : ""}</h3>
-    <p class="poke5e-pc__level">${text.level} ${pokemonLevel(pokemon)}</p>
-    <p class="poke5e-pc__types">${types.map(type => `<span>${escapeHtml(localizedType(type))}</span>`).join("")}</p>
+    <div class="poke5e-pc__nameplate">
+      <h3 class="poke5e-pc__name">${escapeHtml(pcDisplayName(pokemon.name))}${isShiny(pokemon) ? ` <i class="fa-solid fa-star" title="${text.shiny}" aria-label="${text.shiny}"></i>` : ""}</h3>
+      <p class="poke5e-pc__level">${text.level} ${pokemonLevel(pokemon)}</p>
+    </div>
+    <p class="poke5e-pc__types">${types.map(type => `<span class="poke5e-pc__type" data-type="${escapeHtml(String(type).toLowerCase())}">${escapeHtml(localizedType(type))}</span>`).join("")}</p>
     ${hpMarkup(pokemon)}
     ${isFainted(pokemon) ? `<p class="poke5e-pc__fainted">${text.fainted}</p>` : ""}
     ${statusesMarkup(pokemon)}
@@ -176,7 +182,7 @@ function trainerPickerMarkup(entries, entry) {
 
 function statusMarkup(held) {
   const text = labels();
-  return held ? `<span class="poke5e-pc__sprite-small">${spriteMarkup(held)}</span><span>${escapeHtml(text.moving(held.name))}</span>` : `<span>${text.keys}</span>`;
+  return held ? `<span class="poke5e-pc__sprite-small">${spriteMarkup(held)}</span><span>${escapeHtml(text.moving(pcDisplayName(held.name)))}</span>` : `<span>${text.keys}</span>`;
 }
 
 export class PokemonPc extends foundry.applications.api.ApplicationV2 {
@@ -184,7 +190,7 @@ export class PokemonPc extends foundry.applications.api.ApplicationV2 {
     id: APP_ID,
     classes: ["poke5e-pc"],
     tagName: "div",
-    position: { width: 720, height: "auto" },
+    position: { width: 960, height: "auto" },
     window: { frame: true, positioned: true, resizable: false, icon: "fa-solid fa-computer" },
     actions: {
       previousBox: PokemonPc.#previousBox,
@@ -200,6 +206,7 @@ export class PokemonPc extends foundry.applications.api.ApplicationV2 {
   boxIndex = 0;
   selectedUuid = null;
   heldUuid = null;
+  slide = null;
 
   get title() {
     return labels().title;
@@ -227,6 +234,9 @@ export class PokemonPc extends foundry.applications.api.ApplicationV2 {
   #markup(entries, boxes) {
     const text = labels();
     const { entry, boxIndex } = this;
+    // Only the render that changes box scrolls it in, not the ones that follow an actor update.
+    const slide = this.slide ? `data-slide="${this.slide}"` : "";
+    this.slide = null;
     const offset = boxIndex * BOX_SIZE;
     const boxUuids = Array.from({ length: BOX_SIZE }, (_, index) => entry.slots[offset + index] ?? null);
     const partyUuids = Array.from({ length: entry.partySlots }, (_, index) => entry.party[index]?.uuid ?? null);
@@ -247,13 +257,15 @@ export class PokemonPc extends foundry.applications.api.ApplicationV2 {
           <h2 class="poke5e-pc__title">${text.box(boxIndex + 1, boxes)}${entries.length > 1 ? "" : `<small>${escapeHtml(entry.trainer.name)}</small>`}</h2>
           <button type="button" class="poke5e-pc__arrow" data-action="nextBox" data-pc-focus="nextBox" aria-label="${text.next}" title="${text.next}"><i class="fa-solid fa-caret-right" aria-hidden="true"></i></button>
         </header>
-        <div class="poke5e-pc__box" data-wallpaper="${boxIndex % WALLPAPERS}" role="group" aria-label="${text.box(boxIndex + 1, boxes)}">
+        <div class="poke5e-pc__box" data-wallpaper="${boxIndex % WALLPAPERS}" ${slide} role="group" aria-label="${text.box(boxIndex + 1, boxes)}">
           ${boxUuids.map((uuid, index) => slot(uuid, index, "box", offset + index, `box-${index}`)).join("")}
           ${boxUuids.some(Boolean) ? "" : `<p class="poke5e-pc__box-empty">${text.emptyBox}</p>`}
         </div>
+        <div class="poke5e-pc__tray">
         <h3 class="poke5e-pc__party-title">${text.party}</h3>
         <div class="poke5e-pc__party" role="group" aria-label="${text.party}">
           ${partyUuids.map((uuid, index) => slot(uuid, BOX_SIZE + index, "party", index, `party-${index}`)).join("")}
+        </div>
         </div>
         <p class="poke5e-pc__status" role="status" data-pc-status>${statusMarkup(held)}</p>
       </section>`;
@@ -269,8 +281,10 @@ export class PokemonPc extends foundry.applications.api.ApplicationV2 {
   _onFirstRender(context, options) {
     super._onFirstRender(context, options);
     const root = this.element;
+    root.classList.add("is-booting");
     // Image errors do not bubble.
     root.addEventListener("error", event => this.#useFallback(event.target), true);
+    root.addEventListener("load", event => this.#groundSprite(event.target), true);
     root.addEventListener("focusin", event => this.#selectSlot(event.target.closest?.("[data-pc-slot]")));
     root.addEventListener("click", event => this.#onClick(event));
     root.addEventListener("dblclick", event => this.#openFromSlot(event.target.closest("[data-pc-slot]")));
@@ -291,6 +305,24 @@ export class PokemonPc extends foundry.applications.api.ApplicationV2 {
     });
   }
 
+  // shortcut: samples the image as a square, so non-square custom art lands a little off; measure its real ratio if it shows.
+  #groundSprite(image) {
+    if (!image.closest?.(".poke5e-pc__portrait")) {return;}
+    const canvas = document.createElement("canvas");
+    canvas.width = SPRITE_SAMPLE;
+    canvas.height = SPRITE_SAMPLE;
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    context.drawImage(image, 0, 0, SPRITE_SAMPLE, SPRITE_SAMPLE);
+    try {
+      const { data } = context.getImageData(0, 0, SPRITE_SAMPLE, SPRITE_SAMPLE);
+      const rendered = image.clientHeight;
+      image.style.transform = `translateY(${spriteGroundShift(data, SPRITE_SAMPLE, rendered, rendered * PORTRAIT_GROUND)}px)`;
+    } catch (error) {
+      // Art hosted on another site cannot be read; it just keeps its own margin.
+      console.warn(`[poke5e-local] ${APP_ID}`, error);
+    }
+  }
+
   #useFallback(image) {
     if (image.tagName !== "IMG") {return;}
     const next = image.getAttribute("src") === image.dataset.fallback ? FALLBACK_SPRITE : image.dataset.fallback;
@@ -305,11 +337,12 @@ export class PokemonPc extends foundry.applications.api.ApplicationV2 {
     const pokemon = this.entry.pokemon.get(slot.dataset.uuid) ?? null;
     slot.classList.toggle("is-selected", Boolean(pokemon));
     this.selectedUuid = pokemon?.uuid ?? null;
-    this.#drawPreview();
+    this.#drawPreview(true);
   }
 
-  #drawPreview() {
+  #drawPreview(enter = false) {
     const preview = this.element.querySelector("[data-pc-preview]");
+    preview.toggleAttribute("data-enter", enter);
     const focusKey = preview.contains(document.activeElement) ? document.activeElement.dataset.pcFocus : null;
     preview.innerHTML = previewMarkup(this.entry, this.entry.pokemon.get(this.selectedUuid) ?? null, Boolean(this.heldUuid));
     if (focusKey) {preview.querySelector(`[data-pc-focus="${focusKey}"]`)?.focus();}
@@ -333,7 +366,7 @@ export class PokemonPc extends foundry.applications.api.ApplicationV2 {
     if (plan?.error) {
       // Whoever is deployed: the Pokémon it would swap out of the party, or the one being dropped.
       const blocker = slot.dataset.pcZone === "party" ? this.entry.pokemon.get(slot.dataset.uuid) : held;
-      ui.notifications.warn(plan.error === "full" ? text.full(this.entry.limit) : text.active(blocker.name));
+      ui.notifications.warn(plan.error === "full" ? text.full(this.entry.limit) : text.active(pcDisplayName(blocker.name)));
       return;
     }
     this.#setHeld(null);
@@ -345,7 +378,8 @@ export class PokemonPc extends foundry.applications.api.ApplicationV2 {
       console.error(`[poke5e-local] ${APP_ID}`, error);
       ui.notifications.error(text.moveFailed);
     }
-    this.render();
+    await this.render();
+    this.element.querySelector(`[data-uuid="${CSS.escape(held.uuid)}"]`)?.classList.add("is-landing");
   }
 
   #openFromSlot(slot) {
@@ -356,6 +390,7 @@ export class PokemonPc extends foundry.applications.api.ApplicationV2 {
   #changeBox(step) {
     const boxes = pcBoxCount(this.entry.slots);
     this.boxIndex = (this.boxIndex + step + boxes) % boxes;
+    this.slide = step > 0 ? "next" : "previous";
     this.selectedUuid = null;
     this.render();
   }

@@ -1,93 +1,197 @@
 /* ============================================================
  * POKE5E — POKÉMON PC
  * Preview on the left, the box and the party on the right.
+ *
+ * Unlike the module's other windows this one ignores the theme
+ * tokens on purpose: it is the screen of an in-world PC, with
+ * paper panels, ink outlines and square pixel corners.
  * ============================================================ */
+
+@font-face {
+  font-family: "Pixelify Sans";
+  src: url("../assets/fonts/pixelify-sans/pixelify-sans-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+.poke5e-pc {
+  --pc-ink: #23242c;
+  --pc-paper: #f7f2dd;
+  --pc-paper-shade: #e4dbb6;
+  --pc-muted: #5b5848;
+  --pc-red: #bf3a30;
+  --pc-red-dark: #8d271f;
+  --pc-screen: #3a6596;
+  --pc-screen-alt: #416da0;
+  --pc-outline: 0 0 0 2px var(--pc-ink), 0 0 0 4px var(--pc-paper), 0 0 0 6px var(--pc-ink);
+}
+
+/*
+ * Only inside the content: the window's own ⋮ and × buttons draw their icons with Font Awesome, and the title bar reads
+ * better in Foundry's font. One weight only: bold closes this font's C, and "Charizard" reads as "Oharizard".
+ */
+.poke5e-pc .window-content,
+.poke5e-pc .window-content :is(button, select, option, h2, h3, label, b) {
+  font-family: "Pixelify Sans", var(--font-primary, sans-serif);
+  font-weight: 400;
+  font-synthesis: none;
+  font-variant-ligatures: none;
+}
 
 .poke5e-pc .window-content {
   padding: 0;
-  background: var(--poke5e-ui-bg);
-  color: var(--poke5e-ui-text);
+  background: var(--pc-screen);
+  color: var(--pc-ink);
 }
 
 .poke5e-pc__layout {
   display: grid;
-  grid-template-columns: 230px minmax(0, 1fr);
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px;
+  background: repeating-conic-gradient(var(--pc-screen) 0 25%, var(--pc-screen-alt) 0 50%) 0 0 / 32px 32px;
 }
+
+.poke5e-pc__message {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 24px;
+  background: var(--pc-paper);
+  box-shadow: var(--pc-outline);
+  text-align: center;
+}
+
+.poke5e-pc__message p {
+  margin: 0;
+}
+
+.poke5e-pc__message button {
+  width: auto;
+  padding-inline: 16px;
+}
+
+/* ---------- Preview card ---------- */
 
 .poke5e-pc__preview {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 16px 14px;
-  background: var(--poke5e-ui-surface);
-  border-right: 2px solid var(--poke5e-ui-border);
-  text-align: center;
+  gap: 8px;
+  margin: 6px;
+  padding: 10px;
+  background: var(--pc-paper);
+  box-shadow: var(--pc-outline);
 }
 
+/* A grass stage under a pale sky, with the sprite standing on the shadow of its platform. */
 .poke5e-pc__portrait {
-  width: 192px;
-  height: 192px;
-  margin-bottom: 8px;
-  background: var(--poke5e-ui-cream);
-  border: 2px solid var(--poke5e-ui-cream-dark);
-  border-radius: 0;
+  height: 248px;
+  background:
+    radial-gradient(ellipse 110px 24px at 50% 88%, #6fa55a 0 96%, transparent 100%),
+    linear-gradient(#bfe2f2 0 60%, #d7edc4 60% 100%);
+  box-shadow: inset 0 0 0 2px var(--pc-ink);
 }
 
 .poke5e-pc__portrait img {
-  width: 100%;
-  height: 100%;
+  display: block;
+  width: 240px;
+  height: 240px;
+  margin: 0 auto;
   border: 0;
   object-fit: contain;
   image-rendering: pixelated;
 }
 
-.poke5e-pc__name {
-  margin: 0;
-  border: 0;
-  font-size: 18px;
-  overflow-wrap: anywhere;
-  color: var(--poke5e-ui-text);
+.poke5e-pc__nameplate {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid var(--pc-ink);
 }
 
-.poke5e-pc__level,
-.poke5e-pc__place,
-.poke5e-pc__types {
+.poke5e-pc .poke5e-pc__name {
   margin: 0;
+  border: 0;
+  font-size: 22px;
+  overflow-wrap: anywhere;
+  color: var(--pc-ink);
+}
+
+.poke5e-pc__name i {
+  font-size: 14px;
+  color: #b4860b;
 }
 
 .poke5e-pc__level {
-  font-weight: 700;
-  color: var(--poke5e-ui-cream);
+  flex: none;
+  margin: 0;
+  font-size: 18px;
 }
 
 .poke5e-pc__types {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  text-transform: capitalize;
-}
-
-.poke5e-pc__place {
-  margin-bottom: 10px;
-  color: var(--poke5e-ui-muted);
-}
-
-.poke5e-pc__hp,
-.poke5e-pc__fainted,
-.poke5e-pc__statuses,
-.poke5e-pc__item {
-  width: 100%;
+  gap: 6px;
+  min-height: 24px;
   margin: 0;
 }
 
+.poke5e-pc__type {
+  padding: 3px 10px;
+  border: 2px solid var(--pc-ink);
+  background: var(--pc-type, #a8a77a);
+  color: var(--pc-type-text, #17171b);
+  font-size: 13px;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.poke5e-pc__type[data-type="normal"] { --pc-type: #a8a77a; }
+.poke5e-pc__type[data-type="fire"] { --pc-type: #ee8130; }
+.poke5e-pc__type[data-type="water"] { --pc-type: #6390f0; }
+.poke5e-pc__type[data-type="electric"] { --pc-type: #f7d02c; }
+.poke5e-pc__type[data-type="grass"] { --pc-type: #7ac74c; }
+.poke5e-pc__type[data-type="ice"] { --pc-type: #96d9d6; }
+.poke5e-pc__type[data-type="fighting"] { --pc-type: #b02a25; --pc-type-text: #fff; }
+.poke5e-pc__type[data-type="poison"] { --pc-type: #93368f; --pc-type-text: #fff; }
+.poke5e-pc__type[data-type="ground"] { --pc-type: #e2bf65; }
+.poke5e-pc__type[data-type="flying"] { --pc-type: #a98ff3; }
+.poke5e-pc__type[data-type="psychic"] { --pc-type: #f95587; }
+.poke5e-pc__type[data-type="bug"] { --pc-type: #a6b91a; }
+.poke5e-pc__type[data-type="rock"] { --pc-type: #b6a136; }
+.poke5e-pc__type[data-type="ghost"] { --pc-type: #5f4880; --pc-type-text: #fff; }
+.poke5e-pc__type[data-type="dragon"] { --pc-type: #5a28d6; --pc-type-text: #fff; }
+.poke5e-pc__type[data-type="dark"] { --pc-type: #5c4739; --pc-type-text: #fff; }
+.poke5e-pc__type[data-type="steel"] { --pc-type: #b7b7ce; }
+.poke5e-pc__type[data-type="fairy"] { --pc-type: #e29ac0; }
+
+/* The battle HP bar: a dark capsule with its gold label. */
+.poke5e-pc__hp {
+  margin: 0;
+}
+
+.poke5e-pc__hp-track {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 4px;
+  background: var(--pc-ink);
+}
+
+.poke5e-pc__hp-track b {
+  font-size: 11px;
+  line-height: 1;
+  color: #f2c94c;
+}
+
 .poke5e-pc__hp-bar {
-  display: block;
+  flex: 1;
   height: 8px;
-  margin-top: 2px;
-  background: var(--poke5e-ui-bg);
-  border: 1px solid var(--poke5e-ui-border-bright);
+  background: #4a4b55;
 }
 
 .poke5e-pc__hp-bar span {
@@ -95,141 +199,208 @@
   height: 100%;
 }
 
-.poke5e-pc__hp-bar[data-state="high"] span { background: var(--poke5e-ui-success); }
-.poke5e-pc__hp-bar[data-state="mid"] span { background: var(--poke5e-ui-gold); }
-.poke5e-pc__hp-bar[data-state="low"] span { background: var(--poke5e-ui-accent); }
+.poke5e-pc__hp-bar[data-state="high"] span { background: #58c86a; }
+.poke5e-pc__hp-bar[data-state="mid"] span { background: #f0c030; }
+.poke5e-pc__hp-bar[data-state="low"] span { background: #e8503f; }
+
+.poke5e-pc__hp-numbers {
+  display: block;
+  font-size: 15px;
+  text-align: right;
+}
 
 .poke5e-pc__fainted {
-  font-weight: 700;
-  color: var(--poke5e-ui-cream);
+  margin: 0;
+  color: var(--pc-red-dark);
 }
 
 .poke5e-pc__statuses {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 4px 8px;
-  font-size: var(--poke5e-ui-text-sm);
+  margin: 0;
+  font-size: 15px;
+  color: var(--pc-red-dark);
+}
+
+.poke5e-pc__item,
+.poke5e-pc__place {
+  margin: 0;
+  font-size: 16px;
+}
+
+.poke5e-pc__place {
+  color: var(--pc-muted);
+}
+
+.poke5e-pc__hint {
+  margin: 0;
+  color: var(--pc-muted);
 }
 
 .poke5e-pc__actions {
   display: flex;
-  gap: 6px;
-  width: 100%;
+  gap: 8px;
   margin-top: auto;
+  padding-top: 6px;
 }
 
-.poke5e-pc__actions button {
+.poke5e-pc .poke5e-pc__actions button,
+.poke5e-pc .poke5e-pc__message button {
   flex: 1;
+  height: 36px;
+  background: var(--pc-paper-shade);
+  border: 2px solid var(--pc-ink);
+  border-radius: 0;
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.18);
+  color: var(--pc-ink);
+  font-size: 16px;
+}
+
+.poke5e-pc .poke5e-pc__actions button[data-action="toggleMove"] {
+  background: var(--pc-red);
+  color: #fff;
+}
+
+.poke5e-pc .poke5e-pc__actions button:hover,
+.poke5e-pc .poke5e-pc__message button:hover {
+  filter: brightness(1.08);
+}
+
+/* ---------- Storage ---------- */
+
+.poke5e-pc__storage {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  margin: 6px;
 }
 
 .poke5e-pc__trainer {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--poke5e-ui-cream);
+  color: #fff;
 }
 
-.poke5e-pc__trainer select {
+.poke5e-pc .poke5e-pc__trainer select {
   flex: 1;
   min-width: 0;
-}
-
-.poke5e-pc__status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 32px;
-  margin: 0;
-  font-size: var(--poke5e-ui-text-sm);
-  color: var(--poke5e-ui-muted);
-}
-
-.poke5e-pc__sprite-small {
-  flex: none;
-  width: 32px;
-  height: 32px;
-}
-
-.poke5e-pc__sprite-small img {
-  width: 100%;
-  height: 100%;
-  border: 0;
-  object-fit: contain;
-}
-
-.poke5e-pc__storage {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 14px 16px 16px;
+  height: 30px;
+  background: var(--pc-paper);
+  border: 2px solid var(--pc-ink);
+  border-radius: 0;
+  color: var(--pc-ink);
 }
 
 .poke5e-pc__header {
   display: grid;
   grid-template-columns: 44px minmax(0, 1fr) 44px;
   align-items: center;
-  gap: 8px;
-  background: var(--poke5e-ui-cream);
-  border: 2px solid var(--poke5e-ui-cream-dark);
-  border-radius: 0;
-  color: #22282b;
+  background: var(--pc-paper);
+  box-shadow: var(--pc-outline);
 }
 
-.poke5e-pc__title {
+.poke5e-pc .poke5e-pc__title {
   margin: 0;
   padding: 6px 0;
   border: 0;
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 20px;
   text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   overflow-wrap: anywhere;
-  color: inherit;
+  color: var(--pc-ink);
 }
 
 .poke5e-pc__title small {
   display: block;
-  font-size: var(--poke5e-ui-text-xs);
-  font-weight: 400;
+  font-size: 14px;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .poke5e-pc .poke5e-pc__arrow {
   width: 44px;
   height: 44px;
   padding: 0;
-  background: transparent;
+  background: var(--pc-red);
   border: 0;
+  border-radius: 0;
   font-size: 22px;
-  color: inherit;
+  color: #fff;
 }
 
-.poke5e-pc .poke5e-pc__arrow:hover:not(:disabled) {
-  background: rgba(0, 0, 0, 0.12);
-}
-
-.poke5e-pc .poke5e-pc__arrow:disabled {
-  opacity: 0.35;
+.poke5e-pc .poke5e-pc__arrow:hover {
+  background: var(--pc-red-dark);
 }
 
 .poke5e-pc__box,
 .poke5e-pc__party {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 4px;
+  gap: 2px;
 }
 
 .poke5e-pc__box {
+  position: relative;
+  overflow: hidden;
   padding: 8px;
-  background: repeating-linear-gradient(135deg, var(--pc-wall-a) 0 14px, var(--pc-wall-b) 14px 28px);
-  border: 2px solid var(--poke5e-ui-border-bright);
-  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.35);
+  background-color: var(--pc-wall-a);
+  box-shadow: var(--pc-outline);
+}
+
+/* Wallpapers are what tells the classic PC's boxes apart: each box index gets its own pattern. */
+.poke5e-pc__box[data-wallpaper="0"] {
+  --pc-wall-a: #5a9a68;
+  background-image: repeating-conic-gradient(#66a673 0 25%, transparent 0 50%);
+  background-size: 40px 40px;
+}
+
+.poke5e-pc__box[data-wallpaper="1"] {
+  --pc-wall-a: #4f88b8;
+  background-image: radial-gradient(ellipse 22px 8px at 50% 100%, transparent 86%, #5f97c6 90% 100%, transparent 100%);
+  background-size: 44px 22px;
+}
+
+.poke5e-pc__box[data-wallpaper="2"] {
+  --pc-wall-a: #b86a4d;
+  background-image: repeating-linear-gradient(135deg, #c5785b 0 14px, transparent 14px 28px);
+}
+
+.poke5e-pc__box[data-wallpaper="3"] {
+  --pc-wall-a: #c2a64c;
+  background-image: linear-gradient(135deg, #cdb35c 25%, transparent 25%), linear-gradient(225deg, #cdb35c 25%, transparent 25%);
+  background-size: 32px 32px;
+}
+
+.poke5e-pc__box[data-wallpaper="4"] {
+  --pc-wall-a: #868173;
+  background-image: radial-gradient(circle at 50% 50%, #94907f 0 8px, transparent 9px);
+  background-size: 34px 34px;
+}
+
+.poke5e-pc__box[data-wallpaper="5"] {
+  --pc-wall-a: #5a4f85;
+  background-image:
+    radial-gradient(circle at 20% 30%, #cfc8ec 0 1.5px, transparent 2px),
+    radial-gradient(circle at 70% 75%, #cfc8ec 0 1px, transparent 1.5px);
+  background-size: 46px 46px;
+}
+
+.poke5e-pc__box[data-wallpaper="6"] {
+  --pc-wall-a: #4f9a96;
+  background-image: repeating-linear-gradient(90deg, #5ca7a3 0 10px, transparent 10px 30px);
+}
+
+.poke5e-pc__box[data-wallpaper="7"] {
+  --pc-wall-a: #b5607f;
+  background-image: radial-gradient(circle at 50% 50%, #c26f8d 0 4px, transparent 5px);
+  background-size: 22px 22px;
 }
 
 /* Over the grid, so the party row does not jump when arrowing into an empty box. */
-.poke5e-pc__box {
-  position: relative;
-}
-
 .poke5e-pc__box-empty {
   position: absolute;
   top: 50%;
@@ -237,21 +408,15 @@
   margin: 0;
   padding: 6px 12px;
   transform: translate(-50%, -50%);
-  background: var(--poke5e-ui-bg);
-  color: var(--poke5e-ui-text);
+  background: var(--pc-paper);
+  box-shadow: 0 0 0 2px var(--pc-ink);
+  color: var(--pc-ink);
   white-space: nowrap;
   pointer-events: none;
 }
 
-/* Wallpapers are what tells the classic PC's boxes apart: each box index gets its own. */
-.poke5e-pc__box[data-wallpaper="0"] { --pc-wall-a: #4f8a5e; --pc-wall-b: #5a9769; }
-.poke5e-pc__box[data-wallpaper="1"] { --pc-wall-a: #4a7fa9; --pc-wall-b: #558bb6; }
-.poke5e-pc__box[data-wallpaper="2"] { --pc-wall-a: #b0654a; --pc-wall-b: #bc7156; }
-.poke5e-pc__box[data-wallpaper="3"] { --pc-wall-a: #b59a45; --pc-wall-b: #c0a650; }
-.poke5e-pc__box[data-wallpaper="4"] { --pc-wall-a: #7f7a6c; --pc-wall-b: #8b8678; }
-.poke5e-pc__box[data-wallpaper="5"] { --pc-wall-a: #62568c; --pc-wall-b: #6e6298; }
-
 .poke5e-pc .poke5e-pc__slot {
+  position: relative;
   width: auto;
   height: auto;
   min-height: 44px;
@@ -262,21 +427,13 @@
   border-radius: 0;
 }
 
-.poke5e-pc__party .poke5e-pc__slot {
-  background: var(--poke5e-ui-panel);
-}
-
-.poke5e-pc .poke5e-pc__slot {
-  position: relative;
-}
-
 .poke5e-pc .poke5e-pc__slot:hover {
   background: rgba(255, 255, 255, 0.22);
 }
 
 .poke5e-pc .poke5e-pc__slot.is-selected {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: var(--poke5e-ui-cream);
+  background: rgba(255, 255, 255, 0.34);
+  border-color: var(--pc-paper);
 }
 
 /* The pointer of the classic box cursor. */
@@ -285,11 +442,26 @@
   content: "";
   position: absolute;
   z-index: 1;
-  top: -8px;
-  left: calc(50% - 8px);
-  border: 8px solid transparent;
-  border-top-color: var(--poke5e-ui-accent);
+  top: -6px;
+  left: calc(50% - 9px);
+  border: 9px solid transparent;
+  border-top-color: var(--pc-red);
   border-bottom-width: 0;
+  filter: drop-shadow(0 2px 0 var(--pc-ink));
+}
+
+.poke5e-pc .poke5e-pc__slot:focus-visible {
+  border-color: var(--pc-ink);
+  outline: 2px solid var(--pc-paper);
+  outline-offset: -4px;
+}
+
+.poke5e-pc__slot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: contain;
 }
 
 .poke5e-pc__slot.is-held img {
@@ -305,70 +477,186 @@
   position: absolute;
   top: 2px;
   right: 4px;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1;
-  color: var(--poke5e-ui-gold);
-  text-shadow: 0 1px 0 #000;
+  color: #ffd84a;
+  text-shadow: 0 1px 0 var(--pc-ink), 1px 0 0 var(--pc-ink), -1px 0 0 var(--pc-ink);
 }
 
-.poke5e-pc .poke5e-pc__slot:focus-visible {
-  border-color: var(--poke5e-ui-cream);
-  outline: 2px solid var(--poke5e-ui-accent);
-  outline-offset: 1px;
+/* ---------- Party tray ---------- */
+
+.poke5e-pc__tray {
+  background: var(--pc-paper);
+  box-shadow: var(--pc-outline);
 }
 
-.poke5e-pc__slot img {
-  display: block;
+.poke5e-pc .poke5e-pc__party-title {
+  width: fit-content;
+  margin: 0;
+  padding: 2px 14px;
+  border: 0;
+  background: var(--pc-red);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #fff;
+}
+
+.poke5e-pc__party {
+  padding: 6px 8px 8px;
+}
+
+.poke5e-pc .poke5e-pc__party .poke5e-pc__slot {
+  background-color: var(--pc-paper-shade);
+  border-color: var(--pc-paper-shade);
+}
+
+.poke5e-pc .poke5e-pc__party .poke5e-pc__slot.is-selected {
+  border-color: var(--pc-ink);
+}
+
+/* An empty Pokéslot waits with the ball's outline. */
+.poke5e-pc .poke5e-pc__party .poke5e-pc__slot:not([data-uuid])::after {
+  content: "";
+  position: absolute;
+  inset: 25%;
+  background: url("../assets/ui/pokeball.png") center / contain no-repeat;
+  filter: grayscale(1);
+  opacity: 0.3;
+}
+
+/* ---------- Text box ---------- */
+
+.poke5e-pc__status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  margin: 0;
+  padding: 4px 10px;
+  background: var(--pc-paper);
+  box-shadow: var(--pc-outline);
+  font-size: 15px;
+  color: var(--pc-ink);
+}
+
+.poke5e-pc__sprite-small {
+  flex: none;
+  width: 32px;
+  height: 32px;
+}
+
+.poke5e-pc__sprite-small img {
   width: 100%;
   height: 100%;
   border: 0;
   object-fit: contain;
 }
 
-.poke5e-pc__party-title {
-  margin: 0;
-  border: 0;
-  font-size: 14px;
-  color: var(--poke5e-ui-cream);
-}
-
-.poke5e-pc__hint {
-  margin: 0;
-  color: var(--poke5e-ui-muted);
-}
-
-.poke5e-pc__message {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 48px 24px;
-  text-align: center;
-}
-
-.poke5e-pc__message p {
-  margin: 0;
-}
-
-.poke5e-pc__message button {
-  width: auto;
-  padding-inline: 16px;
-}
-
-@media (max-width: 760px) {
+@media (max-width: 940px) {
   .poke5e-pc__layout {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .poke5e-pc__preview {
-    border-right: 0;
-    border-bottom: 2px solid var(--poke5e-ui-border);
   }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .poke5e-pc .poke5e-pc__slot {
-    transition: background-color 80ms linear;
+  .poke5e-pc .poke5e-pc__slot:focus-visible::before,
+  .poke5e-pc .poke5e-pc__slot.is-selected::before {
+    animation: poke5e-pc-pointer 0.8s steps(2, jump-none) infinite alternate;
+  }
+
+  .poke5e-pc__sprite-small img {
+    animation: poke5e-pc-pointer 0.5s steps(2, jump-none) infinite alternate;
+  }
+
+  @keyframes poke5e-pc-pointer {
+    from { transform: translateY(0); }
+    to { transform: translateY(-3px); }
+  }
+
+  /* Everything moves in steps, like a sprite does. `translate` leaves alone the inline `transform` that grounds the sprite. */
+
+  /* The screen switches on, once per opening. */
+  .poke5e-pc.is-booting .window-content {
+    animation: poke5e-pc-boot 0.3s steps(6) both;
+  }
+
+  @keyframes poke5e-pc-boot {
+    from { clip-path: inset(50% 0); filter: brightness(2.2); }
+    55% { clip-path: inset(0); filter: brightness(1.5); }
+    to { clip-path: inset(0); filter: brightness(1); }
+  }
+
+  /* The next box scrolls in from the side of the arrow. */
+  .poke5e-pc__box[data-slide="next"] .poke5e-pc__slot {
+    animation: poke5e-pc-slide-next 0.2s steps(5) both;
+  }
+
+  .poke5e-pc__box[data-slide="previous"] .poke5e-pc__slot {
+    animation: poke5e-pc-slide-previous 0.2s steps(5) both;
+  }
+
+  @keyframes poke5e-pc-slide-next {
+    from { translate: 100% 0; opacity: 0; }
+  }
+
+  @keyframes poke5e-pc-slide-previous {
+    from { translate: -100% 0; opacity: 0; }
+  }
+
+  /* A newly picked Pokémon hops on its platform while its HP bar fills. */
+  .poke5e-pc__preview[data-enter] .poke5e-pc__portrait img {
+    animation: poke5e-pc-hop 0.3s steps(4) both;
+  }
+
+  .poke5e-pc__preview[data-enter] .poke5e-pc__hp-bar span {
+    animation: poke5e-pc-fill 0.4s steps(8) both;
+  }
+
+  @keyframes poke5e-pc-hop {
+    from { translate: 0 0; }
+    50% { translate: 0 -14px; }
+    to { translate: 0 0; }
+  }
+
+  @keyframes poke5e-pc-fill {
+    from { width: 0; }
+  }
+
+  /* Sprites answer to the cursor, shake while held, and land with a bounce. */
+  .poke5e-pc__slot img {
+    transition: translate 0.1s steps(2);
+  }
+
+  .poke5e-pc .poke5e-pc__slot:hover img {
+    translate: 0 -3px;
+  }
+
+  .poke5e-pc__slot.is-held img {
+    animation: poke5e-pc-shake 0.4s steps(2, jump-none) infinite alternate;
+  }
+
+  .poke5e-pc__slot.is-landing img {
+    animation: poke5e-pc-land 0.3s steps(4) both;
+  }
+
+  @keyframes poke5e-pc-shake {
+    from { translate: -2px 0; }
+    to { translate: 2px 0; }
+  }
+
+  @keyframes poke5e-pc-land {
+    from { translate: 0 -16px; scale: 1.1; }
+    60% { translate: 0 0; scale: 1.1 0.9; }
+    to { translate: 0 0; scale: 1; }
+  }
+
+  .poke5e-pc .poke5e-pc__slot.is-shiny::after {
+    animation: poke5e-pc-twinkle 1.2s steps(2, jump-none) infinite alternate;
+  }
+
+  @keyframes poke5e-pc-twinkle {
+    from { opacity: 1; }
+    to { opacity: 0.45; }
   }
 }

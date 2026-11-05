@@ -6,7 +6,7 @@ installFoundryUtils();
 const MODULE_ID = "poke5e-local";
 globalThis.game = { actors: [], user: { isGM: true }, settings: { get: () => undefined } };
 globalThis.fromUuidSync = uuid => game.actors.find(each => each.uuid === uuid) ?? null;
-const { BOX_SIZE, moveSlot, pcBoxCount, planPcMove, resolvePcLayout, staticSpriteSource, trainerPcEntries } = await import("../scripts/pokemon-pc-boxes.mjs");
+const { BOX_SIZE, moveSlot, pcBoxCount, pcDisplayName, planPcMove, resolvePcLayout, spriteGroundShift, staticSpriteSource, trainerPcEntries } = await import("../scripts/pokemon-pc-boxes.mjs");
 
 function actor(name, flags, extra = {}) {
   const document = createFlagDocument({ uuid: `Actor.${name}`, documentName: "Actor", flags: { [MODULE_ID]: flags } });
@@ -33,6 +33,26 @@ test("the static sprite keeps custom art, and never returns a video it cannot co
   assert.equal(sprite("", "main.png"), "main.png");
 });
 
+test("a sprite is shifted until its feet rest on the ground, however much blank margin it has", () => {
+  const sprite4 = (...visible) => {
+    const data = new Uint8ClampedArray(4 * 4 * 4);
+    for (const row of visible) {data[row * 4 * 4 + 3] = 255;}
+    return data;
+  };
+  assert.equal(spriteGroundShift(sprite4(0, 1), 4, 100, 90), 40, "floating: it comes down");
+  assert.equal(spriteGroundShift(sprite4(1, 2), 4, 100, 75), 0, "already there");
+  assert.equal(spriteGroundShift(sprite4(1, 3), 4, 100, 90), -10, "low: it goes up");
+  assert.equal(spriteGroundShift(sprite4(0, 3), 4, 100, 90), -0, "too tall to rise past the top");
+  assert.equal(spriteGroundShift(sprite4(), 4, 100, 90), 0, "nothing visible");
+});
+
+test("the shown name drops the level suffix of imported actors, and nothing else", () => {
+  assert.equal(pcDisplayName("Eevee (Lv. 6)"), "Eevee");
+  assert.equal(pcDisplayName("Eevee (Nv. 12)"), "Eevee");
+  assert.equal(pcDisplayName("Porygon (2)"), "Porygon (2)");
+  assert.equal(pcDisplayName("Rocky"), "Rocky");
+});
+
 test("the layout keeps saved places, fills gaps with the rest, and forgets who left the PC", () => {
   assert.deepEqual(resolvePcLayout(stored("a", "b"), undefined), ["a", "b"]);
   assert.deepEqual(resolvePcLayout(stored("a", "b", "c"), [null, "b", null, "a"]), ["c", "b", null, "a"]);
@@ -40,11 +60,10 @@ test("the layout keeps saved places, fills gaps with the rest, and forgets who l
   assert.deepEqual(resolvePcLayout(stored("a"), ["a", "a"]), ["a"], "a duplicated uuid keeps its first place");
 });
 
-test("there is always one box more than the ones in use", () => {
-  assert.equal(pcBoxCount([]), 1);
-  assert.equal(pcBoxCount(["a"]), 2);
-  assert.equal(pcBoxCount(Array(BOX_SIZE).fill("a")), 2);
-  assert.equal(pcBoxCount(Array(BOX_SIZE + 1).fill("a")), 3);
+test("every trainer has 8 boxes of 30, and more only if their PC outgrows them", () => {
+  assert.equal(pcBoxCount([]), 8);
+  assert.equal(pcBoxCount(Array(BOX_SIZE * 8).fill("a")), 8);
+  assert.equal(pcBoxCount(Array(BOX_SIZE * 8 + 1).fill("a")), 9);
   assert.equal(BOX_SIZE, 30);
 });
 

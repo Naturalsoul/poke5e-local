@@ -8,6 +8,7 @@ const SLOTS_FLAG = "pcSlots";
 
 export const BOX_COLUMNS = 6;
 export const BOX_SIZE = BOX_COLUMNS * 5;
+export const PC_BOXES = 8;
 
 // The token may be the animated WebM when the animated tokens setting is on; its PNG sits next to it.
 export function staticSpriteSource(pokemon) {
@@ -15,6 +16,29 @@ export function staticSpriteSource(pokemon) {
   const still = token.replace(/sprite-animated(-shiny)?\.webm$/i, "sprite$1.png");
   return still && !/\.webm$/i.test(still) ? still : pokemon?.img;
 }
+
+/**
+ * How far to shift a sprite so its lowest visible row rests on `ground`, because each sprite leaves a different blank
+ * margin under its feet. `alpha` is RGBA from a square canvas of `size` pixels, `rendered` the height it is shown at. A
+ * tall sprite stops rising when its top reaches the edge. Nothing visible: no shift.
+ */
+export function spriteGroundShift(alpha, size, rendered, ground) {
+  const rows = [];
+  for (let row = 0; row < size; row += 1) {
+    for (let column = 0; column < size; column += 1) {
+      if (alpha[(row * size + column) * 4 + 3] > 16) {
+        rows.push(row);
+        break;
+      }
+    }
+  }
+  if (!rows.length) {return 0;}
+  const scale = rendered / size;
+  return Math.max(ground - (rows.at(-1) + 1) * scale, -rows[0] * scale);
+}
+
+// Imported actors carry their level in the name, and the PC already shows it on its own.
+export const pcDisplayName = name => String(name).replace(/\s*\((?:lv|nv)\.?\s*\d+\)\s*$/i, "");
 
 const byName = (left, right) => left.name.localeCompare(right.name);
 
@@ -40,8 +64,8 @@ export function resolvePcLayout(stored, saved) {
   return Array.from(slots, uuid => uuid ?? null);
 }
 
-// As many boxes as hold someone, plus an empty one to move Pokémon into.
-export const pcBoxCount = slots => Math.ceil(slots.length / BOX_SIZE) + 1;
+// Every trainer has the same boxes; a PC that outgrows them gets more, so nobody is ever out of reach.
+export const pcBoxCount = slots => Math.max(PC_BOXES, Math.ceil(slots.length / BOX_SIZE));
 
 // The trainers this user may operate, players' first, each with their party and their PC: whatever they own outside it.
 export function trainerPcEntries() {
