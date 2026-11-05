@@ -20,6 +20,10 @@ export const BAG_POCKETS = Object.freeze([
   { id: "other", es: "Equipo", en: "Gear", itemTypes: [] }
 ]);
 
+// Only the pocket for what the catalog does not classify, and only types that have a quantity and so show up in the bag.
+export const BAG_CREATE_POCKET = "other";
+export const BAG_CREATABLE_TYPES = Object.freeze(["loot", "equipment", "weapon", "consumable", "tool"]);
+
 // Features, classes and spells have no quantity: they live on the sheet, not in the bag.
 export const isBagItem = item => item?.system?.quantity !== undefined;
 
