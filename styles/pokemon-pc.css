@@ -24,6 +24,10 @@
   --pc-screen: #3a6596;
   --pc-screen-alt: #416da0;
   --pc-outline: 0 0 0 2px var(--pc-ink), 0 0 0 4px var(--pc-paper), 0 0 0 6px var(--pc-ink);
+  /* The constants are the space the rest of the window takes, so the box and the party fit the screen without scrolling. */
+  --pc-slot: clamp(44px, min((100vw - 442px) / 6, (100vh - 330px) / 6), 89px);
+  max-width: min(100vw - 16px, 6 * var(--pc-slot) + 426px);
+  max-height: calc(100vh - 16px);
 }
 
 /*
@@ -39,6 +43,8 @@
 }
 
 .poke5e-pc .window-content {
+  min-height: 0;
+  overflow-y: auto;
   padding: 0;
   background: var(--pc-screen);
   color: var(--pc-ink);
@@ -87,7 +93,8 @@
 
 /* A grass stage under a pale sky, with the sprite standing on the shadow of its platform. */
 .poke5e-pc__portrait {
-  height: 248px;
+  flex: none;
+  height: clamp(112px, 100vh - 416px, 248px);
   background:
     radial-gradient(ellipse 110px 24px at 50% 88%, #6fa55a 0 96%, transparent 100%),
     linear-gradient(#bfe2f2 0 60%, #d7edc4 60% 100%);
@@ -96,8 +103,8 @@
 
 .poke5e-pc__portrait img {
   display: block;
-  width: 240px;
-  height: 240px;
+  height: calc(100% - 8px);
+  aspect-ratio: 1;
   margin: 0 auto;
   border: 0;
   object-fit: contain;
@@ -342,7 +349,8 @@
 .poke5e-pc__box,
 .poke5e-pc__party {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(6, var(--pc-slot));
+  justify-content: center;
   gap: 2px;
 }
 
@@ -556,9 +564,18 @@
   object-fit: contain;
 }
 
-@media (max-width: 940px) {
-  .poke5e-pc__layout {
+/* Too narrow for two columns: the window scrolls, so the slots only have to fit its width. */
+@media (max-width: 800px) {
+  .poke5e-pc {
+    --pc-slot: min((100vw - 102px) / 6, 89px);
+  }
+
+  .poke5e-pc .poke5e-pc__layout {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .poke5e-pc__portrait {
+    height: 136px;
   }
 }
 

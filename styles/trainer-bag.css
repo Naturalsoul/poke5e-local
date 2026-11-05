@@ -4,6 +4,12 @@
  * pockets, stacks, a text panel and money.
  * ============================================================ */
 
+/* 5.47 rows: the party and the pocket's 4.47. Never so narrow that the coin fields stop fitting. */
+.poke5e-pc.poke5e-bag {
+  --pc-slot: clamp(44px, min((100vw - 420px) / 6, (100vh - 374px) / 5.47), 76px);
+  max-width: min(100vw - 16px, max(6 * var(--pc-slot) + 404px, 780px));
+}
+
 /* The card holds a long description next to its buttons, so it has to fit the height of the storage column. */
 .poke5e-bag .poke5e-pc__layout {
   grid-template-columns: 300px minmax(0, 1fr);
@@ -27,15 +33,16 @@
 }
 
 .poke5e-bag__stage--pokemon {
-  height: 220px;
+  height: clamp(96px, 100vh - 420px, 220px);
   background:
     radial-gradient(ellipse 110px 24px at 50% 88%, #6fa55a 0 96%, transparent 100%),
     linear-gradient(#bfe2f2 0 60%, #d7edc4 60% 100%);
 }
 
 .poke5e-bag__stage--pokemon img {
-  width: 200px;
-  height: 200px;
+  width: auto;
+  height: calc(100% - 20px);
+  aspect-ratio: 1;
 }
 
 .poke5e-bag__fact {
@@ -48,7 +55,7 @@
 /* Pixel type is hard to read in long text, so the description goes back to Foundry's font. */
 .poke5e-bag__description {
   flex: 1 1 0;
-  min-height: 120px;
+  min-height: 72px;
   overflow-y: auto;
   font-family: var(--font-primary, sans-serif);
   font-size: 14px;
@@ -143,11 +150,9 @@
  */
 .poke5e-bag__box {
   flex: none;
-  grid-template-columns: repeat(6, 76px);
-  grid-auto-rows: 76px;
-  justify-content: center;
+  grid-auto-rows: var(--pc-slot);
   align-content: start;
-  height: 340px;
+  height: calc(4.47 * var(--pc-slot));
   overflow-y: auto;
   scrollbar-gutter: stable;
 }
@@ -259,6 +264,33 @@
 .poke5e-bag__description:focus-visible {
   outline: 2px solid var(--pc-red);
   outline-offset: 1px;
+}
+
+@media (max-width: 800px) {
+  .poke5e-pc.poke5e-bag {
+    --pc-slot: min((100vw - 118px) / 6, 76px);
+  }
+
+  .poke5e-bag .poke5e-pc__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .poke5e-bag__stage,
+  .poke5e-bag__stage--pokemon {
+    height: 112px;
+  }
+
+  .poke5e-bag__description {
+    flex: none;
+    max-height: 160px;
+  }
+}
+
+@media (max-width: 520px) {
+  .poke5e-bag__tabs,
+  .poke5e-bag__coins {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
