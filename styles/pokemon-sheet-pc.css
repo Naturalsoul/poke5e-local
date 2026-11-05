@@ -1,0 +1,1422 @@
+/* ============================================================
+ * POKE5E — POKÉMON SHEET, PC DESIGN
+ * Setting "Hoja de Pokémon" (scripts/pokemon-sheet-pc.mjs).
+ *
+ * The classic sheet's panels on the PC's paper and ink: its tokens
+ * are redefined here, so only layout and hard-coded colours need
+ * their own rules.
+ * ============================================================ */
+
+.poke5e-pokemon-summary--pc {
+  --pc-ink: #23242c;
+  --pc-paper: #f7f2dd;
+  --pc-paper-shade: #e4dbb6;
+  --pc-muted: #5b5848;
+  --pc-red: #bf3a30;
+  --pc-red-dark: #8d271f;
+  --pc-screen: #3a6596;
+  --pc-screen-alt: #416da0;
+  --pc-outline: 0 0 0 2px var(--pc-ink), 0 0 0 4px var(--pc-paper), 0 0 0 6px var(--pc-ink);
+
+  --poke5e-ui-bg: var(--pc-paper-shade);
+  --poke5e-ui-surface: var(--pc-paper);
+  --poke5e-ui-panel: var(--pc-paper);
+  --poke5e-ui-panel-alt: var(--pc-paper-shade);
+  --poke5e-ui-border: var(--pc-ink);
+  --poke5e-ui-border-strong: var(--pc-ink);
+  --poke5e-ui-border-bright: var(--pc-ink);
+  --poke5e-ui-border-soft: var(--pc-paper-shade);
+  --poke5e-ui-text: var(--pc-ink);
+  --poke5e-ui-muted: var(--pc-muted);
+  --poke5e-ui-cream: var(--pc-ink);
+  --poke5e-ui-cream-dark: var(--pc-muted);
+  --poke5e-ui-accent: var(--pc-red);
+  --poke5e-ui-accent-dark: var(--pc-red-dark);
+  --poke5e-ui-on-accent: #fff;
+  --poke5e-ui-gold: #7d5b06;
+  --poke5e-ui-brass: var(--pc-muted);
+  --poke5e-ui-shadow: transparent;
+  --poke5e-ui-text-2xs: 13px;
+  --poke5e-ui-text-xs: 14px;
+  --poke5e-ui-text-sm: 14px;
+  --poke5e-ui-text-md: 15px;
+
+  --poke5e-fr-red: var(--pc-red);
+  --poke5e-fr-red-dark: var(--pc-red-dark);
+  --poke5e-fr-cream: var(--pc-ink);
+  --poke5e-fr-cream-dark: var(--pc-muted);
+  --poke5e-fr-ink: var(--pc-ink);
+  --poke5e-fr-muted: var(--pc-muted);
+  --poke5e-fr-border: var(--pc-ink);
+  --poke5e-fr-border-bright: var(--pc-ink);
+  --poke5e-fr-panel: var(--pc-paper);
+  --poke5e-fr-panel-alt: var(--pc-paper-shade);
+  --poke5e-fr-panel-deep: var(--pc-paper-shade);
+  --poke5e-fr-surface: var(--pc-paper);
+  --poke5e-fr-shadow: transparent;
+
+  display: grid;
+  grid-template-columns: 296px minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 8px 16px;
+  min-height: 100%;
+  padding: 16px;
+  background: repeating-conic-gradient(var(--pc-screen) 0 25%, var(--pc-screen-alt) 0 50%) 0 0 / 32px 32px;
+  color: var(--pc-ink);
+}
+
+/*
+ * One weight only: bold closes this font's C (see styles/pokemon-pc.css). It also closes at some sizes: an uppercase C
+ * stays open at 14 and 17 px, a lowercase one at 15 and 16, so titles use 17 and uppercase labels 14. Long text keeps
+ * Foundry's font.
+ */
+.poke5e-pokemon-summary--pc,
+.poke5e-pokemon-summary--pc :is(button, select, option, input, h2, h3, label, b, strong, small, span, summary) {
+  font-family: "Pixelify Sans", var(--font-primary, sans-serif);
+  font-weight: 400;
+  font-synthesis: none;
+  font-variant-ligatures: none;
+}
+
+/* The classic sheet rounds and shades at many specificities; this design has neither anywhere. */
+.poke5e-pokemon-summary--pc *,
+.poke5e-pokemon-summary--pc *::before,
+.poke5e-pokemon-summary--pc *::after {
+  border-radius: 0 !important;
+  text-shadow: none !important;
+}
+
+.poke5e-pokemon-summary--pc p {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--pc-ink);
+}
+
+.poke5e-pokemon-summary--pc small {
+  font-size: 14px;
+  letter-spacing: 0;
+}
+
+/* ---------- Controls: one look, one height ---------- */
+
+.poke5e-pokemon-summary--pc :is(button, select, input) {
+  box-shadow: none;
+  color: var(--pc-ink);
+  font-size: 15px;
+}
+
+.poke5e-pokemon-summary--pc :is(button, select) {
+  height: 28px;
+  min-height: 0;
+  border: 2px solid var(--pc-ink);
+  background: var(--pc-paper-shade);
+}
+
+.poke5e-pokemon-summary--pc input {
+  height: 24px;
+  padding: 0 4px;
+  border: 2px solid var(--pc-ink);
+  background: #fffdf2;
+  text-align: right;
+}
+
+.poke5e-pokemon-summary--pc input[type="number"]::-webkit-inner-spin-button,
+.poke5e-pokemon-summary--pc input[type="number"]::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.poke5e-pokemon-summary--pc button:hover {
+  background: #efe7c6;
+  filter: none;
+}
+
+.poke5e-pokemon-summary--pc :is(button, select, input):focus-visible {
+  outline: 2px solid var(--pc-red);
+  outline-offset: 1px;
+}
+
+/* A box holding an icon and a borderless select, so it lines up with plain selects. */
+.poke5e-pokemon-summary--pc :is(.poke5e-pokemon-gender, .poke5e-pokemon-shiny-control, .poke5e-pokemon-shiny-badge, .poke5e-pokemon-status-add, .poke5e-pokemon-type-control__select-wrap) {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  height: 28px;
+  min-height: 0;
+  margin: 0;
+  padding: 0 0 0 6px;
+  border: 2px solid var(--pc-ink);
+  background: var(--pc-paper-shade);
+  box-shadow: none;
+  color: var(--pc-ink);
+}
+
+.poke5e-pokemon-summary--pc :is(.poke5e-pokemon-gender, .poke5e-pokemon-shiny-control, .poke5e-pokemon-status-add, .poke5e-pokemon-type-control__select-wrap) select {
+  flex: 1;
+  width: auto;
+  min-width: 0;
+  height: 24px;
+  padding: 0 2px;
+  border: 0;
+  background-color: transparent;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-gender__symbol {
+  flex: none;
+  width: auto;
+  height: auto;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--pc-ink);
+}
+
+.poke5e-pokemon-summary--pc :is(.poke5e-pokemon-shiny-control, .poke5e-pokemon-shiny-badge) i {
+  color: var(--poke5e-ui-gold);
+}
+
+/* ---------- The card: what stays in view on every tab ---------- */
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__hero {
+  position: sticky;
+  top: 16px;
+  grid-row: 1 / span 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: auto;
+  min-height: 0;
+  margin: 6px;
+  padding: 10px;
+  border: 0;
+  background: var(--pc-paper);
+  box-shadow: var(--pc-outline);
+  overflow: visible;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__hero::before,
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__hero::after,
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__portrait::before,
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__portrait::after {
+  display: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__portrait {
+  order: 0;
+  position: relative;
+  flex: none;
+  width: 100%;
+  height: 148px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 80px 16px at 50% 90%, #6fa55a 0 96%, transparent 100%),
+    linear-gradient(#bfe2f2 0 58%, #d7edc4 58% 100%);
+  box-shadow: inset 0 0 0 2px var(--pc-ink);
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__portrait img {
+  display: block;
+  width: 144px;
+  height: 144px;
+  margin: 0 auto;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+/* Dex number and the GM's buttons sit over the sky of the stage. */
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__dex {
+  position: absolute;
+  z-index: 1;
+  top: 15px;
+  left: 16px;
+  right: auto;
+  font-size: 15px;
+  color: var(--pc-ink);
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__toolbar {
+  position: absolute;
+  z-index: 1;
+  top: 15px;
+  right: 15px;
+  left: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__toolbar button {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__toolbar button span,
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__identity > small,
+.poke5e-pokemon-summary--pc .poke5e-pokemon-type-control__label,
+.poke5e-pokemon-summary--pc .poke5e-pokemon-nature__label i,
+.poke5e-pokemon-summary--pc .poke5e-pokemon-experience__label {
+  display: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__identity {
+  order: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-nickname {
+  margin: 0;
+  padding: 0 0 2px;
+  border: 0;
+  border-bottom: 2px solid var(--pc-ink);
+  font-size: 22px;
+  color: var(--pc-ink);
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-nickname__text,
+.poke5e-pokemon-summary--pc .poke5e-pokemon-nickname__input {
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 22px;
+  text-align: left;
+  -webkit-text-stroke: 0;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__identity-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-meta-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  margin: 0;
+  padding: 0 4px;
+  border: 2px solid var(--pc-ink);
+  background: none;
+  box-shadow: none;
+  color: var(--pc-ink);
+  font-size: 15px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-type-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-type-control {
+  display: block;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-nature {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 4px 8px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-nature__label {
+  color: var(--pc-muted);
+  font-size: 15px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-nature__control select {
+  width: 100%;
+}
+
+/* The GM's select already spells out the name and the modifiers. */
+.poke5e-pokemon-summary--pc .poke5e-pokemon-nature:has(select) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-nature:has(select) :is(.poke5e-pokemon-nature__label, .poke5e-pokemon-nature__modifiers, .poke5e-pokemon-nature__modifier--neutral) {
+  display: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-nature__modifiers,
+.poke5e-pokemon-summary--pc .poke5e-pokemon-nature__modifier--neutral {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 14px;
+  color: var(--pc-muted);
+}
+
+.poke5e-pokemon-summary--pc :is(.poke5e-pokemon-nature__modifier--increase, .poke5e-pokemon-nature__modifier--decrease) {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  font-size: 14px;
+}
+
+.poke5e-pokemon-summary--pc :is(.poke5e-pokemon-nature__modifier--increase, .poke5e-pokemon-nature__modifier--decrease) :is(strong, small) {
+  color: inherit;
+  font-size: 14px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-nature__modifier--increase { color: var(--pc-red-dark); }
+.poke5e-pokemon-summary--pc .poke5e-pokemon-nature__modifier--decrease { color: #245a96; }
+
+/* HP and EXP: the PC's dark bars. */
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__hp {
+  order: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  margin: 0;
+  padding: 6px 0 0;
+  border: 0;
+  border-top: 2px solid var(--pc-ink);
+  background: none;
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__hp > div:first-child,
+.poke5e-pokemon-summary--pc .poke5e-pokemon-experience__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__hp > div:first-child > strong,
+.poke5e-pokemon-summary--pc .poke5e-pokemon-experience__value > span:first-child {
+  color: var(--pc-muted);
+  font-size: 15px;
+  letter-spacing: 0;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__hp-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__hp-controls span {
+  min-width: 56px;
+  color: var(--pc-ink);
+  font-size: 16px;
+  text-align: center;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__hp-controls button {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  font-size: 12px;
+}
+
+.poke5e-pokemon-summary--pc :is(.poke5e-pokemon-summary__hp-track, .poke5e-pokemon-experience__track) {
+  height: 12px;
+  margin: 0;
+  padding: 2px;
+  border: 0;
+  background: var(--pc-ink);
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.poke5e-pokemon-summary--pc :is(.poke5e-pokemon-summary__hp-track, .poke5e-pokemon-experience__track) > span {
+  display: block;
+  height: 100%;
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-experience__track > span {
+  background: #4fb0f0;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-experience {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 4px 0 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-experience__value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  color: var(--pc-ink);
+  font-size: 15px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-experience__value > span:first-child {
+  margin-right: auto;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-experience__value input {
+  width: 72px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-experience__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  color: var(--pc-muted);
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-experience__footer small {
+  color: var(--pc-muted);
+}
+
+/* ---------- Tabs ---------- */
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-summary__dashboard {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  margin: 6px;
+}
+
+.poke5e-pokemon-pc-tabs {
+  display: flex;
+  background: var(--pc-paper);
+  box-shadow: var(--pc-outline);
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-pc-tabs button {
+  flex: 1;
+  height: 34px;
+  border: 0;
+  background: none;
+  font-size: 17px;
+  transition: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-pc-tabs button:hover {
+  background: var(--pc-paper-shade);
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-pc-tabs button[aria-pressed="true"] {
+  background: var(--pc-red);
+  color: #fff;
+}
+
+.poke5e-pokemon-pc-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.poke5e-pokemon-pc-panel[hidden] {
+  display: none;
+}
+
+.poke5e-pokemon-summary--pc :is([data-pokemon-technical-panel], .poke5e-pokemon-technical) {
+  grid-column: 2;
+  margin: 6px;
+}
+
+/* ---------- Panels ---------- */
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-panel {
+  grid-column: auto;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  margin: 0;
+  padding: 10px 12px;
+  border: 0;
+  background: var(--pc-paper);
+  box-shadow: var(--pc-outline);
+  box-sizing: border-box;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-panel::before,
+.poke5e-pokemon-summary--pc .poke5e-pokemon-panel::after {
+  display: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-panel > header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  margin: 0 0 8px;
+  padding: 0 0 6px;
+  border: 0;
+  border-bottom: 2px solid var(--pc-ink);
+  background: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-panel > header > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-panel > header > div + strong {
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--pc-ink);
+  font-size: 16px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-panel > header i {
+  color: var(--pc-red);
+  font-size: 14px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-panel h3 {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 17px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--pc-ink);
+}
+
+/* Statuses: with none active the panel is only its "add" row. */
+.poke5e-pokemon-summary--pc .poke5e-pokemon-panel--statuses:not(:has(.poke5e-pokemon-status)) > header {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-panel--statuses:not(:has(.poke5e-pokemon-status)) :is(.poke5e-pokemon-statuses, .poke5e-pokemon-statuses__count) {
+  display: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-statuses__count {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--pc-red-dark);
+  font-size: 16px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-statuses__count small {
+  display: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-status-add {
+  flex: 0 1 180px;
+  margin-left: auto;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-status-add i {
+  color: var(--pc-ink);
+  font-size: 12px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-statuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 0;
+  padding: 2px 4px;
+  border: 2px solid var(--pc-red-dark);
+  background: none;
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-status__icon {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  background: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-status__icon img {
+  width: 22px;
+  height: 22px;
+  border: 0;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-status__body small {
+  display: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-status__body strong {
+  color: var(--pc-ink);
+  font-size: 15px;
+}
+
+.poke5e-pokemon-summary--pc :is(.poke5e-pokemon-status__remove, .poke5e-pokemon-item-delete, .poke5e-pokemon-held-item__remove) {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--pc-muted);
+  font-size: 12px;
+}
+
+.poke5e-pokemon-summary--pc :is(.poke5e-pokemon-status__remove, .poke5e-pokemon-item-delete, .poke5e-pokemon-held-item__remove):hover {
+  background: none;
+  color: var(--pc-red);
+}
+
+/* ---------- Moves: a list, one row each ---------- */
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-moves {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-card {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) 124px;
+  align-items: center;
+  gap: 10px;
+  min-height: 0;
+  margin: 0;
+  padding: 8px 0;
+  border: 0;
+  border-bottom: 2px solid var(--pc-paper-shade);
+  background: none;
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-card::before,
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-card::after {
+  display: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-card:last-child {
+  border-bottom: 0;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-card > img {
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-card__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  margin: 0;
+}
+
+.poke5e-pokemon-summary--pc :is(.poke5e-pokemon-move-card__details, .poke5e-pokemon-struggle__details, .poke5e-pokemon-ability__details, .poke5e-pokemon-held-item__details) {
+  display: inline-flex;
+  flex: 0 1 auto;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  width: auto;
+  min-width: 0;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--pc-ink);
+  font-size: 17px;
+  text-align: left;
+}
+
+.poke5e-pokemon-summary--pc :is(.poke5e-pokemon-move-card__details, .poke5e-pokemon-struggle__details, .poke5e-pokemon-ability__details, .poke5e-pokemon-held-item__details):hover {
+  background: none;
+  color: var(--pc-red-dark);
+}
+
+.poke5e-pokemon-summary--pc :is(.poke5e-pokemon-move-card__details, .poke5e-pokemon-struggle__details, .poke5e-pokemon-ability__details, .poke5e-pokemon-held-item__details) span {
+  color: inherit;
+  font-size: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.poke5e-pokemon-summary--pc :is(.poke5e-pokemon-move-card__details, .poke5e-pokemon-struggle__details, .poke5e-pokemon-ability__details, .poke5e-pokemon-held-item__details) i {
+  color: var(--pc-muted);
+  font-size: 11px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  min-width: 0;
+}
+
+/* Same type tag as the PC: flat colour, ink edge. */
+.poke5e-pokemon-summary--pc .poke5e-pokemon-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+  padding: 0 6px;
+  border: 2px solid var(--pc-ink);
+  background: var(--pc-type, #a8a77a);
+  box-shadow: none;
+  color: var(--pc-type-text, #17171b);
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-type-control__swatch {
+  border: 1px solid var(--pc-ink);
+  background: var(--pc-type, #a8a77a);
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-type-badge small {
+  color: inherit;
+  font-size: 14px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-card__pp {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--pc-muted);
+  font-size: 14px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-card__pp :is(span, strong) {
+  color: var(--pc-muted);
+  font-size: 14px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-card__pp input {
+  width: 32px;
+  height: 20px;
+  padding: 0 2px;
+  border-width: 1px;
+  color: var(--pc-ink);
+  font-size: 14px;
+  text-align: center;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-power {
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-power__label {
+  display: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-power__values {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-power__ability {
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--pc-muted);
+  font-size: 14px;
+  letter-spacing: 0;
+}
+
+.poke5e-pokemon-summary--pc :is(.poke5e-pokemon-move-card__activities, .poke5e-pokemon-struggle__activities) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-card__activity {
+  display: flex;
+  flex: 1 1 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: auto;
+  min-width: 0;
+  height: 32px;
+  padding: 0 4px;
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.18);
+  white-space: nowrap;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-card__activity--scope {
+  flex: 1 1 0;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-card__activity i {
+  color: var(--pc-ink);
+  font-size: 12px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-move-card__activity :is(span, small) {
+  color: var(--pc-ink);
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-struggle {
+  display: grid;
+  grid-template-columns: 32px auto minmax(0, 1fr) 124px;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 4px 0 0;
+  padding: 8px 0 0;
+  border: 0;
+  border-top: 2px solid var(--pc-ink);
+  background: none;
+  box-shadow: none;
+}
+
+/* "Default move" and its PP say nothing the row doesn't: it always exists, and never runs out. */
+.poke5e-pokemon-summary--pc .poke5e-pokemon-struggle > span:not(.poke5e-pokemon-move-power),
+.poke5e-pokemon-summary--pc .poke5e-pokemon-struggle > small {
+  display: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-struggle > img {
+  width: 32px;
+  height: 32px;
+  border: 0;
+}
+
+/* ---------- Stats ---------- */
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  min-height: 0;
+  padding: 6px;
+  border: 2px solid var(--pc-ink);
+  background: none;
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat::before,
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat::after {
+  display: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat__header {
+  display: contents;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat__label {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--pc-ink);
+  font-size: 14px;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat__label i {
+  color: var(--poke5e-ui-gold);
+  font-size: 10px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat__score {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat__modifier {
+  grid-column: 3;
+  grid-row: 1;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat__modifier small {
+  display: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat__modifier strong {
+  color: var(--pc-ink);
+  font-size: 22px;
+  line-height: 1;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat__score-editor {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat__score-editor i {
+  display: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat__score-input {
+  width: 34px;
+  height: 24px;
+  padding: 0 2px;
+  font-size: 15px;
+  text-align: center;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat__score-value {
+  color: var(--pc-muted);
+  font-size: 15px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat__actions {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  margin: 0;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat__actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: auto;
+  min-width: 0;
+  height: 26px;
+  padding: 0 2px;
+  color: var(--pc-ink);
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.18);
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat__actions button i {
+  display: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat__actions button span {
+  color: inherit;
+  font-size: 14px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-stat__actions button.is-proficient {
+  border-color: var(--pc-ink);
+  background: #f2c94c;
+  color: var(--pc-ink);
+}
+
+/* Battle numbers: label over value, no boxes. */
+.poke5e-pokemon-summary--pc .poke5e-pokemon-battle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px 12px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-battle-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-battle-grid > div > span {
+  color: var(--pc-muted);
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-battle-grid > div > strong {
+  color: var(--pc-ink);
+  font-size: 18px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-movement {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-movement__entry {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--pc-ink);
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-movement__entry i {
+  color: var(--pc-muted);
+  font-size: 11px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-movement__entry strong {
+  color: var(--pc-ink);
+  font-size: 18px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-movement__entry small {
+  color: var(--pc-muted);
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-initiative {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 32px;
+  margin: 0;
+  padding: 0 8px;
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.18);
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-initiative__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: auto;
+  color: var(--pc-ink);
+  font-size: 15px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-initiative__label :is(i, span) {
+  color: inherit;
+  font-size: inherit;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-initiative strong {
+  color: var(--pc-ink);
+  font-size: 17px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-initiative small {
+  color: var(--pc-muted);
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-skills {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-panel--skills .poke5e-pokemon-skill {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 32px;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  height: 28px;
+  padding: 0 6px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-skill__name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--pc-ink);
+  font-size: 15px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-skill__name i {
+  color: var(--pc-red);
+  font-size: 8px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-skill__name span {
+  color: inherit;
+  font-size: inherit;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-skill strong {
+  color: var(--pc-ink);
+  font-size: 16px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-skill small {
+  color: var(--pc-muted);
+  text-align: right;
+}
+
+/* ---------- Info ---------- */
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-ability {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-ability > img,
+.poke5e-pokemon-summary--pc .poke5e-pokemon-held-item__portrait img {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-ability__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-ability p,
+.poke5e-pokemon-summary--pc .poke5e-pokemon-held-item__description {
+  margin: 4px 0 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-held-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-held-item::before,
+.poke5e-pokemon-summary--pc .poke5e-pokemon-held-item::after {
+  display: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-held-item__header {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 22px;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-held-item__portrait {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-held-item__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-held-item__hint {
+  display: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-held-item__actions {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-held-item__transfer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: 30px;
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.18);
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-held-item__transfer :is(i, span) {
+  color: var(--pc-ink);
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-held-item__transfer i:last-child {
+  display: none;
+}
+
+.poke5e-pokemon-summary--pc :is(.poke5e-pokemon-held-item-empty, .poke5e-pokemon-empty) {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--pc-muted);
+  font-size: 15px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-matchups {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-matchup-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-matchup-group > strong {
+  color: var(--pc-muted);
+  font-size: 15px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.poke5e-pokemon-summary--pc .poke5e-pokemon-matchup-group > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+@media (max-width: 760px) {
+  .poke5e-pokemon-summary--pc {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .poke5e-pokemon-summary--pc .poke5e-pokemon-summary__hero {
+    position: relative;
+    top: 0;
+    grid-row: auto;
+  }
+
+  .poke5e-pokemon-summary--pc :is(.poke5e-pokemon-summary__dashboard, [data-pokemon-technical-panel], .poke5e-pokemon-technical) {
+    grid-column: 1;
+  }
+}
+
+/* The tab already says "Stats". */
+.poke5e-pokemon-summary--pc .poke5e-pokemon-panel:has(.poke5e-pokemon-stats) > header {
+  display: none;
+}

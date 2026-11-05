@@ -6,6 +6,10 @@ import { isTrainerActor } from "./trainer-service.mjs";
 const MODULE_ID = "poke5e-local";
 const SLOTS_FLAG = "pcSlots";
 
+const SPRITE_SAMPLE = 96;
+// Where a sprite's feet touch the platform of a portrait, as a share of the image's height.
+const PORTRAIT_GROUND = 0.925;
+
 export const BOX_COLUMNS = 6;
 export const BOX_SIZE = BOX_COLUMNS * 5;
 export const PC_BOXES = 8;
@@ -35,6 +39,23 @@ export function spriteGroundShift(alpha, size, rendered, ground) {
   if (!rows.length) {return 0;}
   const scale = rendered / size;
   return Math.max(ground - (rows.at(-1) + 1) * scale, -rows[0] * scale);
+}
+
+// shortcut: samples the image as a square, so non-square custom art lands a little off; measure its real ratio if it shows.
+export function groundSprite(image) {
+  const canvas = document.createElement("canvas");
+  canvas.width = SPRITE_SAMPLE;
+  canvas.height = SPRITE_SAMPLE;
+  const context = canvas.getContext("2d", { willReadFrequently: true });
+  context.drawImage(image, 0, 0, SPRITE_SAMPLE, SPRITE_SAMPLE);
+  try {
+    const { data } = context.getImageData(0, 0, SPRITE_SAMPLE, SPRITE_SAMPLE);
+    const rendered = image.clientHeight;
+    image.style.transform = `translateY(${spriteGroundShift(data, SPRITE_SAMPLE, rendered, rendered * PORTRAIT_GROUND)}px)`;
+  } catch (error) {
+    // Art hosted on another site cannot be read; it just keeps its own margin.
+    console.warn("[poke5e-local] sprite", error);
+  }
 }
 
 // Imported actors carry their level in the name, and the PC already shows it on its own.

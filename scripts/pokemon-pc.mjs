@@ -3,7 +3,7 @@ import { escapeHtml } from "./html.mjs";
 import { getLanguage } from "./i18n.mjs";
 import { getPokemonExperienceState } from "./pokemon-experience-service.mjs";
 import { getPokemonHeldItem } from "./pokemon-held-item-service.mjs";
-import { applyPcMove, BOX_COLUMNS, BOX_SIZE, moveSlot, pcBoxCount, pcDisplayName, pcMoveContext, planPcMove, spriteGroundShift, staticSpriteSource, trainerPcEntries } from "./pokemon-pc-boxes.mjs";
+import { applyPcMove, BOX_COLUMNS, BOX_SIZE, groundSprite, moveSlot, pcBoxCount, pcDisplayName, pcMoveContext, planPcMove, staticSpriteSource, trainerPcEntries } from "./pokemon-pc-boxes.mjs";
 import { getPokemonTypes } from "./pokemon-type-service.mjs";
 import { getPokemonShinyState } from "./shiny-runtime.mjs";
 import { localizedType } from "./trainer-command-center.mjs";
@@ -12,9 +12,6 @@ import { isPokemonActive } from "./trainer-party-service.mjs";
 const APP_ID = "poke5e-pc";
 const FALLBACK_SPRITE = "icons/svg/mystery-man.svg";
 const WALLPAPERS = 8;
-const SPRITE_SAMPLE = 96;
-// Where a sprite's feet touch the platform in .poke5e-pc__portrait, as a share of the image's height.
-const PORTRAIT_GROUND = 0.925;
 
 const LABELS = {
   es: {
@@ -316,22 +313,8 @@ export class PokemonPc extends foundry.applications.api.ApplicationV2 {
     });
   }
 
-  // shortcut: samples the image as a square, so non-square custom art lands a little off; measure its real ratio if it shows.
   #groundSprite(image) {
-    if (!image.closest?.(".poke5e-pc__portrait")) {return;}
-    const canvas = document.createElement("canvas");
-    canvas.width = SPRITE_SAMPLE;
-    canvas.height = SPRITE_SAMPLE;
-    const context = canvas.getContext("2d", { willReadFrequently: true });
-    context.drawImage(image, 0, 0, SPRITE_SAMPLE, SPRITE_SAMPLE);
-    try {
-      const { data } = context.getImageData(0, 0, SPRITE_SAMPLE, SPRITE_SAMPLE);
-      const rendered = image.clientHeight;
-      image.style.transform = `translateY(${spriteGroundShift(data, SPRITE_SAMPLE, rendered, rendered * PORTRAIT_GROUND)}px)`;
-    } catch (error) {
-      // Art hosted on another site cannot be read; it just keeps its own margin.
-      console.warn(`[poke5e-local] ${APP_ID}`, error);
-    }
+    if (image.closest?.(".poke5e-pc__portrait")) {groundSprite(image);}
   }
 
   #useFallback(image) {

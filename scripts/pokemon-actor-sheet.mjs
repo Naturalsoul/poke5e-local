@@ -13,6 +13,7 @@ import {
   setPokemonKnownMoveIds
 } from "./pokemon-move-service.mjs";
 import { normalizeId } from "./ids.mjs";
+import { pokemonSheetSize } from "./pokemon-sheet-pc.mjs";
 
 const MODULE_ID =
   "poke5e-local";
@@ -160,6 +161,13 @@ export class PokemonActorSheet
         POKEMON_SHEET_TEMPLATE
     }
   };
+
+
+  _initializeApplicationOptions(options) {
+    const applicationOptions = super._initializeApplicationOptions(options);
+    Object.assign(applicationOptions.position, pokemonSheetSize());
+    return applicationOptions;
+  }
 
 
   async _onDropItem(
