@@ -1,3 +1,5 @@
+import { offerIllusion } from "./illusion-ability-service.mjs";
+
 import {
   deployPokemon,
   recallPokemon,
@@ -32,7 +34,13 @@ export async function deployTrainerPokemon(
       pokemon,
       {
         position,
-        scene
+        scene,
+
+        illusionModelId:
+          await offerIllusion(
+            pokemon,
+            scene
+          )
       }
     );
 
@@ -165,7 +173,8 @@ function resolveSwitchPosition(
 async function deployIncomingSwitchToken(
   incoming,
   position,
-  scene
+  scene,
+  illusionModelId
 ) {
 
   const existingToken =
@@ -183,7 +192,8 @@ async function deployIncomingSwitchToken(
         incoming,
         {
           position,
-          scene
+          scene,
+          illusionModelId
         }
       );
 
@@ -264,7 +274,8 @@ export async function switchTrainerPokemon(
   outgoing,
   incoming,
   {
-    scene = canvas.scene
+    scene = canvas.scene,
+    illusionModelId
   } = {}
 ) {
 
@@ -279,7 +290,8 @@ export async function switchTrainerPokemon(
     await deployIncomingSwitchToken(
       incoming,
       position,
-      scene
+      scene,
+      illusionModelId
     );
 
 

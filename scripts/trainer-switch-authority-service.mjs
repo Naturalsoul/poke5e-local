@@ -1,3 +1,5 @@
+import { offerIllusion } from "./illusion-ability-service.mjs";
+
 import {
   switchTrainerPokemon
 } from "./trainer-deployment-service.mjs";
@@ -407,7 +409,10 @@ async function executeAuthorizedSwitch(
           message.position ??
           null,
 
-        scene
+        scene,
+
+        illusionModelId:
+          message.illusionModelId
       }
     );
 
@@ -547,6 +552,13 @@ export async function requestTrainerPokemonSwitch(
   } = {}
 ) {
 
+  const illusionModelId =
+    await offerIllusion(
+      incoming,
+      scene
+    );
+
+
   /*
    * El GM mantiene el camino directo.
    */
@@ -561,7 +573,8 @@ export async function requestTrainerPokemonSwitch(
       incoming,
       {
         position,
-        scene
+        scene,
+        illusionModelId
       }
     );
   }
@@ -648,6 +661,8 @@ export async function requestTrainerPokemonSwitch(
 
           sceneId:
             scene.id,
+
+          illusionModelId,
 
           position:
             position ??

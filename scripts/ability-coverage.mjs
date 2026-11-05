@@ -109,7 +109,7 @@ export const ABILITY_COVERAGE = Object.freeze({
   "ice-face": { status: "automated", engines: ["form-ability-engine"], note: "Forms by damage, Moves, a hurt ally or each turn." },
   "ice-scales": { status: "automated", engines: ["rider-ability-engine"] },
   illuminate: { status: "manual", reason: "Outside battle or narrative." },
-  illusion: { status: "manual", reason: "Outside battle or narrative." },
+  illusion: { status: "automated", engines: ["illusion-ability-service"], note: "Offered at will when it is deployed; its token and chat messages show the Pokémon it copies." },
   immunity: { status: "automated", engines: ["status-runtime"] },
   imposter: { status: "manual", reason: "Changes another creature's Ability or Moves; the GM adjusts the sheets." },
   infiltrator: { status: "manual", reason: "Interacts with rules the module does not model (Protect, screens, redirection, held item theft)." },

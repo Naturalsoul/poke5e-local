@@ -31,7 +31,7 @@ function formValues(form) {
  * prompt: { title, content, use } — content may hold form fields; resolves to their values
  * (an object, possibly empty) when used, or null when declined or closed.
  */
-async function showPrompt(prompt) {
+export async function showPrompt(prompt) {
   const result = await foundry.applications.api.DialogV2.wait({
     window: { title: prompt.title },
     content: prompt.content,
