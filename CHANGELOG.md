@@ -4,6 +4,11 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.56.0] — 2026-11-05
+
+- **Hoja de entrenador:** se quitan la sección PC y el botón «Al PC», también en la hoja clásica. Esos movimientos se hacen ahora en la ventana del PC.
+- **Hoja de entrenador, Pixel Team Rocket:** diseño más ordenado. Fondo liso, paneles con un solo borde, y el latón queda para lo que se puede pulsar. El rojo marca la pestaña activa y el nivel, y «Desplegar» solo se pone rojo al pasar el mouse. El rango cabe en una línea junto a su etiqueta, y desaparece el nivel repetido del entrenador en la pestaña Pokémon.
+
 ## [0.55.1] — 2026-11-05
 
 - **Hoja de entrenador, diseños Pixel:** ya se puede arrastrar por toda la pantalla y abre con su ancho completo. Antes se quedaba pegada al borde izquierdo o se movía muy poco de lado.

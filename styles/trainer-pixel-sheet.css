@@ -52,6 +52,11 @@
   background: repeating-conic-gradient(var(--pc-screen) 0 25%, var(--pc-screen-alt) 0 50%) 0 0 / 32px 32px;
 }
 
+/* dnd5e's banner art would show behind the panels. */
+.dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet .window-content::before {
+  content: none;
+}
+
 /* dnd5e renders the ability scores last; here they go right under the header. */
 .dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet .window-content > .sheet-header { order: 0; }
 .dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet .window-content > .ability-scores { order: 1; }
@@ -606,7 +611,7 @@
   font-family: inherit;
 }
 
-.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-command-header, .poke5e-trainer-command-section, .poke5e-trainer-command-pc, .poke5e-trainer-switch-banner) {
+.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-command-header, .poke5e-trainer-command-section, .poke5e-trainer-switch-banner) {
   background: var(--pc-paper);
   box-shadow: var(--pc-outline);
 }
@@ -664,7 +669,7 @@
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 }
 
-.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-command-card, .poke5e-trainer-party-card, .poke5e-trainer-pc-card) {
+.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-command-card, .poke5e-trainer-party-card) {
   position: relative;
   min-width: 0;
   padding: 6px;
@@ -675,7 +680,7 @@
   color: var(--pc-ink);
 }
 
-.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-command-card, .poke5e-trainer-party-card, .poke5e-trainer-pc-card) img {
+.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-command-card, .poke5e-trainer-party-card) img {
   border: 0;
   object-fit: contain;
 }
@@ -744,26 +749,26 @@
   color: var(--pc-muted);
 }
 
-/* Party and PC cards: sprite, numbers, then the buttons across. */
-.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-party-card, .poke5e-trainer-pc-card) {
+/* Party cards: sprite, numbers, then the buttons across. */
+.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-party-card) {
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr);
   gap: 4px 6px;
   align-content: start;
 }
 
-.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-party-card, .poke5e-trainer-pc-card) > img {
+.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-party-card) > img {
   width: 48px;
   height: 48px;
 }
 
-.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-party-card__body, .poke5e-trainer-pc-card__body) {
+.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-party-card__body) {
   display: grid;
   gap: 2px;
   min-width: 0;
 }
 
-.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-party-card__header, .poke5e-trainer-pc-card__header, .poke5e-trainer-command-card__name-row) {
+.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-party-card__header, .poke5e-trainer-command-card__name-row) {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -771,11 +776,11 @@
   min-width: 0;
 }
 
-.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-party-card__name, .poke5e-trainer-pc-card__name, .poke5e-trainer-command-card__name-row) {
+.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-party-card__name, .poke5e-trainer-command-card__name-row) {
   min-width: 0;
 }
 
-.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-party-card__name, .poke5e-trainer-pc-card__name, .poke5e-trainer-command-card__name-row) strong {
+.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-party-card__name, .poke5e-trainer-command-card__name-row) strong {
   display: block;
   overflow: hidden;
   font-weight: 400;
@@ -783,7 +788,7 @@
   white-space: nowrap;
 }
 
-.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-party-card__quick-actions, .poke5e-trainer-pc-card__quick-actions) {
+.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-party-card__quick-actions) {
   display: flex;
   flex: none;
   gap: 2px;
@@ -889,31 +894,12 @@
   right: 4px;
 }
 
-.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-command-card__fainted, .poke5e-trainer-party-card__fainted-badge, .poke5e-trainer-pc-card__fainted) {
+.poke5e-trainer-pixel-sheet :is(.poke5e-trainer-command-card__fainted, .poke5e-trainer-party-card__fainted-badge) {
   color: var(--pc-red-dark);
 }
 
 .poke5e-trainer-pixel-sheet [data-fainted="true"] img {
   filter: grayscale(1);
-}
-
-/* The PC list, folded by default. */
-.poke5e-trainer-pixel-sheet .poke5e-trainer-command-pc > summary {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 10px;
-  cursor: pointer;
-}
-
-.poke5e-trainer-pixel-sheet .poke5e-trainer-command-pc > summary strong {
-  font-weight: 400;
-}
-
-.poke5e-trainer-pixel-sheet .poke5e-trainer-command-pc > :not(summary) {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 6px;
-  padding: 0 8px 8px;
 }
 
 .poke5e-trainer-pixel-sheet .poke5e-trainer-switch-banner {
@@ -935,10 +921,88 @@
   --pc-muted: #b7bcc5;
   --pc-red: #c43d3d;
   --pc-red-dark: #f08a80;
-  --pc-screen: #2a1014;
-  --pc-screen-alt: #33141a;
+  --pc-screen: #1a0d10;
+  --pc-screen-alt: #1a0d10;
   --pc-edge: #c7af73;
   --pc-field: #0d0f14;
   --pc-hover: #3a3f4c;
-  --pc-outline: 0 0 0 2px #050507, 0 0 0 4px #c43d3d, 0 0 0 6px #050507;
+  --pc-outline: 0 0 0 2px #3a3f4c;
+  --dnd5e-sheet-header-height: 84px;
+}
+
+/* One quiet line around panels and brass only on what can be clicked; red marks where you are, not every button. */
+.poke5e-trainer-pixel-sheet--rocket :is(.poke5e-trainer-command-card, .poke5e-trainer-party-card) {
+  border-color: transparent;
+}
+
+.poke5e-trainer-pixel-sheet--rocket .poke5e-trainer-command-card--empty {
+  border-color: #3a3f4c;
+}
+
+.dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet--rocket .sheet-header.poke5e-tps__header {
+  align-items: end;
+  margin: 8px 8px 0;
+}
+
+.dnd5e2.sheet.actor.character.poke5e-trainer-pixel-sheet--rocket :is(.ability-scores, nav.tabs.tabs-right) {
+  margin: 8px 8px 0;
+}
+
+.poke5e-trainer-pixel-sheet--rocket .poke5e-trainer-rocket-rank {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.poke5e-trainer-pixel-sheet--rocket .poke5e-trainer-rocket-rank select {
+  flex: none;
+  width: auto;
+}
+
+.poke5e-trainer-pixel-sheet--rocket :is(.poke5e-tps__effects, .poke5e-trainer-command-section) h3 {
+  padding-inline: 0;
+  background: transparent;
+  color: var(--pc-edge);
+}
+
+.poke5e-trainer-pixel-sheet--rocket .poke5e-trainer-command-section > header {
+  padding: 8px 10px 0;
+}
+
+.poke5e-trainer-pixel-sheet--rocket .poke5e-trainer-command-action--primary {
+  background: var(--pc-paper);
+  color: var(--pc-edge);
+}
+
+.poke5e-trainer-pixel-sheet--rocket .poke5e-trainer-command-action--primary:hover:not(:disabled) {
+  background: var(--pc-red);
+  color: var(--pc-accent-text);
+  filter: none;
+}
+
+.poke5e-trainer-pixel-sheet--rocket .poke5e-trainer-command-header strong {
+  color: var(--pc-ink);
+}
+
+.poke5e-trainer-pixel-sheet--rocket .poke5e-trainer-command-header__counters > span {
+  color: var(--pc-muted);
+}
+
+/* The header above already shows the level; this block only matters for the GM's level-up button. */
+.poke5e-trainer-pixel-sheet--rocket .poke5e-trainer-command-header__identity:not(:has(button)),
+.poke5e-trainer-pixel-sheet--rocket .poke5e-trainer-command-header__badge,
+.poke5e-trainer-pixel-sheet--rocket .poke5e-trainer-command-header__counters > span i {
+  display: none;
+}
+
+/* Counts on one line, the trainer's feature buttons on the next. */
+.poke5e-trainer-pixel-sheet--rocket .poke5e-trainer-command-header__counters::after {
+  content: "";
+  flex-basis: 100%;
+  order: 1;
+}
+
+.poke5e-trainer-pixel-sheet--rocket .poke5e-trainer-command-feature {
+  order: 2;
 }

@@ -1,9 +1,7 @@
 import { runTrainerPathAction } from "./trainer-path-actions.mjs";
 import {
-  assignPokemonToParty,
   getTrainerPartyState,
-  isPokemonActor,
-  removePokemonFromParty
+  isPokemonActor
 } from "./trainer-party-service.mjs";
 
 import {
@@ -51,9 +49,7 @@ const PLAYER_BATTLE_ACTIONS =
     "recall",
     "switch-start",
     "switch-complete",
-    "move-use",
-    "party-to-pc",
-    "pc-to-party"
+    "move-use"
   ]);
 
 const LABELS = {
@@ -910,31 +906,6 @@ async function executePokemonAction({
 
 
     return;
-  }
-
-
-  if (
-    action === "party-to-pc"
-  ) {
-
-    await removePokemonFromParty(
-      trainer,
-      pokemon
-    );
-
-
-    return;
-  }
-
-
-  if (
-    action === "pc-to-party"
-  ) {
-
-    await assignPokemonToParty(
-      trainer,
-      pokemon
-    );
   }
 }
 

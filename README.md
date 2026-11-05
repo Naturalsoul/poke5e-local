@@ -48,9 +48,9 @@ el ratón o el teclado.
 
 ![Parte inferior de la hoja de un Charmeleon, con su Ability, sus debilidades y sus Moves](assets/screenshots/pokemon-moves.png)
 
-**Hoja de entrenador:** equipo, Pokémon en campo, rasgos de su camino y acceso al PC.
+**Hoja de entrenador:** equipo, Pokémon en campo y rasgos de su camino.
 
-![Hoja de entrenador con su party y los botones para desplegar o mandar al PC](assets/screenshots/trainer.png)
+![Hoja de entrenador con su party y los botones para desplegar](assets/screenshots/trainer.png)
 
 **Importador:** busca entre todos los Pokémon y los crea con su nivel, Moves y Ability.
 
