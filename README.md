@@ -35,6 +35,35 @@ parte de las reglas de combate: tipos, STAB, estados, Abilities, rasgos de entre
 
 Los cambios están en el [CHANGELOG](CHANGELOG.md).
 
+## Capturas
+
+**PC Pokémon:** las cajas de cada entrenador, con 8 cajas de 30 casillas. Los Pokémon se mueven entre cajas y party con
+el ratón o el teclado.
+
+![PC Pokémon con una caja abierta, la ficha de un Magnezone y la party del entrenador](assets/screenshots/pc.png)
+
+**Hoja de Pokémon:** tipos, naturaleza, HP, EXP y estados arriba; más abajo, objeto, Ability, debilidades y Moves con sus PP.
+
+![Parte superior de la hoja de un Dragonite shiny](assets/screenshots/pokemon.png)
+
+![Parte inferior de la hoja de un Charmeleon, con su Ability, sus debilidades y sus Moves](assets/screenshots/pokemon-moves.png)
+
+**Hoja de entrenador:** equipo, Pokémon en campo, rasgos de su camino y acceso al PC.
+
+![Hoja de entrenador con su party y los botones para desplegar o mandar al PC](assets/screenshots/trainer.png)
+
+**Importador:** busca entre todos los Pokémon y los crea con su nivel, Moves y Ability.
+
+![Importador filtrando los Pokémon que contienen "char"](assets/screenshots/importer.png)
+
+**Planificador de encuentros:** compón o genera un encuentro y mira su EXP y su dificultad antes de crearlo.
+
+![Planificador de encuentros con varios Pokémon salvajes](assets/screenshots/planner.png)
+
+**Fakemon Studio:** crea y edita especies propias.
+
+![Fakemon Studio editando una especie](assets/screenshots/studio.png)
+
 ## Instalación
 
 1. Copia la carpeta `poke5e-local` en `Data/modules/` de Foundry.

@@ -4,6 +4,11 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.52.1] — 2026-11-05
+
+- **README:** añade capturas de la PC, las hojas de Pokémon y entrenador, el importador, el planificador de encuentros y
+  Fakemon Studio, en `assets/screenshots/`.
+
 ## [0.52.0] — 2026-11-05
 
 - **PC Pokémon, EXP:** la ficha muestra una barra de EXP bajo la de HP, con la EXP total y la que pide el siguiente nivel.
