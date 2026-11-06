@@ -84,7 +84,7 @@
  */
 .poke5e-pokemon-summary--pc,
 .poke5e-pokemon-summary--pc :is(button, select, option, input, h2, h3, label, b, strong, small, span, summary) {
-  font-family: "Pixelify Sans", var(--font-primary, sans-serif);
+  font-family: "Jersey 25", var(--font-primary, sans-serif);
   font-weight: 400;
   font-synthesis: none;
   font-variant-ligatures: none;
@@ -1465,7 +1465,7 @@
   top: 30px;
   left: 12px;
   display: block;
-  font-family: "Pixelify Sans", var(--font-primary, sans-serif);
+  font-family: "Jersey 25", var(--font-primary, sans-serif);
   font-size: 64px;
   line-height: 1;
   color: #c43d3d;

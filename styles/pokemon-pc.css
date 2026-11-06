@@ -8,8 +8,8 @@
  * ============================================================ */
 
 @font-face {
-  font-family: "Pixelify Sans";
-  src: url("../assets/fonts/pixelify-sans/pixelify-sans-latin-400-normal.woff2") format("woff2");
+  font-family: "Jersey 25";
+  src: url("../assets/fonts/jersey-25/jersey-25-latin-400-normal.woff2") format("woff2");
   font-weight: 400;
   font-display: swap;
 }
@@ -36,7 +36,7 @@
  */
 .poke5e-pc .window-content,
 .poke5e-pc .window-content :is(button, select, option, h2, h3, label, b) {
-  font-family: "Pixelify Sans", var(--font-primary, sans-serif);
+  font-family: "Jersey 25", var(--font-primary, sans-serif);
   font-weight: 400;
   font-synthesis: none;
   font-variant-ligatures: none;
