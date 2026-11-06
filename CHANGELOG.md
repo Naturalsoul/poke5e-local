@@ -4,6 +4,11 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.63.2] — 2026-11-05
+
+- **Hoja Pixel de entrenador:** los íconos de estado de los Pokémon ya no se ven gigantes en la tarjeta de combate.
+- **Tipografía de las hojas Pixel, el PC y la Mochila:** Jersey 25 reemplaza a Pixelify Sans, con números más fáciles de leer (el 5 ya no parece una S). Va incluida en el módulo con su licencia OFL.
+
 ## [0.63.1] — 2026-11-05
 
 - **PC y Mochila:** las dos ventanas se adaptan a pantallas pequeñas. Las casillas y el retrato se achican según el alto y el ancho disponibles, así que en una laptop se ve todo sin desplazarse. Por debajo de 800 px de ancho, la tarjeta y el almacenamiento se apilan en una sola columna con desplazamiento. En pantallas grandes se ven igual que antes.
