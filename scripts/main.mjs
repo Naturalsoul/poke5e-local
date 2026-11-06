@@ -28,7 +28,6 @@ import { registerFormAbilityEngine } from "./form-ability-engine.mjs";
 import { registerPokemonAbilityIcons } from "./pokemon-ability-icons.mjs";
 import { registerTrainerCombatReactions } from "./trainer-combat-reactions.mjs";
 import { registerTrainerReactionService } from "./trainer-reaction-service.mjs";
-import { registerPokemonCaptureService } from "./pokemon-capture-service.mjs";
 import { registerTrainerPathActions } from "./trainer-path-actions.mjs";
 import {
   Poke5eImporter,
@@ -449,7 +448,6 @@ Hooks.once(
     registerTrainerFeatureEngine();
     registerTrainerPathEffects();
     registerTrainerPathActions();
-    registerPokemonCaptureService();
     registerTrainerReactionService();
     registerTrainerCombatReactions();
     registerPokemonBondService();

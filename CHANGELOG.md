@@ -4,6 +4,10 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.64.0] — 2026-11-05
+
+- **Poké Balls:** ya no capturan solas. Usar una gasta la ball y publica su tarjeta en el chat, sin pedir objetivo ni tirar nada. La tirada de captura y mover al Pokémon al equipo o al PC quedan en manos de la mesa.
+
 ## [0.63.2] — 2026-11-05
 
 - **Hoja Pixel de entrenador:** los íconos de estado de los Pokémon ya no se ven gigantes en la tarjeta de combate.
