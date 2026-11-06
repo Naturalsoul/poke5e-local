@@ -204,7 +204,7 @@ function moneyMarkup(trainer, editable) {
   const fields = CURRENCIES.map(key => {
     const label = game.i18n.localize(CONFIG.DND5E?.currencies?.[key]?.abbreviation ?? key);
     return `<label class="poke5e-bag__coin">${escapeHtml(label)}
-      <input type="number" min="0" step="1" value="${Number(trainer.system.currency?.[key] ?? 0)}" data-bag-currency="${key}" data-pc-focus="coin-${key}" ${editable ? "" : "disabled"}></label>`;
+      <input type="text" inputmode="numeric" pattern="^[+=\\-]?\\d*" value="${Number(trainer.system.currency?.[key] ?? 0)}" data-bag-currency="${key}" data-pc-focus="coin-${key}" ${editable ? "" : "disabled"}></label>`;
   });
   return `<div class="poke5e-bag__money" role="group" aria-label="${text.money}"><h3 class="poke5e-pc__party-title">${text.money}</h3><div class="poke5e-bag__coins">${fields.join("")}</div></div>`;
 }
@@ -485,12 +485,12 @@ export class TrainerBag extends foundry.applications.api.ApplicationV2 {
     }
     const key = event.target.dataset.bagCurrency;
     if (!key) {return;}
-    const value = Math.floor(Number(event.target.value));
-    if (!Number.isFinite(value) || value < 0) {
-      event.target.value = Number(this.#trainer.system.currency?.[key] ?? 0);
-      return;
-    }
-    void this.#run(() => this.#trainer.update({ [`system.currency.${key}`]: value }));
+    const current = Number(this.#trainer.system.currency?.[key] ?? 0);
+    // Same as the dnd5e sheet: "+5" adds, "-5" subtracts, "5" or "=5" sets. Coins never go below zero.
+    const parsed = globalThis.dnd5e.utils.parseDelta(event.target.value, current);
+    const value = Number.isFinite(parsed) ? Math.max(0, Math.floor(parsed)) : current;
+    event.target.value = value;
+    if (value !== current) {void this.#run(() => this.#trainer.update({ [`system.currency.${key}`]: value }));}
   }
 
   #onDragStart(event) {

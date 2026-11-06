@@ -4,6 +4,10 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.64.1] — 2026-11-06
+
+- **Mochila:** el dinero funciona como en la hoja de D&D 5e. Al escribir `+5` o `-5` y pulsar Enter, se suma o se resta; `5` o `=5` fija el valor. Nunca baja de cero.
+
 ## [0.64.0] — 2026-11-05
 
 - **Poké Balls:** ya no capturan solas. Usar una gasta la ball y publica su tarjeta en el chat, sin pedir objetivo ni tirar nada. La tirada de captura y mover al Pokémon al equipo o al PC quedan en manos de la mesa.
