@@ -213,6 +213,11 @@ import {
 } from "./battle-transition-service.mjs";
 
 import {
+  changeSceneWithTransition,
+  registerSceneTransitionService
+} from "./scene-transition-service.mjs";
+
+import {
   fakemonRepository,
   registerFakemonRepositorySettings
 } from "./fakemon-repository.mjs";
@@ -360,6 +365,7 @@ Hooks.once(
     registerTrainerSheetDesign();
     registerPoke5eItemConsumptionService();
     registerBattleTransitionService();
+    registerSceneTransitionService();
 
     const module =
       game.modules.get(
@@ -380,6 +386,8 @@ Hooks.once(
         fakemonRepository,
         openFakemonStudio,
         playBattleTransition,
+        changeScene:
+          changeSceneWithTransition,
         useBattleHotbarMacro
       };
     }

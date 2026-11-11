@@ -4,6 +4,14 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.65.1] — 2026-11-11
+
+- **Transiciones de escena:** "Ver escena" y "Traer jugadores a la escena" también muestran la Pokéball, no solo activar. Son más lentas (1,4 s para cerrarse y otro tanto para abrirse, ajustable en "Poke5e - Duración de la transición de escena") y ya no se traban mientras carga el mapa. Ya no tapan el chat ni el resto de la interfaz: las Pokéballs cubren todo el mapa, también detrás de la barra lateral, y la interfaz queda por encima. Al activar una escena con transición "Aleatoria", todos ven la misma.
+
+## [0.65.0] — 2026-11-11
+
+- **Transiciones de escena:** al activar una escena, todos ven una Pokéball que tapa la pantalla mientras carga el mapa nuevo y se abre cuando está listo. Hay tres: la Pokéball que crece, la lluvia de Pokéballs y la Pokéball que se cierra, o una al azar. Se elige una por defecto en los ajustes del módulo y cada escena puede cambiarla en su configuración ("Transición Pokéball"). "Ver escena" no la muestra. Para macros o Regions: `game.modules.get("poke5e-local").api.changeScene("Ciudad Carmín", "close")`. Quien tenga activado "reducir movimiento" en su sistema ve un fundido a negro.
+
 ## [0.64.1] — 2026-11-06
 
 - **Mochila:** el dinero funciona como en la hoja de D&D 5e. Al escribir `+5` o `-5` y pulsar Enter, se suma o se resta; `5` o `=5` fija el valor. Nunca baja de cero.
