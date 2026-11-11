@@ -4,6 +4,10 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.66.0] — 2026-11-11
+
+- **Transiciones de escena:** cada transición elige al azar el tipo de ball (Poké Ball, Super Ball, Ultra Ball, Master Ball u Honor Ball), y todos los jugadores ven la misma. Hay tres transiciones nuevas al estilo de GBA: franjas, espiral y mosaico, que terminan con la ball girando en el centro de la pantalla. También está la R del Team Rocket, que gira y crece sobre un fondo negro; "Aleatoria" no la elige, hay que escogerla a propósito. El selector de la escena ahora se llama "Transición de escena".
+
 ## [0.65.1] — 2026-11-11
 
 - **Transiciones de escena:** "Ver escena" y "Traer jugadores a la escena" también muestran la Pokéball, no solo activar. Son más lentas (1,4 s para cerrarse y otro tanto para abrirse, ajustable en "Poke5e - Duración de la transición de escena") y ya no se traban mientras carga el mapa. Ya no tapan el chat ni el resto de la interfaz: las Pokéballs cubren todo el mapa, también detrás de la barra lateral, y la interfaz queda por encima. Al activar una escena con transición "Aleatoria", todos ven la misma.
