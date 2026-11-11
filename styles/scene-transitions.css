@@ -1,0 +1,8 @@
+/* Above the canvas and token HUD (z 0-1), below Foundry's UI (z 30+), so chat and controls stay usable. */
+.poke5e-scene-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
