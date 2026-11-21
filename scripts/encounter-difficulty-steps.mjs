@@ -59,7 +59,7 @@ export const TRAINER_STEPS = Object.freeze([
     label: "+1 Pokémon en campo",
     hint: "Un Entrenador saca un Pokémon más a la vez (1+N).",
     apply: state => {
-      const trainer = state.trainers.find(each => (each.onField ?? 1) < rowsOf(state, each).length);
+      const trainer = state.trainers.find(each => (each.onField ?? 1) < Math.min(6, rowsOf(state, each).length));
       if (!trainer) {return null;}
       trainer.onField = (trainer.onField ?? 1) + 1;
       return state;

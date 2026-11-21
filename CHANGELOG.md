@@ -4,6 +4,12 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.71.1] — 2026-11-21
+
+- **Corrección:** "Regenerar equipo" en un Entrenador con más de 6 Pokémon (un boss) lo dejaba en 6. Ahora mantiene su tamaño.
+- **Corrección:** el paso "+1 en campo" de la escalera de dificultad ya no pasa de 6 Pokémon en campo por Entrenador.
+- La ayuda de "Acciones" dice que cada acción de más pesa algo más que otro Pokémon en campo (1.25).
+
 ## [0.71.0] — 2026-11-21
 
 - **Nuevo rango: Entrenador boss.** Todo el grupo contra un solo Entrenador, como un jefe de D&D: de 6 a 12 Pokémon, hasta 6 en campo a la vez, cada uno en su propia iniciativa y con 1 a 3 acciones por turno. Apunta a Mortal: en los combates simulados el grupo gana la mitad de las veces y pierde un 85 % de sus PG.
@@ -16,8 +22,8 @@ solo se corrige algo.
 - **Dificultad calibrada con combates simulados:** se simularon miles de combates de los Pokémon del grupo contra los rivales del planificador, con la economía de acción de poke5e, estados, bayas y cambios de Pokémon. Con eso:
   - Los Moves de equipo pesan ×1.45 en la dificultad en lugar de ×1.1: son lo que más sube un combate.
   - Cada rival en campo de más sobre los del grupo pesa más que antes (exponente 0.7 por encima de la paridad).
-  - Nuevo nivel **Extrema** desde 3: el grupo gana menos de la mitad de las veces. Pone techo a Mortal; ningún rango lo busca y no aparece entre las dificultades de un encuentro salvaje.
-  - Con las semillas nuevas, cada rango cae donde dice: Ruta pierde un 11 % de PG, Entrenador Guay un 20 %, Líder de Gimnasio la mitad (gana 9 de 10), Alto Mando un 60 % y Campeón un 82 % (gana la mitad).
+  - Nuevo nivel **Extrema** desde 3: el grupo gana menos de la mitad de las veces. Pone techo a Mortal, también en los encuentros salvajes: un Mortal ya no pasa de 3. Ningún rango lo busca y no aparece entre las dificultades de un encuentro salvaje.
+  - En los combates simulados, cada rango cae donde dice: Ruta pierde un 9 % de PG, Entrenador Guay un 22 %, Líder de Gimnasio y Alto Mando cerca del 60 % (ganan más de 8 de cada 10) y Campeón un 84 % (gana menos de la mitad).
 - **Tope de Pokémon en campo por rango:** en automático, todos los Entrenadores de un Líder de Gimnasio o del Alto Mando sacan a la vez como mucho tantos Pokémon como el grupo. El Campeón puede sacar 2 más. Si eliges el número a mano, se respeta.
 - **Control:** su Move clave ahora inflige un estado de verdad (paralizar, dormir, quemar, envenenar, congelar o confundir). Ya no sale Snatch ni un Move que solo asusta.
 

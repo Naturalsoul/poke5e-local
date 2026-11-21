@@ -125,6 +125,17 @@ test("a boss is one trainer with 6 to 12 Pokémon, up to 6 out, 1 to 3 actions e
   assert.ok(weigh(2) > weigh(1));
 });
 
+test("a boss keeps a team over 6: asked for 12 it gets 12, and a reroll on auto keeps its size", async () => {
+  const { generateRandomTrainerEncounter, rerollRandomTrainerTeam } = await import("../scripts/encounter-trainer-randomizer.mjs");
+  const many = Array.from({ length: 14 }, (_, index) => ({ id: `species-${index}`, name: `species-${index}`, types: ["normal"], minLevel: 1, sr: 1 }));
+  const [boss] = generateRandomTrainerEncounter({ candidates: many, trainerCount: 1, pokemonPerTrainer: "12", minLevel: 8, maxLevel: 9,
+    archetypeId: "generic" });
+  assert.equal(boss.pokemon.length, 12);
+  const rerolled = rerollRandomTrainerTeam({ candidates: many, currentTeamSize: 10, pokemonPerTrainer: "auto", minLevel: 8, maxLevel: 9,
+    archetypeId: "generic" });
+  assert.equal(rerolled.pokemon.length, 10);
+});
+
 test("generation options only send coverage types when that boost is on", () => {
   const state = { boostCoverage: false, boostStats: "2", partyWeakTo: ["fire"], itemPolicies: {}, type: "wild" };
   assert.deepEqual(buildGenerationOptions(state).boosts.coverageTypes, []);

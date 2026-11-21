@@ -472,7 +472,7 @@ function getRequiredMinimumTeamSizeForArchetypes(
     return clampInteger(
       requested,
       1,
-      6,
+      MAX_TRAINER_TEAM,
       3
     );
   }
@@ -736,23 +736,27 @@ function resolveRerollTargetTeamSize({
     );
 
 
-  if (
-    lockedCount >
-      archetypeMaximum
-  ) {
-    throw new Error(
-      `Hay ${lockedCount} Pokémon bloqueados, pero el arquetipo admite un máximo automático de ${archetypeMaximum}.`
-    );
-  }
-
-
   const normalizedCurrentSize =
     clampInteger(
       currentTeamSize,
       0,
-      6,
+      MAX_TRAINER_TEAM,
       0
     );
+
+
+  // A team bigger than the archetype's (a boss's) keeps its size on a reroll.
+  const autoMaximum = Math.max(archetypeMaximum, normalizedCurrentSize);
+
+
+  if (
+    lockedCount >
+      autoMaximum
+  ) {
+    throw new Error(
+      `Hay ${lockedCount} Pokémon bloqueados, pero el arquetipo admite un máximo automático de ${autoMaximum}.`
+    );
+  }
 
 
   if (
@@ -761,7 +765,7 @@ function resolveRerollTargetTeamSize({
   ) {
     const target =
       Math.min(
-        archetypeMaximum,
+        autoMaximum,
 
         Math.max(
           minimum,

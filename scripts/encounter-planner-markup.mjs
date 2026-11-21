@@ -1600,7 +1600,7 @@ export function renderTrainerControls({
                         </select>
                       </label>
 
-                      <label title="Acciones de cada Pokémon de este Entrenador en su turno, como un jefe de D&D. Cada acción de más pesa como otro Pokémon en campo.">
+                      <label title="Acciones de cada Pokémon de este Entrenador en su turno, como un jefe de D&D. Cada acción de más pesa algo más que otro Pokémon en campo.">
                         Acciones
 
                         <select
