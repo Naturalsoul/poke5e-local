@@ -1,5 +1,6 @@
 import { clampInteger } from "./numbers.mjs";
-import { DIFFICULTIES, MAX_TRAINER_TEAM, encounterDifficulty, fieldedActions, generateForDifficulty } from "./encounter-difficulty.mjs";
+import { DIFFICULTIES, MAX_TRAINER_TEAM, bossWinChance, bossWinRange, encounterDifficulty, fieldedActions, generateForDifficulty }
+  from "./encounter-difficulty.mjs";
 import { generateRandomEncounterRows } from "./encounter-randomizer.mjs";
 import { generateRandomTrainerEncounter, rerollRandomTrainerTeam } from "./encounter-trainer-randomizer.mjs";
 import { getTrainerArchetype, getTrainerArchetypeLabel } from "./encounter-trainer-archetypes.mjs";
@@ -25,6 +26,16 @@ export function plannerBoosts(state) {
 
 export function trainerCandidatePool(state, maxLevel) {
   return { region: state.trainerRandomRegion, maxLevel, minSr: null, maxSr: getTrainerLevelRule(maxLevel).maxSr };
+}
+
+// What the roll aims at: a boss can aim at its chance to win instead of the rank's tier.
+function rankTarget(rank, state) {
+  const chance = rank.id === "boss" ? Number(state.bossWinChance) : NaN;
+  if (!Number.isFinite(chance)) {
+    return { target: rank.target, missed: best => ({ wanted: DIFFICULTIES.find(entry => entry.id === rank.target)?.label, reached: best.tier.label }) };
+  }
+  return { target: bossWinRange(chance),
+    missed: best => ({ wanted: `que el boss gane un ${chance} %`, reached: `un ${Math.round(bossWinChance(best.ratio) * 100)} %` }) };
 }
 
 /**
@@ -94,9 +105,10 @@ export function rollTrainerEncounter({ state, party, rank, levels, boosts, candi
     ? Array.from({ length: rank.trainers[1] - rank.trainers[0] + 1 }, (_, index) => rank.trainers[0] + index)
       .filter((count, index) => !fieldCap || count <= fieldCap || index === 0)
     : [chosen(state.trainerRandomCount, rank.trainers)];
+  const { target, missed } = rankTarget(rank, state);
   let best = null;
   for (const trainerCount of trainerCounts) {
-    const attempt = generateForDifficulty(() => roll(trainerCount), measure, rank.target, 100);
+    const attempt = generateForDifficulty(() => roll(trainerCount), measure, target, 100);
     if (!best || attempt.distance < best.distance) {
       best = attempt;
     }
@@ -108,9 +120,7 @@ export function rollTrainerEncounter({ state, party, rank, levels, boosts, candi
   if (!best.result.length) {
     throw failure ?? new Error("No hay especies compatibles para estos Entrenadores.");
   }
-  const missedTarget = best.distance > 0
-    ? { wanted: DIFFICULTIES.find(entry => entry.id === rank.target)?.label, reached: best.tier.label }
-    : null;
+  const missedTarget = best.distance > 0 ? missed(best) : null;
   return { generatedTrainers: best.result, missedTarget };
 }
 

@@ -142,6 +142,17 @@ const ACTION_WEIGHT = 1.25;
 export const fieldedActions = (trainers, countOf) => Math.max(1, trainers.reduce((total, trainer) =>
   total + Math.min(Number(trainer.onField) || 1, countOf(trainer)) * (1 + ACTION_WEIGHT * ((Number(trainer.actions) || 1) - 1)), 0));
 
+/*
+ * A boss's chance to win by the battle's ratio, fitted on simulated fights of the players' own Pokémon (switching costs
+ * the turn, a replacement after a KO the reaction): logistic in ln(ratio).
+ */
+const BOSS_CURVE = Object.freeze({ a: -7.36, b: 8.03 });
+export const BOSS_WIN_CHANCES = Object.freeze([60, 70, 80, 90]);
+export const bossWinChance = ratio => 1 / (1 + Math.exp(-(BOSS_CURVE.a + BOSS_CURVE.b * Math.log(Math.max(0.01, ratio)))));
+const ratioForBossWin = chance => Math.exp((Math.log(chance / (1 - chance)) - BOSS_CURVE.a) / BOSS_CURVE.b);
+// The ratios where the boss wins within 5 points of the chance asked (in %).
+export const bossWinRange = percent => ({ from: ratioForBossWin(percent / 100 - 0.05), to: ratioForBossWin(Math.min(0.99, percent / 100 + 0.05)) });
+
 export const getTrainerRank = id => TRAINER_RANKS.find(rank => rank.id === id) ?? TRAINER_RANKS[0];
 
 // A rank's levels for a party: { min, max, ace: [min, max] or null }, within 1 and 20.
@@ -165,13 +176,16 @@ export function distanceToTier(ratio, tierId) {
  * @param {() => any} generate
  * @param {(result: any) => { tier: object, ratio: number }} measure
  */
+// difficulty: a tier id, or a ratio range { from, to }.
 export function generateForDifficulty(generate, measure, difficulty, attempts = 300) {
   let best = null;
   for (let attempt = 0; attempt < attempts && best?.distance !== 0; attempt++) {
     const result = generate();
     const { tier, ratio } = measure(result);
-    const distance = distanceToTier(ratio, difficulty);
-    if (!best || distance < best.distance) {best = { result, tier, distance };}
+    const distance = typeof difficulty === "object"
+      ? Math.max(0, difficulty.from - ratio, ratio - difficulty.to)
+      : distanceToTier(ratio, difficulty);
+    if (!best || distance < best.distance) {best = { result, tier, ratio, distance };}
   }
   return best;
 }

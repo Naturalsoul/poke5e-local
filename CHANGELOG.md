@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.72.0] — 2026-11-21
+
+- **Entrenador boss: "Gana el boss".** Con el rango Entrenador boss aparece un selector con la probabilidad de que el boss gane: 50 % (Mortal, como hasta ahora), 60, 70, 80 o 90 %. "Generar Entrenadores" busca el equipo, los Pokémon en campo y las acciones que dan esa probabilidad contra el grupo detectado.
+- La probabilidad sale de 720 configuraciones de boss simuladas contra los Pokémon del grupo. Cambiar de Pokémon cuesta el turno y, si el Pokémon cae, el reemplazo entra en el momento gastando su reacción. Comprobado de vuelta: pedir 60 % da un boss que gana el 59 %, 70 % el 65 % y 90 % el 90 %.
+- "Ajustar paso a paso" muestra "Gana el boss ≈ X %" junto a la dificultad actual de un boss.
+- Si con el grupo no se llega a la probabilidad pedida, el aviso dice cuánto gana el boss que salió.
+
 ## [0.71.1] — 2026-11-21
 
 - **Corrección:** "Regenerar equipo" en un Entrenador con más de 6 Pokémon (un boss) lo dejaba en 6. Ahora mantiene su tamaño.

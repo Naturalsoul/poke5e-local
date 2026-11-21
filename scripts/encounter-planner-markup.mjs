@@ -7,7 +7,8 @@ import {
 import {
   DIFFICULTIES,
   MAX_TRAINER_TEAM,
-  TRAINER_RANKS
+  TRAINER_RANKS,
+  BOSS_WIN_CHANCES
 } from "./encounter-difficulty.mjs";
 import {
   getTrainerArchetype,
@@ -558,7 +559,8 @@ function renderDifficultyControls({
   party,
   trainerBattle,
   boosts = {},
-  weakTo = []
+  weakTo = [],
+  bossWinChance = "auto"
 }) {
   // Trainer battles pick the rival's rank (and show the difficulty it aims at); wild ones a difficulty.
   const targetLabel = entry =>
@@ -629,6 +631,8 @@ function renderDifficultyControls({
         </select>
       </label>
 
+      ${trainerBattle && difficulty === "boss" ? renderBossWinChance(bossWinChance) : ""}
+
       ${number("party-size", "Jugadores", party.size, 12)}
       ${number("party-level", "Nivel del grupo", party.level, 20)}
       ${trainerBattle ? number("party-team", "Pokémon / jugador", party.team, 6) : ""}
@@ -651,6 +655,22 @@ function renderDifficultyControls({
       ${trainerBattle ? renderTrainerExtras({ boosts, weakTo }) : ""}
 
     </div>`;
+}
+
+// The boss aims at its chance to win, read from simulated fights against the group.
+function renderBossWinChance(chance) {
+  const option = (value, label) => `<option value="${value}"${String(chance) === String(value) ? " selected" : ""}>${label}</option>`;
+  return `
+      <label
+        class="poke5e-encounter-planner__difficulty-select"
+        title="Probabilidad aproximada de que el boss gane, según combates simulados contra el grupo. 50 % es Mortal; cuanto más alta, más fuerte sale el boss."
+      >
+        <span>Gana el boss</span>
+        <select data-role="boss-win-chance">
+          ${option("auto", "50 %")}
+          ${BOSS_WIN_CHANCES.map(each => option(each, `${each} %`)).join("")}
+        </select>
+      </label>`;
 }
 
 // The trainer strip's second row: a special encounter and the rivals' extras.
@@ -774,6 +794,7 @@ export function renderStepPanel({
         <span class="poke5e-encounter-planner__steps-current" data-tier="${current.tier.id}">
           <small>Ahora</small>
           <strong>${escapeHtml(current.tier.label)}</strong>
+          ${current.bossWin === undefined ? "" : `<small title="Según combates simulados contra el grupo.">Gana el boss ≈ ${current.bossWin} %</small>`}
         </span>
 
         <button
@@ -826,6 +847,7 @@ export function renderTrainerRandomControls({
   party,
   boosts,
   weakTo,
+  bossWinChance,
   visible
 }) {
   const regionOptions =
@@ -989,7 +1011,8 @@ export function renderTrainerRandomControls({
         trainerBattle:
           true,
         boosts,
-        weakTo
+        weakTo,
+        bossWinChance
       })}
 
       <div
@@ -3561,6 +3584,10 @@ export function renderPlannerContent(
               onField:
                 state
                   .trainerRandomOnField,
+
+              bossWinChance:
+                state
+                  .bossWinChance,
 
               pokemonCount:
                 state

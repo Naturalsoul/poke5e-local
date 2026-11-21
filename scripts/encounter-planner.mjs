@@ -27,6 +27,7 @@ import {
 } from "./encounter-xp-service.mjs";
 import { EncounterRandomCatalog } from "./encounter-random-catalog.mjs";
 import {
+  bossWinChance,
   encounterDifficulty,
   fieldedActions,
   getTrainerRank,
@@ -274,6 +275,9 @@ export class PokemonEncounterPlanner
 
       trainerRandomRank:
         "route",
+
+      bossWinChance:
+        "auto",
 
       trainerRandomArchetype:
         "generic",
@@ -1353,6 +1357,10 @@ export class PokemonEncounterPlanner
   }
 
   #bindTrainerRandomListeners(root) {
+    root.querySelector('[data-role="boss-win-chance"]')?.addEventListener("change", event => {
+      this._encounterState.bossWinChance = event.currentTarget.value;
+    });
+
     // A rank brings its extras; they can still be changed by hand.
     root.querySelector(
       '[data-role="trainer-random-rank"]'
@@ -4551,8 +4559,9 @@ export class PokemonEncounterPlanner
         measure
       );
 
+    const boss = this._encounterState.trainerRandomRank === "boss" && state.trainers.length === 1;
     return renderStepPanel({
-      current,
+      current: boss ? { ...current, bossWin: Math.round(bossWinChance(current.ratio) * 100) } : current,
       previews:
         this._stepPreviews,
       climb:

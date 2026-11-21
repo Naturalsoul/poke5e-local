@@ -125,6 +125,28 @@ test("a boss is one trainer with 6 to 12 Pokémon, up to 6 out, 1 to 3 actions e
   assert.ok(weigh(2) > weigh(1));
 });
 
+test("a boss aims at its chance to win: the curve inverts, and 90 % rolls a stronger boss than 60 %", async () => {
+  const { bossWinChance, bossWinRange, encounterDifficulty, fieldedActions } = await import("../scripts/encounter-difficulty.mjs");
+  const range = bossWinRange(70);
+  assert.ok(Math.abs(bossWinChance(range.from) - 0.65) < 1e-9 && Math.abs(bossWinChance(range.to) - 0.75) < 1e-9);
+  assert.ok(bossWinChance(1) < 0.01 && bossWinChance(5) > 0.99);
+  const rank = getTrainerRank("boss");
+  const party = { size: 4, level: 8, team: 4, pokemon: [], strongest: null, participants: 4 };
+  const levels = rankLevels(party.level, rank);
+  const roll = chance => {
+    const state = { trainerRandomCount: "auto", trainerRandomPokemonCount: "auto", trainerRandomOnField: "auto",
+      trainerRandomArchetype: "generic", bossWinChance: chance };
+    const { generatedTrainers: [boss], missedTarget } = rollTrainerEncounter({ state, party, rank, levels, boosts: rank.extras, candidates,
+      pokemonTypes: () => ["normal"] });
+    const rows = boss.pokemon.map(pokemon => ({ ...pokemon, types: ["normal"] }));
+    const { ratio } = encounterDifficulty(party, rows, { trainerBattle: true, onField: fieldedActions([boss], () => rows.length), boosts: rank.extras });
+    const { from, to } = bossWinRange(Number(chance));
+    assert.ok((ratio >= from - 1e-9 && ratio <= to + 1e-9) || missedTarget?.wanted === `que el boss gane un ${chance} %`, `${chance}: ${ratio}`);
+    return ratio;
+  };
+  assert.ok(roll("90") > roll("60"));
+});
+
 test("a boss keeps a team over 6: asked for 12 it gets 12, and a reroll on auto keeps its size", async () => {
   const { generateRandomTrainerEncounter, rerollRandomTrainerTeam } = await import("../scripts/encounter-trainer-randomizer.mjs");
   const many = Array.from({ length: 14 }, (_, index) => ({ id: `species-${index}`, name: `species-${index}`, types: ["normal"], minLevel: 1, sr: 1 }));
