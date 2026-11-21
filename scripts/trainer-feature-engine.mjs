@@ -565,7 +565,8 @@ export function hasPokeAssistAdvantage(pokemon, moveItem) {
 function isWildTarget() {
   const targets = [...(game.user?.targets ?? [])];
   const actor = targets.length === 1 ? targets[0].actor : null;
-  return isPokemonActor(actor) && !actor.getFlag(MODULE_ID, "trainerOwnerUuid");
+  // A rival trainer's Pokémon from the Encounter Planner has no owner either, but it is not wild.
+  return isPokemonActor(actor) && !actor.getFlag(MODULE_ID, "trainerOwnerUuid") && actor.getFlag(MODULE_ID, "encounter")?.type !== "trainer";
 }
 
 function trainerIntelligenceModifier(

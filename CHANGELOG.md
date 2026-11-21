@@ -4,6 +4,18 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.75.0] — 2026-11-21
+
+- **Los Pokémon de los Entrenadores rivales evolucionan según su nivel.** Un Totodile de nivel 15 sale como Feraligatr. Solo cuentan las evoluciones por nivel (y por género), y solo hacia especies que la tirada podía elegir, así que la región, el nivel y el tipo único de un gimnasio se mantienen. "Regenerar equipo" también evoluciona; los Pokémon bloqueados no cambian.
+- **La dificultad cuenta la especie del rival:** un Pokémon de SR más alto que el promedio del grupo pesa más que uno del mismo nivel con SR más bajo.
+- **El selector de victoria del boss se recalibró con los rasgos y las mochilas de los entrenadores del grupo.** Las simulaciones siguen la regla de acción del entrenador: usar un objeto en su Pokémon o en el de un aliado gasta la acción que comanda a su Pokémon, y las bayas equipadas actúan como reacción. Comprobado de vuelta con bosses nuevos: pedir 50, 60, 70, 80 y 90 % dio un boss que gana el 53, 61, 65, 76 y 91 % en promedio. Cada encuentro por separado varía unos 20 puntos alrededor de ese promedio.
+- **Corrección:** Partners (Ranger nivel 9) sumaba la SAB del entrenador a los ataques contra los Pokémon de un Entrenador rival generado por el Encounter Planner, porque no tienen dueño jugador. Ahora solo se suma contra Pokémon salvajes.
+
+## [0.74.1] — 2026-11-21
+
+- **El selector de victoria del boss se recalibró con jugadores que juegan lo mejor posible:** eligen objetivo por amenaza, usan Moves de estado, cambian por emparejamiento y abren con el mejor Pokémon. Con la curva anterior un boss pedido al 60 o 70 % ganaba entre un 35 y un 45 % contra un grupo así; ahora queda a unos 5 puntos del pedido en promedio. Los rivales del boss salen algo más fuertes con el mismo porcentaje.
+- **La opción 50 % del boss apunta de verdad al 50 %:** antes seguía la dificultad del rango y, contra un grupo que juega bien, el boss ganaba un 30 %.
+
 ## [0.74.0] — 2026-11-21
 
 - **Los extras del rival se guardan con el encuentro:** características +N, cobertura súper eficaz, objetos garantizados, Moves de equipo y Moves de MT. Al reabrir un encuentro de Entrenadores vuelven marcados y la dificultad los cuenta; antes un boss Mortal reabierto marcaba Media. Los encuentros guardados antes de esta versión vuelven sin cambios en los extras.

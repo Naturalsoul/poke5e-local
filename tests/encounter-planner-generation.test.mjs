@@ -129,7 +129,7 @@ test("a boss aims at its chance to win: the curve inverts, and 90 % rolls a stro
   const { bossWinChance, bossWinRange, encounterDifficulty, fieldedActions } = await import("../scripts/encounter-difficulty.mjs");
   const range = bossWinRange(70);
   assert.ok(Math.abs(bossWinChance(range.from) - 0.65) < 1e-9 && Math.abs(bossWinChance(range.to) - 0.75) < 1e-9);
-  assert.ok(bossWinChance(1) < 0.01 && bossWinChance(5) > 0.99);
+  assert.ok(bossWinChance(1) < 0.01 && bossWinChance(6) > 0.99);
   const rank = getTrainerRank("boss");
   const party = { size: 4, level: 8, team: 4, pokemon: [], strongest: null, participants: 4 };
   const levels = rankLevels(party.level, rank);

@@ -14,7 +14,8 @@ import { getTrainerOwnedPokemon, getTrainerPartyState } from "./trainer-party-se
  * - a trainer battle is every Pokémon of every team (each one must be beaten), stronger than wild ones (poke5e
  *   gives them a feat, a specialization and better stats), times (rival Pokémon on the field ÷ the players' on the
  *   field)^0.6 up to even and ^0.7 past it (see fieldWeight);
- * - in trainer battles, each rival Pokémon also weighs by its types against the players' team (typeMatchup);
+ * - in trainer battles, each rival Pokémon also weighs by its types against the players' team (typeMatchup) and by its
+ *   species' SR against theirs (speciesWeight): an evolved rival hits harder than its pre-evolution at the same level;
  * - an even wild fight is Medium, an even trainer battle Hard; Easy, Hard and Deadly follow D&D's thresholds (½, 1½
  *   and 2.2 times Medium), and Extreme (3) caps Deadly.
  * Checked against simulated fights with the players' own Pokémon (poke5e's action economy, statuses, berries): at 1
@@ -66,6 +67,17 @@ const crowd = (foes, partySize) => 1 + 0.5 * Math.max(0, foes / Math.max(1, part
 export const fieldWeight = (onField, size) => { const share = onField / size; return share ** (share > 1 ? 0.7 : 0.6); };
 const quantity = row => Math.max(0, Number(row.quantity ?? 1) || 0);
 
+// A rival's species SR against the players' mean, ^0.35 between ×0.5 and ×2 (fitted on simulated fights); 1 when unknown.
+const SPECIES_EXPONENT = 0.35;
+export function speciesWeight(sr, partySr) {
+  const rival = Number(sr); const players = Number(partySr);
+  return rival > 0 && players > 0 ? Math.min(2, Math.max(0.5, (rival / players) ** SPECIES_EXPONENT)) : 1;
+}
+const meanSr = pokemon => {
+  const known = (pokemon ?? []).map(each => Number(each.sr)).filter(sr => sr > 0);
+  return known.length ? known.reduce((sum, sr) => sum + sr, 0) / known.length : 0;
+};
+
 /*
  * How a rival Pokémon fares by type against the players' team: its types (STAB) against each of their Pokémon, and
  * their damaging Moves' types (or else their own) against it. Each side's best multiplier, averaged over the team, as
@@ -85,8 +97,8 @@ export function typeMatchup(rivalTypes = [], partyPokemon = []) {
 /**
  * @param {{ size: number, level: number, team?: number }} party  players (one Pokémon each on the field), their
  *   level, Pokémon per player
- *   and, from their trainers, their Pokémon (pokemon: [{ types, moveTypes }])
- * @param {{ level: number, quantity?: number, types?: string[] }[]} rows
+ *   and, from their trainers, their Pokémon (pokemon: [{ types, moveTypes, sr }])
+ * @param {{ level: number, quantity?: number, types?: string[], sr?: number }[]} rows
  * @param {{ onField?: number, boosts?: object }} [battle]  with the rival Pokémon on the field at once: a trainer
  *   battle, and their extras (see boostMultiplier)
  */
@@ -95,8 +107,10 @@ export function encounterDifficulty(party, rows, { onField = 0, boosts } = {}) {
   const trainerBattle = onField > 0;
   const partyPower = size * (trainerBattle ? clamp(party?.team, 1, 6) : 1) * pokemonPower(party?.level);
   const weight = rows.reduce((total, row) => total + pokemonPower(row.level) * quantity(row), 0);
+  const partySr = meanSr(party?.pokemon);
   const matched = trainerBattle
-    ? rows.reduce((total, row) => total + pokemonPower(row.level) * quantity(row) * typeMatchup(row.types, party?.pokemon), 0)
+    ? rows.reduce((total, row) => total + pokemonPower(row.level) * quantity(row) * typeMatchup(row.types, party?.pokemon) *
+      speciesWeight(row.sr, partySr), 0)
     : weight;
   const power = Math.round(trainerBattle
     ? matched * TRAINER_POKEMON_BONUS * boostMultiplier(boosts) * fieldWeight(onField, size) * EVEN_TRAINER_BATTLE
@@ -144,9 +158,11 @@ export const fieldedActions = (trainers, countOf) => Math.max(1, trainers.reduce
 
 /*
  * A boss's chance to win by the battle's ratio, fitted on simulated fights of the players' own Pokémon (switching costs
- * the turn, a replacement after a KO the reaction): logistic in ln(ratio).
+ * the turn, a replacement after a KO the reaction) played at their best (targets by threat, status Moves, matchup
+ * switches and leads), with their trainers' features and bags (an item takes the trainer's action, so its Pokémon's
+ * turn) and rivals evolved to their level: logistic in ln(ratio).
  */
-const BOSS_CURVE = Object.freeze({ a: -7.36, b: 8.03 });
+const BOSS_CURVE = Object.freeze({ a: -6.95, b: 6.97 });
 export const BOSS_WIN_CHANCES = Object.freeze([60, 70, 80, 90]);
 export const bossWinChance = ratio => 1 / (1 + Math.exp(-(BOSS_CURVE.a + BOSS_CURVE.b * Math.log(Math.max(0.01, ratio)))));
 const ratioForBossWin = chance => Math.exp((Math.log(chance / (1 - chance)) - BOSS_CURVE.a) / BOSS_CURVE.b);
@@ -241,7 +257,7 @@ const byFrequency = values => {
 // hit the most of them first.
 export function detectEncounterParty() {
   const players = playerTeams().map(({ pokemon }) => {
-    const matchups = pokemon.map(each => ({ types: typesOf(each), moveTypes: damagingMoveTypes(each) }));
+    const matchups = pokemon.map(each => ({ types: typesOf(each), moveTypes: damagingMoveTypes(each), sr: Number(each.getFlag?.(MODULE_ID, "sr")) || 0 }));
     const weakTo = matchups.flatMap(each => calculatePokemonDefenses(each.types).vulnerabilities);
     return { level: Math.max(0, ...pokemon.map(pokemonLevel)), team: Math.min(6, pokemon.length), weakTo, matchups,
       strongest: pokemon.reduce((best, each) => (pokemonLevel(each) > pokemonLevel(best ?? {}) ? each : best), null) };

@@ -3842,6 +3842,11 @@ export class PokemonEncounterPlanner
     ) ?? [];
   }
 
+  #pokemonSr(pokemonId) {
+    this._srById ??= new Map(this.database.pokemon.map(pokemon => [String(pokemon.id), Number(pokemon.sr) || 0]));
+    return this._srById.get(String(pokemonId)) ?? 0;
+  }
+
   #party() {
     if (!this._encounterState.partySize) {
       const party =
@@ -3921,7 +3926,8 @@ export class PokemonEncounterPlanner
                 types:
                   this.#pokemonTypes(
                     row.pokemonId
-                  )
+                  ),
+                sr: this.#pokemonSr(row.pokemonId)
               })
             )
           : rows,
@@ -6298,7 +6304,8 @@ export class PokemonEncounterPlanner
         candidates: this.randomCatalog.trainerCandidates(this.#trainerPool(maxLevel)),
         minLevel,
         maxLevel,
-        nextRowId: () => this.#nextRowId()
+        nextRowId: () => this.#nextRowId(),
+        evolutions: this.database.evolutions ?? []
       });
 
       if (!generatedRows.length) {
@@ -6345,7 +6352,9 @@ export class PokemonEncounterPlanner
         levels,
         boosts: this.#boosts(),
         candidates: this.randomCatalog.trainerCandidates(this.#trainerPool(levels.max)),
-        pokemonTypes: pokemonId => this.#pokemonTypes(pokemonId)
+        pokemonTypes: pokemonId => this.#pokemonTypes(pokemonId),
+        pokemonSr: pokemonId => this.#pokemonSr(pokemonId),
+        evolutions: this.database.evolutions ?? []
       });
 
       if (missedTarget) {
