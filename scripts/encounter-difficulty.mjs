@@ -144,9 +144,10 @@ export const fieldedActions = (trainers, countOf) => Math.max(1, trainers.reduce
 
 /*
  * A boss's chance to win by the battle's ratio, fitted on simulated fights of the players' own Pokémon (switching costs
- * the turn, a replacement after a KO the reaction): logistic in ln(ratio).
+ * the turn, a replacement after a KO the reaction) played at their best (targets by threat, status Moves, matchup
+ * switches and leads): logistic in ln(ratio).
  */
-const BOSS_CURVE = Object.freeze({ a: -7.36, b: 8.03 });
+const BOSS_CURVE = Object.freeze({ a: -7.64, b: 7.18 });
 export const BOSS_WIN_CHANCES = Object.freeze([60, 70, 80, 90]);
 export const bossWinChance = ratio => 1 / (1 + Math.exp(-(BOSS_CURVE.a + BOSS_CURVE.b * Math.log(Math.max(0.01, ratio)))));
 const ratioForBossWin = chance => Math.exp((Math.log(chance / (1 - chance)) - BOSS_CURVE.a) / BOSS_CURVE.b);

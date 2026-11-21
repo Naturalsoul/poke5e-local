@@ -30,7 +30,9 @@ export function trainerCandidatePool(state, maxLevel) {
 
 // What the roll aims at: a boss can aim at its chance to win instead of the rank's tier.
 function rankTarget(rank, state) {
-  const chance = rank.id === "boss" ? Number(state.bossWinChance) : NaN;
+  // A boss always aims at a win chance; "auto" is the even fight.
+  const picked = state.bossWinChance ?? "auto";
+  const chance = rank.id === "boss" ? Number(picked === "auto" ? 50 : picked) : NaN;
   if (!Number.isFinite(chance)) {
     return { target: rank.target, missed: best => ({ wanted: DIFFICULTIES.find(entry => entry.id === rank.target)?.label, reached: best.tier.label }) };
   }
