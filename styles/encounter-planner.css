@@ -1371,10 +1371,10 @@ input[type="number"] {
 
   grid-template-columns:
     minmax(140px, 1.4fr)
-    82px
-    105px
-    120px
-    auto;
+    minmax(64px, 0.8fr)
+    minmax(80px, 1fr)
+    minmax(90px, 1.2fr)
+    max-content;
 
   align-items:
     end;
@@ -1406,11 +1406,11 @@ input[type="number"] {
 .poke5e-encounter-planner__difficulty-bar--trainer {
   grid-template-columns:
     minmax(140px, 1.4fr)
-    82px
-    105px
-    120px
-    120px
-    auto;
+    minmax(64px, 0.8fr)
+    minmax(80px, 1fr)
+    minmax(90px, 1.2fr)
+    minmax(90px, 1.2fr)
+    max-content;
 }
 
 .poke5e-encounter-planner__difficulty-bar
@@ -1533,7 +1533,7 @@ span {
     none;
 }
 
-@container planner (max-width: 900px) {
+@container planner (max-width: 980px) {
   .poke5e-encounter-planner__difficulty-bar,
   .poke5e-encounter-planner__difficulty-bar--trainer {
     grid-template-columns:

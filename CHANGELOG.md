@@ -4,6 +4,15 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.68.0] — 2026-11-21
+
+- **Adaptar estrategia:** el plan de cada Entrenador tiene un botón que elige los Moves de equipo para los Pokémon que el GM puso a mano, sin volver a tirar el equipo. Las filas bloqueadas conservan sus Moves.
+- **Cambios parciales:** con Moves de equipo activos, volver a tirar el equipo de un solo Entrenador, añadirle un Pokémon o cambiar el nivel de uno vuelve a repartir los roles de ese equipo. Los Pokémon bloqueados y los otros Entrenadores no cambian.
+- **Objetos por tipo:** los objetos que potencian un tipo (Mystic Water, Charcoal, las Gemas, los Cristales Z, Black Sludge) solo van a un Pokémon de ese tipo, tanto en "Objetos garantizados" como al crear el encuentro.
+- **Corrección:** al buscar y añadir un Pokémon, cada clic añadía una copia por cada vez que el planificador se había redibujado. Ahora añade uno.
+- **Corrección:** el botón "Detectar grupo" ya no se corta con la ventana angosta.
+- **Roles:** un Pokémon cuenta como Control si tiene un estado real (dormir, paralizar…) o dos Moves de apoyo, no solo por Sand Attack o Leer.
+
 ## [0.67.0] — 2026-11-21
 
 - **Encounter Planner, Moves de equipo:** el paso "Mejores Moves" ahora se llama "Moves de equipo" y ya no elige solo el ataque con más daño. Cada Pokémon toma un rol en el equipo de su Entrenador: Atacante (STAB y cobertura), Preparador (pone un clima o terreno que potencie a su propio equipo, nunca uno que lo dañe, y suma un buff), Control (estados, debuffs, curación o Protect) o Presión (ataques con acción adicional o reacción, y trampas de entrada). Cada equipo pone un solo clima o terreno, intenta no repetir el mismo estado y reparte la cobertura contra las debilidades del grupo entre sus Pokémon. Ningún Pokémon lleva dos Moves de concentración. Los Moves con pocos PP o con un turno de carga o de recarga (Hyper Beam, Solar Beam, Overheat) pesan menos, y entre los mejores se elige uno al azar. Con "Moves de MT" las MT se suman a las opciones de cada rol. La composición muestra el rol junto a los Moves de cada Pokémon. Los encuentros ya creados conservan sus Moves hasta que se vuelven a tirar.

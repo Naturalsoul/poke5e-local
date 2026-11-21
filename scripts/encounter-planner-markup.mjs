@@ -2167,7 +2167,8 @@ function renderTrainerEncounterComposition({
 
 // The team's plan from its Moves' roles, in the order to play them: who opens, controls, presses and finishes.
 function renderTrainerPlan(
-  rows
+  rows,
+  trainerId
 ) {
   const chips = ["setter", "control", "pressure", "attacker"]
     .map(id => MOVE_ROLES[id])
@@ -2175,9 +2176,20 @@ function renderTrainerPlan(
     .filter(([, names]) => names.length)
     .map(([role, names]) => `<span title="${escapeHtml(role.hint)}">${escapeHtml(role.es)}: ${escapeHtml(names.join(", "))}</span>`);
 
-  return chips.length
-    ? `<div class="poke5e-encounter-planner__trainer-boosts"><small>Plan</small>${chips.join("")}</div>`
-    : "";
+  return `
+    <div class="poke5e-encounter-planner__trainer-boosts poke5e-encounter-planner__trainer-plan">
+      <small>Plan</small>
+      ${chips.length ? chips.join("") : "<em>Sin roles: los Moves se eligen al crear el encuentro.</em>"}
+      <button
+        type="button"
+        data-action="adapt-trainer-moves"
+        data-trainer-id="${escapeHtml(trainerId)}"
+        title="Elige de nuevo los Moves de este equipo por roles. Las filas bloqueadas conservan los suyos."
+      >
+        <i class="fa-solid fa-chess" aria-hidden="true"></i>
+        Adaptar estrategia
+      </button>
+    </div>`;
 }
 
 // "3 entrada(s) · 2 en campo": how many it brings and sends out at once.
@@ -2343,7 +2355,7 @@ function renderTrainerCompositionGroup({
         data-role="trainer-composition-body"
         ${collapsed ? "hidden" : ""}
       >
-        ${renderTrainerPlan(rows)}
+        ${unassigned || !rows.length ? "" : renderTrainerPlan(rows, trainerId)}
         ${groupBody}
       </div>
 

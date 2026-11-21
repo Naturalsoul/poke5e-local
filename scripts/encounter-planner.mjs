@@ -5,6 +5,7 @@ import { EncounterDeletionService } from "./encounter-deletion-service.mjs";
 import { EncounterQueryService } from "./encounter-query-service.mjs";
 import { publishEncounterReward } from "./encounter-xp-reward.mjs";
 import {
+  adaptTrainerMoves,
   climbToNextTier,
   withMoves,
   previewSteps
@@ -106,6 +107,8 @@ const {
   ApplicationV2
 } =
   foundry.applications.api;
+
+const rowDelegatedRoots = new WeakSet();
 
 export class PokemonEncounterPlanner
   extends ApplicationV2 {
@@ -666,6 +669,33 @@ export class PokemonEncounterPlanner
                 ""
               )
             );
+          }
+        );
+      }
+    );
+
+    // A team chosen by hand: its Moves by roles, and team Moves from now on (the whisper and the difficulty count them).
+    root.querySelectorAll(
+      '[data-action="adapt-trainer-moves"]'
+    ).forEach(
+      button => {
+        button.addEventListener(
+          "click",
+
+          () => {
+            this._encounterState.boostBestMoves =
+              true;
+
+            this.#adaptTrainerMoves(
+              String(
+                button.dataset
+                  .trainerId ??
+                ""
+              ),
+              row => row.locked === true
+            );
+
+            void this.render();
           }
         );
       }
@@ -1795,28 +1825,8 @@ export class PokemonEncounterPlanner
     );
   }
 
-  // Search, add, edit, remove and lock rows; row inputs are delegated from root so re-rendered rows keep working.
-  #bindPokemonRowListeners(root) {
-    const searchInput =
-      root.querySelector(
-        '[data-role="pokemon-search"]'
-      );
-
-    searchInput?.addEventListener(
-      "input",
-
-      event => {
-
-        this._encounterState.search =
-          event.currentTarget.value;
-
-
-        this.#refreshSearchResultsUi(
-          root
-        );
-      }
-    );
-
+  // The app element survives re-renders: these delegate on it once, or each render adds another listener.
+  #bindRowDelegates(root) {
     root.addEventListener(
       "click",
 
@@ -1951,8 +1961,56 @@ export class PokemonEncounterPlanner
           root,
           input
         );
+
+        // A new level changes what it can learn: its Moves again, with its team.
+        const row =
+          this.#getRowFromElement(
+            input
+          );
+
+        if (
+          input.dataset.role ===
+            "encounter-level" &&
+          row?.trainerId &&
+          this._encounterState.boostBestMoves === true
+        ) {
+          this.#adaptTrainerMoves(
+            row.trainerId,
+            each => each.id !== row.id
+          );
+
+          void this.render();
+        }
       }
     );
+  }
+
+  // Search, add, edit, remove and lock rows; row inputs are delegated from root so re-rendered rows keep working.
+  #bindPokemonRowListeners(root) {
+    const searchInput =
+      root.querySelector(
+        '[data-role="pokemon-search"]'
+      );
+
+    searchInput?.addEventListener(
+      "input",
+
+      event => {
+
+        this._encounterState.search =
+          event.currentTarget.value;
+
+
+        this.#refreshSearchResultsUi(
+          root
+        );
+      }
+    );
+
+    if (!rowDelegatedRoots.has(root)) {
+      rowDelegatedRoots.add(root);
+      this.#bindRowDelegates(root);
+    }
 
     root.querySelectorAll(
       '[data-action="remove-pokemon"]'
@@ -2722,11 +2780,39 @@ export class PokemonEncounterPlanner
         false
     });
 
+    // A Pokémon added to a team takes the role its teammates lack.
+    const added =
+      this._encounterState.rows.at(-1);
+
+    if (
+      trainerId &&
+      this._encounterState.boostBestMoves === true
+    ) {
+      this.#adaptTrainerMoves(
+        trainerId,
+        row => row.id !== added.id
+      );
+    }
 
     void this.render({
       force:
         true
     });
+  }
+
+  // `keep` picks the rows whose Moves stay; the rest of the trainer's team chooses team Moves around them.
+  #adaptTrainerMoves(
+    trainerId,
+    keep
+  ) {
+    this._encounterState.rows =
+      adaptTrainerMoves(
+        { rows: this._encounterState.rows },
+        trainerId,
+        { ...this.#boosts(), bestMoves: true },
+        this.#stepTools(),
+        keep
+      ).rows;
   }
 
   #ensureTrainerExists() {
@@ -4189,10 +4275,12 @@ export class PokemonEncounterPlanner
           teammates
         ),
 
-      rollItem: () =>
+      rollItem: row =>
         selectEncounterItem({
           items:
             this.database.items,
+          pokemonTypes:
+            this.database.pokemon.find(each => each.id === row?.pokemonId)?.types,
           chancePercent:
             100,
           categoryWeights: {
@@ -6118,6 +6206,10 @@ export class PokemonEncounterPlanner
       }
 
       state.rows = rows;
+      // The new Pokémon take the roles around the locked ones.
+      if (state.boostBestMoves === true) {
+        this.#adaptTrainerMoves(trainer.id, row => row.locked === true);
+      }
       ui.notifications.info(
         `Equipo de "${trainer.name}": ${generatedRows.length} Pokémon regenerado(s)` +
         (lockedCount ? ` · ${lockedCount} bloqueado(s).` : ".")

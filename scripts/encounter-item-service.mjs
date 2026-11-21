@@ -73,6 +73,7 @@ export class EncounterItemService {
     policy: requestedPolicy = null,
     // Every Pokémon carries something: a held item or a berry, rolled when it has none.
     guaranteed = false,
+    pokemonTypes = [],
     random = Math.random
   }) {
 
@@ -267,6 +268,8 @@ export class EncounterItemService {
             .categoryWeights,
 
         currentItemId,
+
+        pokemonTypes,
 
         random
       });

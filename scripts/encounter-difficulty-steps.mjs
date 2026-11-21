@@ -23,6 +23,23 @@ export const withMoves = (state, boosts, tools) => {
   return next;
 };
 
+/*
+ * One trainer's team Moves again: the rows `keep` accepts (with Moves) stay as they are and count as teammates; the
+ * others choose theirs around them, the highest level first (the ace takes the attacker's role).
+ */
+export const adaptTrainerMoves = (state, trainerId, boosts, tools, keep = () => false) => {
+  const team = state.rows.filter(row => row.trainerId === trainerId);
+  const fixed = team.filter(row => keep(row) && row.moveIds?.length);
+  const picked = [...fixed];
+  const next = new Map();
+  for (const row of team.filter(each => !fixed.includes(each)).sort((left, right) => right.level - left.level)) {
+    const chosen = { ...row, moveIds: tools.pickMoves?.(row, boosts, [...picked]) ?? row.moveIds };
+    picked.push(chosen);
+    next.set(row.id, chosen);
+  }
+  return { ...state, rows: state.rows.map(row => next.get(row.id) ?? row) };
+};
+
 export const TRAINER_STEPS = Object.freeze([
   {
     id: "on-field",
@@ -54,7 +71,7 @@ export const TRAINER_STEPS = Object.freeze([
     apply: (state, tools) => {
       if (state.boosts.items) {return null;}
       for (const row of state.rows.filter(each => !(each.itemResolved && each.itemId))) {
-        const itemId = tools.rollItem?.();
+        const itemId = tools.rollItem?.(row);
         if (itemId) {Object.assign(row, { itemId, itemResolved: true });}
       }
       return { ...state, boosts: { ...state.boosts, items: true } };

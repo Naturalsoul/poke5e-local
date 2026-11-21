@@ -263,9 +263,9 @@ export function roleOf(moves, pokemon, level) {
   const tags = moves.map(move => moveTags(move, pokemon, level));
   if (tags.some(each => each.has("field"))) {return "setter";}
   // Only control picks status Moves on purpose; the others take one only when nothing else is left.
-  if (tags.some(each => ["status", "debuff", "heal"].some(tag => each.has(tag)) && !each.has("damage"))) {
-    return "control";
-  }
+  // A real status condition, or two support Moves: one Sand Attack doesn't make a control Pokémon.
+  const support = tags.filter(each => !each.has("damage") && ["status", "debuff", "heal"].some(tag => each.has(tag)));
+  if (support.some(each => each.has("status")) || support.length >= 2) {return "control";}
   if (tags.some(each => each.has("hazard") || (each.has("fast") && each.has("damage")))) {return "pressure";}
   return "attacker";
 }
@@ -291,7 +291,10 @@ function roleFit(learnable, pokemon, level, teamTypes) {
     attacker: 1,
     // Only a weather or terrain that powers its team: sandstorm or hail would hurt teammates of other types.
     setter: fields.filter(each => teamTypes.has(FIELD_TYPES[each.move.id])).length,
-    control: tagged.filter(each => !each.tags.has("damage") && ["status", "debuff", "heal"].some(tag => each.tags.has(tag))).length,
+    // A real status condition (sleep, paralysis…): Leer or Tail Whip alone don't make a control Pokémon.
+    control: tagged.some(each => !each.tags.has("damage") && each.tags.has("status"))
+      ? tagged.filter(each => !each.tags.has("damage") && ["status", "debuff", "heal"].some(tag => each.tags.has(tag))).length
+      : 0,
     pressure: tagged.filter(each => each.tags.has("hazard") || (each.tags.has("fast") && each.tags.has("damage"))).length
   };
 }

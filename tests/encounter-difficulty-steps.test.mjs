@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-const { TRAINER_STEPS, climbToNextTier, nextStep, previewSteps } = await import("../scripts/encounter-difficulty-steps.mjs");
+const { TRAINER_STEPS, adaptTrainerMoves, climbToNextTier, nextStep, previewSteps } = await import("../scripts/encounter-difficulty-steps.mjs");
 
 const base = () => ({
   trainers: [{ id: "t1", archetypeId: "bug-catcher", onField: 1 }],
@@ -102,4 +102,18 @@ test("the Moves steps choose them now, TMs only after, and new Pokémon get thei
   assert.ok(tm.boosts.tmMoves && tm.rows.every(row => row.moveIds[0] === "tm"));
   const team = TRAINER_STEPS.find(step => step.id === "team").apply(structuredClone(moves), moveTools);
   assert.equal(team.rows.at(-1).moveIds[0], "best", "the new Pokémon too");
+});
+
+test("adapt a trainer's Moves: kept rows stay and are teammates, the rest pick around them, ace first", () => {
+  const calls = [];
+  const picker = { pickMoves: (row, boosts, teammates) => { calls.push([row.id, teammates.map(each => each.id)]); return [`m-${row.id}`]; } };
+  const state = { rows: [
+    { id: "a", trainerId: "t1", level: 5, moveIds: ["old-a"], locked: true },
+    { id: "b", trainerId: "t1", level: 9, moveIds: ["old-b"] },
+    { id: "c", trainerId: "t1", level: 7, moveIds: [] },
+    { id: "d", trainerId: "t2", level: 9, moveIds: ["old-d"] }
+  ] };
+  const next = adaptTrainerMoves(state, "t1", { bestMoves: true }, picker, row => row.locked === true);
+  assert.deepEqual(next.rows.map(row => row.moveIds[0]), ["old-a", "m-b", "m-c", "old-d"]);
+  assert.deepEqual(calls, [["b", ["a"]], ["c", ["a", "b"]]]);
 });
