@@ -897,6 +897,8 @@ function buildEncounterMetadata({
     optional:
       encounter.optional ===
         true,
+    boosts:
+      encounter.boosts,
     trainer:
       request.trainer
 

@@ -105,8 +105,21 @@ export function normalizeEncounterDefinition(
     optional:
       source.optional ===
         true,
+    // The rivals' extras it was generated with, so a reopened encounter weighs them.
+    boosts:
+      type === ENCOUNTER_TYPES.TRAINER ? normalizeEncounterBoosts(source.boosts) : null,
     pokemon,
     trainers
+  };
+}
+
+export function normalizeEncounterBoosts(boosts) {
+  return {
+    statBonus: clampInteger(boosts?.statBonus, 0, 2, 0),
+    coverage: boosts?.coverage === true,
+    items: boosts?.items === true,
+    bestMoves: boosts?.bestMoves === true,
+    tmMoves: boosts?.tmMoves === true
   };
 }
 

@@ -1,6 +1,7 @@
 import {
   normalizeEncounterAbilityId,
   normalizeEncounterItemId,
+  normalizeEncounterBoosts,
   normalizeTrainerArchetypeId,
   normalizeTrainerField
 } from "./encounter-model.mjs";
@@ -340,6 +341,9 @@ function buildTrainerEncounter(
     optional:
       firstMetadata.optional ===
         true,
+    // Saved before 0.74.0: none.
+    boosts:
+      firstMetadata.boosts ? normalizeEncounterBoosts(firstMetadata.boosts) : null,
     // The tactics plan whispered when it was generated, kept on its Actors.
     strategy:
       String(actors.map(actor => actor?.getFlag(MODULE_ID, ENCOUNTER_STRATEGY_FLAG)).find(Boolean) ?? ""),

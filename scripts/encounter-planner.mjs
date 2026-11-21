@@ -3220,6 +3220,16 @@ export class PokemonEncounterPlanner
 
     this._encounterState.strategy = encounter.strategy ?? "";
 
+    if (encounter.boosts) {
+      Object.assign(this._encounterState, {
+        boostStats: encounter.boosts.statBonus,
+        boostCoverage: encounter.boosts.coverage,
+        boostItems: encounter.boosts.items,
+        boostBestMoves: encounter.boosts.bestMoves,
+        boostTmMoves: encounter.boosts.tmMoves
+      });
+    }
+
     this._encounterState.activeTab =
       normalizeEncounterStudioTab(
         this._encounterState
@@ -6492,12 +6502,10 @@ export class PokemonEncounterPlanner
         withAceBerry(this._encounterState.rows);
     }
 
-    const definition =
-      buildEncounterDefinition(
-        this._encounterState,
-        location,
-        name
-      );
+    const definition = {
+      ...buildEncounterDefinition(this._encounterState, location, name),
+      boosts: this.#boosts()
+    };
 
 
     this._encounterState.busy =
