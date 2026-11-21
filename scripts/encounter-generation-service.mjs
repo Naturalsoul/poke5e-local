@@ -18,8 +18,8 @@ import {
 
 import {
   learnableMoveIds,
-  selectBestMoves,
-  selectEncounterMoves
+  selectEncounterMoves,
+  selectTeamMoves
 
 } from "./encounter-move-selector.mjs";
 
@@ -435,7 +435,28 @@ export class EncounterGenerationService {
         bestMoves:
           boosts.bestMoves,
         tmMoves:
-          boosts.tmMoves
+          boosts.tmMoves,
+        // Its trainer's Pokémon generated before it, for the team's roles.
+        teammates:
+          results.entries
+            .filter(
+              entry =>
+                request.trainer &&
+                entry.trainer?.id ===
+                  request.trainer.id
+            )
+            .map(
+              entry => ({
+                pokemon:
+                  entry.pokemon,
+                level:
+                  entry.level,
+                moves:
+                  entry.moveIds
+                    .map(id => this.movesById.get(id))
+                    .filter(Boolean)
+              })
+            )
       });
 
     const abilityResult =
@@ -607,7 +628,8 @@ export class EncounterGenerationService {
     coverageTypes = [],
     requestedMoveIds = [],
     bestMoves = false,
-    tmMoves = false
+    tmMoves = false,
+    teammates = []
   }) {
     const stored =
       actor.getFlag(
@@ -660,17 +682,26 @@ export class EncounterGenerationService {
       planned ??
       (
         shouldSelect
-        ? (bestMoves ? selectBestMoves : selectEncounterMoves)({
-            pokemon,
-            moves:
-              this.movesById,
-            level,
-            coverageTypes,
-            sources: {
-              tm:
-                tmMoves
-            }
-          })
+        ? bestMoves
+          ? selectTeamMoves({
+              pokemon,
+              moves:
+                this.movesById,
+              level,
+              teammates,
+              coverageTypes,
+              sources: {
+                tm:
+                  tmMoves
+              }
+            }).moves
+          : selectEncounterMoves({
+              pokemon,
+              moves:
+                this.movesById,
+              level,
+              coverageTypes
+            })
         : storedMoveIds
             .map(
               moveId =>

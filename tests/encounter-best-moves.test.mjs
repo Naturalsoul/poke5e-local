@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-const { learnableMoveIds, scoreMove, selectBestMoves } = await import("../scripts/encounter-move-selector.mjs");
+const { learnableMoveIds, moveTags, roleOf, scoreMove, selectTeamMoves, teamTactics } = await import("../scripts/encounter-move-selector.mjs");
 
 const move = (id, type, dice, extra = {}) => ({ id, type, powerAbilities: ["str"], damage: dice ? { dice: { 1: dice }, type: [type] } : null, ...extra });
 const moves = [
@@ -25,13 +25,55 @@ test("scores: dice, STAB, and healing is not damage", () => {
   assert.equal(scoreMove(moves[6], pokemon, 5), 0, "rest heals");
 });
 
-test("best moveset: strongest STAB, coverage, other types, a status Move; TMs only when allowed", () => {
-  const ids = (options = {}) => selectBestMoves({ pokemon, moves, level: 6, random: () => 0, ...options }).map(m => m.id);
-  const levelAndEgg = ids({ sources: { tm: false } });
-  assert.equal(levelAndEgg[0], "flame-burst");
-  assert.ok(levelAndEgg.includes("thunder-punch"), levelAndEgg.join(", "));
-  assert.equal(levelAndEgg.filter(id => ["growl", "rest"].includes(id)).length, 1, "one status Move (rest heals: a status one)");
-  assert.ok(!levelAndEgg.includes("overheat"));
-  assert.equal(ids()[0], "overheat", "with TMs");
-  assert.equal(ids({ sources: { tm: false }, coverageTypes: ["electric"] })[1], "thunder-punch", "the covering Move second");
+// A small team: two who can set weather, one who can paralyze, one fast attacker.
+const util = (id, type, description, extra = {}) => ({ id, type, powerAbilities: "none", damage: null,
+  description: { en: [description] }, range: { raw: "60ft" }, ...extra });
+const teamMoves = [
+  ...moves,
+  util("sunny-day", "fire", "Harsh sunlight for 5 rounds.", { range: { raw: "self" } }),
+  util("self-rest", "psychic", "You fall asleep and regain all hit points.", { range: { raw: "self" } }),
+  util("rain-dance", "water", "A heavy rainfall for 5 rounds.", { range: { raw: "self" } }),
+  util("thunder-wave", "electric", "The target must make a CON save or become paralyzed.", { save: { attribute: ["con"] } }),
+  util("glare", "normal", "The target must make a CON save or become paralyzed.", { save: { attribute: ["con"] } }),
+  move("water-gun", "water", "1d6"),
+  move("quick-attack", "normal", "1d4", { activation: { raw: "1 bonus action", type: "bonus" } })
+];
+const species = (id, types, moveIds) => ({ id, types, combat: { attributes: { str: 14, dex: 12 } },
+  learnset: { level: [{ level: 1, moveIds }] } });
+const team = [
+  species("charmander", ["fire"], ["ember", "flame-burst", "tackle", "sunny-day", "growl"]),
+  species("squirtle", ["water"], ["water-gun", "tackle", "rain-dance", "growl"]),
+  species("pikachu", ["electric"], ["thunder-punch", "thunder-wave", "glare", "quick-attack"]),
+  species("rattata", ["normal"], ["tackle", "quick-attack", "growl"])
+];
+const plan = (random = () => 0) => team.reduce((chosen, member) => [...chosen, { pokemon: member, level: 6,
+  ...selectTeamMoves({ pokemon: member, moves: teamMoves, level: 6, teammates: chosen, coverageTypes: ["electric"], random }) }], []);
+
+test("tags: weather is a field, a CON save to paralyze is a status, a bonus action is fast", () => {
+  const byId = id => teamMoves.find(each => each.id === id);
+  assert.ok(moveTags(byId("sunny-day"), team[0], 6).has("field"));
+  assert.ok(moveTags(byId("thunder-wave"), team[2], 6).has("status"));
+  assert.ok(moveTags(byId("quick-attack"), team[3], 6).has("fast"));
+  assert.ok(!moveTags(byId("self-rest"), team[0], 6).has("status"), "it puts itself asleep");
+});
+
+test("team: different roles, one weather, no repeated status condition", () => {
+  for (const random of [() => 0, () => 0.99, Math.random]) {
+    const members = plan(random);
+    const roles = members.map(each => each.role);
+    assert.equal(new Set(roles).size, roles.length, roles.join(", "));
+    assert.ok(roles.includes("setter"), roles.join(", "));
+    const ids = members.flatMap(each => each.moves.map(m => m.id));
+    assert.equal(ids.filter(id => ["sunny-day", "rain-dance"].includes(id)).length, 1, ids.join(", "));
+    assert.ok(ids.filter(id => ["thunder-wave", "glare"].includes(id)).length <= 1, ids.join(", "));
+    members.forEach(each => assert.ok(each.moves.length <= 4));
+  }
+});
+
+test("team: the role read back from a moveset, and a tactics line per Pokémon", () => {
+  const members = plan();
+  members.forEach(each => assert.equal(roleOf(each.moves, each.pokemon, each.level), each.role, each.pokemon.id));
+  const lines = teamTactics(members.map(each => ({ ...each, name: each.pokemon.id })));
+  assert.equal(lines.length, 4);
+  assert.match(lines[0], /Preparador/);
 });

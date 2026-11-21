@@ -10,6 +10,7 @@ import {
   listTrainerArchetypes
 } from "./encounter-trainer-archetypes.mjs";
 import { getDefaultEncounterItemPolicy } from "./encounter-item-policy.mjs";
+import { MOVE_ROLES, roleOf } from "./encounter-move-selector.mjs";
 import { clampInteger } from "./numbers.mjs";
 
 const MODULE_ID =
@@ -133,6 +134,21 @@ export function prepareEncounterRow({
         database.moves,
         language
       ),
+
+    // The role its Moves play in a trainer's team.
+    moveRole:
+      encounterType === "trainer" &&
+      row.moveIds?.length
+        ? MOVE_ROLES[
+            roleOf(
+              row.moveIds
+                .map(id => database.moves.find(move => move.id === id))
+                .filter(Boolean),
+              pokemon,
+              level
+            )
+          ].es
+        : null,
 
     abilityName:
       resolveAbilityName(

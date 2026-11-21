@@ -1988,7 +1988,7 @@ function renderTrainerBoosts(
       ? '<span><i class="fa-solid fa-box-archive" aria-hidden="true"></i> Objetos garantizados</span>'
       : "",
     boosts.bestMoves
-      ? `<span><i class="fa-solid fa-hand-fist" aria-hidden="true"></i> ${boosts.tmMoves ? "Mejores Moves con MT" : "Mejores Moves"}</span>`
+      ? `<span><i class="fa-solid fa-hand-fist" aria-hidden="true"></i> ${boosts.tmMoves ? "Moves de equipo con MT" : "Moves de equipo"}</span>`
       : ""
   ].filter(Boolean);
 
@@ -2750,7 +2750,7 @@ function renderEncounterCard(
               aria-hidden="true"
             ></i>
 
-            Moves
+            Moves${row.moveRole ? ` · ${escapeHtml(row.moveRole)}` : ""}
           </span>
 
           <strong>
