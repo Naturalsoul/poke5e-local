@@ -117,12 +117,14 @@ export function encounterDifficulty(party, rows, { onField = 0, boosts } = {}) {
     : weight * crowd(rows.reduce((total, row) => total + quantity(row), 0), size));
   const ratio = power / partyPower;
   const tier = DIFFICULTIES.findLast(entry => ratio >= entry.from) ?? DIFFICULTIES[0];
-  return { tier, power, partyPower, ratio, weight, matchup: weight ? matched / weight : 1 };
+  const levelGap = rows.length ? rows.reduce((total, row) => total + level(row.level), 0) / rows.length - level(party?.level) : 0;
+  const win = trainerBattle ? rivalWinChance(ratio, levelGap) : null;
+  return { tier, power, partyPower, ratio, win, weight, matchup: weight ? matched / weight : 1 };
 }
 
 /*
  * Rival ranks, after the games. A rank sets the style: levels around the party's (from–to; the boss's ace apart), one
- * type or not, extras, and the difficulty it aims at. How many Pokémon it brings and sends out at once (within its
+ * type or not, extras, and what it aims at: winChance, the rival's chance to win in % (the boss picks its own), else a tier. How many Pokémon it brings and sends out at once (within its
  * ranges) adapts to the party, since the games tune a rival for one player and a table has several: a boss rank adds
  * gym helpers only when alone it can't reach its difficulty. Levels stay near the party's, so a campaign that levels
  * by XP doesn't inflate. fieldCap: rolled on "auto", all its trainers send out at most the players' Pokémon on the
@@ -132,14 +134,20 @@ export function encounterDifficulty(party, rows, { onField = 0, boosts } = {}) {
 export const TRAINER_RANKS = Object.freeze([
   { id: "route", label: "Entrenador de ruta", target: "easy", levels: [-3, -1], trainers: [1, 6], team: [1, 3],
     onField: [1, 2], extras: {} },
-  { id: "ace-trainer", label: "Entrenador Guay", target: "medium", levels: [-2, 0], trainers: [1, 4], team: [1, 4],
-    onField: [1, 3], extras: { statBonus: 1, coverage: true } },
-  { id: "gym-leader", label: "Líder de Gimnasio", target: "hard", levels: [-1, 0], ace: [1, 1], trainers: [1, 4],
-    team: [1, 6], onField: [1, 6], fieldCap: 0, monotype: true, extras: { statBonus: 1, coverage: true, items: true, bestMoves: true } },
-  { id: "elite-four", label: "Alto Mando", target: "hard", levels: [0, 1], ace: [1, 1], trainers: [1, 4], team: [2, 6],
-    onField: [1, 6], fieldCap: 0, monotype: true, extras: { statBonus: 2, coverage: true, items: true, bestMoves: true } },
-  { id: "champion", label: "Campeón", target: "deadly", levels: [0, 1], ace: [1, 2], trainers: [1, 4], team: [3, 6],
+  { id: "veteran", label: "Entrenador Veterano", winChance: 20, levels: [-1, 0], trainers: [1, 4], team: [2, 5],
+    onField: [1, 3], fieldCap: 3, extras: { statBonus: 1, coverage: true, bestMoves: true } },
+  { id: "ace-trainer", label: "Entrenador Guay", winChance: 40, levels: [-1, 1], ace: [1, 1], trainers: [1, 4], team: [2, 5],
+    onField: [1, 3], fieldCap: 2, extras: { statBonus: 1, coverage: true, items: true, bestMoves: true } },
+  { id: "rival", label: "Rival", winChance: 50, levels: [-1, 1], ace: [1, 2], trainers: [1, 4], team: [3, 6],
     onField: [1, 6], fieldCap: 2, extras: { statBonus: 2, coverage: true, items: true, bestMoves: true } },
+  { id: "gym-leader", label: "Líder de Gimnasio", winChance: 60, levels: [-1, 0], ace: [1, 1], trainers: [1, 4],
+    team: [1, 6], onField: [1, 6], fieldCap: 2, monotype: true, extras: { statBonus: 1, coverage: true, items: true, bestMoves: true } },
+  { id: "elite-four", label: "Alto Mando", winChance: 75, levels: [0, 1], ace: [1, 1], trainers: [1, 4], team: [2, 6],
+    onField: [1, 6], fieldCap: 1, monotype: true, extras: { statBonus: 2, coverage: true, items: true, bestMoves: true } },
+  { id: "champion", label: "Campeón", winChance: 80, levels: [0, 1], ace: [1, 2], trainers: [1, 4], team: [3, 6],
+    onField: [1, 6], fieldCap: 2, extras: { statBonus: 2, coverage: true, items: true, bestMoves: true } },
+  { id: "legend", label: "Leyenda", winChance: 90, levels: [1, 2], ace: [2, 3], trainers: [1, 4], team: [4, 6],
+    onField: [1, 6], fieldCap: 3, extras: { statBonus: 2, coverage: true, items: true, bestMoves: true, tmMoves: true } },
   // The whole party against one trainer: up to 12 Pokémon, up to 6 on the field, more than one action each.
   { id: "boss", label: "Entrenador boss", target: "deadly", levels: [0, 1], ace: [1, 2], trainers: [1, 1], team: [6, 12],
     onField: [1, 6], actions: [1, 3], extras: { statBonus: 2, coverage: true, items: true, bestMoves: true } },
@@ -157,17 +165,18 @@ export const fieldedActions = (trainers, countOf) => Math.max(1, trainers.reduce
   total + Math.min(Number(trainer.onField) || 1, countOf(trainer)) * (1 + ACTION_WEIGHT * ((Number(trainer.actions) || 1) - 1)), 0));
 
 /*
- * A boss's chance to win by the battle's ratio, fitted on simulated fights of the players' own Pokémon (switching costs
- * the turn, a replacement after a KO the reaction) played at their best (targets by threat, status Moves, matchup
- * switches and leads), with their trainers' features and bags (an item takes the trainer's action, so its Pokémon's
- * turn) and rivals evolved to their level: logistic in ln(ratio).
+ * A rival trainer's chance to win, fitted on 640 simulated battles of every rank with Moves de equipo against the
+ * players' own Pokémon played at their best (targets by threat, status Moves, matchup switches and leads), with their
+ * trainers' features and bags (an item takes the trainer's action; a trainer with no Pokémon standing uses one each
+ * round) and rivals evolved to their level: logistic in ln(ratio) and in the rivals' mean level over the party's,
+ * since the ratio overrates levels: at the same ratio a lower-level team wins more often.
  */
-const BOSS_CURVE = Object.freeze({ a: -6.95, b: 6.97 });
+const WIN_CURVE = Object.freeze({ a: -8.95, b: 8.02, level: -0.97 });
 export const BOSS_WIN_CHANCES = Object.freeze([60, 70, 80, 90]);
-export const bossWinChance = ratio => 1 / (1 + Math.exp(-(BOSS_CURVE.a + BOSS_CURVE.b * Math.log(Math.max(0.01, ratio)))));
-const ratioForBossWin = chance => Math.exp((Math.log(chance / (1 - chance)) - BOSS_CURVE.a) / BOSS_CURVE.b);
-// The ratios where the boss wins within 5 points of the chance asked (in %).
-export const bossWinRange = percent => ({ from: ratioForBossWin(percent / 100 - 0.05), to: ratioForBossWin(Math.min(0.99, percent / 100 + 0.05)) });
+export const rivalWinChance = (ratio, levelGap = 0) =>
+  1 / (1 + Math.exp(-(WIN_CURVE.a + WIN_CURVE.b * Math.log(Math.max(0.01, ratio)) + WIN_CURVE.level * levelGap)));
+// Within 5 points of the chance asked (in %).
+export const winRange = percent => ({ winFrom: percent / 100 - 0.05, winTo: Math.min(0.99, percent / 100 + 0.05) });
 
 export const getTrainerRank = id => TRAINER_RANKS.find(rank => rank.id === id) ?? TRAINER_RANKS[0];
 
@@ -197,11 +206,11 @@ export function generateForDifficulty(generate, measure, difficulty, attempts = 
   let best = null;
   for (let attempt = 0; attempt < attempts && best?.distance !== 0; attempt++) {
     const result = generate();
-    const { tier, ratio } = measure(result);
-    const distance = typeof difficulty === "object"
-      ? Math.max(0, difficulty.from - ratio, ratio - difficulty.to)
-      : distanceToTier(ratio, difficulty);
-    if (!best || distance < best.distance) {best = { result, tier, ratio, distance };}
+    const { tier, ratio, win } = measure(result);
+    let distance = distanceToTier(ratio, difficulty);
+    if (difficulty?.winFrom !== undefined) {distance = Math.max(0, difficulty.winFrom - win, win - difficulty.winTo);}
+    else if (typeof difficulty === "object") {distance = Math.max(0, difficulty.from - ratio, ratio - difficulty.to);}
+    if (!best || distance < best.distance) {best = { result, tier, ratio, win, distance };}
   }
   return best;
 }

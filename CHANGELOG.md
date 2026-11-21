@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.76.0] — 2026-11-21
+
+- **Cada rango de Entrenador apunta a cuánto gana el rival,** y el selector lo muestra: Veterano 20 %, Entrenador Guay 40 %, Rival 50 %, Líder de Gimnasio 60 %, Alto Mando 75 %, Campeón 80 % y Leyenda 90 %. El de ruta sigue siendo fácil y el boss conserva su selector. Estos rangos son para combates especiales con mejores recompensas; en las rutas el grupo debería ganar.
+- **Rangos nuevos:** Entrenador Veterano y Leyenda. El Veterano y el Entrenador Guay ahora juegan con las Moves de equipo. El Líder de Gimnasio saca a lo más 2 Pokémon más que el grupo a la vez y el Alto Mando 1 más.
+- **Una sola curva de victoria para todos los rangos,** ajustada con 640 encuentros simulados. Cuenta también cuántos niveles le saca el rival al grupo. El panel de pasos ahora dice "Gana el rival ≈ X %" para cualquier rango con objetivo.
+- **Las simulaciones siguen una regla nueva:** un entrenador sin Pokémon en pie usa un objeto en uno de sus Pokémon o en el de un aliado al empezar cada ronda. Comprobado con encuentros nuevos para un grupo de 4: el rival ganó Veterano 22 %, Guay 37 %, Rival 53 %, Gimnasio 55 %, Alto Mando 74 %, Campeón 86 % y Leyenda 91 %. El boss gana algo más de lo pedido: 59 % con 50, 81 % con 70 y 94 % con 90.
+
 ## [0.75.0] — 2026-11-21
 
 - **Los Pokémon de los Entrenadores rivales evolucionan según su nivel.** Un Totodile de nivel 15 sale como Feraligatr. Solo cuentan las evoluciones por nivel (y por género), y solo hacia especies que la tirada podía elegir, así que la región, el nivel y el tipo único de un gimnasio se mantienen. "Regenerar equipo" también evoluciona; los Pokémon bloqueados no cambian.

@@ -1,6 +1,6 @@
 import { evolveRolledPokemon } from "./encounter-evolution.mjs";
 import { clampInteger } from "./numbers.mjs";
-import { DIFFICULTIES, MAX_TRAINER_TEAM, bossWinChance, bossWinRange, encounterDifficulty, fieldedActions, generateForDifficulty }
+import { DIFFICULTIES, MAX_TRAINER_TEAM, encounterDifficulty, fieldedActions, generateForDifficulty, winRange }
   from "./encounter-difficulty.mjs";
 import { generateRandomEncounterRows } from "./encounter-randomizer.mjs";
 import { generateRandomTrainerEncounter, rerollRandomTrainerTeam } from "./encounter-trainer-randomizer.mjs";
@@ -29,16 +29,17 @@ export function trainerCandidatePool(state, maxLevel) {
   return { region: state.trainerRandomRegion, maxLevel, minSr: null, maxSr: getTrainerLevelRule(maxLevel).maxSr };
 }
 
-// What the roll aims at: a boss can aim at its chance to win instead of the rank's tier.
-function rankTarget(rank, state) {
+// What the roll aims at: the rank's chance for the rival to win (a boss picks its own), else its tier.
+export function rankTarget(rank, state) {
   // A boss always aims at a win chance; "auto" is the even fight.
   const picked = state.bossWinChance ?? "auto";
-  const chance = rank.id === "boss" ? Number(picked === "auto" ? 50 : picked) : NaN;
+  const chance = rank.id === "boss" ? Number(picked === "auto" ? 50 : picked) : Number(rank.winChance);
   if (!Number.isFinite(chance)) {
     return { target: rank.target, missed: best => ({ wanted: DIFFICULTIES.find(entry => entry.id === rank.target)?.label, reached: best.tier.label }) };
   }
-  return { target: bossWinRange(chance),
-    missed: best => ({ wanted: `que el boss gane un ${chance} %`, reached: `un ${Math.round(bossWinChance(best.ratio) * 100)} %` }) };
+  const who = rank.id === "boss" ? "el boss" : "el rival";
+  return { target: winRange(chance),
+    missed: best => ({ wanted: `que ${who} gane un ${chance} %`, reached: `un ${Math.round(best.win * 100)} %` }) };
 }
 
 /**
@@ -114,7 +115,7 @@ export function rollTrainerEncounter({ state, party, rank, levels, boosts, candi
   const { target, missed } = rankTarget(rank, state);
   let best = null;
   for (const trainerCount of trainerCounts) {
-    const attempt = generateForDifficulty(() => roll(trainerCount), measure, target, 100);
+    const attempt = generateForDifficulty(() => roll(trainerCount), measure, target, 300);
     if (!best || attempt.distance < best.distance) {
       best = attempt;
     }

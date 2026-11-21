@@ -135,11 +135,12 @@ test("types tilt a trainer battle: advantage up, disadvantage down, unknown neut
   assert.ok(fight(["fire"]).matchup > 1);
 });
 
-test("every rank reaches its difficulty for parties of 2 to 6, adding helpers only when needed", async () => {
+test("every tier rank reaches its difficulty for parties of 2 to 6, adding helpers only when needed", async () => {
   const { TRAINER_RANKS, generateForDifficulty, rankLevels } = await import("../scripts/encounter-difficulty.mjs");
   const pick = ([min, max]) => min + Math.floor(Math.random() * (max - min + 1));
   for (const party of [{ size: 2, level: 8, team: 3 }, { size: 4, level: 8, team: 3 }, { size: 6, level: 8, team: 4 }]) {
-    for (const rank of TRAINER_RANKS) {
+    // The win-chance ranks lean on their field cap, which this sketch doesn't roll: the planner's own roll tests them.
+    for (const rank of TRAINER_RANKS.filter(entry => !entry.winChance)) {
       const levels = rankLevels(party.level, rank);
       let best = null;
       for (let trainers = rank.trainers[0]; trainers <= rank.trainers[1] && best?.distance !== 0; trainers++) {
