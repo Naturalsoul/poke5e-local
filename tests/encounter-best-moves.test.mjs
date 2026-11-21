@@ -36,12 +36,14 @@ const teamMoves = [
   util("thunder-wave", "electric", "The target must make a CON save or become paralyzed.", { save: { attribute: ["con"] } }),
   util("glare", "normal", "The target must make a CON save or become paralyzed.", { save: { attribute: ["con"] } }),
   move("water-gun", "water", "1d6"),
+  util("swords-dance", "normal", "Increasing your AC by 1.", { duration: "1 minute, concentration", range: { raw: "self" } }),
+  move("fire-focus", "fire", "3d8", { duration: "concentration" }),
   move("quick-attack", "normal", "1d4", { activation: { raw: "1 bonus action", type: "bonus" } })
 ];
 const species = (id, types, moveIds) => ({ id, types, combat: { attributes: { str: 14, dex: 12 } },
   learnset: { level: [{ level: 1, moveIds }] } });
 const team = [
-  species("charmander", ["fire"], ["ember", "flame-burst", "tackle", "sunny-day", "growl"]),
+  species("charmander", ["fire"], ["ember", "flame-burst", "tackle", "sunny-day", "growl", "swords-dance", "fire-focus"]),
   species("squirtle", ["water"], ["water-gun", "tackle", "rain-dance", "growl"]),
   species("pikachu", ["electric"], ["thunder-punch", "thunder-wave", "glare", "quick-attack"]),
   species("rattata", ["normal"], ["tackle", "quick-attack", "growl"])
@@ -67,6 +69,7 @@ test("team: different roles, one weather, no repeated status condition", () => {
     assert.equal(ids.filter(id => ["sunny-day", "rain-dance"].includes(id)).length, 1, ids.join(", "));
     assert.ok(ids.filter(id => ["thunder-wave", "glare"].includes(id)).length <= 1, ids.join(", "));
     members.forEach(each => assert.ok(each.moves.length <= 4));
+    members.forEach(each => assert.ok(each.moves.filter(m => /concentration/.test(m.duration ?? "")).length <= 1, each.pokemon.id));
   }
 });
 

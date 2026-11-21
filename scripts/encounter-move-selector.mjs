@@ -220,8 +220,10 @@ const PROTECT = /avoid the damage/i;
 const DEBUFF = /disadvantage on|reduc\w+ (its|their|the target)|-\d to (its|their)/i;
 const BUFF = /your AC by|increas\w+ your|you have advantage|you gain \+|\+\d to your|bonus to your/i;
 const HEAL = /(regain|recover|restore)\w* [^.]*hit points/i;
-// Self-drawbacks that make a nuke worse than its dice: a charge or recharge turn, exhaustion, recoil.
-const DRAWBACK = /charge|consecutive turns|on your next turn|exhausts you|next attack is done at disadvantage|recoil/i;
+// Self-drawbacks that make a nuke worse than its dice: a charge or recharge turn (in its activation), exhaustion, recoil.
+const CHARGE = /charge/i;
+const DRAWBACK = /consecutive turns|action on your next turn|on your next turn, if you keep|exhausts you|next attack is done at disadvantage|recoil/i;
+const concentrates = move => /concentration/i.test(move?.duration ?? "");
 
 const describe = move => JSON.stringify(move?.description?.en ?? "");
 const conditionOf = move => CONDITIONS.find(each => describe(move).toLowerCase().includes(each)) ?? null;
@@ -271,7 +273,7 @@ export function roleOf(moves, pokemon, level) {
 // Damage that lasts: few PP and self-drawbacks lower a Move (Hyper Beam, Overheat).
 const sustainedScore = (move, pokemon, level) => scoreMove(move, pokemon, level) *
   Math.min(1, ((Number(move.pp) || 5) + 3) / 10) *
-  (DRAWBACK.test(`${move.activation?.raw ?? ""} ${describe(move)}`) ? 0.7 : 1);
+  (CHARGE.test(move.activation?.raw ?? "") || DRAWBACK.test(describe(move)) ? 0.7 : 1);
 
 // One of the near-best (within 85% of the top), not always the same one.
 const pickNearBest = (scored, random) => {
@@ -287,7 +289,8 @@ function roleFit(learnable, pokemon, level, teamTypes) {
   const fields = tagged.filter(each => each.tags.has("field"));
   return {
     attacker: 1,
-    setter: fields.length ? 2 + fields.filter(each => teamTypes.has(FIELD_TYPES[each.move.id])).length : 0,
+    // Only a weather or terrain that powers its team: sandstorm or hail would hurt teammates of other types.
+    setter: fields.filter(each => teamTypes.has(FIELD_TYPES[each.move.id])).length,
     control: tagged.filter(each => !each.tags.has("damage") && ["status", "debuff", "heal"].some(tag => each.tags.has(tag))).length,
     pressure: tagged.filter(each => each.tags.has("hazard") || (each.tags.has("fast") && each.tags.has("damage"))).length
   };
@@ -340,7 +343,9 @@ export function selectTeamMoves({
   const take = move => {
     if (move && chosen.length < count && !chosen.includes(move)) {chosen.push(move);}
   };
-  const open = filter => tagged.filter(each => !chosen.includes(each.move) && filter(each));
+  // One concentration Move at most: a second would end the first.
+  const open = filter => tagged.filter(each => !chosen.includes(each.move) &&
+    !(concentrates(each.move) && chosen.some(concentrates)) && filter(each));
   const pickDamage = filter => pickNearBest(open(each => each.tags.has("damage") && filter(each)), random);
   const pickUtility = filter => {
     const options = open(each => !each.tags.has("damage") && filter(each));
@@ -357,8 +362,7 @@ export function selectTeamMoves({
   const otherType = () => pickDamage(each => !chosen.some(move => move.type === each.move.type));
 
   if (role === "setter") {
-    const fields = open(each => each.tags.has("field") && !fieldTaken);
-    take((fields.find(each => teamTypes.has(FIELD_TYPES[each.move.id])) ?? fields[0])?.move);
+    take(open(each => each.tags.has("field") && teamTypes.has(FIELD_TYPES[each.move.id]))[0]?.move);
     take(stab());
     take(pickUtility(each => each.tags.has("buff")));
     take(cover());
@@ -401,7 +405,7 @@ export function teamTactics(members, language = "es") {
         const tags = moveTags(move, member.pokemon, member.level);
         return { setter: tags.has("field"), control: tags.has("status"), pressure: tags.has("fast") || tags.has("hazard") }[member.role];
       }) ?? member.moves[0];
-      return `${member.name} (${role.es}): ${role.hint}${key ? ` — ${name(key)}` : ""}.`;
+      return `${member.name} (${role.es}): ${role.hint}.${key ? ` Move clave: ${name(key)}.` : ""}`;
     });
 }
 

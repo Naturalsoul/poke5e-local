@@ -4020,9 +4020,12 @@ export class PokemonEncounterPlanner
   async #whisperTactics(
     result
   ) {
+    // Only with team Moves: their roles are what the plan reads.
     if (
       result.encounter?.type !==
-        "trainer"
+        "trainer" ||
+      this._encounterState.boostBestMoves !==
+        true
     ) {
       return;
     }
@@ -4103,15 +4106,18 @@ export class PokemonEncounterPlanner
       )
     ].join("");
 
-    await ChatMessage.create({
-      content,
-      whisper:
-        ChatMessage.getWhisperRecipients(
-          "GM"
-        ).map(
-          user => user.id
-        )
-    });
+    // The encounter is already created: a failed message mustn't look like a failed generation.
+    try {
+      await ChatMessage.implementation.create({
+        content,
+        whisper:
+          game.users
+            .filter(user => user.isGM)
+            .map(user => user.id)
+      });
+    } catch (error) {
+      console.warn("poke5e-local | No se pudo enviar el plan táctico.", error);
+    }
   }
 
   // What the steps need: new Pokémon and trainers of an archetype, and how high levels may go.
