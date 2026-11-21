@@ -4,6 +4,10 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.69.2] — 2026-11-21
+
+- **Corrección:** en poke5e, Intimidate no actúa al entrar: da desventaja a un ataque enemigo una vez por descanso corto. El susurro ya no lo pone de líder y dice que lo guarde para el ataque más fuerte contra su equipo. Las habilidades Surge tampoco cuentan como de entrada. Solo abren por habilidad los que traen clima (Drizzle, Drought, Sand Stream, Snow Warning).
+
 ## [0.69.1] — 2026-11-21
 
 - **Corrección:** si un Entrenador saca todo su equipo a la vez, el susurro dice "Salen todos a la vez" en lugar de guardar al As para el final.

@@ -97,14 +97,17 @@ test("sweeper: an offensive setup Move makes the role, and it reads back", () =>
 
 test("battle order: an entry ability leads, the ace goes last with its surprise Move and item", () => {
   const members = plan().map(each => ({ ...each, name: each.pokemon.id }));
-  members[3] = { ...members[3], abilityId: "intimidate", abilityName: "Intimidate" };
+  members[3] = { ...members[3], abilityId: "drought", abilityName: "Drought" };
+  members[1] = { ...members[1], abilityId: "intimidate", abilityName: "Intimidate" };
   members[0] = { ...members[0], level: 9, itemName: "Sitrus Berry" };
   const { order, lead, ace } = battleOrder(members);
   assert.equal(lead.name, "rattata");
   assert.equal(ace.name, "charmander");
   assert.equal(order.at(-1), ace);
   const lines = teamTactics(members, "es", { weakTo: ["electric"] });
-  assert.match(lines[1], /^rattata .*Intimidate actúa al entrar/);
+  assert.match(lines[1], /^rattata .*Drought actúa al entrar/);
+  assert.match(lines.find(line => line.startsWith("squirtle")), /Intimidate: guárdalo para el ataque más fuerte/);
+  assert.ok(!lines.some(line => /Intimidate actúa al entrar/.test(line)));
   const aceLine = lines.at(-1);
   assert.match(aceLine, /charmander \(\w+, As\)/);
   assert.match(aceLine, /Lleva Sitrus Berry/);

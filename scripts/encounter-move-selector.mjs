@@ -437,6 +437,9 @@ export function teamTactics(members, language = "es", { weakTo = [], onField = 1
       if (ENTRY_ABILITIES.has(member.abilityId)) {parts.push(`${member.abilityName ?? member.abilityId} actúa al entrar.`);}
       if (opener) {parts.push(`Abre con ${name(opener)}.`);}
     }
+    if (member.abilityId === "intimidate") {
+      parts.push(`${member.abilityName ?? "Intimidate"}: guárdalo para el ataque más fuerte contra su equipo (desventaja, una vez por descanso corto).`);
+    }
     if (member === ace) {
       // The coverage the players won't expect from its type (Gyarados's Earthquake).
       const surprise = member.moves.find(move => tagsOf(move).has("damage") && weakTo.includes(move.type) &&
@@ -463,10 +466,9 @@ export const aceOf = list => list.find(each => each.ace) ??
   list.reduce((best, each) => (!best || Number(each.level) > Number(best.level) ? each : best), null);
 
 // Abilities that act as the Pokémon enters: worth leading with (Intimidate, the weather and terrain setters).
-const ENTRY_ABILITIES = new Set([
-  "intimidate", "drizzle", "drought", "sand-stream", "snow-warning",
-  "electric-surge", "grassy-surge", "misty-surge", "psychic-surge"
-]);
+// The weather abilities act as the Pokémon enters (poke5e). Intimidate and the Surges don't: Intimidate is a
+// disadvantage once per short rest, and a Surge lets it use its terrain Move as a bonus action.
+const ENTRY_ABILITIES = new Set(["drizzle", "drought", "sand-stream", "snow-warning"]);
 
 /*
  * Who goes out first and last, as boss trainers do: the ace (the one marked, or the highest level) last; the lead an
