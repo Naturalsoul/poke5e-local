@@ -1,11 +1,14 @@
 import {
   normalizeEncounterAbilityId,
   normalizeEncounterItemId,
-  normalizeTrainerArchetypeId
+  normalizeEncounterBoosts,
+  normalizeTrainerArchetypeId,
+  normalizeTrainerField
 } from "./encounter-model.mjs";
 import { clampInteger } from "./numbers.mjs";
 
 const MODULE_ID = "poke5e-local";
+export const ENCOUNTER_STRATEGY_FLAG = "encounterStrategy";
 
 export class EncounterQueryService {
   list() {
@@ -261,6 +264,12 @@ function buildTrainerEncounter(
         archetypeId:
           trainer.archetypeId,
 
+        onField:
+          trainer.onField,
+
+        actions:
+          trainer.actions,
+
         order:
           trainer.order,
 
@@ -295,6 +304,12 @@ function buildTrainerEncounter(
           archetypeId:
             trainer.archetypeId,
 
+          onField:
+            trainer.onField,
+
+          actions:
+            trainer.actions,
+
           pokemon:
             trainer.pokemon
         })
@@ -326,6 +341,12 @@ function buildTrainerEncounter(
     optional:
       firstMetadata.optional ===
         true,
+    // Saved before 0.74.0: none.
+    boosts:
+      firstMetadata.boosts ? normalizeEncounterBoosts(firstMetadata.boosts) : null,
+    // The tactics plan whispered when it was generated, kept on its Actors.
+    strategy:
+      String(actors.map(actor => actor?.getFlag(MODULE_ID, ENCOUNTER_STRATEGY_FLAG)).find(Boolean) ?? ""),
     pokemon:
       [],
     trainers
@@ -374,6 +395,7 @@ function normalizeTrainerMetadata(
     id,
     name,
     archetypeId,
+    ...normalizeTrainerField(source),
 
     order:
       Number.isFinite(

@@ -4,6 +4,15 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.74.0] — 2026-11-21
+
+- **Los extras del rival se guardan con el encuentro:** características +N, cobertura súper eficaz, objetos garantizados, Moves de equipo y Moves de MT. Al reabrir un encuentro de Entrenadores vuelven marcados y la dificultad los cuenta; antes un boss Mortal reabierto marcaba Media. Los encuentros guardados antes de esta versión vuelven sin cambios en los extras.
+
+## [0.73.0] — 2026-11-21
+
+- **"En campo" y "Acciones" se guardan con el encuentro.** Al reabrir un encuentro de Entrenadores, cada Entrenador vuelve con sus Pokémon en campo y sus acciones, y la dificultad de la escalera los cuenta. Los encuentros guardados antes de esta versión vuelven con 1 y 1.
+- **Nueva pestaña "Estrategia de encuentro"** en el Encounter Studio, para encuentros de Entrenadores. Muestra el plan táctico que se susurra al GM al generar, guardado con el encuentro para consultarlo en la sesión. Se guarda al generar o actualizar con "Moves de equipo" activado.
+
 ## [0.72.0] — 2026-11-21
 
 - **Entrenador boss: "Gana el boss".** Con el rango Entrenador boss aparece un selector con la probabilidad de que el boss gane: 50 % (Mortal, como hasta ahora), 60, 70, 80 o 90 %. "Generar Entrenadores" busca el equipo, los Pokémon en campo y las acciones que dan esa probabilidad contra el grupo detectado.

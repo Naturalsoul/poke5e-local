@@ -897,6 +897,8 @@ function buildEncounterMetadata({
     optional:
       encounter.optional ===
         true,
+    boosts:
+      encounter.boosts,
     trainer:
       request.trainer
 
@@ -909,6 +911,12 @@ function buildEncounterMetadata({
 
             archetypeId:
               request.trainer.archetypeId,
+
+            onField:
+              request.trainer.onField,
+
+            actions:
+              request.trainer.actions,
 
             order:
               request.trainerOrder

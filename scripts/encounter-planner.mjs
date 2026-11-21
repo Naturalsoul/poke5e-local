@@ -2,7 +2,7 @@ import { escapeHtml } from "./html.mjs";
 import { getLanguage } from "./i18n.mjs";
 import { EncounterGenerationService } from "./encounter-generation-service.mjs";
 import { EncounterDeletionService } from "./encounter-deletion-service.mjs";
-import { EncounterQueryService } from "./encounter-query-service.mjs";
+import { ENCOUNTER_STRATEGY_FLAG, EncounterQueryService } from "./encounter-query-service.mjs";
 import { publishEncounterReward } from "./encounter-xp-reward.mjs";
 import {
   adaptTrainerMoves,
@@ -237,6 +237,10 @@ export class PokemonEncounterPlanner
 
       trainers:
         [],
+
+      // The saved encounter's tactics plan (HTML built by #whisperTactics).
+      strategy:
+        "",
 
       selectedTrainerId:
         "",
@@ -3120,6 +3124,8 @@ export class PokemonEncounterPlanner
     this._encounterState.activeTab =
       "composition";
 
+    this._encounterState.strategy = "";
+
     this._encounterState.collapsedTrainerIds =
       new Set();
 
@@ -3212,6 +3218,18 @@ export class PokemonEncounterPlanner
         ? "trainer"
         : "wild";
 
+    this._encounterState.strategy = encounter.strategy ?? "";
+
+    if (encounter.boosts) {
+      Object.assign(this._encounterState, {
+        boostStats: encounter.boosts.statBonus,
+        boostCoverage: encounter.boosts.coverage,
+        boostItems: encounter.boosts.items,
+        boostBestMoves: encounter.boosts.bestMoves,
+        boostTmMoves: encounter.boosts.tmMoves
+      });
+    }
+
     this._encounterState.activeTab =
       normalizeEncounterStudioTab(
         this._encounterState
@@ -3291,10 +3309,9 @@ export class PokemonEncounterPlanner
                   "auto"
                 ),
 
-              // shortcut: kept for this session like the team size, not saved with the encounter; save it if a
-              // reopened encounter's difficulty matters.
               onField:
                 clampInteger(
+                  trainer.onField ??
                   existingPreference
                     ?.onField,
                   1,
@@ -3304,6 +3321,7 @@ export class PokemonEncounterPlanner
 
               actions:
                 clampInteger(
+                  trainer.actions ??
                   existingPreference
                     ?.actions,
                   1,
@@ -4197,6 +4215,19 @@ export class PokemonEncounterPlanner
   }
 
   // The DM's game plan, whispered to the GMs: each trainer's roles in the order to play them, with the key Move.
+  // Kept on the encounter's Actors, for the "Estrategia de encuentro" tab.
+  async #saveStrategy(entries, content) {
+    this._encounterState.strategy = content;
+    const actorIds = [...new Set(entries.map(entry => entry.actor?.id).filter(Boolean))];
+    try {
+      await Actor.implementation.updateDocuments(
+        actorIds.map(_id => ({ _id, [`flags.poke5e-local.${ENCOUNTER_STRATEGY_FLAG}`]: content }))
+      );
+    } catch (error) {
+      console.warn("poke5e-local | No se pudo guardar la estrategia del encuentro.", error);
+    }
+  }
+
   async #whisperTactics(
     result
   ) {
@@ -4317,7 +4348,8 @@ export class PokemonEncounterPlanner
       )
     ].join("");
 
-    // The encounter is already created: a failed message mustn't look like a failed generation.
+    // The encounter is already created: a failed message or save mustn't look like a failed generation.
+    await this.#saveStrategy(result.entries, content);
     try {
       await ChatMessage.implementation.create({
         content,
@@ -6470,12 +6502,10 @@ export class PokemonEncounterPlanner
         withAceBerry(this._encounterState.rows);
     }
 
-    const definition =
-      buildEncounterDefinition(
-        this._encounterState,
-        location,
-        name
-      );
+    const definition = {
+      ...buildEncounterDefinition(this._encounterState, location, name),
+      boosts: this.#boosts()
+    };
 
 
     this._encounterState.busy =

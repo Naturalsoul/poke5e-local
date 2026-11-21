@@ -657,6 +657,24 @@ function renderDifficultyControls({
     </div>`;
 }
 
+// The tactics plan whispered at generation, kept with the encounter. It is HTML the planner built with escaped text.
+function renderEncounterStrategy(strategy) {
+  return `
+    <section class="poke5e-encounter-planner__panel poke5e-encounter-planner__strategy">
+      <header class="poke5e-encounter-planner__panel-header">
+        <i class="fa-solid fa-chess-knight" aria-hidden="true"></i>
+        <h3>Estrategia de encuentro</h3>
+        <small>El plan táctico que se susurró al generar</small>
+      </header>
+      ${strategy
+        ? `<div class="poke5e-encounter-planner__strategy-body">${strategy}</div>`
+        : `<p class="poke5e-encounter-planner__steps-empty">
+            Este encuentro no tiene estrategia guardada. Se guarda al generar o actualizar un encuentro de Entrenadores con
+            "Moves de equipo" activado.
+          </p>`}
+    </section>`;
+}
+
 // The boss aims at its chance to win, read from simulated fights against the group.
 function renderBossWinChance(chance) {
   const option = (value, label) => `<option value="${value}"${String(chance) === String(value) ? " selected" : ""}>${label}</option>`;
@@ -3477,6 +3495,33 @@ export function renderPlannerContent(
                 Entrenadores
               </button>
 
+              <button
+                type="button"
+                class="poke5e-encounter-planner__studio-tab${
+                  activeStudioTab ===
+                    "strategy"
+                    ? " is-active"
+                    : ""
+                }"
+                data-action="switch-studio-tab"
+                data-tab="strategy"
+                role="tab"
+                aria-selected="${
+                  activeStudioTab ===
+                    "strategy"
+                    ? "true"
+                    : "false"
+                }"
+                ${trainerEncounter ? "" : "hidden"}
+              >
+                <i
+                  class="fa-solid fa-chess-knight"
+                  aria-hidden="true"
+                ></i>
+
+                Estrategia de encuentro
+              </button>
+
 
               <button
                 type="button"
@@ -3629,6 +3674,15 @@ export function renderPlannerContent(
 
             ${view.stepPanel}
 
+          </section>
+
+          <section
+            class="poke5e-encounter-planner__studio-panel"
+            data-studio-tab="strategy"
+            role="tabpanel"
+            ${activeStudioTab === "strategy" ? "" : "hidden"}
+          >
+            ${renderEncounterStrategy(state.strategy)}
           </section>
 
           <section
