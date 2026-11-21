@@ -315,3 +315,21 @@ test("Multitalented adds the chosen skill proficiency from level 15", () => {
   assert.deepEqual(trainerPathEffectChanges({ ...base, level: 14 }), []);
   assert.deepEqual(trainerPathEffectChanges({ ...base, level: 15, multitalentedSkill: "" }), []);
 });
+
+test("Partners adds WIS to attacks against wild Pokémon only, not a rival trainer's", () => {
+  const ranger = trainer("ranger", 9);
+  ranger.system.abilities = { wis: { value: 16 } };
+  const partner = pokemon(ranger, ["grass"]);
+  ranger.setFlag(MODULE_ID, "rangerPartnerUuid", partner.uuid);
+  const foe = encounter => createFlagDocument({ documentName: "Actor", flags: { [MODULE_ID]: { kind: "pokemon", ...(encounter ? { encounter } : {}) } } });
+  const attackParts = target => {
+    game.user.targets = new Set([{ actor: target }]);
+    const rollConfig = { parts: [], options: {} };
+    hooks.handler("dnd5e.preRollAttack")({ subject: { item: move(partner, { moveType: "normal" }) }, rolls: [rollConfig] });
+    game.user.targets = new Set();
+    return rollConfig.parts;
+  };
+  assert.ok(attackParts(foe(null)).includes("3"), "wild");
+  assert.ok(attackParts(foe({ key: "a", type: "wild" })).includes("3"), "wild encounter");
+  assert.ok(!attackParts(foe({ key: "b", type: "trainer" })).includes("3"), "rival trainer's Pokémon");
+});

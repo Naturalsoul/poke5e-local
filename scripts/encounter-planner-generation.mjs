@@ -1,3 +1,4 @@
+import { evolveRolledPokemon } from "./encounter-evolution.mjs";
 import { clampInteger } from "./numbers.mjs";
 import { DIFFICULTIES, MAX_TRAINER_TEAM, bossWinChance, bossWinRange, encounterDifficulty, fieldedActions, generateForDifficulty }
   from "./encounter-difficulty.mjs";
@@ -44,7 +45,7 @@ function rankTarget(rank, state) {
  * Rolls rival trainers for the planner's rank and keeps the roll closest to the rank's target difficulty.
  * `missedTarget` is set when no roll reached it. Throws when no species fit the trainers.
  */
-export function rollTrainerEncounter({ state, party, rank, levels, boosts, candidates, pokemonTypes }) {
+export function rollTrainerEncounter({ state, party, rank, levels, boosts, candidates, pokemonTypes, evolutions = [], pokemonSr = () => 0 }) {
   const pick = ([min, max]) => min + Math.floor(Math.random() * (max - min + 1));
   // "auto" takes the rank's range; otherwise the number chosen.
   const chosen = (value, range, max = 6) => (value === "auto" ? pick(range) : clampInteger(value, 1, max, 1));
@@ -65,6 +66,7 @@ export function rollTrainerEncounter({ state, party, rank, levels, boosts, candi
     };
     const typed = rank.monotype ? monotypePool(candidates, Number(options.pokemonPerTrainer)) : candidates;
     let generated;
+    let pool = typed;
     try {
       generated = generateRandomTrainerEncounter({ ...options, candidates: typed });
     } catch (error) {
@@ -73,6 +75,7 @@ export function rollTrainerEncounter({ state, party, rank, levels, boosts, candi
         return [];
       }
       try {
+        pool = candidates;
         generated = generateRandomTrainerEncounter({ ...options, candidates });
       } catch (fallbackError) {
         failure = fallbackError;
@@ -87,6 +90,7 @@ export function rollTrainerEncounter({ state, party, rank, levels, boosts, candi
       trainerIndex === 0 ? levels.ace : null,
       pick
     ));
+    trainers.forEach(trainer => { trainer.pokemon = trainer.pokemon.map(pokemon => evolveRolledPokemon(pokemon, { evolutions, pool })); });
     // Within the rank's cap, the helpers send out fewer first.
     while (fieldCap && trainers.reduce((total, trainer) => total + trainer.onField, 0) > fieldCap) {
       const most = trainers.reduce((top, trainer) => (trainer.onField >= top.onField ? trainer : top));
@@ -98,7 +102,7 @@ export function rollTrainerEncounter({ state, party, rank, levels, boosts, candi
 
   const measure = generated => encounterDifficulty(
     party,
-    generated.flatMap(trainer => trainer.pokemon.map(pokemon => ({ ...pokemon, types: pokemonTypes(pokemon.pokemonId) }))),
+    generated.flatMap(trainer => trainer.pokemon.map(pokemon => ({ ...pokemon, types: pokemonTypes(pokemon.pokemonId), sr: pokemonSr(pokemon.pokemonId) }))),
     { boosts, onField: fieldedActions(generated, trainer => trainer.pokemon.length) }
   );
 
@@ -187,7 +191,7 @@ export function trainerTeamLevels(rows, trainerId, partyLevel) {
 }
 
 // Rerolls a trainer's unlocked slots; `rows` is the whole encounter with the new team in the old team's place.
-export function rerollTrainerTeamRows({ trainer, rows, candidates, minLevel, maxLevel, nextRowId }) {
+export function rerollTrainerTeamRows({ trainer, rows, candidates, minLevel, maxLevel, nextRowId, evolutions = [] }) {
   const currentRows = rows.filter(row => row.trainerId === trainer.id);
   const lockedRows = currentRows.filter(row => row.locked === true);
   const result = rerollRandomTrainerTeam({
@@ -200,7 +204,7 @@ export function rerollTrainerTeamRows({ trainer, rows, candidates, minLevel, max
     archetypeId: getTrainerArchetype(trainer.archetypeId).id
   });
   const generatedRows = result.pokemon.map(pokemon => ({
-    id: nextRowId(), trainerId: trainer.id, ...pokemon, abilityId: null, itemId: null, itemResolved: false
+    id: nextRowId(), trainerId: trainer.id, ...(pokemon.locked ? pokemon : evolveRolledPokemon(pokemon, { evolutions, pool: candidates })), abilityId: null, itemId: null, itemResolved: false
   }));
   return {
     generatedRows,
