@@ -73,6 +73,7 @@ export class EncounterItemService {
     policy: requestedPolicy = null,
     // Every Pokémon carries something: a held item or a berry, rolled when it has none.
     guaranteed = false,
+    pokemonTypes = [],
     random = Math.random
   }) {
 
@@ -99,9 +100,11 @@ export class EncounterItemService {
       );
 
 
+    // An item the planner already chose (the ace's berry, the items step) is kept, not rolled again.
     const forced =
       guaranteed &&
-      !currentItemId;
+      !currentItemId &&
+      !(requestedItemResolved === true && requestedItemId);
 
     const reroll =
       requestedReroll ||
@@ -267,6 +270,8 @@ export class EncounterItemService {
             .categoryWeights,
 
         currentItemId,
+
+        pokemonTypes,
 
         random
       });

@@ -14,7 +14,7 @@ test("an even fight is Medium; weaker or fewer rivals are easier, stronger or mo
   assert.equal(tier(party, [{ level: 5, quantity: 2 }]), "easy", "half as many");
   assert.equal(tier(party, [{ level: 5 }]), "trivial", "one against four");
   assert.equal(tier(party, [{ level: 7, quantity: 4 }]), "hard", "two levels higher: 750 against 500");
-  assert.equal(tier(party, [{ level: 5, quantity: 8 }]), "deadly", "twice as many: 8 × 500 × 1.5 = 12 000 against 2000");
+  assert.equal(tier(party, [{ level: 5, quantity: 8 }]), "extreme", "twice as many: 8 × 500 × 1.5 = 12 000 against 2000");
   assert.equal(tier({ size: 2, level: 10 }, [{ level: 12 }, { level: 9, quantity: 2 }]), "hard", "mixed rows");
 });
 
@@ -30,7 +30,9 @@ test("distance to a tier is 0 inside it and grows outside", () => {
   assert.equal(distanceToTier(1.2, "medium"), 0);
   assert.equal(distanceToTier(0.8, "medium"), 0.19999999999999996);
   assert.equal(distanceToTier(2, "medium"), 0.5);
-  assert.equal(distanceToTier(5, "deadly"), 0);
+  assert.equal(distanceToTier(2.5, "deadly"), 0);
+  assert.equal(distanceToTier(5, "deadly"), 2, "Extreme caps Deadly");
+  assert.equal(distanceToTier(5, "extreme"), 0);
 });
 
 test("the party is each player's trainer, at their strongest team Pokémon's level on average", () => {
@@ -145,7 +147,7 @@ test("every rank reaches its difficulty for parties of 2 to 6, adding helpers on
           const team = pick(rank.team);
           const rows = Array.from({ length: trainers * team }, (_, index) => ({
             level: levels.ace && index === team - 1 ? pick(levels.ace) : pick([levels.min, levels.max]) }));
-          return { rows, onField: trainers * Math.min(team, pick(rank.onField)) };
+          return { rows, onField: trainers * Math.min(team, pick(rank.onField)) * pick(rank.actions ?? [1, 1]) };
         };
         const attempt = generateForDifficulty(roll, ({ rows, onField }) =>
           encounterDifficulty(party, rows, { onField, boosts: rank.extras }), rank.target, 300);

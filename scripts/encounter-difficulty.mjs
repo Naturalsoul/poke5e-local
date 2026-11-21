@@ -13,10 +13,13 @@ import { getTrainerOwnedPokemon, getTrainerPartyState } from "./trainer-party-se
  * - a wild encounter is its Pokémon's weight, times D&D's crowd multiplier when they outnumber the party;
  * - a trainer battle is every Pokémon of every team (each one must be beaten), stronger than wild ones (poke5e
  *   gives them a feat, a specialization and better stats), times (rival Pokémon on the field ÷ the players' on the
- *   field)^0.6: D&D's crowd multipliers both ways (2 against 1 ×1.5, 3 against 1 ×2, 1 against 4 ×0.43);
+ *   field)^0.6 up to even and ^0.7 past it (see fieldWeight);
  * - in trainer battles, each rival Pokémon also weighs by its types against the players' team (typeMatchup);
  * - an even wild fight is Medium, an even trainer battle Hard; Easy, Hard and Deadly follow D&D's thresholds (½, 1½
- *   and 2.2 times Medium).
+ *   and 2.2 times Medium), and Extreme (3) caps Deadly.
+ * Checked against simulated fights with the players' own Pokémon (poke5e's action economy, statuses, berries): at 1
+ * they lose about a quarter of their HP, at 1.5 half (and win 9 in 10), at 2.2 three quarters (win 6 in 10), past 3
+ * they win under half.
  * Trainer battles aren't chosen by difficulty but by the rival's rank, as in the games (TRAINER_RANKS); the
  * difficulty is what the planner shows of them.
  * ============================================================ */
@@ -38,8 +41,8 @@ const EVEN_TRAINER_BATTLE = 1.5;
  */
 export function boostMultiplier({ statBonus = 0, coverage = false, items = false, bestMoves = false, tmMoves = false } = {}) {
   return (1 + 0.1 * Math.max(0, Math.min(2, Number(statBonus) || 0))) * (coverage ? 1.1 : 1) * (items ? 1.05 : 1) *
-    // The best moveset hits harder than a random one; TMs, harder still.
-    (bestMoves ? 1.1 : 1) * (tmMoves ? 1.1 : 1);
+    // The team's Moves by role (control, setup, coverage) weigh about ×1.45 in simulated fights; TMs, harder still.
+    (bestMoves ? 1.45 : 1) * (tmMoves ? 1.1 : 1);
 }
 
 // From the lowest: each tier starts at this many times the party's weight.
@@ -48,7 +51,9 @@ export const DIFFICULTIES = Object.freeze([
   { id: "easy", label: "Fácil", from: 0.5 },
   { id: "medium", label: "Media", from: 1 },
   { id: "hard", label: "Difícil", from: 1.5 },
-  { id: "deadly", label: "Mortal", from: 2.2 }
+  { id: "deadly", label: "Mortal", from: 2.2 },
+  // Past 3 the players win under half of the fights: the ceiling of Deadly, which ranks don't aim at.
+  { id: "extreme", label: "Extrema", from: 3 }
 ]);
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, Math.trunc(Number(value)) || min));
@@ -57,6 +62,8 @@ export const pokemonPower = value => POWER_BY_LEVEL[level(value)];
 
 // Each extra rival per party Pokémon adds half: 2 against 1 is ×1.5, 3 against 1 is ×2.
 const crowd = (foes, partySize) => 1 + 0.5 * Math.max(0, foes / Math.max(1, partySize) - 1);
+// Rival Pokémon on the field against the players': past even, each extra one costs them more (fitted on simulated fights).
+export const fieldWeight = (onField, size) => { const share = onField / size; return share ** (share > 1 ? 0.7 : 0.6); };
 const quantity = row => Math.max(0, Number(row.quantity ?? 1) || 0);
 
 /*
@@ -92,7 +99,7 @@ export function encounterDifficulty(party, rows, { onField = 0, boosts } = {}) {
     ? rows.reduce((total, row) => total + pokemonPower(row.level) * quantity(row) * typeMatchup(row.types, party?.pokemon), 0)
     : weight;
   const power = Math.round(trainerBattle
-    ? matched * TRAINER_POKEMON_BONUS * boostMultiplier(boosts) * (onField / size) ** 0.6 * EVEN_TRAINER_BATTLE
+    ? matched * TRAINER_POKEMON_BONUS * boostMultiplier(boosts) * fieldWeight(onField, size) * EVEN_TRAINER_BATTLE
     : weight * crowd(rows.reduce((total, row) => total + quantity(row), 0), size));
   const ratio = power / partyPower;
   const tier = DIFFICULTIES.findLast(entry => ratio >= entry.from) ?? DIFFICULTIES[0];
@@ -104,7 +111,9 @@ export function encounterDifficulty(party, rows, { onField = 0, boosts } = {}) {
  * type or not, extras, and the difficulty it aims at. How many Pokémon it brings and sends out at once (within its
  * ranges) adapts to the party, since the games tune a rival for one player and a table has several: a boss rank adds
  * gym helpers only when alone it can't reach its difficulty. Levels stay near the party's, so a campaign that levels
- * by XP doesn't inflate.
+ * by XP doesn't inflate. fieldCap: rolled on "auto", all its trainers send out at most the players' Pokémon on the
+ * field plus this many, since outnumbering the party weighs the most (fieldWeight). actions: how many actions each of
+ * its Pokémon takes on its turn, like a D&D boss; an extra action weighs a bit more than one more Pokémon on the field.
  */
 export const TRAINER_RANKS = Object.freeze([
   { id: "route", label: "Entrenador de ruta", target: "easy", levels: [-3, -1], trainers: [1, 6], team: [1, 3],
@@ -112,14 +121,37 @@ export const TRAINER_RANKS = Object.freeze([
   { id: "ace-trainer", label: "Entrenador Guay", target: "medium", levels: [-2, 0], trainers: [1, 4], team: [1, 4],
     onField: [1, 3], extras: { statBonus: 1, coverage: true } },
   { id: "gym-leader", label: "Líder de Gimnasio", target: "hard", levels: [-1, 0], ace: [1, 1], trainers: [1, 4],
-    team: [1, 6], onField: [1, 6], monotype: true, extras: { statBonus: 1, coverage: true, items: true, bestMoves: true } },
+    team: [1, 6], onField: [1, 6], fieldCap: 0, monotype: true, extras: { statBonus: 1, coverage: true, items: true, bestMoves: true } },
   { id: "elite-four", label: "Alto Mando", target: "hard", levels: [0, 1], ace: [1, 1], trainers: [1, 4], team: [2, 6],
-    onField: [1, 6], monotype: true, extras: { statBonus: 2, coverage: true, items: true, bestMoves: true } },
+    onField: [1, 6], fieldCap: 0, monotype: true, extras: { statBonus: 2, coverage: true, items: true, bestMoves: true } },
   { id: "champion", label: "Campeón", target: "deadly", levels: [0, 1], ace: [1, 2], trainers: [1, 4], team: [3, 6],
-    onField: [1, 6], extras: { statBonus: 2, coverage: true, items: true, bestMoves: true } },
+    onField: [1, 6], fieldCap: 2, extras: { statBonus: 2, coverage: true, items: true, bestMoves: true } },
+  // The whole party against one trainer: up to 12 Pokémon, up to 6 on the field, more than one action each.
+  { id: "boss", label: "Entrenador boss", target: "deadly", levels: [0, 1], ace: [1, 2], trainers: [1, 1], team: [6, 12],
+    onField: [1, 6], actions: [1, 3], extras: { statBonus: 2, coverage: true, items: true, bestMoves: true } },
   { id: "totem", label: "Pokémon Dominante", target: "hard", levels: [-1, 0], ace: [1, 2], trainers: [1, 4], team: [1, 6],
     onField: [1, 6], extras: { statBonus: 2, items: true } }
 ]);
+
+// A rival trainer's team: the games' 6, or up to 12 for a boss.
+export const MAX_TRAINER_TEAM = 12;
+
+// What a trainer battle weighs on the field: each trainer's Pokémon out at once (no more than it has) times their actions.
+// An extra action weighs 1.25 Pokémon on the field: at that weight a Deadly boss and a Deadly Champion win as often.
+const ACTION_WEIGHT = 1.25;
+export const fieldedActions = (trainers, countOf) => Math.max(1, trainers.reduce((total, trainer) =>
+  total + Math.min(Number(trainer.onField) || 1, countOf(trainer)) * (1 + ACTION_WEIGHT * ((Number(trainer.actions) || 1) - 1)), 0));
+
+/*
+ * A boss's chance to win by the battle's ratio, fitted on simulated fights of the players' own Pokémon (switching costs
+ * the turn, a replacement after a KO the reaction): logistic in ln(ratio).
+ */
+const BOSS_CURVE = Object.freeze({ a: -7.36, b: 8.03 });
+export const BOSS_WIN_CHANCES = Object.freeze([60, 70, 80, 90]);
+export const bossWinChance = ratio => 1 / (1 + Math.exp(-(BOSS_CURVE.a + BOSS_CURVE.b * Math.log(Math.max(0.01, ratio)))));
+const ratioForBossWin = chance => Math.exp((Math.log(chance / (1 - chance)) - BOSS_CURVE.a) / BOSS_CURVE.b);
+// The ratios where the boss wins within 5 points of the chance asked (in %).
+export const bossWinRange = percent => ({ from: ratioForBossWin(percent / 100 - 0.05), to: ratioForBossWin(Math.min(0.99, percent / 100 + 0.05)) });
 
 export const getTrainerRank = id => TRAINER_RANKS.find(rank => rank.id === id) ?? TRAINER_RANKS[0];
 
@@ -144,13 +176,16 @@ export function distanceToTier(ratio, tierId) {
  * @param {() => any} generate
  * @param {(result: any) => { tier: object, ratio: number }} measure
  */
+// difficulty: a tier id, or a ratio range { from, to }.
 export function generateForDifficulty(generate, measure, difficulty, attempts = 300) {
   let best = null;
   for (let attempt = 0; attempt < attempts && best?.distance !== 0; attempt++) {
     const result = generate();
     const { tier, ratio } = measure(result);
-    const distance = distanceToTier(ratio, difficulty);
-    if (!best || distance < best.distance) {best = { result, tier, distance };}
+    const distance = typeof difficulty === "object"
+      ? Math.max(0, difficulty.from - ratio, ratio - difficulty.to)
+      : distanceToTier(ratio, difficulty);
+    if (!best || distance < best.distance) {best = { result, tier, ratio, distance };}
   }
   return best;
 }

@@ -1,4 +1,5 @@
 import { clampInteger } from "./numbers.mjs";
+import { MAX_TRAINER_TEAM } from "./encounter-difficulty.mjs";
 
 export function selectTrainerArchetypePokemon({
   candidates,
@@ -16,7 +17,7 @@ export function selectTrainerArchetypePokemon({
     clampInteger(
       count,
       1,
-      6,
+      MAX_TRAINER_TEAM,
       1
     );
 

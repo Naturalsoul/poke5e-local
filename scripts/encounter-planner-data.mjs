@@ -4,7 +4,7 @@ import {
   RANDOM_REGION_ALL
 } from "./encounter-random-catalog.mjs";
 import { RANDOM_ENCOUNTER_SIZES } from "./encounter-randomizer.mjs";
-import { detectEncounterParty } from "./encounter-difficulty.mjs";
+import { MAX_TRAINER_TEAM, detectEncounterParty } from "./encounter-difficulty.mjs";
 import {
   getTrainerArchetype,
   listTrainerArchetypes
@@ -672,7 +672,7 @@ export function canGenerateRandomTrainerEncounter(
       : clampInteger(
           pokemonCount,
           1,
-          6,
+          MAX_TRAINER_TEAM,
           3
         );
 
@@ -814,7 +814,7 @@ export function normalizeTrainerTeamSize(
     clampInteger(
       normalized,
       1,
-      6,
+      MAX_TRAINER_TEAM,
       3
     )
   );
@@ -857,7 +857,7 @@ function getTrainerRerollTargetForUi({
     return clampInteger(
       teamSize,
       1,
-      6,
+      MAX_TRAINER_TEAM,
       3
     );
   }
@@ -885,14 +885,14 @@ function getTrainerRerollTargetForUi({
     clampInteger(
       pokemonCount,
       0,
-      6,
+      MAX_TRAINER_TEAM,
       0
     );
 
 
   return current > 0
     ? Math.min(
-        maximum,
+        Math.max(maximum, current),
         Math.max(
           minimum,
           current

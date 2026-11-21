@@ -12,6 +12,8 @@ export function selectEncounterItem({
   chancePercent = 20,
   categoryWeights = {},
   currentItemId = null,
+  // Holder types: type-bound items (Mystic Water, Fire Gem, Z-crystals, Black Sludge) only go to a matching Pokémon.
+  pokemonTypes = [],
   random = Math.random
 }) {
 
@@ -50,7 +52,9 @@ export function selectEncounterItem({
 
         : []
     ).filter(
-      isEncounterItemEligible
+      item =>
+        isEncounterItemEligible(item) &&
+        fitsHolderTypes(item, pokemonTypes)
     );
 
 
@@ -139,6 +143,19 @@ export function selectEncounterItem({
     getEncounterItemWeight,
     random
   );
+}
+
+
+const TYPE_BOUND =
+  /(\w+)-type damage it deals|damage for an? (\w+)-type move|use an? (\w+)-type Z-Move|holder is an? (\w+)-type Pokémon/i;
+
+
+export function fitsHolderTypes(item, pokemonTypes = []) {
+  const types = (Array.isArray(pokemonTypes) ? pokemonTypes : []).map(type => String(type).toLowerCase());
+  if (!types.length) {return true;}
+  const match = String(item?.description?.en ?? item?.description ?? "").match(TYPE_BOUND);
+  const type = match?.slice(1).find(Boolean)?.toLowerCase();
+  return !type || types.includes(type);
 }
 
 

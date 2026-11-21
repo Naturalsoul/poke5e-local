@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-const { learnableMoveIds, moveTags, roleOf, scoreMove, selectTeamMoves, teamTactics } = await import("../scripts/encounter-move-selector.mjs");
+const { battleOrder, learnableMoveIds, moveTags, roleOf, scoreMove, selectTeamMoves, teamTactics } = await import("../scripts/encounter-move-selector.mjs");
 
 const move = (id, type, dice, extra = {}) => ({ id, type, powerAbilities: ["str"], damage: dice ? { dice: { 1: dice }, type: [type] } : null, ...extra });
 const moves = [
@@ -77,6 +77,57 @@ test("team: the role read back from a moveset, and a tactics line per Pokémon",
   const members = plan();
   members.forEach(each => assert.equal(roleOf(each.moves, each.pokemon, each.level), each.role, each.pokemon.id));
   const lines = teamTactics(members.map(each => ({ ...each, name: each.pokemon.id })));
-  assert.equal(lines.length, 4);
-  assert.match(lines[0], /Preparador/);
+  assert.equal(lines.length, 5);
+  assert.match(lines[0], /^Sale primero: \w+\. Después, al caer alguno: .*El As, \w+, entra al final\.$/);
+  assert.match(lines.at(-1), /, As\)/);
+  const together = teamTactics(members.map(each => ({ ...each, name: each.pokemon.id })), "es", { onField: 2 });
+  assert.match(together[0], /^Salen juntos: \w+, \w+\./);
+});
+
+test("sweeper: an offensive setup Move makes the role, and it reads back", () => {
+  const dance = util("dragon-dance", "dragon", "For the duration, double your proficiency bonus when making an attack.",
+    { duration: "1 minute, concentration", range: { raw: "self" } });
+  const gyarados = species("gyarados", ["water"], ["water-gun", "tackle", "dragon-dance", "thunder-punch"]);
+  const picked = selectTeamMoves({ pokemon: gyarados, moves: [...teamMoves, dance], level: 6, teammates: plan().slice(0, 3),
+    random: () => 0 });
+  assert.equal(picked.role, "sweeper");
+  assert.ok(picked.moves.some(each => each.id === "dragon-dance"));
+  assert.equal(roleOf(picked.moves, gyarados, 6), "sweeper");
+});
+
+test("battle order: an entry ability leads, the ace goes last with its surprise Move and item", () => {
+  const members = plan().map(each => ({ ...each, name: each.pokemon.id }));
+  members[3] = { ...members[3], abilityId: "drought", abilityName: "Drought" };
+  members[1] = { ...members[1], abilityId: "intimidate", abilityName: "Intimidate" };
+  members[0] = { ...members[0], level: 9, itemName: "Sitrus Berry" };
+  const { order, lead, ace } = battleOrder(members);
+  assert.equal(lead.name, "rattata");
+  assert.equal(ace.name, "charmander");
+  assert.equal(order.at(-1), ace);
+  const lines = teamTactics(members, "es", { weakTo: ["electric"] });
+  assert.match(lines[1], /^rattata .*Drought actúa al entrar/);
+  assert.match(lines.find(line => line.startsWith("squirtle")), /Intimidate: guárdalo para el ataque más fuerte/);
+  assert.ok(!lines.some(line => /Intimidate actúa al entrar/.test(line)));
+  const aceLine = lines.at(-1);
+  assert.match(aceLine, /charmander \(\w+, As\)/);
+  assert.match(aceLine, /Lleva Sitrus Berry/);
+});
+
+test("battle order: the whole team on the field goes out at once, with no ace held back", () => {
+  const members = plan().map(each => ({ ...each, name: each.pokemon.id }));
+  const [head] = teamTactics(members, "es", { onField: 4 });
+  assert.match(head, /^Salen todos a la vez: \w+, \w+, \w+, \w+\.$/);
+});
+
+test("control: the key Move inflicts a real status, not a save that does nothing to the target", () => {
+  const snatch = util("snatch", "dark", "The target must make a WIS save or you steal its next beneficial Move.", { save: { attribute: ["wis"] } });
+  const glare = util("scary-face", "normal", "The target must make a WIS save or become frightened.", { save: { attribute: ["wis"] } });
+  const wave = util("thunder-wave", "electric", "The target must make a CON save or become paralyzed.", { save: { attribute: ["con"] } });
+  const pichu = species("pichu", ["electric"], ["snatch", "scary-face", "thunder-wave", "thunder-punch"]);
+  for (const random of [() => 0, () => 0.99]) {
+    const picked = selectTeamMoves({ pokemon: pichu, moves: [...teamMoves, snatch, glare, wave], level: 6,
+      teammates: plan().slice(0, 2), random });
+    if (picked.role !== "control") {continue;}
+    assert.equal(picked.moves[0].id, "thunder-wave", picked.moves.map(each => each.id).join(", "));
+  }
 });

@@ -483,6 +483,9 @@ export class EncounterGenerationService {
       await this.items.prepare({
         actor,
 
+        pokemonTypes:
+          pokemon.types,
+
         encounterType:
           encounter.type,
 

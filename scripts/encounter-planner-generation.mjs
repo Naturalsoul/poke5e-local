@@ -1,5 +1,6 @@
 import { clampInteger } from "./numbers.mjs";
-import { DIFFICULTIES, encounterDifficulty, generateForDifficulty } from "./encounter-difficulty.mjs";
+import { DIFFICULTIES, MAX_TRAINER_TEAM, bossWinChance, bossWinRange, encounterDifficulty, fieldedActions, generateForDifficulty }
+  from "./encounter-difficulty.mjs";
 import { generateRandomEncounterRows } from "./encounter-randomizer.mjs";
 import { generateRandomTrainerEncounter, rerollRandomTrainerTeam } from "./encounter-trainer-randomizer.mjs";
 import { getTrainerArchetype, getTrainerArchetypeLabel } from "./encounter-trainer-archetypes.mjs";
@@ -27,6 +28,16 @@ export function trainerCandidatePool(state, maxLevel) {
   return { region: state.trainerRandomRegion, maxLevel, minSr: null, maxSr: getTrainerLevelRule(maxLevel).maxSr };
 }
 
+// What the roll aims at: a boss can aim at its chance to win instead of the rank's tier.
+function rankTarget(rank, state) {
+  const chance = rank.id === "boss" ? Number(state.bossWinChance) : NaN;
+  if (!Number.isFinite(chance)) {
+    return { target: rank.target, missed: best => ({ wanted: DIFFICULTIES.find(entry => entry.id === rank.target)?.label, reached: best.tier.label }) };
+  }
+  return { target: bossWinRange(chance),
+    missed: best => ({ wanted: `que el boss gane un ${chance} %`, reached: `un ${Math.round(bossWinChance(best.ratio) * 100)} %` }) };
+}
+
 /**
  * Rolls rival trainers for the planner's rank and keeps the roll closest to the rank's target difficulty.
  * `missedTarget` is set when no roll reached it. Throws when no species fit the trainers.
@@ -34,14 +45,17 @@ export function trainerCandidatePool(state, maxLevel) {
 export function rollTrainerEncounter({ state, party, rank, levels, boosts, candidates, pokemonTypes }) {
   const pick = ([min, max]) => min + Math.floor(Math.random() * (max - min + 1));
   // "auto" takes the rank's range; otherwise the number chosen.
-  const chosen = (value, range) => (value === "auto" ? pick(range) : clampInteger(value, 1, 6, 1));
+  const chosen = (value, range, max = 6) => (value === "auto" ? pick(range) : clampInteger(value, 1, max, 1));
   let failure = null;
+  const fieldCap = state.trainerRandomOnField === "auto" && Number.isFinite(rank.fieldCap)
+    ? Math.max(1, (Number(party?.size) || 1) + rank.fieldCap)
+    : null;
 
   // One roll: team, Pokémon on the field and (for Gym Leaders and the Elite Four) one type for every trainer.
   const roll = trainerCount => {
     const options = {
       trainerCount,
-      pokemonPerTrainer: String(chosen(state.trainerRandomPokemonCount, rank.team)),
+      pokemonPerTrainer: String(chosen(state.trainerRandomPokemonCount, rank.team, MAX_TRAINER_TEAM)),
       minLevel: levels.min,
       maxLevel: levels.max,
       archetypeId: state.trainerRandomArchetype,
@@ -64,27 +78,37 @@ export function rollTrainerEncounter({ state, party, rank, levels, boosts, candi
       }
     }
     const onField = chosen(state.trainerRandomOnField, rank.onField);
-    return generated.map((trainer, trainerIndex) => withAce(
-      { ...trainer, onField: Math.min(onField, trainer.pokemon.length) },
+    const actions = rank.actions ? pick(rank.actions) : 1;
+    const trainers = generated.map((trainer, trainerIndex) => withAce(
+      { ...trainer, onField: Math.min(onField, trainer.pokemon.length), actions },
       // The boss's ace only: the others are their gym helpers.
       trainerIndex === 0 ? levels.ace : null,
       pick
     ));
+    // Within the rank's cap, the helpers send out fewer first.
+    while (fieldCap && trainers.reduce((total, trainer) => total + trainer.onField, 0) > fieldCap) {
+      const most = trainers.reduce((top, trainer) => (trainer.onField >= top.onField ? trainer : top));
+      if (most.onField <= 1) {break;}
+      most.onField -= 1;
+    }
+    return trainers;
   };
 
   const measure = generated => encounterDifficulty(
     party,
     generated.flatMap(trainer => trainer.pokemon.map(pokemon => ({ ...pokemon, types: pokemonTypes(pokemon.pokemonId) }))),
-    { boosts, onField: Math.max(1, generated.reduce((total, trainer) => total + trainer.onField, 0)) }
+    { boosts, onField: fieldedActions(generated, trainer => trainer.pokemon.length) }
   );
 
   // Fewest trainers first: helpers join only when the rival alone can't reach the rank's difficulty.
   const trainerCounts = state.trainerRandomCount === "auto"
     ? Array.from({ length: rank.trainers[1] - rank.trainers[0] + 1 }, (_, index) => rank.trainers[0] + index)
+      .filter((count, index) => !fieldCap || count <= fieldCap || index === 0)
     : [chosen(state.trainerRandomCount, rank.trainers)];
+  const { target, missed } = rankTarget(rank, state);
   let best = null;
   for (const trainerCount of trainerCounts) {
-    const attempt = generateForDifficulty(() => roll(trainerCount), measure, rank.target, 100);
+    const attempt = generateForDifficulty(() => roll(trainerCount), measure, target, 100);
     if (!best || attempt.distance < best.distance) {
       best = attempt;
     }
@@ -96,9 +120,7 @@ export function rollTrainerEncounter({ state, party, rank, levels, boosts, candi
   if (!best.result.length) {
     throw failure ?? new Error("No hay especies compatibles para estos Entrenadores.");
   }
-  const missedTarget = best.distance > 0
-    ? { wanted: DIFFICULTIES.find(entry => entry.id === rank.target)?.label, reached: best.tier.label }
-    : null;
+  const missedTarget = best.distance > 0 ? missed(best) : null;
   return { generatedTrainers: best.result, missedTarget };
 }
 
@@ -117,7 +139,8 @@ export function buildTrainerRoster({ generatedTrainers, teamSize, language, next
       name: `${getTrainerArchetypeLabel(archetype, language)} ${archetypeCount}`,
       archetypeId: archetype.id,
       teamSize: normalizeTrainerTeamSize(teamSize),
-      onField: generatedTrainer.onField
+      onField: generatedTrainer.onField,
+      actions: generatedTrainer.actions ?? 1
     });
     for (const pokemon of generatedTrainer.pokemon) {
       rows.push({ id: nextRowId(), trainerId, ...pokemon, abilityId: null, itemId: null, itemResolved: false });

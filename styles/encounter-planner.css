@@ -1371,10 +1371,10 @@ input[type="number"] {
 
   grid-template-columns:
     minmax(140px, 1.4fr)
-    82px
-    105px
-    120px
-    auto;
+    minmax(64px, 0.8fr)
+    minmax(80px, 1fr)
+    minmax(90px, 1.2fr)
+    max-content;
 
   align-items:
     end;
@@ -1406,11 +1406,11 @@ input[type="number"] {
 .poke5e-encounter-planner__difficulty-bar--trainer {
   grid-template-columns:
     minmax(140px, 1.4fr)
-    82px
-    105px
-    120px
-    120px
-    auto;
+    minmax(64px, 0.8fr)
+    minmax(80px, 1fr)
+    minmax(90px, 1.2fr)
+    minmax(90px, 1.2fr)
+    max-content;
 }
 
 .poke5e-encounter-planner__difficulty-bar
@@ -1533,7 +1533,7 @@ span {
     none;
 }
 
-@container planner (max-width: 900px) {
+@container planner (max-width: 980px) {
   .poke5e-encounter-planner__difficulty-bar,
   .poke5e-encounter-planner__difficulty-bar--trainer {
     grid-template-columns:
@@ -2323,6 +2323,7 @@ i {
   grid-template-columns:
     minmax(0, 1.5fr)
     minmax(0, 1fr)
+    64px
     64px;
 
   align-items:
@@ -5048,7 +5049,8 @@ strong {
     #e98a3f;
 }
 
-.poke5e-encounter-planner__status-item--difficulty[data-tier="deadly"] {
+.poke5e-encounter-planner__status-item--difficulty[data-tier="deadly"],
+.poke5e-encounter-planner__status-item--difficulty[data-tier="extreme"] {
   --difficulty-color:
     var(--encounter-red);
 
@@ -6160,7 +6162,8 @@ button[data-action="publish-reward"]:hover:not(:disabled) {
 }
 
 .poke5e-encounter-planner__steps-current[data-tier="hard"] strong,
-.poke5e-encounter-planner__steps-current[data-tier="deadly"] strong {
+.poke5e-encounter-planner__steps-current[data-tier="deadly"] strong,
+.poke5e-encounter-planner__steps-current[data-tier="extreme"] strong {
   color:
     var(--encounter-red);
 }
@@ -6276,7 +6279,9 @@ button.is-primary {
 .poke5e-encounter-planner__steps
 .poke5e-encounter-planner__step[data-tier="hard"] small,
 .poke5e-encounter-planner__steps
-.poke5e-encounter-planner__step[data-tier="deadly"] small {
+.poke5e-encounter-planner__step[data-tier="deadly"] small,
+.poke5e-encounter-planner__steps
+.poke5e-encounter-planner__step[data-tier="extreme"] small {
   color:
     color-mix(in srgb, var(--poke5e-ui-accent) 65%, var(--poke5e-ui-text));
 }

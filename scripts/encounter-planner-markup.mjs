@@ -1,12 +1,14 @@
 import { escapeHtml } from "./html.mjs";
-import { MOVE_ROLES } from "./encounter-move-selector.mjs";
+import { MOVE_ROLES, aceOf } from "./encounter-move-selector.mjs";
 import {
   RANDOM_BIOME_ROUTE,
   RANDOM_REGION_ALL
 } from "./encounter-random-catalog.mjs";
 import {
   DIFFICULTIES,
-  TRAINER_RANKS
+  MAX_TRAINER_TEAM,
+  TRAINER_RANKS,
+  BOSS_WIN_CHANCES
 } from "./encounter-difficulty.mjs";
 import {
   getTrainerArchetype,
@@ -557,7 +559,8 @@ function renderDifficultyControls({
   party,
   trainerBattle,
   boosts = {},
-  weakTo = []
+  weakTo = [],
+  bossWinChance = "auto"
 }) {
   // Trainer battles pick the rival's rank (and show the difficulty it aims at); wild ones a difficulty.
   const targetLabel = entry =>
@@ -571,8 +574,7 @@ function renderDifficultyControls({
         ? TRAINER_RANKS
         : DIFFICULTIES.filter(
             entry =>
-              entry.id !==
-                "trivial"
+              !["trivial", "extreme"].includes(entry.id)
           )
     )
       .map(
@@ -629,6 +631,8 @@ function renderDifficultyControls({
         </select>
       </label>
 
+      ${trainerBattle && difficulty === "boss" ? renderBossWinChance(bossWinChance) : ""}
+
       ${number("party-size", "Jugadores", party.size, 12)}
       ${number("party-level", "Nivel del grupo", party.level, 20)}
       ${trainerBattle ? number("party-team", "Pokémon / jugador", party.team, 6) : ""}
@@ -651,6 +655,22 @@ function renderDifficultyControls({
       ${trainerBattle ? renderTrainerExtras({ boosts, weakTo }) : ""}
 
     </div>`;
+}
+
+// The boss aims at its chance to win, read from simulated fights against the group.
+function renderBossWinChance(chance) {
+  const option = (value, label) => `<option value="${value}"${String(chance) === String(value) ? " selected" : ""}>${label}</option>`;
+  return `
+      <label
+        class="poke5e-encounter-planner__difficulty-select"
+        title="Probabilidad aproximada de que el boss gane, según combates simulados contra el grupo. 50 % es Mortal; cuanto más alta, más fuerte sale el boss."
+      >
+        <span>Gana el boss</span>
+        <select data-role="boss-win-chance">
+          ${option("auto", "50 %")}
+          ${BOSS_WIN_CHANCES.map(each => option(each, `${each} %`)).join("")}
+        </select>
+      </label>`;
 }
 
 // The trainer strip's second row: a special encounter and the rivals' extras.
@@ -774,6 +794,7 @@ export function renderStepPanel({
         <span class="poke5e-encounter-planner__steps-current" data-tier="${current.tier.id}">
           <small>Ahora</small>
           <strong>${escapeHtml(current.tier.label)}</strong>
+          ${current.bossWin === undefined ? "" : `<small title="Según combates simulados contra el grupo.">Gana el boss ≈ ${current.bossWin} %</small>`}
         </span>
 
         <button
@@ -826,6 +847,7 @@ export function renderTrainerRandomControls({
   party,
   boosts,
   weakTo,
+  bossWinChance,
   visible
 }) {
   const regionOptions =
@@ -989,7 +1011,8 @@ export function renderTrainerRandomControls({
         trainerBattle:
           true,
         boosts,
-        weakTo
+        weakTo,
+        bossWinChance
       })}
 
       <div
@@ -1402,7 +1425,7 @@ function renderTrainerPokemonCountOptions(
     let count =
       1;
     count <=
-      6;
+      MAX_TRAINER_TEAM;
     count += 1
   ) {
     const normalized =
@@ -1594,6 +1617,26 @@ export function renderTrainerControls({
                               .map(
                                 count =>
                                   `<option value="${count}"${count === (trainer.onField ?? 1) ? " selected" : ""}>${count}</option>`
+                              )
+                              .join("")
+                          }
+                        </select>
+                      </label>
+
+                      <label title="Acciones de cada Pokémon de este Entrenador en su turno, como un jefe de D&D. Cada acción de más pesa algo más que otro Pokémon en campo.">
+                        Acciones
+
+                        <select
+                          data-role="trainer-actions"
+                          data-trainer-id="${escapeHtml(
+                            trainer.id
+                          )}"
+                        >
+                          ${
+                            [1, 2, 3]
+                              .map(
+                                count =>
+                                  `<option value="${count}"${count === (trainer.actions ?? 1) ? " selected" : ""}>${count}</option>`
                               )
                               .join("")
                           }
@@ -2167,17 +2210,34 @@ function renderTrainerEncounterComposition({
 
 // The team's plan from its Moves' roles, in the order to play them: who opens, controls, presses and finishes.
 function renderTrainerPlan(
-  rows
+  rows,
+  trainerId
 ) {
-  const chips = ["setter", "control", "pressure", "attacker"]
+  const chips = ["setter", "control", "sweeper", "pressure", "attacker"]
     .map(id => MOVE_ROLES[id])
     .map(role => [role, rows.filter(row => row.moveRole === role.es).map(row => row.localizedName)])
     .filter(([, names]) => names.length)
     .map(([role, names]) => `<span title="${escapeHtml(role.hint)}">${escapeHtml(role.es)}: ${escapeHtml(names.join(", "))}</span>`);
+  // The ace goes out last: the one the archetype marked, or the highest level.
+  const ace = aceOf(rows);
+  if (chips.length && ace) {
+    chips.push(`<span title="Sale al final del combate.">As: ${escapeHtml(ace.localizedName)}</span>`);
+  }
 
-  return chips.length
-    ? `<div class="poke5e-encounter-planner__trainer-boosts"><small>Plan</small>${chips.join("")}</div>`
-    : "";
+  return `
+    <div class="poke5e-encounter-planner__trainer-boosts poke5e-encounter-planner__trainer-plan">
+      <small>Plan</small>
+      ${chips.length ? chips.join("") : "<em>Sin roles: los Moves se eligen al crear el encuentro.</em>"}
+      <button
+        type="button"
+        data-action="adapt-trainer-moves"
+        data-trainer-id="${escapeHtml(trainerId)}"
+        title="Elige de nuevo los Moves de este equipo por roles. Las filas bloqueadas conservan los suyos."
+      >
+        <i class="fa-solid fa-chess" aria-hidden="true"></i>
+        Adaptar estrategia
+      </button>
+    </div>`;
 }
 
 // "3 entrada(s) · 2 en campo": how many it brings and sends out at once.
@@ -2343,7 +2403,7 @@ function renderTrainerCompositionGroup({
         data-role="trainer-composition-body"
         ${collapsed ? "hidden" : ""}
       >
-        ${renderTrainerPlan(rows)}
+        ${unassigned || !rows.length ? "" : renderTrainerPlan(rows, trainerId)}
         ${groupBody}
       </div>
 
@@ -3524,6 +3584,10 @@ export function renderPlannerContent(
               onField:
                 state
                   .trainerRandomOnField,
+
+              bossWinChance:
+                state
+                  .bossWinChance,
 
               pokemonCount:
                 state
