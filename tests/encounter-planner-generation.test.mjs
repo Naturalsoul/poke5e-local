@@ -94,6 +94,20 @@ test("a rank roll returns trainers within the rank's levels", () => {
   }
 });
 
+test("a Gym Leader on auto sends out no more Pokémon than the party, all trainers together; a manual choice wins", () => {
+  const rank = getTrainerRank("gym-leader");
+  const party = { size: 2, level: 5, team: 4, pokemon: [], strongest: null, participants: 2 };
+  const levels = rankLevels(party.level, rank);
+  const state = { trainerRandomCount: "auto", trainerRandomPokemonCount: "auto", trainerRandomOnField: "auto", trainerRandomArchetype: "generic" };
+  for (let i = 0; i < 10; i += 1) {
+    const { generatedTrainers } = rollTrainerEncounter({ state, party, rank, levels, boosts: {}, candidates, pokemonTypes: () => ["normal"] });
+    assert.ok(generatedTrainers.reduce((total, trainer) => total + trainer.onField, 0) <= party.size);
+  }
+  const manual = rollTrainerEncounter({ state: { ...state, trainerRandomCount: "1", trainerRandomPokemonCount: "6", trainerRandomOnField: "4" },
+    party, rank, levels, boosts: {}, candidates, pokemonTypes: () => ["normal"] });
+  assert.equal(manual.generatedTrainers[0].onField, Math.min(4, manual.generatedTrainers[0].pokemon.length));
+});
+
 test("generation options only send coverage types when that boost is on", () => {
   const state = { boostCoverage: false, boostStats: "2", partyWeakTo: ["fire"], itemPolicies: {}, type: "wild" };
   assert.deepEqual(buildGenerationOptions(state).boosts.coverageTypes, []);

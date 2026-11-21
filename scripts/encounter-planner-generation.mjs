@@ -36,6 +36,9 @@ export function rollTrainerEncounter({ state, party, rank, levels, boosts, candi
   // "auto" takes the rank's range; otherwise the number chosen.
   const chosen = (value, range) => (value === "auto" ? pick(range) : clampInteger(value, 1, 6, 1));
   let failure = null;
+  const fieldCap = state.trainerRandomOnField === "auto" && Number.isFinite(rank.fieldCap)
+    ? Math.max(1, (Number(party?.size) || 1) + rank.fieldCap)
+    : null;
 
   // One roll: team, Pokémon on the field and (for Gym Leaders and the Elite Four) one type for every trainer.
   const roll = trainerCount => {
@@ -64,12 +67,19 @@ export function rollTrainerEncounter({ state, party, rank, levels, boosts, candi
       }
     }
     const onField = chosen(state.trainerRandomOnField, rank.onField);
-    return generated.map((trainer, trainerIndex) => withAce(
+    const trainers = generated.map((trainer, trainerIndex) => withAce(
       { ...trainer, onField: Math.min(onField, trainer.pokemon.length) },
       // The boss's ace only: the others are their gym helpers.
       trainerIndex === 0 ? levels.ace : null,
       pick
     ));
+    // Within the rank's cap, the helpers send out fewer first.
+    while (fieldCap && trainers.reduce((total, trainer) => total + trainer.onField, 0) > fieldCap) {
+      const most = trainers.reduce((top, trainer) => (trainer.onField >= top.onField ? trainer : top));
+      if (most.onField <= 1) {break;}
+      most.onField -= 1;
+    }
+    return trainers;
   };
 
   const measure = generated => encounterDifficulty(
@@ -81,6 +91,7 @@ export function rollTrainerEncounter({ state, party, rank, levels, boosts, candi
   // Fewest trainers first: helpers join only when the rival alone can't reach the rank's difficulty.
   const trainerCounts = state.trainerRandomCount === "auto"
     ? Array.from({ length: rank.trainers[1] - rank.trainers[0] + 1 }, (_, index) => rank.trainers[0] + index)
+      .filter((count, index) => !fieldCap || count <= fieldCap || index === 0)
     : [chosen(state.trainerRandomCount, rank.trainers)];
   let best = null;
   for (const trainerCount of trainerCounts) {

@@ -232,6 +232,9 @@ const OPENER = /first turn that the user has entered combat/i;
 
 const describe = move => JSON.stringify(move?.description?.en ?? "");
 const conditionOf = move => CONDITIONS.find(each => describe(move).toLowerCase().includes(each)) ?? null;
+// The conditions that take a Pokémon out of the fight or wear it down: what the control role's key Move must inflict.
+const DISABLING = ["paralyzed", "asleep", "burned", "poisoned", "frozen", "confused"];
+const disables = move => DISABLING.some(each => describe(move).toLowerCase().includes(each));
 
 /*
  * What a Move does in a team plan, from its own fields first (activation, save, healing) and its description last:
@@ -381,7 +384,9 @@ export function selectTeamMoves({
     take(pickUtility(each => each.tags.has("buff")));
     take(cover());
   } else if (role === "control") {
-    take(pickUtility(each => each.tags.has("status") && freshCondition(each)) ?? pickUtility(each => each.tags.has("status")));
+    take(pickUtility(each => each.tags.has("status") && disables(each.move) && freshCondition(each)) ??
+      pickUtility(each => each.tags.has("status") && disables(each.move)) ??
+      pickUtility(each => each.tags.has("status") && freshCondition(each)) ?? pickUtility(each => each.tags.has("status")));
     take(stab());
     take(pickUtility(each => ["debuff", "heal", "protect"].some(tag => each.tags.has(tag))));
     take(cover());

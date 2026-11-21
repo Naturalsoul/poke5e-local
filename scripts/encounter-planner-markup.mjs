@@ -571,8 +571,7 @@ function renderDifficultyControls({
         ? TRAINER_RANKS
         : DIFFICULTIES.filter(
             entry =>
-              entry.id !==
-                "trivial"
+              !["trivial", "extreme"].includes(entry.id)
           )
     )
       .map(

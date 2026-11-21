@@ -4,6 +4,16 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.70.0] — 2026-11-21
+
+- **Dificultad calibrada con combates simulados:** se simularon miles de combates de los Pokémon del grupo contra los rivales del planificador, con la economía de acción de poke5e, estados, bayas y cambios de Pokémon. Con eso:
+  - Los Moves de equipo pesan ×1.45 en la dificultad en lugar de ×1.1: son lo que más sube un combate.
+  - Cada rival en campo de más sobre los del grupo pesa más que antes (exponente 0.7 por encima de la paridad).
+  - Nuevo nivel **Extrema** desde 3: el grupo gana menos de la mitad de las veces. Pone techo a Mortal; ningún rango lo busca y no aparece entre las dificultades de un encuentro salvaje.
+  - Con las semillas nuevas, cada rango cae donde dice: Ruta pierde un 11 % de PG, Entrenador Guay un 20 %, Líder de Gimnasio la mitad (gana 9 de 10), Alto Mando un 60 % y Campeón un 82 % (gana la mitad).
+- **Tope de Pokémon en campo por rango:** en automático, todos los Entrenadores de un Líder de Gimnasio o del Alto Mando sacan a la vez como mucho tantos Pokémon como el grupo. El Campeón puede sacar 2 más. Si eliges el número a mano, se respeta.
+- **Control:** su Move clave ahora inflige un estado de verdad (paralizar, dormir, quemar, envenenar, congelar o confundir). Ya no sale Snatch ni un Move que solo asusta.
+
 ## [0.69.2] — 2026-11-21
 
 - **Corrección:** en poke5e, Intimidate no actúa al entrar: da desventaja a un ataque enemigo una vez por descanso corto. El susurro ya no lo pone de líder y dice que lo guarde para el ataque más fuerte contra su equipo. Las habilidades Surge tampoco cuentan como de entrada. Solo abren por habilidad los que traen clima (Drizzle, Drought, Sand Stream, Snow Warning).

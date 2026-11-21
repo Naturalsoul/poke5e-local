@@ -5048,7 +5048,8 @@ strong {
     #e98a3f;
 }
 
-.poke5e-encounter-planner__status-item--difficulty[data-tier="deadly"] {
+.poke5e-encounter-planner__status-item--difficulty[data-tier="deadly"],
+.poke5e-encounter-planner__status-item--difficulty[data-tier="extreme"] {
   --difficulty-color:
     var(--encounter-red);
 
@@ -6160,7 +6161,8 @@ button[data-action="publish-reward"]:hover:not(:disabled) {
 }
 
 .poke5e-encounter-planner__steps-current[data-tier="hard"] strong,
-.poke5e-encounter-planner__steps-current[data-tier="deadly"] strong {
+.poke5e-encounter-planner__steps-current[data-tier="deadly"] strong,
+.poke5e-encounter-planner__steps-current[data-tier="extreme"] strong {
   color:
     var(--encounter-red);
 }
@@ -6276,7 +6278,9 @@ button.is-primary {
 .poke5e-encounter-planner__steps
 .poke5e-encounter-planner__step[data-tier="hard"] small,
 .poke5e-encounter-planner__steps
-.poke5e-encounter-planner__step[data-tier="deadly"] small {
+.poke5e-encounter-planner__step[data-tier="deadly"] small,
+.poke5e-encounter-planner__steps
+.poke5e-encounter-planner__step[data-tier="extreme"] small {
   color:
     color-mix(in srgb, var(--poke5e-ui-accent) 65%, var(--poke5e-ui-text));
 }

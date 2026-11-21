@@ -118,3 +118,16 @@ test("battle order: the whole team on the field goes out at once, with no ace he
   const [head] = teamTactics(members, "es", { onField: 4 });
   assert.match(head, /^Salen todos a la vez: \w+, \w+, \w+, \w+\.$/);
 });
+
+test("control: the key Move inflicts a real status, not a save that does nothing to the target", () => {
+  const snatch = util("snatch", "dark", "The target must make a WIS save or you steal its next beneficial Move.", { save: { attribute: ["wis"] } });
+  const glare = util("scary-face", "normal", "The target must make a WIS save or become frightened.", { save: { attribute: ["wis"] } });
+  const wave = util("thunder-wave", "electric", "The target must make a CON save or become paralyzed.", { save: { attribute: ["con"] } });
+  const pichu = species("pichu", ["electric"], ["snatch", "scary-face", "thunder-wave", "thunder-punch"]);
+  for (const random of [() => 0, () => 0.99]) {
+    const picked = selectTeamMoves({ pokemon: pichu, moves: [...teamMoves, snatch, glare, wave], level: 6,
+      teammates: plan().slice(0, 2), random });
+    if (picked.role !== "control") {continue;}
+    assert.equal(picked.moves[0].id, "thunder-wave", picked.moves.map(each => each.id).join(", "));
+  }
+});
