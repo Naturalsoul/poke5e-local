@@ -2323,6 +2323,7 @@ i {
   grid-template-columns:
     minmax(0, 1.5fr)
     minmax(0, 1fr)
+    64px
     64px;
 
   align-items:

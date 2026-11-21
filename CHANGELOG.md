@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.71.0] — 2026-11-21
+
+- **Nuevo rango: Entrenador boss.** Todo el grupo contra un solo Entrenador, como un jefe de D&D: de 6 a 12 Pokémon, hasta 6 en campo a la vez, cada uno en su propia iniciativa y con 1 a 3 acciones por turno. Apunta a Mortal: en los combates simulados el grupo gana la mitad de las veces y pierde un 85 % de sus PG.
+- **Acciones por Entrenador:** cada Entrenador tiene un selector "Acciones" junto a "En campo". Cada acción de más pesa en la dificultad como 1.25 Pokémon en campo. Con más acciones o más Pokémon en campo, el boss pasa a Extrema.
+- **Equipos de hasta 12 Pokémon** para los rivales (el tamaño de equipo y "Pokémon / Entrenador"). Los jugadores siguen con 6.
+- **Susurro:** si los Pokémon de un Entrenador tienen más de una acción, el plan táctico lo dice: elige cada acción después de ver la anterior, y la acción adicional y la reacción siguen siendo una.
+
 ## [0.70.0] — 2026-11-21
 
 - **Dificultad calibrada con combates simulados:** se simularon miles de combates de los Pokémon del grupo contra los rivales del planificador, con la economía de acción de poke5e, estados, bayas y cambios de Pokémon. Con eso:

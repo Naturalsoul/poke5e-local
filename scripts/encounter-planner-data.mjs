@@ -4,7 +4,7 @@ import {
   RANDOM_REGION_ALL
 } from "./encounter-random-catalog.mjs";
 import { RANDOM_ENCOUNTER_SIZES } from "./encounter-randomizer.mjs";
-import { detectEncounterParty } from "./encounter-difficulty.mjs";
+import { MAX_TRAINER_TEAM, detectEncounterParty } from "./encounter-difficulty.mjs";
 import {
   getTrainerArchetype,
   listTrainerArchetypes
@@ -814,7 +814,7 @@ export function normalizeTrainerTeamSize(
     clampInteger(
       normalized,
       1,
-      6,
+      MAX_TRAINER_TEAM,
       3
     )
   );

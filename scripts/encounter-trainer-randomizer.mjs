@@ -6,6 +6,7 @@ import {
   selectTrainerArchetypePokemon
 } from "./encounter-trainer-archetype-selector.mjs";
 import { clampInteger } from "./numbers.mjs";
+import { MAX_TRAINER_TEAM } from "./encounter-difficulty.mjs";
 
 
 export function generateRandomTrainerEncounter({
@@ -646,7 +647,7 @@ function resolveTrainerTeamSize({
     clampInteger(
       requested,
       1,
-      6,
+      MAX_TRAINER_TEAM,
       3
     );
 
@@ -688,7 +689,7 @@ function resolveRerollTargetTeamSize({
       clampInteger(
         requested,
         1,
-        6,
+        MAX_TRAINER_TEAM,
         3
       );
 

@@ -6,6 +6,7 @@ import {
 } from "./encounter-random-catalog.mjs";
 import {
   DIFFICULTIES,
+  MAX_TRAINER_TEAM,
   TRAINER_RANKS
 } from "./encounter-difficulty.mjs";
 import {
@@ -1401,7 +1402,7 @@ function renderTrainerPokemonCountOptions(
     let count =
       1;
     count <=
-      6;
+      MAX_TRAINER_TEAM;
     count += 1
   ) {
     const normalized =
@@ -1593,6 +1594,26 @@ export function renderTrainerControls({
                               .map(
                                 count =>
                                   `<option value="${count}"${count === (trainer.onField ?? 1) ? " selected" : ""}>${count}</option>`
+                              )
+                              .join("")
+                          }
+                        </select>
+                      </label>
+
+                      <label title="Acciones de cada Pokémon de este Entrenador en su turno, como un jefe de D&D. Cada acción de más pesa como otro Pokémon en campo.">
+                        Acciones
+
+                        <select
+                          data-role="trainer-actions"
+                          data-trainer-id="${escapeHtml(
+                            trainer.id
+                          )}"
+                        >
+                          ${
+                            [1, 2, 3]
+                              .map(
+                                count =>
+                                  `<option value="${count}"${count === (trainer.actions ?? 1) ? " selected" : ""}>${count}</option>`
                               )
                               .join("")
                           }

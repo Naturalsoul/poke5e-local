@@ -108,6 +108,23 @@ test("a Gym Leader on auto sends out no more Pokémon than the party, all traine
   assert.equal(manual.generatedTrainers[0].onField, Math.min(4, manual.generatedTrainers[0].pokemon.length));
 });
 
+test("a boss is one trainer with 6 to 12 Pokémon, up to 6 out, 1 to 3 actions each, weighed by both", async () => {
+  const { encounterDifficulty, fieldedActions } = await import("../scripts/encounter-difficulty.mjs");
+  const rank = getTrainerRank("boss");
+  const party = { size: 4, level: 8, team: 4, pokemon: [], strongest: null, participants: 4 };
+  const levels = rankLevels(party.level, rank);
+  const state = { trainerRandomCount: "auto", trainerRandomPokemonCount: "auto", trainerRandomOnField: "auto", trainerRandomArchetype: "generic" };
+  const { generatedTrainers: [boss, ...others] } = rollTrainerEncounter({ state, party, rank, levels, boosts: rank.extras, candidates,
+    pokemonTypes: () => ["normal"] });
+  assert.equal(others.length, 0);
+  assert.ok(boss.pokemon.length >= 6 && boss.pokemon.length <= 12, String(boss.pokemon.length));
+  assert.ok(boss.onField >= 1 && boss.onField <= 6 && boss.actions >= 1 && boss.actions <= 3);
+  assert.equal(fieldedActions([{ onField: 2, actions: 3 }, { onField: 9 }], () => 4), 11, "2 × (1 + 2 × 1.25), and 4 out of 9 asked");
+  const rows = boss.pokemon.map(pokemon => ({ ...pokemon, types: ["normal"] }));
+  const weigh = actions => encounterDifficulty(party, rows, { onField: fieldedActions([{ ...boss, actions }], () => rows.length), boosts: rank.extras }).ratio;
+  assert.ok(weigh(2) > weigh(1));
+});
+
 test("generation options only send coverage types when that boost is on", () => {
   const state = { boostCoverage: false, boostStats: "2", partyWeakTo: ["fire"], itemPolicies: {}, type: "wild" };
   assert.deepEqual(buildGenerationOptions(state).boosts.coverageTypes, []);

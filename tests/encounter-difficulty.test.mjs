@@ -147,7 +147,7 @@ test("every rank reaches its difficulty for parties of 2 to 6, adding helpers on
           const team = pick(rank.team);
           const rows = Array.from({ length: trainers * team }, (_, index) => ({
             level: levels.ace && index === team - 1 ? pick(levels.ace) : pick([levels.min, levels.max]) }));
-          return { rows, onField: trainers * Math.min(team, pick(rank.onField)) };
+          return { rows, onField: trainers * Math.min(team, pick(rank.onField)) * pick(rank.actions ?? [1, 1]) };
         };
         const attempt = generateForDifficulty(roll, ({ rows, onField }) =>
           encounterDifficulty(party, rows, { onField, boosts: rank.extras }), rank.target, 300);

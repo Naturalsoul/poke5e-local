@@ -28,6 +28,7 @@ import {
 import { EncounterRandomCatalog } from "./encounter-random-catalog.mjs";
 import {
   encounterDifficulty,
+  fieldedActions,
   getTrainerRank,
   rankLevels
 } from "./encounter-difficulty.mjs";
@@ -1739,6 +1740,40 @@ export class PokemonEncounterPlanner
     );
 
     root.querySelectorAll(
+      '[data-role="trainer-actions"]'
+    ).forEach(
+      select => {
+        select.addEventListener(
+          "change",
+
+          () => {
+            const trainer =
+              this.#getTrainer(
+                select.dataset
+                  .trainerId
+              );
+
+            if (!trainer) {
+              return;
+            }
+
+            trainer.actions =
+              clampInteger(
+                select.value,
+                1,
+                3,
+                1
+              );
+
+            this.#refreshTotalsUi(
+              root
+            );
+          }
+        );
+      }
+    );
+
+    root.querySelectorAll(
       '[data-role="trainer-team-size"]'
     ).forEach(
       select => {
@@ -2912,6 +2947,9 @@ export class PokemonEncounterPlanner
         "auto",
 
       onField:
+        1,
+
+      actions:
         1
     };
 
@@ -3149,7 +3187,10 @@ export class PokemonEncounterPlanner
                       ),
 
                     onField:
-                      trainer.onField
+                      trainer.onField,
+
+                    actions:
+                      trainer.actions
                   }
                 ]
               )
@@ -3250,6 +3291,15 @@ export class PokemonEncounterPlanner
                     ?.onField,
                   1,
                   6,
+                  1
+                ),
+
+              actions:
+                clampInteger(
+                  existingPreference
+                    ?.actions,
+                  1,
+                  3,
                   1
                 )
             };
@@ -3860,27 +3910,16 @@ export class PokemonEncounterPlanner
             encounter?.onField ??
             (
               trainerBattle
-              ? this._encounterState
-                  .trainers
-                  .reduce(
-                    (
-                      total,
-                      trainer
-                    ) =>
-                      total +
-                      Math.min(
-                        trainer.onField ??
-                          1,
-                        countTrainerRowQuantity(
-                          rows.filter(
-                            row =>
-                              row.trainerId ===
-                                trainer.id
-                          )
-                        )
-                      ),
-                    0
+              ? fieldedActions(
+                  this._encounterState.trainers,
+                  trainer => countTrainerRowQuantity(
+                    rows.filter(
+                      row =>
+                        row.trainerId ===
+                          trainer.id
+                    )
                   )
+                )
               : 0
             )
         }
@@ -4238,7 +4277,9 @@ export class PokemonEncounterPlanner
       const aceRow = aceOf(this._encounterState.rows.filter(row => row.trainerId === trainerId));
       const ace = aceRow && team.members.find(member => member.pokemon?.id === aceRow.pokemonId && member.level === aceRow.level);
       if (ace) {ace.ace = true;}
-      team.onField = this._encounterState.trainers.find(trainer => trainer.id === trainerId)?.onField ?? 1;
+      const trainer = this._encounterState.trainers.find(each => each.id === trainerId);
+      team.onField = trainer?.onField ?? 1;
+      team.actions = Number(trainer?.actions) || 1;
     }
 
     const weakTo =
@@ -4256,7 +4297,11 @@ export class PokemonEncounterPlanner
         : "",
       ...[...teams.values()].map(
         team =>
-          `<p><strong>${escapeHtml(team.name ?? "Entrenador")}</strong></p><ul>${
+          `<p><strong>${escapeHtml(team.name ?? "Entrenador")}</strong></p>${
+            team.actions > 1
+              ? `<p>Cada Pokémon hace ${team.actions} acciones en su turno: elige cada una después de ver la anterior. La acción adicional y la reacción siguen siendo una.</p>`
+              : ""
+          }<ul>${
             teamTactics(team.members, language, { weakTo, onField: team.onField })
               .map(line => `<li>${escapeHtml(line)}</li>`)
               .join("")
@@ -4442,26 +4487,14 @@ export class PokemonEncounterPlanner
         boosts:
           state.boosts,
         onField:
-          Math.max(
-            1,
-            state.trainers.reduce(
-              (
-                total,
-                trainer
-              ) =>
-                total +
-                Math.min(
-                  trainer.onField ??
-                    1,
-                  countTrainerRowQuantity(
-                    state.rows.filter(
-                      row =>
-                        row.trainerId ===
-                          trainer.id
-                    )
-                  )
-                ),
-              0
+          fieldedActions(
+            state.trainers,
+            trainer => countTrainerRowQuantity(
+              state.rows.filter(
+                row =>
+                  row.trainerId ===
+                    trainer.id
+              )
             )
           )
       }

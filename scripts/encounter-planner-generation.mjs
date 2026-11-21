@@ -1,5 +1,5 @@
 import { clampInteger } from "./numbers.mjs";
-import { DIFFICULTIES, encounterDifficulty, generateForDifficulty } from "./encounter-difficulty.mjs";
+import { DIFFICULTIES, MAX_TRAINER_TEAM, encounterDifficulty, fieldedActions, generateForDifficulty } from "./encounter-difficulty.mjs";
 import { generateRandomEncounterRows } from "./encounter-randomizer.mjs";
 import { generateRandomTrainerEncounter, rerollRandomTrainerTeam } from "./encounter-trainer-randomizer.mjs";
 import { getTrainerArchetype, getTrainerArchetypeLabel } from "./encounter-trainer-archetypes.mjs";
@@ -34,7 +34,7 @@ export function trainerCandidatePool(state, maxLevel) {
 export function rollTrainerEncounter({ state, party, rank, levels, boosts, candidates, pokemonTypes }) {
   const pick = ([min, max]) => min + Math.floor(Math.random() * (max - min + 1));
   // "auto" takes the rank's range; otherwise the number chosen.
-  const chosen = (value, range) => (value === "auto" ? pick(range) : clampInteger(value, 1, 6, 1));
+  const chosen = (value, range, max = 6) => (value === "auto" ? pick(range) : clampInteger(value, 1, max, 1));
   let failure = null;
   const fieldCap = state.trainerRandomOnField === "auto" && Number.isFinite(rank.fieldCap)
     ? Math.max(1, (Number(party?.size) || 1) + rank.fieldCap)
@@ -44,7 +44,7 @@ export function rollTrainerEncounter({ state, party, rank, levels, boosts, candi
   const roll = trainerCount => {
     const options = {
       trainerCount,
-      pokemonPerTrainer: String(chosen(state.trainerRandomPokemonCount, rank.team)),
+      pokemonPerTrainer: String(chosen(state.trainerRandomPokemonCount, rank.team, MAX_TRAINER_TEAM)),
       minLevel: levels.min,
       maxLevel: levels.max,
       archetypeId: state.trainerRandomArchetype,
@@ -67,8 +67,9 @@ export function rollTrainerEncounter({ state, party, rank, levels, boosts, candi
       }
     }
     const onField = chosen(state.trainerRandomOnField, rank.onField);
+    const actions = rank.actions ? pick(rank.actions) : 1;
     const trainers = generated.map((trainer, trainerIndex) => withAce(
-      { ...trainer, onField: Math.min(onField, trainer.pokemon.length) },
+      { ...trainer, onField: Math.min(onField, trainer.pokemon.length), actions },
       // The boss's ace only: the others are their gym helpers.
       trainerIndex === 0 ? levels.ace : null,
       pick
@@ -85,7 +86,7 @@ export function rollTrainerEncounter({ state, party, rank, levels, boosts, candi
   const measure = generated => encounterDifficulty(
     party,
     generated.flatMap(trainer => trainer.pokemon.map(pokemon => ({ ...pokemon, types: pokemonTypes(pokemon.pokemonId) }))),
-    { boosts, onField: Math.max(1, generated.reduce((total, trainer) => total + trainer.onField, 0)) }
+    { boosts, onField: fieldedActions(generated, trainer => trainer.pokemon.length) }
   );
 
   // Fewest trainers first: helpers join only when the rival alone can't reach the rank's difficulty.
@@ -128,7 +129,8 @@ export function buildTrainerRoster({ generatedTrainers, teamSize, language, next
       name: `${getTrainerArchetypeLabel(archetype, language)} ${archetypeCount}`,
       archetypeId: archetype.id,
       teamSize: normalizeTrainerTeamSize(teamSize),
-      onField: generatedTrainer.onField
+      onField: generatedTrainer.onField,
+      actions: generatedTrainer.actions ?? 1
     });
     for (const pokemon of generatedTrainer.pokemon) {
       rows.push({ id: nextRowId(), trainerId, ...pokemon, abilityId: null, itemId: null, itemResolved: false });

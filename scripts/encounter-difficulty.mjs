@@ -112,7 +112,8 @@ export function encounterDifficulty(party, rows, { onField = 0, boosts } = {}) {
  * ranges) adapts to the party, since the games tune a rival for one player and a table has several: a boss rank adds
  * gym helpers only when alone it can't reach its difficulty. Levels stay near the party's, so a campaign that levels
  * by XP doesn't inflate. fieldCap: rolled on "auto", all its trainers send out at most the players' Pokémon on the
- * field plus this many, since outnumbering the party weighs the most (fieldWeight).
+ * field plus this many, since outnumbering the party weighs the most (fieldWeight). actions: how many actions each of
+ * its Pokémon takes on its turn, like a D&D boss; an extra action weighs a bit more than one more Pokémon on the field.
  */
 export const TRAINER_RANKS = Object.freeze([
   { id: "route", label: "Entrenador de ruta", target: "easy", levels: [-3, -1], trainers: [1, 6], team: [1, 3],
@@ -125,9 +126,21 @@ export const TRAINER_RANKS = Object.freeze([
     onField: [1, 6], fieldCap: 0, monotype: true, extras: { statBonus: 2, coverage: true, items: true, bestMoves: true } },
   { id: "champion", label: "Campeón", target: "deadly", levels: [0, 1], ace: [1, 2], trainers: [1, 4], team: [3, 6],
     onField: [1, 6], fieldCap: 2, extras: { statBonus: 2, coverage: true, items: true, bestMoves: true } },
+  // The whole party against one trainer: up to 12 Pokémon, up to 6 on the field, more than one action each.
+  { id: "boss", label: "Entrenador boss", target: "deadly", levels: [0, 1], ace: [1, 2], trainers: [1, 1], team: [6, 12],
+    onField: [1, 6], actions: [1, 3], extras: { statBonus: 2, coverage: true, items: true, bestMoves: true } },
   { id: "totem", label: "Pokémon Dominante", target: "hard", levels: [-1, 0], ace: [1, 2], trainers: [1, 4], team: [1, 6],
     onField: [1, 6], extras: { statBonus: 2, items: true } }
 ]);
+
+// A rival trainer's team: the games' 6, or up to 12 for a boss.
+export const MAX_TRAINER_TEAM = 12;
+
+// What a trainer battle weighs on the field: each trainer's Pokémon out at once (no more than it has) times their actions.
+// An extra action weighs 1.25 Pokémon on the field: at that weight a Deadly boss and a Deadly Champion win as often.
+const ACTION_WEIGHT = 1.25;
+export const fieldedActions = (trainers, countOf) => Math.max(1, trainers.reduce((total, trainer) =>
+  total + Math.min(Number(trainer.onField) || 1, countOf(trainer)) * (1 + ACTION_WEIGHT * ((Number(trainer.actions) || 1) - 1)), 0));
 
 export const getTrainerRank = id => TRAINER_RANKS.find(rank => rank.id === id) ?? TRAINER_RANKS[0];
 
