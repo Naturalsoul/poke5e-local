@@ -418,8 +418,10 @@ export function selectTeamMoves({
 export function teamTactics(members, language = "es", { weakTo = [], onField = 1 } = {}) {
   const name = move => move?.name?.[language] ?? move?.name?.en ?? move?.id;
   const { order, ace } = battleOrder(members);
-  // The first ones out together (the ace held back while others remain), the rest as those faint.
-  const together = Math.max(1, Math.min(Number(onField) || 1, order.length > 1 ? order.length - 1 : 1));
+  // The first ones out together (the ace held back while others remain), the rest as those faint; all of them
+  // when the trainer sends its whole team at once.
+  const all = order.length > 1 && Number(onField) >= order.length;
+  const together = all ? order.length : Math.max(1, Math.min(Number(onField) || 1, order.length > 1 ? order.length - 1 : 1));
   const lines = order.map((member, index) => {
     const role = MOVE_ROLES[member.role] ?? MOVE_ROLES.attacker;
     const tagsOf = move => moveTags(move, member.pokemon, member.level);
@@ -430,7 +432,7 @@ export function teamTactics(members, language = "es", { weakTo = [], onField = 1
     }) ?? member.moves[0];
     const parts = [`${member.name} (${role.es}${member === ace ? ", As" : ""}): ${role.hint}.`];
     if (key) {parts.push(`Move clave: ${name(key)}.`);}
-    if (index < together && member !== ace) {
+    if (index < together && (all || member !== ace)) {
       const opener = member.moves.find(move => tagsOf(move).has("opener"));
       if (ENTRY_ABILITIES.has(member.abilityId)) {parts.push(`${member.abilityName ?? member.abilityId} actúa al entrar.`);}
       if (opener) {parts.push(`Abre con ${name(opener)}.`);}
@@ -448,7 +450,7 @@ export function teamTactics(members, language = "es", { weakTo = [], onField = 1
   const names = list => list.map(member => member.name).join(", ");
   const first = order.slice(0, together);
   const middle = order.slice(together, -1);
-  const head = [
+  const head = all ? `Salen todos a la vez: ${names(order)}.` : [
     `${together > 1 ? "Salen juntos" : "Sale primero"}: ${names(first)}.`,
     middle.length ? `Después, al caer alguno: ${names(middle)}.` : "",
     `El As, ${ace.name}, entra al final.`

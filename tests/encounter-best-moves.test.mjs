@@ -109,3 +109,9 @@ test("battle order: an entry ability leads, the ace goes last with its surprise 
   assert.match(aceLine, /charmander \(\w+, As\)/);
   assert.match(aceLine, /Lleva Sitrus Berry/);
 });
+
+test("battle order: the whole team on the field goes out at once, with no ace held back", () => {
+  const members = plan().map(each => ({ ...each, name: each.pokemon.id }));
+  const [head] = teamTactics(members, "es", { onField: 4 });
+  assert.match(head, /^Salen todos a la vez: \w+, \w+, \w+, \w+\.$/);
+});

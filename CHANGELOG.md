@@ -4,6 +4,10 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.69.1] — 2026-11-21
+
+- **Corrección:** si un Entrenador saca todo su equipo a la vez, el susurro dice "Salen todos a la vez" en lugar de guardar al As para el final.
+
 ## [0.69.0] — 2026-11-21
 
 - **El As:** el Pokémon más fuerte de cada Entrenador es su As. La composición lo muestra junto al plan, y el susurro lo marca y lo deja para el final.
