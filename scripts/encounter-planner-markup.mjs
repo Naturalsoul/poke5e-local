@@ -1,5 +1,5 @@
 import { escapeHtml } from "./html.mjs";
-import { MOVE_ROLES } from "./encounter-move-selector.mjs";
+import { MOVE_ROLES, aceOf } from "./encounter-move-selector.mjs";
 import {
   RANDOM_BIOME_ROUTE,
   RANDOM_REGION_ALL
@@ -2170,11 +2170,16 @@ function renderTrainerPlan(
   rows,
   trainerId
 ) {
-  const chips = ["setter", "control", "pressure", "attacker"]
+  const chips = ["setter", "control", "sweeper", "pressure", "attacker"]
     .map(id => MOVE_ROLES[id])
     .map(role => [role, rows.filter(row => row.moveRole === role.es).map(row => row.localizedName)])
     .filter(([, names]) => names.length)
     .map(([role, names]) => `<span title="${escapeHtml(role.hint)}">${escapeHtml(role.es)}: ${escapeHtml(names.join(", "))}</span>`);
+  // The ace goes out last: the one the archetype marked, or the highest level.
+  const ace = aceOf(rows);
+  if (chips.length && ace) {
+    chips.push(`<span title="Sale al final del combate.">As: ${escapeHtml(ace.localizedName)}</span>`);
+  }
 
   return `
     <div class="poke5e-encounter-planner__trainer-boosts poke5e-encounter-planner__trainer-plan">

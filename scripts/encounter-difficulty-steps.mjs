@@ -7,6 +7,8 @@
  * returns it changed, or null when it can't apply; the random ones (new Pokémon, new trainer) come from tools.
  */
 
+import { aceOf } from "./encounter-move-selector.mjs";
+
 const rowsOf = (state, trainer) => state.rows.filter(row => row.trainerId === trainer.id);
 
 // A new Pokémon gets its Moves now if the extras choose them (team moveset, coverage), with its trainer's team in mind.
@@ -27,6 +29,17 @@ export const withMoves = (state, boosts, tools) => {
  * One trainer's team Moves again: the rows `keep` accepts (with Moves) stay as they are and count as teammates; the
  * others choose theirs around them, the highest level first (the ace takes the attacker's role).
  */
+// Each trainer's ace (the one marked, or the highest level) carries a healing berry for when it drops below half:
+// Sitrus, or Oran up to level 5 (30 HP would be most of its health). Rows that already have an item keep it.
+export const withAceBerry = rows => {
+  const trainerIds = new Set(rows.map(row => row.trainerId).filter(Boolean));
+  const aces = [...trainerIds].map(id => aceOf(rows.filter(row => row.trainerId === id)));
+  const bare = new Set(aces.filter(row => !(row.itemResolved && row.itemId)).map(row => row.id));
+  return rows.map(row => (bare.has(row.id)
+    ? { ...row, itemId: row.level <= 5 ? "oran-berry" : "sitrus-berry", itemResolved: true }
+    : row));
+};
+
 export const adaptTrainerMoves = (state, trainerId, boosts, tools, keep = () => false) => {
   const team = state.rows.filter(row => row.trainerId === trainerId);
   const fixed = team.filter(row => keep(row) && row.moveIds?.length);
@@ -67,14 +80,15 @@ export const TRAINER_STEPS = Object.freeze([
   {
     id: "items",
     label: "Objetos garantizados",
-    hint: "Cada Pokémon lleva un objeto equipado o una baya, elegido ya: se ve en la composición.",
+    hint: "Cada Pokémon lleva un objeto equipado o una baya, elegido ya: se ve en la composición. El As de cada Entrenador lleva una baya que lo cura.",
     apply: (state, tools) => {
       if (state.boosts.items) {return null;}
-      for (const row of state.rows.filter(each => !(each.itemResolved && each.itemId))) {
+      const rows = withAceBerry(state.rows);
+      for (const row of rows.filter(each => !(each.itemResolved && each.itemId))) {
         const itemId = tools.rollItem?.(row);
         if (itemId) {Object.assign(row, { itemId, itemResolved: true });}
       }
-      return { ...state, boosts: { ...state.boosts, items: true } };
+      return { ...state, rows, boosts: { ...state.boosts, items: true } };
     }
   },
   {
@@ -132,9 +146,9 @@ export const TRAINER_STEPS = Object.freeze([
     hint: "El Pokémon más fuerte de un Entrenador sube un nivel: el del Entrenador con el As más bajo, así que repetido rota entre todos. Sube niveles (power creep): va después de lo demás.",
     creep: true,
     apply: (state, tools) => {
-      const aceOf = trainer => rowsOf(state, trainer).reduce((best, row) => (!best || row.level > best.level ? row : best), null);
+      const highest = trainer => rowsOf(state, trainer).reduce((best, row) => (!best || row.level > best.level ? row : best), null);
       const ace = state.trainers
-        .map(aceOf)
+        .map(highest)
         .filter(each => each && each.level < tools.maxAceLevel)
         .reduce((lowest, each) => (!lowest || each.level < lowest.level ? each : lowest), null);
       if (!ace) {return null;}

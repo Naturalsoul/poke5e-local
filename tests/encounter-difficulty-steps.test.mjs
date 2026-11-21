@@ -117,3 +117,14 @@ test("adapt a trainer's Moves: kept rows stay and are teammates, the rest pick a
   assert.deepEqual(next.rows.map(row => row.moveIds[0]), ["old-a", "m-b", "m-c", "old-d"]);
   assert.deepEqual(calls, [["b", ["a"]], ["c", ["a", "b"]]]);
 });
+
+test("ace berry: the marked or highest-level Pokémon of each trainer, unless it has an item", async () => {
+  const { withAceBerry } = await import("../scripts/encounter-difficulty-steps.mjs");
+  const rows = [
+    { id: "a", trainerId: "t1", level: 7 }, { id: "b", trainerId: "t1", level: 9 },
+    { id: "c", trainerId: "t2", level: 4 }, { id: "d", trainerId: "t2", level: 5, ace: true },
+    { id: "e", trainerId: "t3", level: 8, itemId: "charcoal", itemResolved: true }, { id: "f" , level: 10 }
+  ];
+  const items = Object.fromEntries(withAceBerry(rows).map(row => [row.id, row.itemId ?? null]));
+  assert.deepEqual(items, { a: null, b: "sitrus-berry", c: null, d: "oran-berry", e: "charcoal", f: null });
+});

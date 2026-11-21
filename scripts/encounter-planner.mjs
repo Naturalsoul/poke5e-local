@@ -7,11 +7,13 @@ import { publishEncounterReward } from "./encounter-xp-reward.mjs";
 import {
   adaptTrainerMoves,
   climbToNextTier,
+  withAceBerry,
   withMoves,
   previewSteps
 } from "./encounter-difficulty-steps.mjs";
 import { selectEncounterItem } from "./encounter-item-selector.mjs";
 import {
+  aceOf,
   selectEncounterMoves,
   roleOf,
   selectTeamMoves,
@@ -4164,6 +4166,11 @@ export class PokemonEncounterPlanner
     const language =
       getLanguage();
 
+    const localName = (list, id) => {
+      const found = list?.find(each => each.id === id);
+      return found?.name?.[language] ?? found?.name?.en ?? (typeof found?.name === "string" ? found.name : null);
+    };
+
     const moveById =
       new Map(
         this.database.moves.map(
@@ -4200,6 +4207,14 @@ export class PokemonEncounterPlanner
         level:
           entry.level,
         moves,
+        abilityId:
+          entry.abilityId,
+        abilityName:
+          localName(this.database.abilities, entry.abilityId) ?? undefined,
+        itemName:
+          entry.itemId
+            ? localName(this.database.items, entry.itemId) ?? undefined
+            : undefined,
         role:
           roleOf(
             moves,
@@ -4218,6 +4233,14 @@ export class PokemonEncounterPlanner
       return;
     }
 
+    // The ace from the planner's rows (the same one that got the berry), and how many go out at once.
+    for (const [trainerId, team] of teams) {
+      const aceRow = aceOf(this._encounterState.rows.filter(row => row.trainerId === trainerId));
+      const ace = aceRow && team.members.find(member => member.pokemon?.id === aceRow.pokemonId && member.level === aceRow.level);
+      if (ace) {ace.ace = true;}
+      team.onField = this._encounterState.trainers.find(trainer => trainer.id === trainerId)?.onField ?? 1;
+    }
+
     const weakTo =
       this._encounterState.partyWeakTo ??
       [];
@@ -4227,10 +4250,14 @@ export class PokemonEncounterPlanner
       weakTo.length
         ? `<p>Lo que más daña al grupo: ${escapeHtml(weakTo.slice(0, 3).join(", "))}.</p>`
         : "",
+      "<p>Objetivos: los Atacantes, el Barredor y el As rematan al Pokémon más herido; Control duerme o paraliza al más sano o al más peligroso.</p>",
+      this._encounterState.trainers.some(trainer => Number(trainer.onField) > 1)
+        ? "<p>Con varios en campo, no gasten dos ataques en un Pokémon que uno solo ya deja KO.</p>"
+        : "",
       ...[...teams.values()].map(
         team =>
           `<p><strong>${escapeHtml(team.name ?? "Entrenador")}</strong></p><ul>${
-            teamTactics(team.members, language)
+            teamTactics(team.members, language, { weakTo, onField: team.onField })
               .map(line => `<li>${escapeHtml(line)}</li>`)
               .join("")
           }</ul>`
@@ -6390,6 +6417,15 @@ export class PokemonEncounterPlanner
       );
 
       return;
+    }
+
+    // Guaranteed items (from the rank or the step): each trainer's ace also gets its healing berry.
+    if (
+      this._encounterState.type === "trainer" &&
+      this._encounterState.boostItems === true
+    ) {
+      this._encounterState.rows =
+        withAceBerry(this._encounterState.rows);
     }
 
     const definition =

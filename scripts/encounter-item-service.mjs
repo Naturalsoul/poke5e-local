@@ -100,9 +100,11 @@ export class EncounterItemService {
       );
 
 
+    // An item the planner already chose (the ace's berry, the items step) is kept, not rolled again.
     const forced =
       guaranteed &&
-      !currentItemId;
+      !currentItemId &&
+      !(requestedItemResolved === true && requestedItemId);
 
     const reroll =
       requestedReroll ||

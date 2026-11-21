@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-const { learnableMoveIds, moveTags, roleOf, scoreMove, selectTeamMoves, teamTactics } = await import("../scripts/encounter-move-selector.mjs");
+const { battleOrder, learnableMoveIds, moveTags, roleOf, scoreMove, selectTeamMoves, teamTactics } = await import("../scripts/encounter-move-selector.mjs");
 
 const move = (id, type, dice, extra = {}) => ({ id, type, powerAbilities: ["str"], damage: dice ? { dice: { 1: dice }, type: [type] } : null, ...extra });
 const moves = [
@@ -77,6 +77,35 @@ test("team: the role read back from a moveset, and a tactics line per Pokémon",
   const members = plan();
   members.forEach(each => assert.equal(roleOf(each.moves, each.pokemon, each.level), each.role, each.pokemon.id));
   const lines = teamTactics(members.map(each => ({ ...each, name: each.pokemon.id })));
-  assert.equal(lines.length, 4);
-  assert.match(lines[0], /Preparador/);
+  assert.equal(lines.length, 5);
+  assert.match(lines[0], /^Sale primero: \w+\. Después, al caer alguno: .*El As, \w+, entra al final\.$/);
+  assert.match(lines.at(-1), /, As\)/);
+  const together = teamTactics(members.map(each => ({ ...each, name: each.pokemon.id })), "es", { onField: 2 });
+  assert.match(together[0], /^Salen juntos: \w+, \w+\./);
+});
+
+test("sweeper: an offensive setup Move makes the role, and it reads back", () => {
+  const dance = util("dragon-dance", "dragon", "For the duration, double your proficiency bonus when making an attack.",
+    { duration: "1 minute, concentration", range: { raw: "self" } });
+  const gyarados = species("gyarados", ["water"], ["water-gun", "tackle", "dragon-dance", "thunder-punch"]);
+  const picked = selectTeamMoves({ pokemon: gyarados, moves: [...teamMoves, dance], level: 6, teammates: plan().slice(0, 3),
+    random: () => 0 });
+  assert.equal(picked.role, "sweeper");
+  assert.ok(picked.moves.some(each => each.id === "dragon-dance"));
+  assert.equal(roleOf(picked.moves, gyarados, 6), "sweeper");
+});
+
+test("battle order: an entry ability leads, the ace goes last with its surprise Move and item", () => {
+  const members = plan().map(each => ({ ...each, name: each.pokemon.id }));
+  members[3] = { ...members[3], abilityId: "intimidate", abilityName: "Intimidate" };
+  members[0] = { ...members[0], level: 9, itemName: "Sitrus Berry" };
+  const { order, lead, ace } = battleOrder(members);
+  assert.equal(lead.name, "rattata");
+  assert.equal(ace.name, "charmander");
+  assert.equal(order.at(-1), ace);
+  const lines = teamTactics(members, "es", { weakTo: ["electric"] });
+  assert.match(lines[1], /^rattata .*Intimidate actúa al entrar/);
+  const aceLine = lines.at(-1);
+  assert.match(aceLine, /charmander \(\w+, As\)/);
+  assert.match(aceLine, /Lleva Sitrus Berry/);
 });

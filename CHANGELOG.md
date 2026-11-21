@@ -4,6 +4,16 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.69.0] — 2026-11-21
+
+- **El As:** el Pokémon más fuerte de cada Entrenador es su As. La composición lo muestra junto al plan, y el susurro lo marca y lo deja para el final.
+- **Orden de salida:** el susurro dice quién sale primero (o quiénes salen juntos, según los Pokémon en campo), quién entra al caer alguno y que el As entra al final. Abre el que tiene una habilidad de entrada (Intimidate, Drizzle, Drought, Sand Stream, Snow Warning, los Surge) o Fake Out; si no hay, el Preparador o el Control.
+- **Barredor:** un rol nuevo para el Pokémon con un Move que lo potencia (Swords Dance, Dragon Dance, Nasty Plot). Se potencia en su primer turno y después barre con su STAB. Los Moves que dan un penalizador al rival (Charm, Sand Attack) o que confunden (Swagger, Flatter) no cuentan.
+- **Baya del As:** con "Objetos garantizados", el As de cada Entrenador lleva una Sitrus Berry (Oran Berry hasta nivel 5), salvo que ya lleve un objeto.
+- **Move sorpresa:** si el As tiene un Move súper eficaz contra el grupo que no es de su tipo, el susurro lo marca para usarlo cuando el grupo no lo espere.
+- **Objetivos:** el susurro dice a quién atacar: Atacantes, Barredor y As rematan al más herido; Control duerme o paraliza al más sano o al más peligroso. Con varios en campo, avisa que no gasten dos ataques en un Pokémon que uno solo ya deja KO.
+- **Corrección:** con "Objetos garantizados", el objeto que muestra la composición era el que se sorteaba de nuevo al crear el encuentro. Ahora el Pokémon lleva el que se ve.
+
 ## [0.68.0] — 2026-11-21
 
 - **Adaptar estrategia:** el plan de cada Entrenador tiene un botón que elige los Moves de equipo para los Pokémon que el GM puso a mano, sin volver a tirar el equipo. Las filas bloqueadas conservan sus Moves.
