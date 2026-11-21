@@ -910,6 +910,12 @@ function buildEncounterMetadata({
             archetypeId:
               request.trainer.archetypeId,
 
+            onField:
+              request.trainer.onField,
+
+            actions:
+              request.trainer.actions,
+
             order:
               request.trainerOrder
           }

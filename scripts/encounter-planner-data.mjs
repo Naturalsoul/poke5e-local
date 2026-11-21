@@ -24,6 +24,7 @@ const ENCOUNTER_STUDIO_TABS =
     "composition",
     "generator",
     "trainers",
+    "strategy",
     "options"
   ]);
 
@@ -1057,8 +1058,7 @@ export function normalizeEncounterStudioTab(
 
 
   if (
-    tab ===
-      "trainers" &&
+    ["trainers", "strategy"].includes(tab) &&
     !trainerEncounter
   ) {
     return "composition";
@@ -1155,6 +1155,9 @@ export function buildEncounterDefinition(
             getTrainerArchetype(
               trainer.archetypeId
             ).id,
+
+          onField: trainer.onField,
+          actions: trainer.actions,
 
           pokemon:
             state.rows

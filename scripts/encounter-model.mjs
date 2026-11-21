@@ -235,12 +235,19 @@ function normalizeTrainers(
             trainer?.archetypeId
           ),
 
+        ...normalizeTrainerField(trainer),
+
         pokemon
       };
     }
   );
 }
 
+
+// How many of a trainer's Pokémon go out at once, and how many actions each takes.
+export function normalizeTrainerField(trainer) {
+  return { onField: clampInteger(trainer?.onField, 1, 6, 1), actions: clampInteger(trainer?.actions, 1, 3, 1) };
+}
 
 function resolveUniqueTrainerId(
   value,
