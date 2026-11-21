@@ -162,7 +162,7 @@ export const fieldedActions = (trainers, countOf) => Math.max(1, trainers.reduce
  * switches and leads), with their trainers' features and bags (an item takes the trainer's action, so its Pokémon's
  * turn) and rivals evolved to their level: logistic in ln(ratio).
  */
-const BOSS_CURVE = Object.freeze({ a: -6.07, b: 6.31 });
+const BOSS_CURVE = Object.freeze({ a: -6.95, b: 6.97 });
 export const BOSS_WIN_CHANCES = Object.freeze([60, 70, 80, 90]);
 export const bossWinChance = ratio => 1 / (1 + Math.exp(-(BOSS_CURVE.a + BOSS_CURVE.b * Math.log(Math.max(0.01, ratio)))));
 const ratioForBossWin = chance => Math.exp((Math.log(chance / (1 - chance)) - BOSS_CURVE.a) / BOSS_CURVE.b);

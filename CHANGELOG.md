@@ -8,7 +8,7 @@ solo se corrige algo.
 
 - **Los Pokémon de los Entrenadores rivales evolucionan según su nivel.** Un Totodile de nivel 15 sale como Feraligatr. Solo cuentan las evoluciones por nivel (y por género), y solo hacia especies que la tirada podía elegir, así que la región, el nivel y el tipo único de un gimnasio se mantienen. "Regenerar equipo" también evoluciona; los Pokémon bloqueados no cambian.
 - **La dificultad cuenta la especie del rival:** un Pokémon de SR más alto que el promedio del grupo pesa más que uno del mismo nivel con SR más bajo.
-- **El selector de victoria del boss se recalibró con los rasgos y las mochilas de los entrenadores del grupo.** Las simulaciones siguen la regla de acción del entrenador: usar un objeto en su Pokémon o en el de un aliado gasta la acción que comanda a su Pokémon, y las bayas equipadas actúan como reacción. Comprobado de vuelta con bosses nuevos: pedir 50, 60, 70, 80 y 90 % dio un boss que gana el 48, 56, 70, 73 y 94 %.
+- **El selector de victoria del boss se recalibró con los rasgos y las mochilas de los entrenadores del grupo.** Las simulaciones siguen la regla de acción del entrenador: usar un objeto en su Pokémon o en el de un aliado gasta la acción que comanda a su Pokémon, y las bayas equipadas actúan como reacción. Comprobado de vuelta con bosses nuevos: pedir 50, 60, 70, 80 y 90 % dio un boss que gana el 53, 61, 65, 76 y 91 % en promedio. Cada encuentro por separado varía unos 20 puntos alrededor de ese promedio.
 - **Corrección:** Partners (Ranger nivel 9) sumaba la SAB del entrenador a los ataques contra los Pokémon de un Entrenador rival generado por el Encounter Planner, porque no tienen dueño jugador. Ahora solo se suma contra Pokémon salvajes.
 
 ## [0.74.1] — 2026-11-21
