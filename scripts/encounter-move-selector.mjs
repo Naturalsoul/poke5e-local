@@ -383,7 +383,7 @@ export function selectTeamMoves({
     take(pickUtility(each => each.tags.has("buff") && !each.tags.has("status")));
   }
   while (chosen.length < count) {
-    const next = otherType() ?? pickDamage(() => true) ?? pickUtility(freshCondition);
+    const next = otherType() ?? pickDamage(() => true) ?? pickUtility(each => each.tags.size > 0 && freshCondition(each));
     if (!next) {break;}
     take(next);
   }

@@ -6,6 +6,7 @@ import { EncounterQueryService } from "./encounter-query-service.mjs";
 import { publishEncounterReward } from "./encounter-xp-reward.mjs";
 import {
   climbToNextTier,
+  withMoves,
   previewSteps
 } from "./encounter-difficulty-steps.mjs";
 import { selectEncounterItem } from "./encounter-item-selector.mjs";
@@ -1233,6 +1234,45 @@ export class PokemonEncounterPlanner
       );
     }
 
+    // On: the team Moves step, with its undo. Off: the Moves are chosen again when the encounter is created.
+    root.querySelector(
+      '[data-role="boost-best-moves"]'
+    )?.addEventListener(
+      "change",
+
+      async event => {
+        if (
+          event.currentTarget.checked &&
+          this._encounterState.rows.length
+        ) {
+          await this.#applyStep(
+            "moves"
+          );
+
+          return;
+        }
+
+        Object.assign(
+          this._encounterState,
+          {
+            boostBestMoves:
+              event.currentTarget.checked,
+            boostTmMoves:
+              false
+          }
+        );
+
+        if (!event.currentTarget.checked) {
+          this._encounterState.rows =
+            this._encounterState.rows.map(
+              row => (row.locked === true ? row : { ...row, moveIds: [] })
+            );
+        }
+
+        await this.render();
+      }
+    );
+
     for (
       const button
       of root.querySelectorAll(
@@ -1305,7 +1345,12 @@ export class PokemonEncounterPlanner
                 true,
             boostItems:
               rank.extras.items ===
-                true
+                true,
+            boostBestMoves:
+              rank.extras.bestMoves ===
+                true,
+            boostTmMoves:
+              false
           }
         );
 
@@ -4094,7 +4139,7 @@ export class PokemonEncounterPlanner
     const content = [
       "<h3>Plan táctico</h3>",
       weakTo.length
-        ? `<p>El grupo es débil a: ${escapeHtml(weakTo.join(", "))}. Enfoca a quien más tipos débiles tenga.</p>`
+        ? `<p>Lo que más daña al grupo: ${escapeHtml(weakTo.slice(0, 3).join(", "))}.</p>`
         : "",
       ...[...teams.values()].map(
         team =>
@@ -6133,6 +6178,10 @@ export class PokemonEncounterPlanner
 
       state.trainers = trainers;
       state.rows = rows;
+      // Team Moves chosen now, so the composition shows each Pokémon's role and the plan.
+      if (state.boostBestMoves === true) {
+        state.rows = withMoves({ trainers, rows, boosts: this.#boosts() }, this.#boosts(), this.#stepTools()).rows;
+      }
       state.stepHistory = [];
       state.selectedTrainerId = trainers[0]?.id ?? "";
       state.search = "";

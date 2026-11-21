@@ -112,11 +112,11 @@ export const TRAINER_RANKS = Object.freeze([
   { id: "ace-trainer", label: "Entrenador Guay", target: "medium", levels: [-2, 0], trainers: [1, 4], team: [1, 4],
     onField: [1, 3], extras: { statBonus: 1, coverage: true } },
   { id: "gym-leader", label: "Líder de Gimnasio", target: "hard", levels: [-1, 0], ace: [1, 1], trainers: [1, 4],
-    team: [1, 6], onField: [1, 6], monotype: true, extras: { statBonus: 1, coverage: true, items: true } },
+    team: [1, 6], onField: [1, 6], monotype: true, extras: { statBonus: 1, coverage: true, items: true, bestMoves: true } },
   { id: "elite-four", label: "Alto Mando", target: "hard", levels: [0, 1], ace: [1, 1], trainers: [1, 4], team: [2, 6],
-    onField: [1, 6], monotype: true, extras: { statBonus: 2, coverage: true, items: true } },
+    onField: [1, 6], monotype: true, extras: { statBonus: 2, coverage: true, items: true, bestMoves: true } },
   { id: "champion", label: "Campeón", target: "deadly", levels: [0, 1], ace: [1, 2], trainers: [1, 4], team: [3, 6],
-    onField: [1, 6], extras: { statBonus: 2, coverage: true, items: true } },
+    onField: [1, 6], extras: { statBonus: 2, coverage: true, items: true, bestMoves: true } },
   { id: "totem", label: "Pokémon Dominante", target: "hard", levels: [-1, 0], ace: [1, 2], trainers: [1, 4], team: [1, 6],
     onField: [1, 6], extras: { statBonus: 2, items: true } }
 ]);
@@ -194,8 +194,16 @@ export function playerTeams() {
   });
 }
 
+// Each value once, the most repeated first.
+const byFrequency = values => {
+  const counts = new Map();
+  values.forEach(value => counts.set(value, (counts.get(value) ?? 0) + 1));
+  return [...counts.keys()].sort((left, right) => counts.get(right) - counts.get(left));
+};
+
 // The players' trainers: how many, their strongest Pokémon's level and their team size, on average (their team,
-// or else every Pokémon they own), and the attacking types super effective against any of those Pokémon.
+// or else every Pokémon they own), and the attacking types super effective against any of those Pokémon, those that
+// hit the most of them first.
 export function detectEncounterParty() {
   const players = playerTeams().map(({ pokemon }) => {
     const matchups = pokemon.map(each => ({ types: typesOf(each), moveTypes: damagingMoveTypes(each) }));
@@ -208,7 +216,7 @@ export function detectEncounterParty() {
     size: players.length,
     level: level(average(players.map(player => player.level))),
     team: clamp(average(players.map(player => player.team)), 1, 6),
-    weakTo: [...new Set(players.flatMap(player => player.weakTo))],
+    weakTo: byFrequency(players.flatMap(player => player.weakTo)),
     pokemon: players.flatMap(player => player.matchups),
     strongest: strongestOf(players.map(player => player.strongest))
   };

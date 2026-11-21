@@ -15,7 +15,7 @@ const withOwnMoves = (row, boosts, tools, teammates = []) => (boosts.bestMoves |
   : row);
 
 // With these extras, every Pokémon's Moves chosen again (so the composition shows them), one trainer's team at a time.
-const withMoves = (state, boosts, tools) => {
+export const withMoves = (state, boosts, tools) => {
   const next = { ...state, boosts, rows: [] };
   for (const row of state.rows) {
     next.rows.push(withOwnMoves(row, boosts, tools, next.rows.filter(each => each.trainerId === row.trainerId)));
