@@ -6,7 +6,7 @@ solo se corrige algo.
 
 ## [0.74.1] — 2026-11-21
 
-- **El selector de victoria del boss se recalibró con jugadores que juegan lo mejor posible:** eligen objetivo por amenaza, usan Moves de estado, cambian por emparejamiento y abren con el mejor Pokémon. Con la curva anterior un boss pedido al 60 o 70 % ganaba un 42 o 44 % contra un grupo así; ahora queda a unos 5 puntos del pedido en promedio. Los rivales del boss salen algo más fuertes con el mismo porcentaje.
+- **El selector de victoria del boss se recalibró con jugadores que juegan lo mejor posible:** eligen objetivo por amenaza, usan Moves de estado, cambian por emparejamiento y abren con el mejor Pokémon. Con la curva anterior un boss pedido al 60 o 70 % ganaba entre un 35 y un 45 % contra un grupo así; ahora queda a unos 5 puntos del pedido en promedio. Los rivales del boss salen algo más fuertes con el mismo porcentaje.
 - **La opción 50 % del boss apunta de verdad al 50 %:** antes seguía la dificultad del rango y, contra un grupo que juega bien, el boss ganaba un 30 %.
 
 ## [0.74.0] — 2026-11-21
