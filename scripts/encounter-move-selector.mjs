@@ -209,15 +209,108 @@ export function scoreMove(move, pokemon, level) {
     (power >= best - 1 ? 1.1 : 1);
 }
 
-/**
- * The best moveset from the Moves it can learn (level-up and, as allowed, egg and TM): its strongest STAB Move, a super effective one
- * against the players' Pokémon if it can, the strongest of other types (one per type), and a status Move; then the
- * strongest left.
+// Weather and terrain Moves, and the type each one powers up.
+const FIELD_TYPES = Object.freeze({
+  "sunny-day": "fire", "rain-dance": "water", sandstorm: "rock", hail: "ice", snowscape: "ice",
+  "electric-terrain": "electric", "grassy-terrain": "grass", "misty-terrain": "fairy", "psychic-terrain": "psychic"
+});
+const CONDITIONS = ["paralyzed", "poisoned", "burned", "asleep", "frozen", "confused", "flinch", "frightened", "charmed"];
+const HAZARD = /switched into battle|enters? the (battle|area)/i;
+const PROTECT = /avoid the damage/i;
+const DEBUFF = /disadvantage on|reduc\w+ (its|their|the target)|-\d to (its|their)/i;
+const BUFF = /your AC by|increas\w+ your|you have advantage|you gain \+|\+\d to your|bonus to your/i;
+const HEAL = /(regain|recover|restore)\w* [^.]*hit points/i;
+// Self-drawbacks that make a nuke worse than its dice: a charge or recharge turn (in its activation), exhaustion, recoil.
+const CHARGE = /charge/i;
+const DRAWBACK = /consecutive turns|action on your next turn|on your next turn, if you keep|exhausts you|next attack is done at disadvantage|recoil/i;
+const concentrates = move => /concentration/i.test(move?.duration ?? "");
+
+const describe = move => JSON.stringify(move?.description?.en ?? "");
+const conditionOf = move => CONDITIONS.find(each => describe(move).toLowerCase().includes(each)) ?? null;
+
+/*
+ * What a Move does in a team plan, from its own fields first (activation, save, healing) and its description last:
+ * damage, field (weather/terrain), status (with the condition), debuff, buff, heal, protect, hazard, fast (bonus or
+ * reaction).
  */
-export function selectBestMoves({
+export function moveTags(move, pokemon, level) {
+  const text = describe(move);
+  const damage = scoreMove(move, pokemon, level) > 0;
+  const tags = new Set();
+  if (damage) {tags.add("damage");}
+  if (FIELD_TYPES[move.id]) {tags.add("field");}
+  // On others: Rest puts itself to sleep.
+  const onSelf = /^self\b/i.test(move.range?.raw ?? "");
+  if ((conditionOf(move) && !onSelf) || (move.save && !damage)) {tags.add("status");}
+  if (DEBUFF.test(text)) {tags.add("debuff");}
+  if (BUFF.test(text) && !damage) {tags.add("buff");}
+  if (move.damage?.type === "healing" || HEAL.test(text)) {tags.add("heal");}
+  if (PROTECT.test(text)) {tags.add("protect");}
+  if (HAZARD.test(text)) {tags.add("hazard");}
+  if (/bonus|reaction/i.test(move.activation?.raw ?? move.activation?.type ?? "") && !tags.has("protect")) {tags.add("fast");}
+  return tags;
+}
+
+export const MOVE_ROLES = Object.freeze({
+  attacker: { es: "Atacante", hint: "remata con su STAB y su cobertura" },
+  setter: { es: "Preparador", hint: "abre poniendo el clima o el terreno y se potencia" },
+  control: { es: "Control", hint: "inutiliza al Pokémon más peligroso del grupo con estados" },
+  pressure: { es: "Presión", hint: "usa acciones adicionales y reacciones para atacar fuera de turno" }
+});
+
+// The role a finished moveset plays (any moveset, also one chosen by hand).
+export function roleOf(moves, pokemon, level) {
+  const tags = moves.map(move => moveTags(move, pokemon, level));
+  if (tags.some(each => each.has("field"))) {return "setter";}
+  // Only control picks status Moves on purpose; the others take one only when nothing else is left.
+  if (tags.some(each => ["status", "debuff", "heal"].some(tag => each.has(tag)) && !each.has("damage"))) {
+    return "control";
+  }
+  if (tags.some(each => each.has("hazard") || (each.has("fast") && each.has("damage")))) {return "pressure";}
+  return "attacker";
+}
+
+// Damage that lasts: few PP and self-drawbacks lower a Move (Hyper Beam, Overheat).
+const sustainedScore = (move, pokemon, level) => scoreMove(move, pokemon, level) *
+  Math.min(1, ((Number(move.pp) || 5) + 3) / 10) *
+  (CHARGE.test(move.activation?.raw ?? "") || DRAWBACK.test(describe(move)) ? 0.7 : 1);
+
+// One of the near-best (within 85% of the top), not always the same one.
+const pickNearBest = (scored, random) => {
+  if (!scored.length) {return null;}
+  const top = Math.max(...scored.map(each => each.score));
+  const near = scored.filter(each => each.score >= top * 0.85);
+  return near[Math.floor(random() * near.length)].move;
+};
+
+// How well a Pokémon fills each role, from what it can learn and what its teammates are.
+function roleFit(learnable, pokemon, level, teamTypes) {
+  const tagged = learnable.map(move => ({ move, tags: moveTags(move, pokemon, level) }));
+  const fields = tagged.filter(each => each.tags.has("field"));
+  return {
+    attacker: 1,
+    // Only a weather or terrain that powers its team: sandstorm or hail would hurt teammates of other types.
+    setter: fields.filter(each => teamTypes.has(FIELD_TYPES[each.move.id])).length,
+    control: tagged.filter(each => !each.tags.has("damage") && ["status", "debuff", "heal"].some(tag => each.tags.has(tag))).length,
+    pressure: tagged.filter(each => each.tags.has("hazard") || (each.tags.has("fast") && each.tags.has("damage"))).length
+  };
+}
+
+// The roles a trainer's team should have, in order: an attacker first (the ace), then a setter, control, pressure.
+const ROLE_ORDER = ["attacker", "setter", "control", "pressure", "attacker", "control"];
+
+/**
+ * A moveset with a role in its trainer's team. `teammates` are the Pokémon already chosen ({ pokemon, level, moves,
+ * role? }, the role read from the Moves when missing):
+ * this one takes the first role of ROLE_ORDER they don't have that it can fill, and the team never repeats a weather
+ * or terrain, a status condition or a covering type (the players' weaknesses go round the team).
+ * Returns { role, moves }.
+ */
+export function selectTeamMoves({
   pokemon,
   moves,
   level,
+  teammates = [],
   coverageTypes = [],
   sources = {},
   maxMoves = MAX_MOVES,
@@ -226,25 +319,94 @@ export function selectBestMoves({
   const moveIndex = createMoveIndex(moves);
   const learnable = learnableMoveIds(pokemon, level, sources).map(id => moveIndex.get(id)).filter(Boolean);
   const count = clampInteger(maxMoves, 0, MAX_MOVES, MAX_MOVES);
-  const damaging = learnable
-    .map(move => ({ move, score: scoreMove(move, pokemon, level) }))
-    .filter(each => each.score > 0)
-    .sort((left, right) => right.score - left.score)
-    .map(each => each.move);
-  const status = shuffle(learnable.filter(move => !scoreMove(move, pokemon, level)), random);
+  const ownTypes = pokemon?.types ?? [];
+  const teamTypes = new Set([...ownTypes, ...teammates.flatMap(each => each.pokemon?.types ?? [])]);
+  const taken = teammates.flatMap(each => each.moves ?? []);
+  const fieldTaken = taken.some(move => FIELD_TYPES[move.id]);
+  const conditionsTaken = new Set(taken.map(conditionOf).filter(Boolean));
+  const coveredTaken = new Set(taken.filter(move => move.damage && coverageTypes.includes(move.type)).map(move => move.type));
+  const roles = teammates.map(each => each.role ?? roleOf(each.moves ?? [], each.pokemon, each.level));
+
+  const fit = roleFit(learnable.filter(move => !(fieldTaken && FIELD_TYPES[move.id])), pokemon, level, teamTypes);
+  const missing = [...ROLE_ORDER];
+  roles.forEach(role => {
+    const at = missing.indexOf(role);
+    if (at >= 0) {missing.splice(at, 1);}
+  });
+  const role = missing.find(each => fit[each] > 0) ?? "attacker";
+
+  // Only the setter brings the team's one weather or terrain.
+  const tagged = learnable
+    .map(move => ({ move, tags: moveTags(move, pokemon, level), score: sustainedScore(move, pokemon, level) }))
+    .filter(each => !each.tags.has("field") || (role === "setter" && !fieldTaken));
   const chosen = [];
   const take = move => {
     if (move && chosen.length < count && !chosen.includes(move)) {chosen.push(move);}
   };
-  take(damaging.find(move => (pokemon?.types ?? []).includes(move.type)));
-  take(damaging.find(move => coverageTypes.includes(move.type)));
-  for (const move of damaging) {
-    if (chosen.length >= count - (status.length ? 1 : 0)) {break;}
-    if (!chosen.some(each => each.type === move.type)) {take(move);}
+  // One concentration Move at most: a second would end the first.
+  const open = filter => tagged.filter(each => !chosen.includes(each.move) &&
+    !(concentrates(each.move) && chosen.some(concentrates)) && filter(each));
+  const pickDamage = filter => pickNearBest(open(each => each.tags.has("damage") && filter(each)), random);
+  const pickUtility = filter => {
+    const options = open(each => !each.tags.has("damage") && filter(each));
+    return options.length ? options[Math.floor(random() * options.length)].move : null;
+  };
+  const freshCondition = each => {
+    const condition = conditionOf(each.move);
+    return !condition || (!conditionsTaken.has(condition) && !chosen.some(move => conditionOf(move) === condition));
+  };
+  const coverType = coverageTypes.find(type => !coveredTaken.has(type) && !ownTypes.includes(type)) ?? coverageTypes[0];
+  const stab = () => pickDamage(each => ownTypes.includes(each.move.type));
+  const cover = () => pickDamage(each => each.move.type === coverType) ??
+    pickDamage(each => coverageTypes.includes(each.move.type));
+  const otherType = () => pickDamage(each => !chosen.some(move => move.type === each.move.type));
+
+  if (role === "setter") {
+    take(open(each => each.tags.has("field") && teamTypes.has(FIELD_TYPES[each.move.id]))[0]?.move);
+    take(stab());
+    take(pickUtility(each => each.tags.has("buff")));
+    take(cover());
+  } else if (role === "control") {
+    take(pickUtility(each => each.tags.has("status") && freshCondition(each)) ?? pickUtility(each => each.tags.has("status")));
+    take(stab());
+    take(pickUtility(each => ["debuff", "heal", "protect"].some(tag => each.tags.has(tag))));
+    take(cover());
+  } else if (role === "pressure") {
+    take(pickDamage(each => each.tags.has("fast")));
+    take(stab());
+    take(pickUtility(each => each.tags.has("hazard")) ?? pickDamage(each => each.tags.has("hazard")));
+    take(cover());
+  } else {
+    take(stab());
+    take(cover());
+    take(otherType());
+    take(pickUtility(each => each.tags.has("buff") && !each.tags.has("status")));
   }
-  take(status[0]);
-  damaging.forEach(take);
-  return chosen;
+  while (chosen.length < count) {
+    const next = otherType() ?? pickDamage(() => true) ?? pickUtility(each => each.tags.size > 0 && freshCondition(each));
+    if (!next) {break;}
+    take(next);
+  }
+  return { role, moves: chosen };
+}
+
+/*
+ * The DM's game plan for one trainer: who opens, who controls, who presses and who finishes, with the Moves for it.
+ * `members`: [{ name, role, moves }]. Returns lines of text.
+ */
+export function teamTactics(members, language = "es") {
+  const name = move => move?.name?.[language] ?? move?.name?.en ?? move?.id;
+  const order = ["setter", "control", "pressure", "attacker"];
+  return [...members]
+    .sort((left, right) => order.indexOf(left.role) - order.indexOf(right.role))
+    .map(member => {
+      const role = MOVE_ROLES[member.role] ?? MOVE_ROLES.attacker;
+      const key = member.moves.find(move => {
+        const tags = moveTags(move, member.pokemon, member.level);
+        return { setter: tags.has("field"), control: tags.has("status"), pressure: tags.has("fast") || tags.has("hazard") }[member.role];
+      }) ?? member.moves[0];
+      return `${member.name} (${role.es}): ${role.hint}.${key ? ` Move clave: ${name(key)}.` : ""}`;
+    });
 }
 
 function createMoveIndex(

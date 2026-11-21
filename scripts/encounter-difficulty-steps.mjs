@@ -9,15 +9,17 @@
 
 const rowsOf = (state, trainer) => state.rows.filter(row => row.trainerId === trainer.id);
 
-// A new Pokémon gets its Moves now if the extras choose them (best moveset, coverage), like the others.
-const withOwnMoves = (row, boosts, tools) => (boosts.bestMoves || boosts.coverage
-  ? { ...row, moveIds: tools.pickMoves?.(row, boosts) ?? row.moveIds }
+// A new Pokémon gets its Moves now if the extras choose them (team moveset, coverage), with its trainer's team in mind.
+const withOwnMoves = (row, boosts, tools, teammates = []) => (boosts.bestMoves || boosts.coverage
+  ? { ...row, moveIds: tools.pickMoves?.(row, boosts, teammates) ?? row.moveIds }
   : row);
 
-// With these extras, every Pokémon's Moves chosen again (so the composition shows them).
-const withMoves = (state, boosts, tools) => {
-  const next = { ...state, boosts };
-  next.rows = state.rows.map(row => ({ ...row, moveIds: tools.pickMoves?.(row, boosts) ?? row.moveIds }));
+// With these extras, every Pokémon's Moves chosen again (so the composition shows them), one trainer's team at a time.
+export const withMoves = (state, boosts, tools) => {
+  const next = { ...state, boosts, rows: [] };
+  for (const row of state.rows) {
+    next.rows.push(withOwnMoves(row, boosts, tools, next.rows.filter(each => each.trainerId === row.trainerId)));
+  }
   return next;
 };
 
@@ -60,8 +62,8 @@ export const TRAINER_STEPS = Object.freeze([
   },
   {
     id: "moves",
-    label: "Mejores Moves",
-    hint: "Cada Pokémon lleva su mejor combinación de Moves de nivel y de huevo: su ataque STAB más fuerte, otros tipos y uno de estado.",
+    label: "Moves de equipo",
+    hint: "Cada Pokémon toma un rol en su equipo (Atacante, Preparador, Control, Presión) con Moves de nivel y de huevo: un clima o terreno por equipo, estados distintos y la cobertura repartida.",
     apply: (state, tools) => (state.boosts.bestMoves ? null : withMoves(state, { ...state.boosts, bestMoves: true }, tools))
   },
   {
@@ -74,7 +76,7 @@ export const TRAINER_STEPS = Object.freeze([
       if (!trainer) {return null;}
       const row = tools.addPokemon(trainer, rowsOf(state, trainer));
       if (!row) {return null;}
-      state.rows.push(withOwnMoves(row, state.boosts, tools));
+      state.rows.push(withOwnMoves(row, state.boosts, tools, rowsOf(state, trainer)));
       return state;
     }
   },
@@ -87,14 +89,16 @@ export const TRAINER_STEPS = Object.freeze([
       const helper = tools.addTrainer(state.trainers[0]);
       if (!helper) {return null;}
       state.trainers.push(helper.trainer);
-      state.rows.push(...helper.rows.map(row => withOwnMoves(row, state.boosts, tools)));
+      const team = [];
+      helper.rows.forEach(row => team.push(withOwnMoves(row, state.boosts, tools, [...team])));
+      state.rows.push(...team);
       return state;
     }
   },
   {
     id: "tm-moves",
     label: "Moves de MT",
-    hint: "Su mejor combinación suma las MT que pueden aprender: los Moves más fuertes, así que va después de los de nivel y huevo.",
+    hint: "Los Moves de equipo suman las MT que pueden aprender: más opciones por rol, así que va después de los de nivel y huevo.",
     apply: (state, tools) => (state.boosts.tmMoves
       ? null
       : withMoves(state, { ...state.boosts, bestMoves: true, tmMoves: true }, tools))

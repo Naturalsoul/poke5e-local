@@ -4,6 +4,13 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.67.0] — 2026-11-21
+
+- **Encounter Planner, Moves de equipo:** el paso "Mejores Moves" ahora se llama "Moves de equipo" y ya no elige solo el ataque con más daño. Cada Pokémon toma un rol en el equipo de su Entrenador: Atacante (STAB y cobertura), Preparador (pone un clima o terreno que potencie a su propio equipo, nunca uno que lo dañe, y suma un buff), Control (estados, debuffs, curación o Protect) o Presión (ataques con acción adicional o reacción, y trampas de entrada). Cada equipo pone un solo clima o terreno, intenta no repetir el mismo estado y reparte la cobertura contra las debilidades del grupo entre sus Pokémon. Ningún Pokémon lleva dos Moves de concentración. Los Moves con pocos PP o con un turno de carga o de recarga (Hyper Beam, Solar Beam, Overheat) pesan menos, y entre los mejores se elige uno al azar. Con "Moves de MT" las MT se suman a las opciones de cada rol. La composición muestra el rol junto a los Moves de cada Pokémon. Los encuentros ya creados conservan sus Moves hasta que se vuelven a tirar.
+- **Moves de equipo en los extras:** se activan con su casilla junto a Cobertura y Objetos, y vienen activados en Líder de Gimnasio, Alto Mando y Campeón. Al generar Entrenadores con la casilla activa, los Moves se eligen enseguida. Al desactivarla, los Moves de las filas no bloqueadas se vuelven a elegir al crear el encuentro.
+- **Plan táctico:** cada Entrenador muestra su plan en la composición (Preparador, Control, Presión y Atacante, con sus Pokémon). Al generar el combate, el GM recibe por susurro el plan con el Move clave de cada Pokémon y los tres tipos que más dañan al grupo.
+- **Detectar grupo:** los tipos a los que es débil el grupo quedan ordenados por cuántos de sus Pokémon dañan, así la cobertura reparte primero los que más golpean.
+
 ## [0.66.0] — 2026-11-11
 
 - **Transiciones de escena:** cada transición elige al azar el tipo de ball (Poké Ball, Super Ball, Ultra Ball, Master Ball u Honor Ball), y todos los jugadores ven la misma. Hay tres transiciones nuevas al estilo de GBA: franjas, espiral y mosaico, que terminan con la ball girando en el centro de la pantalla. También está la R del Team Rocket, que gira y crece sobre un fondo negro; "Aleatoria" no la elige, hay que escogerla a propósito. El selector de la escena ahora se llama "Transición de escena".

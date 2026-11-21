@@ -6,12 +6,15 @@ import { EncounterQueryService } from "./encounter-query-service.mjs";
 import { publishEncounterReward } from "./encounter-xp-reward.mjs";
 import {
   climbToNextTier,
+  withMoves,
   previewSteps
 } from "./encounter-difficulty-steps.mjs";
 import { selectEncounterItem } from "./encounter-item-selector.mjs";
 import {
-  selectBestMoves,
-  selectEncounterMoves
+  selectEncounterMoves,
+  roleOf,
+  selectTeamMoves,
+  teamTactics
 } from "./encounter-move-selector.mjs";
 import {
   encounterShare,
@@ -1231,6 +1234,45 @@ export class PokemonEncounterPlanner
       );
     }
 
+    // On: the team Moves step, with its undo. Off: the Moves are chosen again when the encounter is created.
+    root.querySelector(
+      '[data-role="boost-best-moves"]'
+    )?.addEventListener(
+      "change",
+
+      async event => {
+        if (
+          event.currentTarget.checked &&
+          this._encounterState.rows.length
+        ) {
+          await this.#applyStep(
+            "moves"
+          );
+
+          return;
+        }
+
+        Object.assign(
+          this._encounterState,
+          {
+            boostBestMoves:
+              event.currentTarget.checked,
+            boostTmMoves:
+              false
+          }
+        );
+
+        if (!event.currentTarget.checked) {
+          this._encounterState.rows =
+            this._encounterState.rows.map(
+              row => (row.locked === true ? row : { ...row, moveIds: [] })
+            );
+        }
+
+        await this.render();
+      }
+    );
+
     for (
       const button
       of root.querySelectorAll(
@@ -1303,7 +1345,12 @@ export class PokemonEncounterPlanner
                 true,
             boostItems:
               rank.extras.items ===
-                true
+                true,
+            boostBestMoves:
+              rank.extras.bestMoves ===
+                true,
+            boostTmMoves:
+              false
           }
         );
 
@@ -3940,17 +3987,21 @@ export class PokemonEncounterPlanner
     };
   }
 
-  // A row's Moves with these extras: the best moveset (TMs if allowed), or the usual pick; a covering Move either way.
+  // A row's Moves with these extras: a role in its trainer's team (TMs if allowed), or the usual pick; coverage either way.
   #pickMoves(
     row,
-    boosts
+    boosts,
+    teammates = []
   ) {
-    const pokemon =
+    const pokemonOf = each =>
       this.database.pokemon.find(
-        each =>
-          each.id ===
-            row.pokemonId
+        candidate =>
+          candidate.id ===
+            each.pokemonId
       );
+
+    const pokemon =
+      pokemonOf(row);
 
     if (!pokemon) {
       return row.moveIds;
@@ -3963,11 +4014,7 @@ export class PokemonEncounterPlanner
           []
         : [];
 
-    return (
-      boosts.bestMoves
-        ? selectBestMoves
-        : selectEncounterMoves
-    )({
+    const options = {
       pokemon,
       moves:
         this.database.moves,
@@ -3978,10 +4025,144 @@ export class PokemonEncounterPlanner
         tm:
           boosts.tmMoves
       }
-    }).map(
+    };
+
+    const moveById =
+      new Map(
+        this.database.moves.map(
+          move => [move.id, move]
+        )
+      );
+
+    return (
+      boosts.bestMoves
+        ? selectTeamMoves({
+            ...options,
+            teammates:
+              teammates.map(
+                each => ({
+                  pokemon:
+                    pokemonOf(each),
+                  level:
+                    each.level,
+                  moves:
+                    (each.moveIds ?? [])
+                      .map(id => moveById.get(id))
+                      .filter(Boolean)
+                })
+              )
+          }).moves
+        : selectEncounterMoves(
+            options
+          )
+    ).map(
       move =>
         move.id
     );
+  }
+
+  // The DM's game plan, whispered to the GMs: each trainer's roles in the order to play them, with the key Move.
+  async #whisperTactics(
+    result
+  ) {
+    // Only with team Moves: their roles are what the plan reads.
+    if (
+      result.encounter?.type !==
+        "trainer" ||
+      this._encounterState.boostBestMoves !==
+        true
+    ) {
+      return;
+    }
+
+    const language =
+      getLanguage();
+
+    const moveById =
+      new Map(
+        this.database.moves.map(
+          move => [move.id, move]
+        )
+      );
+
+    const teams =
+      new Map();
+
+    for (
+      const entry
+      of result.entries
+    ) {
+      if (!entry.trainer) {
+        continue;
+      }
+
+      const moves =
+        (entry.moveIds ?? [])
+          .map(id => moveById.get(id))
+          .filter(Boolean);
+
+      const team =
+        teams.get(entry.trainer.id) ??
+        { name: entry.trainer.name, members: [] };
+
+      team.members.push({
+        name:
+          entry.actor?.name ??
+          entry.pokemon.id,
+        pokemon:
+          entry.pokemon,
+        level:
+          entry.level,
+        moves,
+        role:
+          roleOf(
+            moves,
+            entry.pokemon,
+            entry.level
+          )
+      });
+
+      teams.set(
+        entry.trainer.id,
+        team
+      );
+    }
+
+    if (!teams.size) {
+      return;
+    }
+
+    const weakTo =
+      this._encounterState.partyWeakTo ??
+      [];
+
+    const content = [
+      "<h3>Plan táctico</h3>",
+      weakTo.length
+        ? `<p>Lo que más daña al grupo: ${escapeHtml(weakTo.slice(0, 3).join(", "))}.</p>`
+        : "",
+      ...[...teams.values()].map(
+        team =>
+          `<p><strong>${escapeHtml(team.name ?? "Entrenador")}</strong></p><ul>${
+            teamTactics(team.members, language)
+              .map(line => `<li>${escapeHtml(line)}</li>`)
+              .join("")
+          }</ul>`
+      )
+    ].join("");
+
+    // The encounter is already created: a failed message mustn't look like a failed generation.
+    try {
+      await ChatMessage.implementation.create({
+        content,
+        whisper:
+          game.users
+            .filter(user => user.isGM)
+            .map(user => user.id)
+      });
+    } catch (error) {
+      console.warn("poke5e-local | No se pudo enviar el plan táctico.", error);
+    }
   }
 
   // What the steps need: new Pokémon and trainers of an archetype, and how high levels may go.
@@ -3999,11 +4180,13 @@ export class PokemonEncounterPlanner
 
       pickMoves: (
         row,
-        boosts
+        boosts,
+        teammates
       ) =>
         this.#pickMoves(
           row,
-          boosts
+          boosts,
+          teammates
         ),
 
       rollItem: () =>
@@ -5995,6 +6178,10 @@ export class PokemonEncounterPlanner
 
       state.trainers = trainers;
       state.rows = rows;
+      // Team Moves chosen now, so the composition shows each Pokémon's role and the plan.
+      if (state.boostBestMoves === true) {
+        state.rows = withMoves({ trainers, rows, boosts: this.#boosts() }, this.#boosts(), this.#stepTools()).rows;
+      }
       state.stepHistory = [];
       state.selectedTrainerId = trainers[0]?.id ?? "";
       state.search = "";
@@ -6144,6 +6331,10 @@ export class PokemonEncounterPlanner
           definition,
           buildGenerationOptions(this._encounterState)
         );
+
+      await this.#whisperTactics(
+        result
+      );
 
 
       const details = [

@@ -1,4 +1,5 @@
 import { escapeHtml } from "./html.mjs";
+import { MOVE_ROLES } from "./encounter-move-selector.mjs";
 import {
   RANDOM_BIOME_ROUTE,
   RANDOM_REGION_ALL
@@ -702,6 +703,13 @@ function renderTrainerExtras({
           boosts.items,
           "Objetos garantizados",
           "Cada Pokémon lleva un objeto equipado o una baya."
+        )}
+
+        ${toggle(
+          "boost-best-moves",
+          boosts.bestMoves,
+          "Moves de equipo",
+          "Cada Pokémon toma un rol en su equipo: Atacante, Preparador, Control o Presión."
         )}
       </div>`;
 }
@@ -1988,7 +1996,7 @@ function renderTrainerBoosts(
       ? '<span><i class="fa-solid fa-box-archive" aria-hidden="true"></i> Objetos garantizados</span>'
       : "",
     boosts.bestMoves
-      ? `<span><i class="fa-solid fa-hand-fist" aria-hidden="true"></i> ${boosts.tmMoves ? "Mejores Moves con MT" : "Mejores Moves"}</span>`
+      ? `<span><i class="fa-solid fa-hand-fist" aria-hidden="true"></i> ${boosts.tmMoves ? "Moves de equipo con MT" : "Moves de equipo"}</span>`
       : ""
   ].filter(Boolean);
 
@@ -2157,6 +2165,21 @@ function renderTrainerEncounterComposition({
   `;
 }
 
+// The team's plan from its Moves' roles, in the order to play them: who opens, controls, presses and finishes.
+function renderTrainerPlan(
+  rows
+) {
+  const chips = ["setter", "control", "pressure", "attacker"]
+    .map(id => MOVE_ROLES[id])
+    .map(role => [role, rows.filter(row => row.moveRole === role.es).map(row => row.localizedName)])
+    .filter(([, names]) => names.length)
+    .map(([role, names]) => `<span title="${escapeHtml(role.hint)}">${escapeHtml(role.es)}: ${escapeHtml(names.join(", "))}</span>`);
+
+  return chips.length
+    ? `<div class="poke5e-encounter-planner__trainer-boosts"><small>Plan</small>${chips.join("")}</div>`
+    : "";
+}
+
 // "3 entrada(s) · 2 en campo": how many it brings and sends out at once.
 function trainerCompositionCount(
   count,
@@ -2320,6 +2343,7 @@ function renderTrainerCompositionGroup({
         data-role="trainer-composition-body"
         ${collapsed ? "hidden" : ""}
       >
+        ${renderTrainerPlan(rows)}
         ${groupBody}
       </div>
 
@@ -2750,7 +2774,7 @@ function renderEncounterCard(
               aria-hidden="true"
             ></i>
 
-            Moves
+            Moves${row.moveRole ? ` · ${escapeHtml(row.moveRole)}` : ""}
           </span>
 
           <strong>
