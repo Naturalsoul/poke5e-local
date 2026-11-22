@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getTrainerRank, rankLevels } from "../scripts/encounter-difficulty.mjs";
+import { TRAINER_RANKS, getTrainerRank, rankLevels } from "../scripts/encounter-difficulty.mjs";
 import {
   buildGenerationOptions,
   buildTrainerRoster,
@@ -94,14 +94,14 @@ test("a rank roll returns trainers within the rank's levels", () => {
   }
 });
 
-test("a Gym Leader on auto sends out no more Pokémon than the party, all trainers together; a manual choice wins", () => {
+test("a Gym Leader on auto sends out no more than the party plus its field cap, all trainers together; a manual choice wins", () => {
   const rank = getTrainerRank("gym-leader");
   const party = { size: 2, level: 5, team: 4, pokemon: [], strongest: null, participants: 2 };
   const levels = rankLevels(party.level, rank);
   const state = { trainerRandomCount: "auto", trainerRandomPokemonCount: "auto", trainerRandomOnField: "auto", trainerRandomArchetype: "generic" };
   for (let i = 0; i < 10; i += 1) {
     const { generatedTrainers } = rollTrainerEncounter({ state, party, rank, levels, boosts: {}, candidates, pokemonTypes: () => ["normal"] });
-    assert.ok(generatedTrainers.reduce((total, trainer) => total + trainer.onField, 0) <= party.size);
+    assert.ok(generatedTrainers.reduce((total, trainer) => total + trainer.onField, 0) <= party.size + rank.fieldCap);
   }
   const manual = rollTrainerEncounter({ state: { ...state, trainerRandomCount: "1", trainerRandomPokemonCount: "6", trainerRandomOnField: "4" },
     party, rank, levels, boosts: {}, candidates, pokemonTypes: () => ["normal"] });
@@ -125,11 +125,11 @@ test("a boss is one trainer with 6 to 12 Pokémon, up to 6 out, 1 to 3 actions e
   assert.ok(weigh(2) > weigh(1));
 });
 
-test("a boss aims at its chance to win: the curve inverts, and 90 % rolls a stronger boss than 60 %", async () => {
-  const { bossWinChance, bossWinRange, encounterDifficulty, fieldedActions } = await import("../scripts/encounter-difficulty.mjs");
-  const range = bossWinRange(70);
-  assert.ok(Math.abs(bossWinChance(range.from) - 0.65) < 1e-9 && Math.abs(bossWinChance(range.to) - 0.75) < 1e-9);
-  assert.ok(bossWinChance(1) < 0.01 && bossWinChance(6) > 0.99);
+test("a rival aims at its chance to win: higher ratio and a lower level gap win more, and a boss lands in its band or says what it reached", async () => {
+  const { encounterDifficulty, fieldedActions, rivalWinChance, winRange } = await import("../scripts/encounter-difficulty.mjs");
+  assert.ok(Math.abs(winRange(70).winFrom - 0.65) < 1e-9 && Math.abs(winRange(70).winTo - 0.75) < 1e-9);
+  assert.ok(rivalWinChance(1) < 0.01 && rivalWinChance(6) > 0.99);
+  assert.ok(rivalWinChance(3.2, 0) > rivalWinChance(3, 0) && rivalWinChance(3, -1) > rivalWinChance(3, 0) && rivalWinChance(3, 1) < rivalWinChance(3, 0));
   const rank = getTrainerRank("boss");
   const party = { size: 4, level: 8, team: 4, pokemon: [], strongest: null, participants: 4 };
   const levels = rankLevels(party.level, rank);
@@ -139,12 +139,11 @@ test("a boss aims at its chance to win: the curve inverts, and 90 % rolls a stro
     const { generatedTrainers: [boss], missedTarget } = rollTrainerEncounter({ state, party, rank, levels, boosts: rank.extras, candidates,
       pokemonTypes: () => ["normal"] });
     const rows = boss.pokemon.map(pokemon => ({ ...pokemon, types: ["normal"] }));
-    const { ratio } = encounterDifficulty(party, rows, { trainerBattle: true, onField: fieldedActions([boss], () => rows.length), boosts: rank.extras });
-    const { from, to } = bossWinRange(Number(chance));
-    assert.ok((ratio >= from - 1e-9 && ratio <= to + 1e-9) || missedTarget?.wanted === `que el boss gane un ${chance} %`, `${chance}: ${ratio}`);
-    return ratio;
+    const { win } = encounterDifficulty(party, rows, { onField: fieldedActions([boss], () => rows.length), boosts: rank.extras });
+    const { winFrom, winTo } = winRange(Number(chance));
+    assert.ok((win >= winFrom - 1e-9 && win <= winTo + 1e-9) || missedTarget?.wanted === `que el boss gane un ${chance} %`, `${chance}: ${win}`);
   };
-  assert.ok(roll("90") > roll("60"));
+  ["60", "90"].forEach(roll);
 });
 
 test("a boss keeps a team over 6: asked for 12 it gets 12, and a reroll on auto keeps its size", async () => {
@@ -164,4 +163,16 @@ test("generation options only send coverage types when that boost is on", () => 
   assert.equal(buildGenerationOptions(state).boosts.statBonus, 2);
   state.boostCoverage = true;
   assert.deepEqual(buildGenerationOptions(state).boosts.coverageTypes, ["fire"]);
+});
+
+test("every win-chance rank rolls a rival that wins its chance for parties of 2 to 6", () => {
+  const state = { trainerRandomCount: "auto", trainerRandomPokemonCount: "auto", trainerRandomOnField: "auto", trainerRandomArchetype: "generic" };
+  for (const party of [{ size: 2, level: 8, team: 3 }, { size: 4, level: 8, team: 5 }, { size: 6, level: 8, team: 4 }]) {
+    for (const rank of TRAINER_RANKS.filter(entry => entry.winChance)) {
+      const { missedTarget } = rollTrainerEncounter({ state, party: { ...party, pokemon: [] }, rank, levels: rankLevels(party.level, rank),
+        boosts: rank.extras, candidates, pokemonTypes: () => ["normal"] });
+      const reached = missedTarget ? Number.parseInt(missedTarget.reached.replace(/\D+/g, ""), 10) : rank.winChance;
+      assert.ok(Math.abs(reached - rank.winChance) <= 10, `${rank.id} for ${party.size} players: ${missedTarget?.reached}`);
+    }
+  }
 });

@@ -27,7 +27,6 @@ import {
 } from "./encounter-xp-service.mjs";
 import { EncounterRandomCatalog } from "./encounter-random-catalog.mjs";
 import {
-  bossWinChance,
   encounterDifficulty,
   fieldedActions,
   getTrainerRank,
@@ -4597,9 +4596,10 @@ export class PokemonEncounterPlanner
         measure
       );
 
-    const boss = this._encounterState.trainerRandomRank === "boss" && state.trainers.length === 1;
+    const rankId = this._encounterState.trainerRandomRank;
+    const winShown = (rankId === "boss" && state.trainers.length === 1) || Boolean(getTrainerRank(rankId).winChance);
     return renderStepPanel({
-      current: boss ? { ...current, bossWin: Math.round(bossWinChance(current.ratio) * 100) } : current,
+      current: winShown && current.win !== null ? { ...current, bossWin: Math.round(current.win * 100) } : current,
       previews:
         this._stepPreviews,
       climb:

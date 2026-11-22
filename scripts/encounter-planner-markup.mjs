@@ -563,10 +563,10 @@ function renderDifficultyControls({
   bossWinChance = "auto"
 }) {
   // Trainer battles pick the rival's rank (and show the difficulty it aims at); wild ones a difficulty.
-  const targetLabel = entry =>
-    entry.target
-      ? ` · ${DIFFICULTIES.find(tier => tier.id === entry.target)?.label}`
-      : "";
+  const targetLabel = entry => {
+    if (entry.winChance) {return ` · gana el rival ${entry.winChance} %`;}
+    return entry.target ? ` · ${DIFFICULTIES.find(tier => tier.id === entry.target)?.label}` : "";
+  };
 
   const options =
     (
@@ -812,7 +812,7 @@ export function renderStepPanel({
         <span class="poke5e-encounter-planner__steps-current" data-tier="${current.tier.id}">
           <small>Ahora</small>
           <strong>${escapeHtml(current.tier.label)}</strong>
-          ${current.bossWin === undefined ? "" : `<small title="Según combates simulados contra el grupo.">Gana el boss ≈ ${current.bossWin} %</small>`}
+          ${current.bossWin === undefined ? "" : `<small title="Según combates simulados contra el grupo.">Gana el rival ≈ ${current.bossWin} %</small>`}
         </span>
 
         <button
