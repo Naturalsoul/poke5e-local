@@ -4,6 +4,12 @@ Los cambios del módulo por versión, de la más reciente a la más antigua. La 
 se sube el número **menor** (0.19.0 → 0.20.0) cuando se añade algo y el de **parche** (0.19.0 → 0.19.1) cuando
 solo se corrige algo.
 
+## [0.76.1] — 2026-11-21
+
+- **En combates de Entrenador, el recuadro Dificultad muestra cuánto gana el rival** ("Rival gana 62 %") en vez de Fácil, Mortal o Extrema, que ya no distinguían los rangos especiales. La palabra sigue al pasar el ratón.
+- **Cada rango sale cerca del centro de su objetivo.** Antes el generador se quedaba con el primer equipo dentro de la franja, así que el Entrenador Guay salía siempre entre 35 y 39 % en vez de cerca de 40. Comprobado con 25 tiradas por rango para un grupo de 4: cada promedio quedó a 1 punto de su objetivo.
+- El selector de rango dice "gana el rival lo que elijas" para el boss, en vez de "Mortal".
+
 ## [0.76.0] — 2026-11-21
 
 - **Cada rango de Entrenador apunta a cuánto gana el rival,** y el selector lo muestra: Veterano 20 %, Entrenador Guay 40 %, Rival 50 %, Líder de Gimnasio 60 %, Alto Mando 75 %, Campeón 80 % y Leyenda 90 %. El de ruta sigue siendo fácil y el boss conserva su selector. Estos rangos son para combates especiales con mejores recompensas; en las rutas el grupo debería ganar.

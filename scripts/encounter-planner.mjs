@@ -4911,7 +4911,8 @@ export class PokemonEncounterPlanner
       tier,
       power,
       partyPower,
-      matchup
+      matchup,
+      win
     } =
       this.#difficulty(
         rows
@@ -4931,10 +4932,12 @@ export class PokemonEncounterPlanner
       tier:
         tier.id,
 
+      // Trainer battles show the rival's chance to win: the tier words no longer tell the special ranks apart.
       label:
-        tier.label,
+        trainerBattle && win !== null ? `Rival gana ${Math.round(win * 100)} %` : tier.label,
 
       title:
+        (trainerBattle ? `${tier.label}. ` : "") +
         `Fuerza ${formatNumber(power)} contra ${formatNumber(partyPower)} del grupo (${group}). ` +
         (
           trainerBattle

@@ -565,6 +565,7 @@ function renderDifficultyControls({
   // Trainer battles pick the rival's rank (and show the difficulty it aims at); wild ones a difficulty.
   const targetLabel = entry => {
     if (entry.winChance) {return ` · gana el rival ${entry.winChance} %`;}
+    if (entry.id === "boss") {return " · gana el rival lo que elijas";}
     return entry.target ? ` · ${DIFFICULTIES.find(tier => tier.id === entry.target)?.label}` : "";
   };
 

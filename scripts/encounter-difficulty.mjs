@@ -204,13 +204,18 @@ export function distanceToTier(ratio, tierId) {
 // difficulty: a tier id, or a ratio range { from, to }.
 export function generateForDifficulty(generate, measure, difficulty, attempts = 300) {
   let best = null;
-  for (let attempt = 0; attempt < attempts && best?.distance !== 0; attempt++) {
+  // Inside its band a win target keeps looking for a roll near the centre, or every roll sits on the edge it enters from.
+  const centre = difficulty?.winFrom === undefined ? null : (difficulty.winFrom + difficulty.winTo) / 2;
+  const offCentre = win => (centre === null ? 0 : Math.abs(win - centre));
+  for (let attempt = 0; attempt < attempts && !(best?.distance === 0 && offCentre(best.win) <= 0.02); attempt++) {
     const result = generate();
     const { tier, ratio, win } = measure(result);
     let distance = distanceToTier(ratio, difficulty);
-    if (difficulty?.winFrom !== undefined) {distance = Math.max(0, difficulty.winFrom - win, win - difficulty.winTo);}
+    if (centre !== null) {distance = Math.max(0, difficulty.winFrom - win, win - difficulty.winTo);}
     else if (typeof difficulty === "object") {distance = Math.max(0, difficulty.from - ratio, ratio - difficulty.to);}
-    if (!best || distance < best.distance) {best = { result, tier, ratio, win, distance };}
+    if (!best || distance < best.distance || (distance === best.distance && offCentre(win) < offCentre(best.win))) {
+      best = { result, tier, ratio, win, distance };
+    }
   }
   return best;
 }
