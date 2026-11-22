@@ -65,6 +65,16 @@ test("generating by difficulty rerolls until it lands in the tier, or keeps the 
   assert.ok(deadly.distance > 0);
 });
 
+test("a win target keeps rolling past the band's edge for one near its centre", async () => {
+  const { generateForDifficulty, winRange } = await import("../scripts/encounter-difficulty.mjs");
+  const wins = [0.2, 0.36, 0.44, 0.41, 0.4, 0.3];
+  let calls = 0;
+  const best = generateForDifficulty(() => wins[calls++], win => ({ tier: null, ratio: 1, win }), winRange(40), wins.length);
+  assert.equal(best.win, 0.41, "0.36 and 0.44 are in the band but on its edges");
+  assert.equal(best.distance, 0);
+  assert.equal(calls, 4, "stops within 2 points of the centre");
+});
+
 test("trainer battles: whole teams, Pokémon on the field both ways, an even battle is Hard", async () => {
   const party = { size: 4, level: 8, team: 3 };
   const trainers = (count, size, level, onField = 1) => ({
